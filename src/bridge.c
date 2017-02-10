@@ -5,7 +5,9 @@
 void ts_document_root_node_p(TSDocument *document, TSNode *outNode) {
 	assert(document != NULL);
 	assert(outNode != NULL);
-	*outNode = ts_document_root_node(document);
+	TSNode root = ts_document_root_node(document);
+	assert(root.data != NULL);
+	*outNode = root;
 }
 
 const char *ts_node_p_name(const TSNode *node, const TSDocument *document) {
