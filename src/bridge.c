@@ -2,6 +2,14 @@
 #include <assert.h>
 #include <stdio.h>
 
+void log_to_stdout(void *payload, TSLogType type, const char *message) {
+  printf("%s\n", message);
+}
+
+void ts_document_log_to_stderr(TSDocument *document) {
+  ts_document_set_logger(document, (TSLogger) {.log = log_to_stdout, .payload = NULL});
+}
+
 void ts_document_root_node_p(TSDocument *document, TSNode *outNode) {
 	assert(document != NULL);
 	assert(outNode != NULL);
