@@ -75,6 +75,19 @@ size_t ts_node_p_end_char(const TSNode *node) {
 }
 
 
+size_t ts_node_p_start_byte(const TSNode *node) {
+	assert(node != NULL);
+	assert(node->data != NULL);
+	return ts_node_start_byte(*node);
+}
+
+size_t ts_node_p_end_byte(const TSNode *node) {
+	assert(node != NULL);
+	assert(node->data != NULL);
+	return ts_node_end_byte(*node);
+}
+
+
 size_t ts_node_p_start_point_row(const TSNode *node) {
 	assert(node != NULL);
 	assert(node->data != NULL);
