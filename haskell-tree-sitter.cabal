@@ -24,11 +24,12 @@ library
                      , Text.Parser.TreeSitter.Node
   c-sources:           src/bridge.c
                      , vendor/tree-sitter/src/runtime/document.c
+                     , vendor/tree-sitter/src/runtime/error_costs.c
                      , vendor/tree-sitter/src/runtime/language.c
                      , vendor/tree-sitter/src/runtime/lexer.c
                      , vendor/tree-sitter/src/runtime/node.c
-                     , vendor/tree-sitter/src/runtime/stack.c
                      , vendor/tree-sitter/src/runtime/parser.c
+                     , vendor/tree-sitter/src/runtime/stack.c
                      , vendor/tree-sitter/src/runtime/string_input.c
                      , vendor/tree-sitter/src/runtime/tree.c
                      , vendor/tree-sitter/src/runtime/utf16.c
