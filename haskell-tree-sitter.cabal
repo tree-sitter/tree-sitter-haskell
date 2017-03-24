@@ -48,3 +48,9 @@ test-suite haskell-tree-sitter-test
 source-repository head
   type:     git
   location: https://github.com/tree-sitter/haskell-tree-sitter
+
+custom-setup
+  setup-depends:  base >= 4.8 && < 5
+                , Cabal
+                , directory
+                , process
