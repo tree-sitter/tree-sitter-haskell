@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 typedef struct Node {
-  const void *data;
+  TSNode node;
   const char *type;
   TSPoint startPoint;
   TSPoint endPoint;
@@ -21,12 +21,21 @@ void ts_document_log_to_stderr(TSDocument *document) {
   ts_document_set_logger(document, (TSLogger) {.log = log_to_stdout, .payload = NULL});
 }
 
-void ts_document_root_node_p(TSDocument *document, TSNode *outNode) {
+void ts_document_root_node_p(TSDocument *document, Node *outNode) {
 	assert(document != NULL);
 	assert(outNode != NULL);
 	TSNode root = ts_document_root_node(document);
 	assert(root.data != NULL);
-	*outNode = root;
+  *outNode = (Node){
+    .node = root,
+    .type = ts_node_type(root, document),
+    .startPoint = ts_node_start_point(root),
+    .endPoint = ts_node_end_point(root),
+    .startByte = ts_node_start_byte(root),
+    .endByte = ts_node_end_byte(root),
+    .namedChildCount = ts_node_named_child_count(root),
+    .childCount = ts_node_child_count(root)
+  };
 }
 
 const char *ts_node_p_name(const TSNode *node, const TSDocument *document) {

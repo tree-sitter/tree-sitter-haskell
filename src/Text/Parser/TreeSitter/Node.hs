@@ -22,6 +22,11 @@ data Node = Node
 data Point = Point { pointRow :: Int32, pointColumn :: Int32 }
   deriving (Show, Eq, Generic, CStorable)
 
+
+data TSNode = TSNode (Ptr ()) Int32 Int32 Int32
+  deriving (Show, Eq, Generic, CStorable)
+
+
 instance Storable Node where
   alignment = cAlignment
   sizeOf = cSizeOf
@@ -33,6 +38,13 @@ instance Storable Point where
   sizeOf = cSizeOf
   peek = cPeek
   poke = cPoke
+
+instance Storable TSNode where
+  alignment = cAlignment
+  sizeOf = cSizeOf
+  peek = cPeek
+  poke = cPoke
+
 
 foreign import ccall "src/bridge.c ts_document_root_node_p" ts_document_root_node_p :: Ptr Document -> Ptr Node -> IO ()
 foreign import ccall "src/bridge.c ts_node_p_name" ts_node_p_name :: Ptr Node -> Ptr Document -> IO CString
