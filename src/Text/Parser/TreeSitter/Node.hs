@@ -19,7 +19,7 @@ data Node = Node
   }
   deriving (Show, Eq, Generic, CStorable)
 
-data Point = Point { row :: Int32, column :: Int32 }
+data Point = Point { pointRow :: Int32, pointColumn :: Int32 }
   deriving (Show, Eq, Generic, CStorable)
 
 instance Storable Node where
