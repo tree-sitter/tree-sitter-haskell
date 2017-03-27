@@ -44,27 +44,25 @@ void ts_document_root_node_p(TSDocument *document, Node *outNode) {
 }
 
 
-void ts_node_copy_child_nodes(const TSDocument *document, const Node *parentNode, Node *outChildNodes, size_t capacity) {
+void ts_node_copy_child_nodes(const TSDocument *document, const Node *parentNode, Node *outChildNodes, size_t count) {
   assert(document != NULL);
   assert(parentNode != NULL);
   assert(outChildNodes != NULL);
-  assert(capacity >= 0);
+  assert(count >= 0);
   uint32_t maxCount = ts_node_child_count(parentNode->node);
-  uint32_t maxCapacity = capacity / sizeof(Node);
-  uint32_t max = maxCount <= maxCapacity ? maxCount : maxCapacity;
+  uint32_t max = maxCount <= count ? maxCount : count;
   for (uint32_t i = 0; i < max; i++) {
     outChildNodes[i] = ts_node_elaborate(document, ts_node_child(parentNode->node, i));
   }
 }
 
-void ts_node_copy_named_child_nodes(const TSDocument *document, const Node *parentNode, Node *outChildNodes, size_t capacity) {
+void ts_node_copy_named_child_nodes(const TSDocument *document, const Node *parentNode, Node *outChildNodes, size_t count) {
   assert(document != NULL);
   assert(parentNode != NULL);
   assert(outChildNodes != NULL);
-  assert(capacity >= 0);
+  assert(count >= 0);
   uint32_t maxCount = ts_node_named_child_count(parentNode->node);
-  uint32_t maxCapacity = capacity / sizeof(Node);
-  uint32_t max = maxCount <= maxCapacity ? maxCount : maxCapacity;
+  uint32_t max = maxCount <= count ? maxCount : count;
   for (uint32_t i = 0; i < max; i++) {
     outChildNodes[i] = ts_node_elaborate(document, ts_node_named_child(parentNode->node, i));
   }
