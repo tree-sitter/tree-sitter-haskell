@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 typedef struct Node {
+  const void *data;
   TSPoint startPoint;
   TSPoint endPoint;
   uint32_t startByte;
