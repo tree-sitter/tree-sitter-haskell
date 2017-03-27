@@ -4,6 +4,7 @@
 
 typedef struct Node {
   const void *data;
+  const char *type;
   TSPoint startPoint;
   TSPoint endPoint;
   uint32_t startByte;

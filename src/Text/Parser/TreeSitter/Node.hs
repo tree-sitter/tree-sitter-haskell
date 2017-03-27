@@ -9,6 +9,7 @@ import Text.Parser.TreeSitter.Document
 
 data Node = Node
   { _nodeData :: !(Ptr ())
+  , nodeType :: CString
   , startPoint :: !Point
   , endPoint :: !Point
   , startByte :: !Int32
