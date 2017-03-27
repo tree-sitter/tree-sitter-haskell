@@ -1,6 +1,7 @@
 #include "tree_sitter/runtime.h"
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 typedef struct Node {
   TSNode node;
@@ -21,7 +22,7 @@ void ts_document_log_to_stderr(TSDocument *document) {
   ts_document_set_logger(document, (TSLogger) {.log = log_to_stdout, .payload = NULL});
 }
 
-Node ts_node_elaborate(TSDocument *document, TSNode node) {
+Node ts_node_elaborate(const TSDocument *document, TSNode node) {
   return (Node){
     .node = node,
     .type = ts_node_type(node, document),
@@ -42,6 +43,32 @@ void ts_document_root_node_p(TSDocument *document, Node *outNode) {
   *outNode = ts_node_elaborate(document, root);
 }
 
+
+void ts_node_copy_child_nodes(const TSDocument *document, const Node *parentNode, Node *outChildNodes, size_t capacity) {
+  assert(document != NULL);
+  assert(parentNode != NULL);
+  assert(outChildNodes != NULL);
+  assert(capacity >= 0);
+  uint32_t maxCount = ts_node_child_count(parentNode->node);
+  uint32_t maxCapacity = capacity / sizeof(Node);
+  uint32_t max = maxCount <= maxCapacity ? maxCount : maxCapacity;
+  for (uint32_t i = 0; i < max; i++) {
+    outChildNodes[i] = ts_node_elaborate(document, ts_node_child(parentNode->node, i));
+  }
+}
+
+void ts_node_copy_named_child_nodes(const TSDocument *document, const Node *parentNode, Node *outChildNodes, size_t capacity) {
+  assert(document != NULL);
+  assert(parentNode != NULL);
+  assert(outChildNodes != NULL);
+  assert(capacity >= 0);
+  uint32_t maxCount = ts_node_named_child_count(parentNode->node);
+  uint32_t maxCapacity = capacity / sizeof(Node);
+  uint32_t max = maxCount <= maxCapacity ? maxCount : maxCapacity;
+  for (uint32_t i = 0; i < max; i++) {
+    outChildNodes[i] = ts_node_elaborate(document, ts_node_named_child(parentNode->node, i));
+  }
+}
 
 const char *ts_node_p_name(const TSNode *node, const TSDocument *document) {
   assert(node != NULL);
