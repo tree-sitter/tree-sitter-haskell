@@ -2,6 +2,15 @@
 #include <assert.h>
 #include <stdio.h>
 
+typedef struct Node {
+  TSPoint startPoint;
+  TSPoint endPoint;
+  uint32_t startByte;
+  uint32_t endByte;
+  uint32_t namedChildCount;
+  uint32_t childCount;
+} Node;
+
 void log_to_stdout(void *payload, TSLogType type, const char *message) {
   printf("%s\n", message);
 }
