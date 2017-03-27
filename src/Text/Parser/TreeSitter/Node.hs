@@ -8,7 +8,7 @@ import GHC.Generics
 import Text.Parser.TreeSitter.Document
 
 data Node = Node
-  { _nodeNode :: TSNode
+  { nodeTSNode :: TSNode
   , nodeType :: CString
   , nodeStartPoint :: !Point
   , nodeEndPoint :: !Point
