@@ -7,10 +7,27 @@ import Foreign.CStorable
 import GHC.Generics
 import Text.Parser.TreeSitter.Document
 
-data Node = Node (Ptr ()) CSize CSize CSize
+data Node = Node
+  { _nodeData :: !(Ptr ())
+  , startPoint :: !Point
+  , endPoint :: !Point
+  , startByte :: !Int32
+  , endByte :: !Int32
+  , namedChildCount :: !Int32
+  , childCount :: !Int32
+  }
+  deriving (Show, Eq, Generic, CStorable)
+
+data Point = Point { row :: Int32, column :: Int32 }
   deriving (Show, Eq, Generic, CStorable)
 
 instance Storable Node where
+  alignment = cAlignment
+  sizeOf = cSizeOf
+  peek = cPeek
+  poke = cPoke
+
+instance Storable Point where
   alignment = cAlignment
   sizeOf = cSizeOf
   peek = cPeek
