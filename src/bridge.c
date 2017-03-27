@@ -21,22 +21,27 @@ void ts_document_log_to_stderr(TSDocument *document) {
   ts_document_set_logger(document, (TSLogger) {.log = log_to_stdout, .payload = NULL});
 }
 
+Node ts_node_elaborate(TSDocument *document, TSNode node) {
+  return (Node){
+    .node = node,
+    .type = ts_node_type(node, document),
+    .startPoint = ts_node_start_point(node),
+    .endPoint = ts_node_end_point(node),
+    .startByte = ts_node_start_byte(node),
+    .endByte = ts_node_end_byte(node),
+    .namedChildCount = ts_node_named_child_count(node),
+    .childCount = ts_node_child_count(node)
+  };
+}
+
 void ts_document_root_node_p(TSDocument *document, Node *outNode) {
   assert(document != NULL);
   assert(outNode != NULL);
   TSNode root = ts_document_root_node(document);
   assert(root.data != NULL);
-  *outNode = (Node){
-    .node = root,
-    .type = ts_node_type(root, document),
-    .startPoint = ts_node_start_point(root),
-    .endPoint = ts_node_end_point(root),
-    .startByte = ts_node_start_byte(root),
-    .endByte = ts_node_end_byte(root),
-    .namedChildCount = ts_node_named_child_count(root),
-    .childCount = ts_node_child_count(root)
-  };
+  *outNode = ts_node_elaborate(document, root);
 }
+
 
 const char *ts_node_p_name(const TSNode *node, const TSDocument *document) {
   assert(node != NULL);
