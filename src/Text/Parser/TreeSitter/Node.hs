@@ -10,12 +10,12 @@ import Text.Parser.TreeSitter.Document
 data Node = Node
   { _nodeData :: !(Ptr ())
   , nodeType :: CString
-  , startPoint :: !Point
-  , endPoint :: !Point
-  , startByte :: !Int32
-  , endByte :: !Int32
-  , namedChildCount :: !Int32
-  , childCount :: !Int32
+  , nodeStartPoint :: !Point
+  , nodeEndPoint :: !Point
+  , nodeStartByte :: !Int32
+  , nodeEndByte :: !Int32
+  , nodeNamedChildCount :: !Int32
+  , nodeChildCount :: !Int32
   }
   deriving (Show, Eq, Generic, CStorable)
 
