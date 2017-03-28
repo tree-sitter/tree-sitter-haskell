@@ -22,7 +22,7 @@ void ts_document_log_to_stderr(TSDocument *document) {
   ts_document_set_logger(document, (TSLogger) {.log = log_to_stdout, .payload = NULL});
 }
 
-Node ts_node_elaborate(const TSDocument *document, TSNode node) {
+static inline Node ts_node_elaborate(const TSDocument *document, TSNode node) {
   return (Node){
     .node = node,
     .type = ts_node_type(node, document),
