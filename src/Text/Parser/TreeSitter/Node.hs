@@ -8,8 +8,8 @@ import GHC.Generics
 import Text.Parser.TreeSitter.Document
 
 data Node = Node
-  { nodeTSNode :: TSNode
-  , nodeType :: CString
+  { nodeTSNode :: !TSNode
+  , nodeType :: !CString
   , nodeStartPoint :: !Point
   , nodeEndPoint :: !Point
   , nodeStartByte :: !Int32
@@ -19,11 +19,11 @@ data Node = Node
   }
   deriving (Show, Eq, Generic, CStorable)
 
-data Point = Point { pointRow :: Int32, pointColumn :: Int32 }
+data Point = Point { pointRow :: !Int32, pointColumn :: !Int32 }
   deriving (Show, Eq, Generic, CStorable)
 
 
-data TSNode = TSNode (Ptr ()) Int32 Int32 Int32
+data TSNode = TSNode !(Ptr ()) !Int32 !Int32 !Int32
   deriving (Show, Eq, Generic, CStorable)
 
 
