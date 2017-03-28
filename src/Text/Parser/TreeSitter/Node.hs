@@ -43,7 +43,7 @@ pokeAdvance ptr a = do
 
 instance Storable Node where
   alignment _ = alignment (TSNode nullPtr 0 0 0 :: TSNode)
-  sizeOf _ = fromIntegral ts_size_of_type_node
+  sizeOf _ = 64
   peek ptr = do
     (nodeTSNode, ptr) <- peekAdvance (castPtr ptr)
     (nodeType, ptr) <- peekAdvance ptr
@@ -58,7 +58,7 @@ instance Storable Node where
 
 instance Storable TSPoint where
   alignment _ = alignment (0 :: Int32)
-  sizeOf _ = fromIntegral ts_size_of_type_ts_point
+  sizeOf _ = 8
   peek ptr = do
     (pointRow, ptr) <- peekAdvance (castPtr ptr)
     (pointColumn, ptr) <- peekAdvance ptr
@@ -67,7 +67,7 @@ instance Storable TSPoint where
 
 instance Storable TSNode where
   alignment _ = alignment (nullPtr :: Ptr ())
-  sizeOf _ = fromIntegral ts_size_of_type_ts_node
+  sizeOf _ = 24
   peek ptr = do
     (p, ptr) <- peekAdvance (castPtr ptr)
     (o1, ptr) <- peekAdvance ptr
@@ -82,9 +82,6 @@ instance Storable TSNode where
     return ()
 
 
-foreign import ccall "src/bridge.c ts_size_of_type_node" ts_size_of_type_node :: CSize
-foreign import ccall "src/bridge.c ts_size_of_type_ts_node" ts_size_of_type_ts_node :: CSize
-foreign import ccall "src/bridge.c ts_size_of_type_ts_point" ts_size_of_type_ts_point :: CSize
 
 foreign import ccall "src/bridge.c ts_document_root_node_p" ts_document_root_node_p :: Ptr Document -> Ptr Node -> IO ()
 
