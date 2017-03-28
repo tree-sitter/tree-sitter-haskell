@@ -11,8 +11,8 @@ import Text.Parser.TreeSitter.Document
 data Node = Node
   { nodeTSNode :: !TSNode
   , nodeType :: !CString
-  , nodeStartPoint :: !Point
-  , nodeEndPoint :: !Point
+  , nodeStartPoint :: !TSPoint
+  , nodeEndPoint :: !TSPoint
   , nodeStartByte :: !Int32
   , nodeEndByte :: !Int32
   , nodeNamedChildCount :: !Int32
@@ -20,7 +20,7 @@ data Node = Node
   }
   deriving (Show, Eq, Generic, CStorable)
 
-data Point = Point { pointRow :: !Int32, pointColumn :: !Int32 }
+data TSPoint = TSPoint { pointRow :: !Int32, pointColumn :: !Int32 }
   deriving (Show, Eq, Generic, CStorable)
 
 
@@ -56,13 +56,13 @@ instance Storable Node where
     return $! Node nodeTSNode nodeType nodeStartPoint nodeEndPoint nodeStartByte nodeEndByte nodeNamedChildCount nodeChildCount
   poke = cPoke
 
-instance Storable Point where
+instance Storable TSPoint where
   alignment _ = alignment (0 :: Int32)
   sizeOf _ = 8
   peek ptr = do
     (pointRow, ptr) <- peekAdvance (castPtr ptr)
     (pointColumn, ptr) <- peekAdvance ptr
-    return $! Point pointRow pointColumn
+    return $! TSPoint pointRow pointColumn
   poke = cPoke
 
 instance Storable TSNode where
