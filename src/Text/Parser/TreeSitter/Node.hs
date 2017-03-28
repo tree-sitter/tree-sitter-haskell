@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass, ScopedTypeVariables #-}
 {-# OPTIONS_GHC -funbox-strict-fields #-}
 module Text.Parser.TreeSitter.Node where
 
@@ -27,6 +27,19 @@ data Point = Point { pointRow :: !Int32, pointColumn :: !Int32 }
 data TSNode = TSNode !(Ptr ()) !Int32 !Int32 !Int32
   deriving (Show, Eq, Generic, CStorable)
 
+peekAdvance :: forall a b. Storable a => Ptr a -> IO (a, Ptr b)
+peekAdvance ptr = do
+  let aligned = alignPtr ptr (alignment (undefined :: a))
+  a <- peek aligned
+  return (a, castPtr aligned `plusPtr` sizeOf a)
+{-# INLINE peekAdvance #-}
+
+pokeAdvance :: forall a b. Storable a => Ptr a -> a -> IO (Ptr b)
+pokeAdvance ptr a = do
+  let aligned = alignPtr ptr (alignment (undefined :: a))
+  poke aligned a
+  return (castPtr aligned `plusPtr` sizeOf a)
+{-# INLINE pokeAdvance #-}
 
 instance Storable Node where
   alignment = cAlignment
