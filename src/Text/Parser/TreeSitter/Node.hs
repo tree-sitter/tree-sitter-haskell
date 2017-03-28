@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric, DeriveAnyClass #-}
+{-# OPTIONS_GHC -funbox-strict-fields #-}
 module Text.Parser.TreeSitter.Node where
 
 import Foreign
