@@ -14,6 +14,19 @@ typedef struct Node {
   uint32_t childCount;
 } Node;
 
+size_t ts_size_of_type_node() {
+  return sizeof(Node);
+}
+
+size_t ts_size_of_type_ts_node() {
+  return sizeof(TSNode);
+}
+
+size_t ts_size_of_type_ts_point() {
+  return sizeof(TSPoint);
+}
+
+
 void log_to_stdout(void *payload, TSLogType type, const char *message) {
   printf("%s\n", message);
 }
