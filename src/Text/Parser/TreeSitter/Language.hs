@@ -1,6 +1,8 @@
 module Text.Parser.TreeSitter.Language where
 
 import Data.Word
+import Foreign.C.String
+import Foreign.Ptr
 
 newtype Language = Language ()
   deriving (Show, Eq)
