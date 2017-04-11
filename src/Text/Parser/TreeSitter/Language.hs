@@ -17,12 +17,12 @@ foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts
 
 
 -- | TemplateHaskell construction of a datatype for the referenced Language.
-mkSymbolDatatype :: Name -> Ptr Language -> Q Dec
+mkSymbolDatatype :: Name -> Ptr Language -> Q [Dec]
 mkSymbolDatatype name language = do
   let symbolCount = ts_language_symbol_count language
   symbolNames <- runIO $ traverse (peekCString . ts_language_symbol_name language) [0..fromIntegral (pred symbolCount)]
 
-  pure $! DataD [] name [] Nothing (flip NormalC [] . mkName . toTitleCase <$> symbolNames) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ]
+  pure [ DataD [] name [] Nothing (flip NormalC [] . mkName . toTitleCase <$> symbolNames) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ] ]
 
 toTitleCase :: String -> String
 toTitleCase s = case s of
