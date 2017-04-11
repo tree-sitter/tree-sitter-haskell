@@ -26,7 +26,7 @@ mkSymbolDatatype name language = do
   pure [ DataD [] name [] Nothing (flip NormalC [] . mkName . toTitleCase <$> symbolNames) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ] ]
 
 toTitleCase :: String -> String
-toTitleCase = (>>= initUpper) . toWords
-  where toWords = splitWhen (== '_')
+toTitleCase = (>>= initUpper) . filter (not . all (== '_')) . toWords
+  where toWords = split (condense (whenElt (not . isAlpha)))
         initUpper (c:cs) = toUpper c : cs
         initUpper "" = ""
