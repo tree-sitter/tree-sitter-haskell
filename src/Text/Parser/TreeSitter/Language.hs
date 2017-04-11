@@ -2,6 +2,7 @@
 module Text.Parser.TreeSitter.Language where
 
 import Data.Char
+import Data.List.Split
 import Data.Word
 import Foreign.C.String
 import Foreign.Ptr
@@ -25,9 +26,7 @@ mkSymbolDatatype name language = do
   pure [ DataD [] name [] Nothing (flip NormalC [] . mkName . toTitleCase <$> symbolNames) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ] ]
 
 toTitleCase :: String -> String
-toTitleCase s = case s of
-  c:rest -> toUpper c : go rest
-  _ -> go s
-  where go "" = ""
-        go ('_':c:rest) = toUpper c : go rest
-        go (c:rest) = c : go rest
+toTitleCase = (>>= initUpper) . toWords
+  where toWords = splitWhen (== '_')
+        initUpper (c:cs) = toUpper c : cs
+        initUpper "" = ""
