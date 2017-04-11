@@ -22,7 +22,7 @@ mkSymbolDatatype name language = do
   let symbolCount = ts_language_symbol_count language
   symbolNames <- runIO $ traverse (peekCString . ts_language_symbol_name language) [0..fromIntegral (pred symbolCount)]
 
-  pure $! DataD [] name [] Nothing [  ] [ ConT (mkName "Show"), ConT (mkName "Eq"), ConT (mkName "Enum") ]
+  pure $! DataD [] name [] Nothing [  ] [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ]
 
 toTitleCase :: String -> String
 toTitleCase s = case s of
