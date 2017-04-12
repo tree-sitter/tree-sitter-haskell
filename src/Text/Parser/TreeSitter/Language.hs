@@ -26,7 +26,43 @@ mkSymbolDatatype name language = do
   pure [ DataD [] name [] Nothing (flip NormalC [] . mkName . toTitleCase <$> symbolNames) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ] ]
 
 toTitleCase :: String -> String
-toTitleCase = (>>= initUpper) . filter (not . all (== '_')) . toWords
+toTitleCase = (>>= initUpper) . map (>>= toDescription) . toWords
   where toWords = split (condense (whenElt (not . isAlpha)))
         initUpper (c:cs) = toUpper c : cs
         initUpper "" = ""
+        toDescription '{' = "OpenBrace"
+        toDescription '}' = "CloseBrace"
+        toDescription '(' = "OpenParen"
+        toDescription ')' = "CloseParen"
+        toDescription '.' = "Period"
+        toDescription ':' = "Colon"
+        toDescription ',' = "Comma"
+        toDescription '|' = "VerticalLine"
+        toDescription ';' = "Semicolon"
+        toDescription '*' = "Asterisk"
+        toDescription '&' = "Ampersand"
+        toDescription '=' = "Equal"
+        toDescription '<' = "LessThan"
+        toDescription '>' = "GreaterThan"
+        toDescription '[' = "OpenBracket"
+        toDescription ']' = "CloseBracket"
+        toDescription '+' = "Plus"
+        toDescription '-' = "Minus"
+        toDescription '/' = "ForwardSlash"
+        toDescription '\\' = "Backslash"
+        toDescription '^' = "Caret"
+        toDescription '!' = "ExclamationPoint"
+        toDescription '%' = "Percent"
+        toDescription '@' = "At"
+        toDescription '~' = "Tilde"
+        toDescription '?' = "QuestionMark"
+        toDescription '`' = "Backtick"
+        toDescription '#' = "Pound"
+        toDescription '$' = "Dollar"
+        toDescription '"' = "DoubleQuote"
+        toDescription '\'' = "SingleQuote"
+        toDescription '\t' = "Tab"
+        toDescription '\n' = "LF"
+        toDescription '\r' = "CR"
+        toDescription '_' = "Underscore"
+        toDescription c = [c]
