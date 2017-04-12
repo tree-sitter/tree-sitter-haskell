@@ -13,8 +13,12 @@ newtype Language = Language ()
 
 type TSSymbol = Word16
 
+data TSSymbolType = Regular | Anonymous | Auxiliary
+  deriving (Enum, Eq, Ord, Show)
+
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_count" ts_language_symbol_count :: Ptr Language -> Word32
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_name" ts_language_symbol_name :: Ptr Language -> TSSymbol -> CString
+foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_type" ts_language_symbol_type :: Ptr Language -> TSSymbol -> Int
 
 
 -- | TemplateHaskell construction of a datatype for the referenced Language.
