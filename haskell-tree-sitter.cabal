@@ -17,6 +17,8 @@ library
   hs-source-dirs:      src
   build-depends:       base >= 4.7 && < 5
                      , c-storable-deriving
+                     , split
+                     , template-haskell
   default-language:    Haskell2010
   exposed-modules:     Text.Parser.TreeSitter
                      , Text.Parser.TreeSitter.Document
