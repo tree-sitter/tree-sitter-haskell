@@ -40,7 +40,7 @@ symbolToName :: TSSymbolType -> String -> Name
 symbolToName ty = mkName . (prefix ++) . (>>= initUpper) . map (>>= toDescription) . filter (not . all (== '_')) . toWords . prefixHidden
   where toWords = split (condense (whenElt (not . isAlpha)))
 
-        prefixHidden ('_':s) = "Hidden" ++ s
+        prefixHidden s@('_':_) = "Hidden" ++ s
         prefixHidden s = s
 
         initUpper (c:cs) = toUpper c : cs
