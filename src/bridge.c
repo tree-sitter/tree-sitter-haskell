@@ -6,6 +6,7 @@
 typedef struct Node {
   TSNode node;
   const char *type;
+  TSSymbol symbol;
   TSPoint startPoint;
   TSPoint endPoint;
   uint32_t startByte;
@@ -25,6 +26,7 @@ void ts_document_log_to_stderr(TSDocument *document) {
 static inline Node ts_node_elaborate(const TSDocument *document, TSNode node) {
   return (Node){
     .node = node,
+    .symbol = ts_node_symbol(node),
     .type = ts_node_type(node, document),
     .startPoint = ts_node_start_point(node),
     .endPoint = ts_node_end_point(node),
