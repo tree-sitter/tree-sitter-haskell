@@ -2,6 +2,7 @@
 module Text.Parser.TreeSitter.Language where
 
 import Data.Char
+import Data.Traversable (for)
 import Data.List.Split
 import Data.Word
 import Foreign.C.String
@@ -19,6 +20,13 @@ data TSSymbolType = Regular | Anonymous | Auxiliary
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_count" ts_language_symbol_count :: Ptr Language -> Word32
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_name" ts_language_symbol_name :: Ptr Language -> TSSymbol -> CString
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_type" ts_language_symbol_type :: Ptr Language -> TSSymbol -> Int
+
+
+languageSymbols :: Ptr Language -> IO [(TSSymbolType, String)]
+languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
+  name <- peekCString (ts_language_symbol_name language symbol)
+  pure (toEnum (ts_language_symbol_type language symbol), name)
+  where count = ts_language_symbol_count language
 
 
 -- | TemplateHaskell construction of a datatype for the referenced Language.
