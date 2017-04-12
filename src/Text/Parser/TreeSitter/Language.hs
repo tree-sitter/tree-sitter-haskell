@@ -37,7 +37,7 @@ mkSymbolDatatype name language = do
   pure [ DataD [] name [] Nothing (flip NormalC [] . uncurry symbolToName <$> symbols) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ] ]
 
 symbolToName :: TSSymbolType -> String -> Name
-symbolToName ty = mkName . (>>= initUpper) . map (>>= toDescription) . toWords
+symbolToName ty = mkName . (prefix ++) . (>>= initUpper) . map (>>= toDescription) . toWords
   where toWords = split (condense (whenElt (not . isAlpha)))
         initUpper (c:cs) = toUpper c : cs
         initUpper "" = ""
@@ -77,3 +77,8 @@ symbolToName ty = mkName . (>>= initUpper) . map (>>= toDescription) . toWords
         toDescription '\r' = "CR"
         toDescription '_' = "Underscore"
         toDescription c = [c]
+
+        prefix = case ty of
+          Regular -> ""
+          Anonymous -> "Anon"
+          Auxiliary -> "Aux"
