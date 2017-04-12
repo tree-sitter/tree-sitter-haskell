@@ -37,10 +37,15 @@ mkSymbolDatatype name language = do
   pure [ DataD [] name [] Nothing (flip NormalC [] . uncurry symbolToName <$> symbols) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ] ]
 
 symbolToName :: TSSymbolType -> String -> Name
-symbolToName ty = mkName . (prefix ++) . (>>= initUpper) . map (>>= toDescription) . toWords
+symbolToName ty = mkName . (prefix ++) . (>>= initUpper) . map (>>= toDescription) . filter (not . all (== '_')) . toWords . prefixHidden
   where toWords = split (condense (whenElt (not . isAlpha)))
+
+        prefixHidden ('_':s) = "Hidden" ++ s
+        prefixHidden s = s
+
         initUpper (c:cs) = toUpper c : cs
         initUpper "" = ""
+
         toDescription '{' = "LBrace"
         toDescription '}' = "RBrace"
         toDescription '(' = "LParen"
@@ -75,7 +80,6 @@ symbolToName ty = mkName . (prefix ++) . (>>= initUpper) . map (>>= toDescriptio
         toDescription '\t' = "Tab"
         toDescription '\n' = "LF"
         toDescription '\r' = "CR"
-        toDescription '_' = "Underscore"
         toDescription c = [c]
 
         prefix = case ty of
