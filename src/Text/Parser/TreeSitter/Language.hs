@@ -8,6 +8,7 @@ import Data.Word
 import Foreign.C.String
 import Foreign.Ptr
 import Language.Haskell.TH
+import Language.Haskell.TH.Syntax
 
 newtype Language = Language ()
   deriving (Show, Eq)
@@ -31,7 +32,14 @@ mkSymbolDatatype :: Name -> Ptr Language -> Q [Dec]
 mkSymbolDatatype name language = do
   symbols <- runIO $ languageSymbols language
 
-  pure [ DataD [] name [] Nothing (flip NormalC [] . uncurry symbolToName <$> symbols) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ] ]
+  Module _ modName <- thisModule
+  pure
+    [ DataD [] name [] Nothing (flip NormalC [] . mkName . uncurry symbolToName <$> symbols) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ]
+    , InstanceD Nothing [] (AppT (ConT ''Symbol) (ConT name)) [ FunD 'symbolType (uncurry (clause modName) <$> symbols) ] ]
+  where clause modName symbolType str = Clause [ ConP (Name (OccName (symbolToName symbolType str)) (NameQ modName)) [] ] (NormalB (ConE (promote symbolType))) []
+        promote Regular = 'Regular
+        promote Anonymous = 'Anonymous
+        promote Auxiliary = 'Auxiliary
 
 languageSymbols :: Ptr Language -> IO [(SymbolType, String)]
 languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
@@ -39,8 +47,8 @@ languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
   pure (toEnum (ts_language_symbol_type language symbol), name)
   where count = ts_language_symbol_count language
 
-symbolToName :: SymbolType -> String -> Name
-symbolToName ty = mkName . (prefix ++) . (>>= initUpper) . map (>>= toDescription) . filter (not . all (== '_')) . toWords . prefixHidden
+symbolToName :: SymbolType -> String -> String
+symbolToName ty = (prefix ++) . (>>= initUpper) . map (>>= toDescription) . filter (not . all (== '_')) . toWords . prefixHidden
   where toWords = split (condense (whenElt (not . isAlpha)))
 
         prefixHidden s@('_':_) = "Hidden" ++ s
