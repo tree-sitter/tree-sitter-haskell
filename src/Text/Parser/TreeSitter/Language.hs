@@ -22,6 +22,10 @@ foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_type" ts_language_symbol_type :: Ptr Language -> TSSymbol -> Int
 
 
+class Symbol s where
+  symbolType :: s -> SymbolType
+
+
 -- | TemplateHaskell construction of a datatype for the referenced Language.
 mkSymbolDatatype :: Name -> Ptr Language -> Q [Dec]
 mkSymbolDatatype name language = do
