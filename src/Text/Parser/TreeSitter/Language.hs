@@ -22,19 +22,18 @@ foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_type" ts_language_symbol_type :: Ptr Language -> TSSymbol -> Int
 
 
-languageSymbols :: Ptr Language -> IO [(SymbolType, String)]
-languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
-  name <- peekCString (ts_language_symbol_name language symbol)
-  pure (toEnum (ts_language_symbol_type language symbol), name)
-  where count = ts_language_symbol_count language
-
-
 -- | TemplateHaskell construction of a datatype for the referenced Language.
 mkSymbolDatatype :: Name -> Ptr Language -> Q [Dec]
 mkSymbolDatatype name language = do
   symbols <- runIO $ languageSymbols language
 
   pure [ DataD [] name [] Nothing (flip NormalC [] . uncurry symbolToName <$> symbols) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ] ]
+
+languageSymbols :: Ptr Language -> IO [(SymbolType, String)]
+languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
+  name <- peekCString (ts_language_symbol_name language symbol)
+  pure (toEnum (ts_language_symbol_type language symbol), name)
+  where count = ts_language_symbol_count language
 
 symbolToName :: SymbolType -> String -> Name
 symbolToName ty = mkName . (prefix ++) . (>>= initUpper) . map (>>= toDescription) . filter (not . all (== '_')) . toWords . prefixHidden
