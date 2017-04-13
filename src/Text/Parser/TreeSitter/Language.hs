@@ -14,7 +14,7 @@ newtype Language = Language ()
 
 type TSSymbol = Word16
 
-data TSSymbolType = Regular | Anonymous | Auxiliary
+data SymbolType = Regular | Anonymous | Auxiliary
   deriving (Enum, Eq, Ord, Show)
 
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_count" ts_language_symbol_count :: Ptr Language -> Word32
@@ -22,7 +22,7 @@ foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_type" ts_language_symbol_type :: Ptr Language -> TSSymbol -> Int
 
 
-languageSymbols :: Ptr Language -> IO [(TSSymbolType, String)]
+languageSymbols :: Ptr Language -> IO [(SymbolType, String)]
 languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
   name <- peekCString (ts_language_symbol_name language symbol)
   pure (toEnum (ts_language_symbol_type language symbol), name)
@@ -36,7 +36,7 @@ mkSymbolDatatype name language = do
 
   pure [ DataD [] name [] Nothing (flip NormalC [] . uncurry symbolToName <$> symbols) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord ] ]
 
-symbolToName :: TSSymbolType -> String -> Name
+symbolToName :: SymbolType -> String -> Name
 symbolToName ty = mkName . (prefix ++) . (>>= initUpper) . map (>>= toDescription) . filter (not . all (== '_')) . toWords . prefixHidden
   where toWords = split (condense (whenElt (not . isAlpha)))
 
