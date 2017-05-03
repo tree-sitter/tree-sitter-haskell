@@ -23,6 +23,14 @@ void ts_document_log_to_stderr(TSDocument *document) {
   ts_document_set_logger(document, (TSLogger) {.log = log_to_stdout, .payload = NULL});
 }
 
+void ts_document_parse_halt_on_error(TSDocument *document) {
+  ts_document_parse_with_options(document, (TSParseOptions){
+    .changed_ranges = NULL,
+    .changed_range_count = NULL,
+    .halt_on_error = true
+  });
+}
+
 static inline Node ts_node_elaborate(const TSDocument *document, TSNode node) {
   return (Node){
     .node = node,
