@@ -2,6 +2,7 @@
 {-# OPTIONS_GHC -funbox-strict-fields #-}
 module Text.Parser.TreeSitter.Node where
 
+import Prelude
 import Foreign
 import Foreign.C
 import Foreign.CStorable
