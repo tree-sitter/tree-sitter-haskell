@@ -1,6 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Text.Parser.TreeSitter.Language where
 
+import Prelude
 import Data.Char
 import Data.Ix (Ix)
 import Data.Traversable (for)

@@ -1,5 +1,6 @@
 module Text.Parser.TreeSitter.Document where
 
+import Prelude
 import Foreign
 import Foreign.C
 import Text.Parser.TreeSitter.Language
