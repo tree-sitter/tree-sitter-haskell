@@ -32,16 +32,23 @@ class Symbol s where
 -- | TemplateHaskell construction of a datatype for the referenced Language.
 mkSymbolDatatype :: Name -> Ptr Language -> Q [Dec]
 mkSymbolDatatype name language = do
-  symbols <- runIO $ languageSymbols language
+  symbols <- ((Regular, "ParseError") :) <$> runIO (languageSymbols language)
+  let namedSymbols = uncurry symbolToName <$> symbols
 
   Module _ modName <- thisModule
   pure
-    [ DataD [] name [] Nothing (flip NormalC [] . mkName . uncurry symbolToName <$> symbols) [ ConT ''Show, ConT ''Eq, ConT ''Enum, ConT ''Ord, ConT ''Bounded, ConT ''Ix ]
-    , InstanceD Nothing [] (AppT (ConT ''Symbol) (ConT name)) [ FunD 'symbolType (uncurry (clause modName) <$> symbols) ] ]
+    [ DataD [] name [] Nothing (flip NormalC [] . mkName <$> namedSymbols) [ ConT ''Show, ConT ''Eq, ConT ''Ord, ConT ''Bounded, ConT ''Ix ]
+    , InstanceD Nothing [] (AppT (ConT ''Symbol) (ConT name)) [ FunD 'symbolType (uncurry (clause modName) <$> symbols) ]
+    , InstanceD Nothing [] (AppT (ConT ''Enum) (ConT name))
+      [ FunD 'toEnum (zipWith (toEnumClause modName) [-1..] namedSymbols)
+      , FunD 'fromEnum (zipWith (fromEnumClause modName) [-1..] namedSymbols) ] ]
   where clause modName symbolType str = Clause [ ConP (Name (OccName (symbolToName symbolType str)) (NameQ modName)) [] ] (NormalB (ConE (promote symbolType))) []
         promote Regular = 'Regular
         promote Anonymous = 'Anonymous
         promote Auxiliary = 'Auxiliary
+
+        toEnumClause modName n name = Clause [ LitP (IntegerL n) ] (NormalB (ConE (Name (OccName name) (NameQ modName)))) []
+        fromEnumClause modName n name = Clause [ ConP (Name (OccName name) (NameQ modName)) [] ] (NormalB (LitE (IntegerL n))) []
 
 languageSymbols :: Ptr Language -> IO [(SymbolType, String)]
 languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
