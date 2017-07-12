@@ -47,8 +47,8 @@ mkSymbolDatatype name language = do
         promote Anonymous = 'Anonymous
         promote Auxiliary = 'Auxiliary
 
-        toEnumClause modName n name = Clause [ ConP (Name (OccName name) (NameQ modName)) [] ] (NormalB (LitE (IntegerL n))) []
-        fromEnumClause modName n name = Clause [ LitP (IntegerL n) ] (NormalB (ConE (Name (OccName name) (NameQ modName)))) []
+        toEnumClause modName n name = Clause [ LitP (IntegerL n) ] (NormalB (ConE (Name (OccName name) (NameQ modName)))) []
+        fromEnumClause modName n name = Clause [ ConP (Name (OccName name) (NameQ modName)) [] ] (NormalB (LitE (IntegerL n))) []
 
 languageSymbols :: Ptr Language -> IO [(SymbolType, String)]
 languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
