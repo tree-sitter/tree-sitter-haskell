@@ -37,18 +37,12 @@ mkSymbolDatatype name language = do
 
   Module _ modName <- thisModule
   pure
-    [ DataD [] name [] Nothing (flip NormalC [] . mkName <$> namedSymbols) [ ConT ''Show, ConT ''Eq, ConT ''Ord, ConT ''Bounded, ConT ''Ix ]
-    , InstanceD Nothing [] (AppT (ConT ''Symbol) (ConT name)) [ FunD 'symbolType (uncurry (clause modName) <$> symbols) ]
-    , InstanceD Nothing [] (AppT (ConT ''Enum) (ConT name))
-      [ FunD 'toEnum (zipWith (toEnumClause modName) [-1..] namedSymbols)
-      , FunD 'fromEnum (zipWith (fromEnumClause modName) [-1..] namedSymbols) ] ]
+    [ DataD [] name [] Nothing (flip NormalC [] . mkName <$> namedSymbols) [ ConT ''Show, ConT ''Enum, ConT ''Eq, ConT ''Ord, ConT ''Bounded, ConT ''Ix ]
+    , InstanceD Nothing [] (AppT (ConT ''Symbol) (ConT name)) [ FunD 'symbolType (uncurry (clause modName) <$> symbols) ] ]
   where clause modName symbolType str = Clause [ ConP (Name (OccName (symbolToName symbolType str)) (NameQ modName)) [] ] (NormalB (ConE (promote symbolType))) []
         promote Regular = 'Regular
         promote Anonymous = 'Anonymous
         promote Auxiliary = 'Auxiliary
-
-        toEnumClause modName n name = Clause [ LitP (IntegerL n) ] (NormalB (ConE (Name (OccName name) (NameQ modName)))) []
-        fromEnumClause modName n name = Clause [ ConP (Name (OccName name) (NameQ modName)) [] ] (NormalB (LitE (IntegerL n))) []
 
 languageSymbols :: Ptr Language -> IO [(SymbolType, String)]
 languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
