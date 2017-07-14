@@ -32,7 +32,7 @@ class Symbol s where
 -- | TemplateHaskell construction of a datatype for the referenced Language.
 mkSymbolDatatype :: Name -> Ptr Language -> Q [Dec]
 mkSymbolDatatype name language = do
-  symbols <- (<> [(Regular, "ParseError")]) <$> runIO (languageSymbols language)
+  symbols <- (++ [(Regular, "ParseError")]) <$> runIO (languageSymbols language)
   let namedSymbols = uncurry symbolToName <$> symbols
 
   Module _ modName <- thisModule
