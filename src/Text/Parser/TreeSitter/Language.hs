@@ -37,7 +37,7 @@ mkSymbolDatatype name language = do
 
   Module _ modName <- thisModule
   pure
-    [ DataD [] name [] Nothing (flip NormalC [] . mkName <$> namedSymbols) [ ConT ''Show, ConT ''Enum, ConT ''Eq, ConT ''Ord, ConT ''Bounded, ConT ''Ix ]
+    [ DataD [] name [] Nothing (flip NormalC [] . mkName <$> namedSymbols) [ DerivClause Nothing [ ConT ''Show, ConT ''Enum, ConT ''Eq, ConT ''Ord, ConT ''Bounded, ConT ''Ix ] ]
     , InstanceD Nothing [] (AppT (ConT ''Symbol) (ConT name)) [ FunD 'symbolType (uncurry (clause modName) <$> symbols) ] ]
   where clause modName symbolType str = Clause [ ConP (Name (OccName (symbolToName symbolType str)) (NameQ modName)) [] ] (NormalB (ConE (promote symbolType))) []
         promote Regular = 'Regular
