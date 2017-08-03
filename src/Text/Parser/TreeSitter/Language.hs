@@ -6,6 +6,7 @@ import Data.Char
 import Data.Ix (Ix)
 import Data.Traversable (for)
 import Data.List.Split
+import Data.List
 import Data.Word
 import Foreign.C.String
 import Foreign.Ptr
@@ -33,7 +34,7 @@ class Symbol s where
 mkSymbolDatatype :: Name -> Ptr Language -> Q [Dec]
 mkSymbolDatatype name language = do
   symbols <- (++ [(Regular, "ParseError")]) <$> runIO (languageSymbols language)
-  let namedSymbols = uncurry symbolToName <$> symbols
+  let namedSymbols = nub (uncurry symbolToName <$> symbols)
 
   Module _ modName <- thisModule
   pure
