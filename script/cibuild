@@ -4,4 +4,8 @@ export LC_CTYPE=en_US.UTF-8
 
 "$(dirname $0)/bootstrap" 2> /dev/null
 
-stack test :haskell-tree-sitter-test
+project_path="$(cd "$(dirname $0)/.." && pwd)"
+build_path="$project_path/dist-newstyle/build/semantic-diff-0.3.0/build"
+
+cabal new-build haskell-tree-sitter:test
+"$build_path/test/test"
