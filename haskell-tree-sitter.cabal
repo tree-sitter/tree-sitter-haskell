@@ -39,7 +39,7 @@ library
                      , vendor/tree-sitter/externals/utf8proc/utf8proc.c
   cc-options:          -std=c99 -Os
 
-test-suite haskell-tree-sitter-test
+test-suite test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
