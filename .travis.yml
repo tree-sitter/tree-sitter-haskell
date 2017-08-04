@@ -24,7 +24,7 @@ matrix:
 before_install:
 - HC=${CC}
 - unset CC
-- PATH=/opt/ghc/bin:~/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin
+- PATH=/bin:/usr/bin:/opt/ghc/bin:~/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin
 
 install:
 - cabal --version
