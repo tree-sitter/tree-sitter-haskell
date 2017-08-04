@@ -2,4 +2,4 @@
 
 git submodule sync && git submodule update --init --recursive
 
-stack setup
+cabal update
