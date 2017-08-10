@@ -3,6 +3,7 @@ module Text.Parser.TreeSitter.Language where
 
 import Prelude
 import Data.Char
+import Data.Function ((&))
 import Data.Ix (Ix)
 import Data.Traversable (for)
 import Data.List.Split
@@ -56,7 +57,14 @@ languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
   where count = ts_language_symbol_count language
 
 symbolToName :: SymbolType -> String -> (SymbolType, String)
-symbolToName ty = (,) ty . (prefix ++) . (>>= initUpper) . map (>>= toDescription) . filter (not . all (== '_')) . toWords . prefixHidden
+symbolToName ty name
+  = prefixHidden name
+  & toWords
+  & filter (not . all (== '_'))
+  & map (>>= toDescription)
+  & (>>= initUpper)
+  & (prefix ++)
+  & (,) ty
   where toWords = split (condense (whenElt (not . isAlpha)))
 
         prefixHidden s@('_':_) = "Hidden" ++ s
