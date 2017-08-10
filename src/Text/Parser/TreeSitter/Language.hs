@@ -34,7 +34,7 @@ class Symbol s where
 mkSymbolDatatype :: Name -> Ptr Language -> Q [Dec]
 mkSymbolDatatype name language = do
   symbols <- (++ [(Regular, "ParseError")]) <$> runIO (languageSymbols language)
-  let namedSymbols = nub (uncurry symbolToName <$> symbols)
+  let namedSymbols = uncurry symbolToName <$> symbols
 
   Module _ modName <- thisModule
   pure
