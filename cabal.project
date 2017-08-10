@@ -1,0 +1,2 @@
+packages: haskell-tree-sitter.cabal
+jobs: $ncpus

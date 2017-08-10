@@ -55,7 +55,7 @@ instance Storable Node where
     (nodeStartByte, ptr) <- peekAdvance ptr
     (nodeEndByte, ptr) <- peekAdvance ptr
     (nodeNamedChildCount, ptr) <- peekAdvance ptr
-    (nodeChildCount, ptr) <- peekAdvance ptr
+    (nodeChildCount, _) <- peekAdvance ptr
     return $! Node nodeTSNode nodeType nodeSymbol nodeStartPoint nodeEndPoint nodeStartByte nodeEndByte nodeNamedChildCount nodeChildCount
   poke = cPoke
 
@@ -64,7 +64,7 @@ instance Storable TSPoint where
   sizeOf _ = 8
   peek ptr = do
     (pointRow, ptr) <- peekAdvance (castPtr ptr)
-    (pointColumn, ptr) <- peekAdvance ptr
+    (pointColumn, _) <- peekAdvance ptr
     return $! TSPoint pointRow pointColumn
   poke = cPoke
 
@@ -75,13 +75,13 @@ instance Storable TSNode where
     (p, ptr) <- peekAdvance (castPtr ptr)
     (o1, ptr) <- peekAdvance ptr
     (o2, ptr) <- peekAdvance ptr
-    (o3, ptr) <- peekAdvance ptr
+    (o3, _) <- peekAdvance ptr
     return $! TSNode p o1 o2 o3
   poke ptr (TSNode p o1 o2 o3) = do
     ptr <- pokeAdvance (castPtr ptr) p
     ptr <- pokeAdvance ptr o1
     ptr <- pokeAdvance ptr o2
-    ptr <- pokeAdvance ptr o3
+    _ <- pokeAdvance ptr o3
     return ()
 
 

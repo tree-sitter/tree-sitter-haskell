@@ -4,8 +4,8 @@ import Distribution.Simple
 import Distribution.Simple.LocalBuildInfo
 import Distribution.Simple.Setup
 import System.Directory
-import System.Process
 
+main :: IO ()
 main = defaultMainWithHooks simpleUserHooks { confHook = conf }
 
 conf :: (P.GenericPackageDescription, P.HookedBuildInfo) -> ConfigFlags -> IO LocalBuildInfo
