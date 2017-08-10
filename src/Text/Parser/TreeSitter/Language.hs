@@ -34,16 +34,20 @@ class Symbol s where
 mkSymbolDatatype :: Name -> Ptr Language -> Q [Dec]
 mkSymbolDatatype name language = do
   symbols <- (++ [(Regular, "ParseError")]) <$> runIO (languageSymbols language)
-  let namedSymbols = uncurry symbolToName <$> symbols
+  let namedSymbols = renameDups [] $ uncurry symbolToName <$> symbols
 
   Module _ modName <- thisModule
   pure
-    [ DataD [] name [] Nothing (flip NormalC [] . mkName <$> namedSymbols) [ ConT ''Show, ConT ''Enum, ConT ''Eq, ConT ''Ord, ConT ''Bounded, ConT ''Ix ]
-    , InstanceD Nothing [] (AppT (ConT ''Symbol) (ConT name)) [ FunD 'symbolType (uncurry (clause modName) <$> symbols) ] ]
-  where clause modName symbolType str = Clause [ ConP (Name (OccName (symbolToName symbolType str)) (NameQ modName)) [] ] (NormalB (ConE (promote symbolType))) []
+    [ DataD [] name [] Nothing (flip NormalC [] . mkName . snd <$> namedSymbols) [ ConT ''Show, ConT ''Enum, ConT ''Eq, ConT ''Ord, ConT ''Bounded, ConT ''Ix ]
+    , InstanceD Nothing [] (AppT (ConT ''Symbol) (ConT name)) [ FunD 'symbolType (uncurry (clause modName) <$> namedSymbols) ] ]
+  where clause modName symbolType str = Clause [ ConP (Name (OccName str) (NameQ modName)) [] ] (NormalB (ConE (promote symbolType))) []
         promote Regular = 'Regular
         promote Anonymous = 'Anonymous
         promote Auxiliary = 'Auxiliary
+        renameDups done [] = reverse done
+        renameDups done ((ty, name):queue) = if elem name (snd <$> done)
+                                      then renameDups done ((ty, name ++ "'") : queue)
+                                      else renameDups ((ty, name) : done) queue
 
 languageSymbols :: Ptr Language -> IO [(SymbolType, String)]
 languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
@@ -51,8 +55,8 @@ languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do
   pure (toEnum (ts_language_symbol_type language symbol), name)
   where count = ts_language_symbol_count language
 
-symbolToName :: SymbolType -> String -> String
-symbolToName ty = (prefix ++) . (>>= initUpper) . map (>>= toDescription) . filter (not . all (== '_')) . toWords . prefixHidden
+symbolToName :: SymbolType -> String -> (SymbolType, String)
+symbolToName ty = (,) ty . (prefix ++) . (>>= initUpper) . map (>>= toDescription) . filter (not . all (== '_')) . toWords . prefixHidden
   where toWords = split (condense (whenElt (not . isAlpha)))
 
         prefixHidden s@('_':_) = "Hidden" ++ s
