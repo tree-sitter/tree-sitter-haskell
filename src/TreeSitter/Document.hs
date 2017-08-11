@@ -1,9 +1,9 @@
-module Text.Parser.TreeSitter.Document where
+module TreeSitter.Document where
 
 import Prelude
 import Foreign
 import Foreign.C
-import Text.Parser.TreeSitter.Language
+import TreeSitter.Language
 
 newtype Document = Document ()
   deriving (Show, Eq)
