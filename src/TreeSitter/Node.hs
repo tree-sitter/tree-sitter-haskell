@@ -1,13 +1,13 @@
 {-# LANGUAGE DeriveGeneric, DeriveAnyClass, ScopedTypeVariables #-}
 {-# OPTIONS_GHC -funbox-strict-fields #-}
-module Text.Parser.TreeSitter.Node where
+module TreeSitter.Node where
 
 import Prelude
 import Foreign
 import Foreign.C
 import Foreign.CStorable
 import GHC.Generics
-import Text.Parser.TreeSitter.Document
+import TreeSitter.Document
 
 data Node = Node
   { nodeTSNode :: !TSNode
