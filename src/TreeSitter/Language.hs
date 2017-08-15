@@ -13,6 +13,8 @@ import Foreign.C.String
 import Foreign.Ptr
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax
+import System.Directory
+import System.FilePath.Posix
 
 newtype Language = Language ()
   deriving (Show, Eq)
@@ -49,6 +51,19 @@ mkSymbolDatatype name language = do
         renameDups done ((ty, name):queue) = if elem name (snd <$> done)
                                       then renameDups done ((ty, name ++ "'") : queue)
                                       else renameDups ((ty, name) : done) queue
+
+-- https://stackoverflow.com/questions/16163948/how-do-i-use-templatehaskells-adddependentfile-on-a-file-relative-to-the-file-b
+addDependentFileRelative :: FilePath -> Q [Dec]
+addDependentFileRelative relativeFile = do
+    currentFilename <- loc_filename <$> location
+    pwd             <- runIO getCurrentDirectory
+
+    let invocationRelativePath = takeDirectory (pwd </> currentFilename) </> relativeFile
+
+    addDependentFile invocationRelativePath
+
+    return []
+
 
 languageSymbols :: Ptr Language -> IO [(SymbolType, String)]
 languageSymbols language = for [0..fromIntegral (pred count)] $ \ symbol -> do

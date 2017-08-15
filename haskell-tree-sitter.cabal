@@ -17,6 +17,8 @@ library
   hs-source-dirs:      src
   build-depends:       base >= 4.7 && < 5
                      , c-storable-deriving
+                     , directory
+                     , filepath
                      , split
                      , template-haskell >= 2.12 && < 2.13
   default-language:    Haskell2010
