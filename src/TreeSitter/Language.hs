@@ -1,5 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
-module Text.Parser.TreeSitter.Language where
+module TreeSitter.Language where
 
 import Prelude
 import Data.Char

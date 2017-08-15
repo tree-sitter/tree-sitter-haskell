@@ -1,2 +1,2 @@
-packages: haskell-tree-sitter.cabal
+packages: ./ languages/*/
 jobs: $ncpus
