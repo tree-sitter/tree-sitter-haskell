@@ -17,18 +17,17 @@ library
   hs-source-dirs:      src
   build-depends:       base >= 4.7 && < 5
                      , c-storable-deriving
-                     , directory
-                     , filepath
-                     , split
-                     , template-haskell >= 2.12 && < 2.13
+                     , directory >= 1.3.0.2 && < 1.4
+                     , filepath >= 1.4.1.2 && < 1.5
+                     , split >= 0.2.3.2 && < 0.3
+                     , template-haskell >= 2.12.0.0 && < 2.13.0.0
   default-language:    Haskell2010
-  default-extensions:  FlexibleInstances, OverloadedStrings, NoImplicitPrelude, RecordWildCards
   exposed-modules:     TreeSitter.Document
                      , TreeSitter.Language
                      , TreeSitter.Node
   c-sources:           src/bridge.c
                      , vendor/tree-sitter/src/runtime/document.c
-                     , vendor/tree-sitter/src/runtime/error_costs.c
+                     , vendor/tree-sitter/src/runtime/get_changed_ranges.c
                      , vendor/tree-sitter/src/runtime/language.c
                      , vendor/tree-sitter/src/runtime/lexer.c
                      , vendor/tree-sitter/src/runtime/node.c
@@ -40,7 +39,7 @@ library
                      , vendor/tree-sitter/externals/utf8proc/utf8proc.c
   cc-options:          -std=c99 -Os
 
-test-suite test
+test-suite haskell-tree-sitter-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
