@@ -29,7 +29,7 @@ foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts
 foreign import ccall unsafe "vendor/tree-sitter/include/tree_sitter/runtime.h ts_language_symbol_type" ts_language_symbol_type :: Ptr Language -> TSSymbol -> Int
 
 
-class Symbol s where
+class (Bounded s, Enum s, Ix s, Ord s, Show s) => Symbol s where
   symbolType :: s -> SymbolType
 
 
