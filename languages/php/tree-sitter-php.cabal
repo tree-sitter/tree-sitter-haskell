@@ -1,0 +1,24 @@
+name:                tree-sitter-php
+version:             0.1.0
+synopsis:            tree-sitter php language bindings
+description:         Please see README.md
+homepage:            https://github.com/tree-sitter/tree-sitter-php#readme
+author:              Max Brunsfeld, Tim Clem, Rob Rix, Josh Vera, Rick Winfrey
+maintainer:          vera@github.com
+copyright:           2017 GitHub
+category:            Web
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  exposed-modules:     TreeSitter.PHP
+  build-depends:       base >= 4.7 && < 5
+                     , haskell-tree-sitter
+  default-language:    Haskell2010
+  c-sources:           vendor/tree-sitter-php/src/parser.c
+                     , vendor/tree-sitter-php/src/scanner.c
+
+source-repository head
+  type:     git
+  location: https://github.com/tree-sitter/tree-sitter-php

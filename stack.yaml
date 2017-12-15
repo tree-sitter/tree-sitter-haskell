@@ -4,6 +4,8 @@ packages:
 - '.'
 - location: languages/go
   extra-dep: true
+- location: languages/php
+  extra-dep: true
 - location: languages/python
   extra-dep: true
 - location: languages/typescript
