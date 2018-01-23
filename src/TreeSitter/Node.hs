@@ -46,6 +46,11 @@ newtype Struct a = Struct { runStruct :: forall b . Ptr b -> IO (a, Ptr a) }
 evalStruct :: Struct a -> Ptr b -> IO a
 evalStruct = fmap (fmap fst) . runStruct
 
+peekStruct :: forall a . Storable a => Struct a
+peekStruct = Struct (\ p -> let aligned = alignPtr (castPtr p) (alignment (undefined :: a)) in do
+  a <- peek aligned
+  pure (a, aligned `plusPtr` sizeOf a))
+
 instance Functor Struct where
   fmap f a = Struct (\ p -> do
     (a', p') <- runStruct a p
