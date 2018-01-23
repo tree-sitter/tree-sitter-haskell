@@ -57,11 +57,11 @@ instance Storable Node where
     pure $! Node nodeTSNode nodeType nodeSymbol nodeStartPoint nodeEndPoint nodeStartByte nodeEndByte nodeNamedChildCount nodeChildCount
   poke ptr (Node n t s sp ep sb eb nc c) = do
     ptr <- pokeAdvance (castPtr ptr) n
-    ptr <- pokeAdvance (castPtr ptr) t
-    ptr <- pokeAdvance (castPtr ptr) s
-    ptr <- pokeAdvance (castPtr ptr) sp
+    ptr <- pokeAdvance          ptr  t
+    ptr <- pokeAdvance          ptr  s
+    ptr <- pokeAdvance          ptr  sp
     ptr <- pokeAdvance          ptr  ep
-    ptr <- pokeAdvance (castPtr ptr) sb
+    ptr <- pokeAdvance          ptr  sb
     ptr <- pokeAdvance          ptr  eb
     ptr <- pokeAdvance          ptr  nc
     _   <- pokeAdvance          ptr  c
