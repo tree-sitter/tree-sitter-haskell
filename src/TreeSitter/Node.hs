@@ -98,22 +98,28 @@ instance Functor Struct where
     (a', p') <- runStruct a p
     let fa = f a'
     fa `seq` pure (fa, castPtr p))
+  {-# INLINE fmap #-}
 
 instance Applicative Struct where
   pure a = Struct (\ p -> pure (a, castPtr p))
+  {-# INLINE pure #-}
 
   f <*> a = Struct (\ p -> do
     (f', p')  <- runStruct f          p
     (a', p'') <- runStruct a (castPtr p')
     let fa = f' a'
     fa `seq` pure (fa, castPtr p''))
+  {-# INLINE (<*>) #-}
 
 instance Monad Struct where
   return = pure
+  {-# INLINE return #-}
+
   a >>= f = Struct (\ p -> do
     (a', p')   <- runStruct a               p
     (fa', p'') <- runStruct (f a') (castPtr p')
     pure (fa', p''))
+  {-# INLINE (>>=) #-}
 
 
 foreign import ccall unsafe "src/bridge.c ts_document_root_node_p" ts_document_root_node_p :: Ptr Document -> Ptr Node -> IO ()
