@@ -28,6 +28,7 @@ data TSNode = TSNode !(Ptr ()) !Int32 !Int32 !Int32
   deriving (Show, Eq, Generic)
 
 
+-- | 'Struct' is a strict 'Monad' with automatic alignment & advancing, & inferred type.
 newtype Struct a = Struct { runStruct :: forall b . Ptr b -> IO (a, Ptr a) }
 
 evalStruct :: Struct a -> Ptr b -> IO a
