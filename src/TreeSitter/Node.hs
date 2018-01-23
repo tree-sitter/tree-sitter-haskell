@@ -58,28 +58,6 @@ pokeStruct a = Struct (\ p -> do
   poke aligned a
   pure ((), castPtr aligned `plusPtr` sizeOf a))
 
-instance Functor Struct where
-  fmap f a = Struct (\ p -> do
-    (a', p') <- runStruct a p
-    let fa = f a'
-    fa `seq` pure (fa, castPtr p))
-
-instance Applicative Struct where
-  pure a = Struct (\ p -> pure (a, castPtr p))
-
-  f <*> a = Struct (\ p -> do
-    (f', p')  <- runStruct f          p
-    (a', p'') <- runStruct a (castPtr p')
-    let fa = f' a'
-    fa `seq` pure (fa, castPtr p''))
-
-instance Monad Struct where
-  return = pure
-  a >>= f = Struct (\ p -> do
-    (a', p')   <- runStruct a               p
-    (fa', p'') <- runStruct (f a') (castPtr p')
-    pure (fa', p''))
-
 
 instance Storable Node where
   alignment _ = alignment (TSNode nullPtr 0 0 0 :: TSNode)
@@ -136,6 +114,28 @@ instance Storable TSNode where
     _   <- pokeAdvance          ptr  o3
     pure ()
 
+
+instance Functor Struct where
+  fmap f a = Struct (\ p -> do
+    (a', p') <- runStruct a p
+    let fa = f a'
+    fa `seq` pure (fa, castPtr p))
+
+instance Applicative Struct where
+  pure a = Struct (\ p -> pure (a, castPtr p))
+
+  f <*> a = Struct (\ p -> do
+    (f', p')  <- runStruct f          p
+    (a', p'') <- runStruct a (castPtr p')
+    let fa = f' a'
+    fa `seq` pure (fa, castPtr p''))
+
+instance Monad Struct where
+  return = pure
+  a >>= f = Struct (\ p -> do
+    (a', p')   <- runStruct a               p
+    (fa', p'') <- runStruct (f a') (castPtr p')
+    pure (fa', p''))
 
 
 foreign import ccall unsafe "src/bridge.c ts_document_root_node_p" ts_document_root_node_p :: Ptr Document -> Ptr Node -> IO ()
