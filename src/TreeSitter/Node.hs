@@ -47,9 +47,9 @@ evalStruct :: Struct a -> Ptr b -> IO a
 evalStruct = fmap (fmap fst) . runStruct
 
 instance Functor Struct where
-  fmap f (Struct run) = Struct (\ p -> do
-    (a, p') <- run p
-    let fa = f a
+  fmap f a = Struct (\ p -> do
+    (a', p') <- runStruct a p
+    let fa = f a'
     fa `seq` pure (fa, castPtr p))
 
 instance Applicative Struct where
