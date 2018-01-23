@@ -43,6 +43,9 @@ pokeAdvance ptr a = do
 
 newtype Struct a = Struct { runStruct :: forall b . Ptr b -> IO (a, Ptr a) }
 
+evalStruct :: Struct a -> Ptr b -> IO a
+evalStruct = fmap (fmap fst) . runStruct
+
 
 instance Storable Node where
   alignment _ = alignment (TSNode nullPtr 0 0 0 :: TSNode)
