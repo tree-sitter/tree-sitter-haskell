@@ -52,6 +52,12 @@ peekStruct = Struct (\ p -> do
   a <- peek aligned
   pure (a, aligned `plusPtr` sizeOf a))
 
+pokeStruct :: Storable a => a -> Struct ()
+pokeStruct a = Struct (\ p -> do
+  let aligned = alignPtr (castPtr p) (alignment a)
+  poke aligned a
+  pure ((), castPtr aligned `plusPtr` sizeOf a))
+
 instance Functor Struct where
   fmap f a = Struct (\ p -> do
     (a', p') <- runStruct a p
