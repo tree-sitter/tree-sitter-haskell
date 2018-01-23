@@ -56,7 +56,7 @@ instance Applicative Struct where
   pure a = Struct (\ p -> pure (a, castPtr p))
 
   f <*> a = Struct (\ p -> do
-    (f', p')  <- runStruct f p
+    (f', p')  <- runStruct f          p
     (a', p'') <- runStruct a (castPtr p')
     let fa = f' a'
     fa `seq` pure (fa, castPtr p''))
