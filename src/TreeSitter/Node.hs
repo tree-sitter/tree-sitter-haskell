@@ -1,6 +1,13 @@
 {-# LANGUAGE DeriveGeneric, DeriveAnyClass, RankNTypes, ScopedTypeVariables #-}
 {-# OPTIONS_GHC -funbox-strict-fields #-}
-module TreeSitter.Node where
+module TreeSitter.Node
+( Node(..)
+, TSPoint(..)
+, TSNode(..)
+, ts_document_root_node_p
+, ts_node_copy_named_child_nodes
+, ts_node_copy_child_nodes
+) where
 
 import Prelude
 import Foreign
