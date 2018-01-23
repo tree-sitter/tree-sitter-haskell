@@ -91,10 +91,9 @@ instance Storable TSPoint where
     pointRow    <- peekStruct
     pointColumn <- peekStruct
     pure $! TSPoint pointRow pointColumn
-  poke ptr (TSPoint r c) = do
-    ptr <- pokeAdvance (castPtr ptr) r
-    _   <- pokeAdvance          ptr  c
-    pure ()
+  poke ptr (TSPoint r c) = flip evalStruct ptr $ do
+    pokeStruct r
+    pokeStruct c
 
 
 instance Storable TSNode where
