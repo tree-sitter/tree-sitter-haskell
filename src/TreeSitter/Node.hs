@@ -62,17 +62,15 @@ pokeStruct a = Struct (\ p -> do
 instance Storable Node where
   alignment _ = alignment (TSNode nullPtr 0 0 0 :: TSNode)
   sizeOf _ = 72
-  peek = evalStruct $ do
-    nodeTSNode          <- peekStruct
-    nodeType            <- peekStruct
-    nodeSymbol          <- peekStruct
-    nodeStartPoint      <- peekStruct
-    nodeEndPoint        <- peekStruct
-    nodeStartByte       <- peekStruct
-    nodeEndByte         <- peekStruct
-    nodeNamedChildCount <- peekStruct
-    nodeChildCount      <- peekStruct
-    pure $! Node nodeTSNode nodeType nodeSymbol nodeStartPoint nodeEndPoint nodeStartByte nodeEndByte nodeNamedChildCount nodeChildCount
+  peek = evalStruct $ Node <$> peekStruct
+                           <*> peekStruct
+                           <*> peekStruct
+                           <*> peekStruct
+                           <*> peekStruct
+                           <*> peekStruct
+                           <*> peekStruct
+                           <*> peekStruct
+                           <*> peekStruct
   poke ptr (Node n t s sp ep sb eb nc c) = flip evalStruct ptr $ do
     pokeStruct n
     pokeStruct t
