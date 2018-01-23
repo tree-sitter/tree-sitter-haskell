@@ -98,12 +98,10 @@ instance Storable TSPoint where
 instance Storable TSNode where
   alignment _ = alignment (nullPtr :: Ptr ())
   sizeOf _ = 24
-  peek = evalStruct $ do
-    p  <- peekStruct
-    o1 <- peekStruct
-    o2 <- peekStruct
-    o3 <- peekStruct
-    pure $! TSNode p o1 o2 o3
+  peek = evalStruct $ TSNode <$> peekStruct
+                             <*> peekStruct
+                             <*> peekStruct
+                             <*> peekStruct
   poke ptr (TSNode p o1 o2 o3) = flip evalStruct ptr $ do
     pokeStruct p
     pokeStruct o1
