@@ -105,12 +105,11 @@ instance Storable TSNode where
     o2 <- peekStruct
     o3 <- peekStruct
     pure $! TSNode p o1 o2 o3
-  poke ptr (TSNode p o1 o2 o3) = do
-    ptr <- pokeAdvance (castPtr ptr) p
-    ptr <- pokeAdvance          ptr  o1
-    ptr <- pokeAdvance          ptr  o2
-    _   <- pokeAdvance          ptr  o3
-    pure ()
+  poke ptr (TSNode p o1 o2 o3) = flip evalStruct ptr $ do
+    pokeStruct p
+    pokeStruct o1
+    pokeStruct o2
+    pokeStruct o3
 
 
 instance Functor Struct where
