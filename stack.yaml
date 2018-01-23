@@ -14,4 +14,4 @@ packages:
   extra-dep: true
 - location: languages/ruby
   extra-dep: true
-resolver: nightly-2017-09-10
+resolver: lts-10.0
