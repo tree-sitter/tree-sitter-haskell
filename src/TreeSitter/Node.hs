@@ -27,19 +27,6 @@ data TSPoint = TSPoint { pointRow :: !Int32, pointColumn :: !Int32 }
 data TSNode = TSNode !(Ptr ()) !Int32 !Int32 !Int32
   deriving (Show, Eq, Generic)
 
-peekAdvance :: forall a b. Storable a => Ptr a -> IO (a, Ptr b)
-peekAdvance ptr = do
-  let aligned = alignPtr ptr (alignment (undefined :: a))
-  a <- peek aligned
-  pure (a, castPtr aligned `plusPtr` sizeOf a)
-{-# INLINE peekAdvance #-}
-
-pokeAdvance :: forall a b. Storable a => Ptr a -> a -> IO (Ptr b)
-pokeAdvance ptr a = do
-  let aligned = alignPtr ptr (alignment (undefined :: a))
-  poke aligned a
-  pure (castPtr aligned `plusPtr` sizeOf a)
-{-# INLINE pokeAdvance #-}
 
 newtype Struct a = Struct { runStruct :: forall b . Ptr b -> IO (a, Ptr a) }
 
