@@ -61,6 +61,13 @@ instance Applicative Struct where
     let fa = f' a'
     fa `seq` pure (fa, castPtr p''))
 
+instance Monad Struct where
+  return = pure
+  a >>= f = Struct (\ p -> do
+    (a', p')   <- runStruct a               p
+    (fa', p'') <- runStruct (f a') (castPtr p')
+    pure (fa', p''))
+
 
 instance Storable Node where
   alignment _ = alignment (TSNode nullPtr 0 0 0 :: TSNode)
