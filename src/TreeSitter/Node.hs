@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, DeriveAnyClass, ScopedTypeVariables #-}
+{-# LANGUAGE DeriveGeneric, DeriveAnyClass, RankNTypes, ScopedTypeVariables #-}
 {-# OPTIONS_GHC -funbox-strict-fields #-}
 module TreeSitter.Node where
 
@@ -40,6 +40,9 @@ pokeAdvance ptr a = do
   poke aligned a
   pure (castPtr aligned `plusPtr` sizeOf a)
 {-# INLINE pokeAdvance #-}
+
+newtype Struct a = Struct { runStruct :: forall b . Ptr b -> IO (a, Ptr a) }
+
 
 instance Storable Node where
   alignment _ = alignment (TSNode nullPtr 0 0 0 :: TSNode)
