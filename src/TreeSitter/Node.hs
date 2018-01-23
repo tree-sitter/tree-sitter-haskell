@@ -73,17 +73,16 @@ instance Storable Node where
     nodeNamedChildCount <- peekStruct
     nodeChildCount      <- peekStruct
     pure $! Node nodeTSNode nodeType nodeSymbol nodeStartPoint nodeEndPoint nodeStartByte nodeEndByte nodeNamedChildCount nodeChildCount
-  poke ptr (Node n t s sp ep sb eb nc c) = do
-    ptr <- pokeAdvance (castPtr ptr) n
-    ptr <- pokeAdvance          ptr  t
-    ptr <- pokeAdvance          ptr  s
-    ptr <- pokeAdvance          ptr  sp
-    ptr <- pokeAdvance          ptr  ep
-    ptr <- pokeAdvance          ptr  sb
-    ptr <- pokeAdvance          ptr  eb
-    ptr <- pokeAdvance          ptr  nc
-    _   <- pokeAdvance          ptr  c
-    pure ()
+  poke ptr (Node n t s sp ep sb eb nc c) = flip evalStruct ptr $ do
+    pokeStruct n
+    pokeStruct t
+    pokeStruct s
+    pokeStruct sp
+    pokeStruct ep
+    pokeStruct sb
+    pokeStruct eb
+    pokeStruct nc
+    pokeStruct c
 
 instance Storable TSPoint where
   alignment _ = alignment (0 :: Int32)
