@@ -47,7 +47,8 @@ evalStruct :: Struct a -> Ptr b -> IO a
 evalStruct = fmap (fmap fst) . runStruct
 
 peekStruct :: forall a . Storable a => Struct a
-peekStruct = Struct (\ p -> let aligned = alignPtr (castPtr p) (alignment (undefined :: a)) in do
+peekStruct = Struct (\ p -> do
+  let aligned = alignPtr (castPtr p) (alignment (undefined :: a))
   a <- peek aligned
   pure (a, aligned `plusPtr` sizeOf a))
 
