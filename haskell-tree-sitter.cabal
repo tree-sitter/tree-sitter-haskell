@@ -37,6 +37,7 @@ library
                      , vendor/tree-sitter/src/runtime/utf16.c
                      , vendor/tree-sitter/externals/utf8proc/utf8proc.c
   cc-options:          -std=c99 -Os
+  ghc-options:         -Wall -fno-warn-name-shadowing -O -j
 
 test-suite haskell-tree-sitter-test
   type:                exitcode-stdio-1.0
