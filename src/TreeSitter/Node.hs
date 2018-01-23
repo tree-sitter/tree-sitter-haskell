@@ -95,7 +95,6 @@ instance Storable TSPoint where
     pokeStruct r
     pokeStruct c
 
-
 instance Storable TSNode where
   alignment _ = alignment (nullPtr :: Ptr ())
   sizeOf _ = 24
