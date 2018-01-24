@@ -10,6 +10,9 @@ main = hspec $ do
     it "has the same size as its C counterpart" $
       sizeOf (undefined :: TSNode) `shouldBe` fromIntegral sizeof_tsnode
 
+    it "roundtrips correctly" $
+      with (TSNode nullPtr 1 2) peek `shouldReturn` TSNode nullPtr 1 2
+
   describe "TSPoint" $ do
     it "has the same size as its C counterpart" $
       sizeOf (undefined :: TSPoint) `shouldBe` fromIntegral sizeof_tspoint
