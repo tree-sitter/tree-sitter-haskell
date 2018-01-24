@@ -121,7 +121,7 @@ instance Monad Struct where
   a >>= f = Struct (\ p -> do
     (a', p')   <- runStruct a               p
     (fa', p'') <- runStruct (f a') (castPtr p')
-    pure (fa', p''))
+    fa' `seq` pure (fa', p''))
   {-# INLINE (>>=) #-}
 
 
