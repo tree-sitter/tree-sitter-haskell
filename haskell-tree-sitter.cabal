@@ -39,7 +39,7 @@ library
   cc-options:          -std=c99 -Os
   ghc-options:         -Wall -fno-warn-name-shadowing -O -j
 
-test-suite haskell-tree-sitter-test
+test-suite test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
