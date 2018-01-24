@@ -1,3 +1,4 @@
+import Foreign
 import Foreign.C.Types
 import Foreign.Storable
 import Test.Hspec
@@ -12,6 +13,9 @@ main = hspec $ do
   describe "TSPoint" $ do
     it "has the same size as its C counterpart" $ do
       sizeOf (undefined :: TSPoint) `shouldBe` fromIntegral sizeof_tspoint
+
+    it "roundtrips correctly" $
+      with (TSPoint 1 2) peek `shouldReturn` TSPoint 1 2
 
   describe "Node" $ do
     it "has the same size as its C counterpart" $ do
