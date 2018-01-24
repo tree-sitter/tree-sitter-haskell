@@ -104,7 +104,7 @@ instance Functor Struct where
   fmap f a = Struct (\ p -> do
     (a', p') <- runStruct a p
     let fa = f a'
-    fa `seq` pure (fa, castPtr p))
+    fa `seq` pure (fa, castPtr p'))
   {-# INLINE fmap #-}
 
 instance Applicative Struct where
