@@ -31,7 +31,7 @@ data Node = Node
 data TSPoint = TSPoint { pointRow :: !Int32, pointColumn :: !Int32 }
   deriving (Show, Eq, Generic)
 
-data TSNode = TSNode !(Ptr ()) !Int32 !Int32 !Int32
+data TSNode = TSNode !(Ptr ()) !Int32 !Int32
   deriving (Show, Eq, Generic)
 
 
@@ -57,7 +57,7 @@ pokeStruct a = Struct (\ p -> do
 
 
 instance Storable Node where
-  alignment _ = alignment (TSNode nullPtr 0 0 0 :: TSNode)
+  alignment _ = alignment (TSNode nullPtr 0 0 :: TSNode)
   sizeOf _ = 72
   peek = evalStruct $ Node <$> peekStruct
                            <*> peekStruct
@@ -94,12 +94,10 @@ instance Storable TSNode where
   peek = evalStruct $ TSNode <$> peekStruct
                              <*> peekStruct
                              <*> peekStruct
-                             <*> peekStruct
-  poke ptr (TSNode p o1 o2 o3) = flip evalStruct ptr $ do
+  poke ptr (TSNode p o1 o2) = flip evalStruct ptr $ do
     pokeStruct p
     pokeStruct o1
     pokeStruct o2
-    pokeStruct o3
 
 
 instance Functor Struct where
