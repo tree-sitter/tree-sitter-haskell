@@ -5,7 +5,6 @@ module TreeSitter.Node
 , TSPoint(..)
 , TSNode(..)
 , ts_document_root_node_p
-, ts_node_copy_named_child_nodes
 , ts_node_copy_child_nodes
 ) where
 
