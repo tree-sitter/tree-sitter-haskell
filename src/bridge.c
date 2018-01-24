@@ -11,7 +11,6 @@ typedef struct Node {
   TSPoint endPoint;
   uint32_t startByte;
   uint32_t endByte;
-  uint32_t namedChildCount;
   uint32_t childCount;
 } Node;
 
@@ -40,7 +39,6 @@ static inline Node ts_node_elaborate(const TSDocument *document, TSNode node) {
     .endPoint = ts_node_end_point(node),
     .startByte = ts_node_start_byte(node),
     .endByte = ts_node_end_byte(node),
-    .namedChildCount = ts_node_named_child_count(node),
     .childCount = ts_node_child_count(node)
   };
 }
