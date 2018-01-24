@@ -31,7 +31,7 @@ data Node = Node
 data TSPoint = TSPoint { pointRow :: !Int32, pointColumn :: !Int32 }
   deriving (Show, Eq, Generic)
 
-data TSNode = TSNode !(Ptr ()) !Int32 !Int32
+data TSNode = TSNode !(Ptr ()) !Word32 !Word32
   deriving (Show, Eq, Generic)
 
 
