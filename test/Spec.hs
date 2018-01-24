@@ -6,15 +6,15 @@ import TreeSitter.Node
 main :: IO ()
 main = hspec $ do
   describe "TSNode" $ do
-    it "should have the same size as its C counterpart" $ do
+    it "has the same size as its C counterpart" $ do
       sizeOf (undefined :: TSNode) `shouldBe` fromIntegral sizeof_tsnode
 
   describe "TSPoint" $ do
-    it "should have the same size as its C counterpart" $ do
+    it "has the same size as its C counterpart" $ do
       sizeOf (undefined :: TSPoint) `shouldBe` fromIntegral sizeof_tspoint
 
   describe "Node" $ do
-    it "should have the same size as its C counterpart" $ do
+    it "has the same size as its C counterpart" $ do
       sizeOf (undefined :: Node) `shouldBe` fromIntegral sizeof_node
 
 foreign import ccall unsafe "src/bridge.c sizeof_tsnode" sizeof_tsnode :: CSize
