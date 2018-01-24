@@ -21,14 +21,14 @@ data Node = Node
   , nodeSymbol :: !Word16
   , nodeStartPoint :: !TSPoint
   , nodeEndPoint :: !TSPoint
-  , nodeStartByte :: !Int32
-  , nodeEndByte :: !Int32
-  , nodeNamedChildCount :: !Int32
-  , nodeChildCount :: !Int32
+  , nodeStartByte :: !Word32
+  , nodeEndByte :: !Word32
+  , nodeNamedChildCount :: !Word32
+  , nodeChildCount :: !Word32
   }
   deriving (Show, Eq, Generic)
 
-data TSPoint = TSPoint { pointRow :: !Int32, pointColumn :: !Int32 }
+data TSPoint = TSPoint { pointRow :: !Word32, pointColumn :: !Word32 }
   deriving (Show, Eq, Generic)
 
 data TSNode = TSNode !(Ptr ()) !Word32 !Word32
