@@ -90,7 +90,7 @@ instance Storable TSPoint where
 
 instance Storable TSNode where
   alignment _ = alignment (nullPtr :: Ptr ())
-  sizeOf _ = 24
+  sizeOf _ = 16
   peek = evalStruct $ TSNode <$> peekStruct
                              <*> peekStruct
                              <*> peekStruct
