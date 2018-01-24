@@ -75,3 +75,15 @@ void ts_node_copy_named_child_nodes(const TSDocument *document, const TSNode *pa
     outChildNodes[i] = ts_node_elaborate(document, ts_node_named_child(*parentNode, i));
   }
 }
+
+size_t sizeof_tsnode() {
+  return sizeof(TSNode);
+}
+
+size_t sizeof_tspoint() {
+  return sizeof(TSPoint);
+}
+
+size_t sizeof_node() {
+  return sizeof(Node);
+}
