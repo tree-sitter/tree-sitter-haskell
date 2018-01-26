@@ -17,7 +17,7 @@ library
                      , haskell-tree-sitter
   default-language:    Haskell2010
   c-sources:           vendor/tree-sitter-php/src/parser.c
-                     , vendor/tree-sitter-php/src/scanner.c
+                     , vendor/tree-sitter-php/src/scanner.cc
 
 source-repository head
   type:     git
