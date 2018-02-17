@@ -597,3 +597,61 @@ g x = case x of
         (alternative
           (type_constructor (identifier))
           (type_constructor (identifier)))))))
+
+=================================================
+Function Declarations With Guards
+=================================================
+
+f x | x < 10, x > 2 = True
+    | otherwise = False
+
+---
+
+(module
+  (function_declaration
+    (function_head
+      (function_identifier (variable))
+      (variable))
+    (guard
+      (binary
+        (variable)
+        (variable_symbol)
+        (integer)))
+    (guard
+      (binary
+        (variable)
+        (variable_symbol)
+        (integer)))
+    (function_body
+      (type_constructor (identifier)))
+    (guard
+      (otherwise))
+    (function_body
+      (type_constructor (identifier)))))
+
+=================================================
+Function Declarations With Do
+=================================================
+
+f x = do
+  let z = x
+  y <- a
+  pure y
+
+---
+
+(module
+  (function_declaration
+    (function_head
+      (function_identifier (variable))
+      (variable))
+    (function_body
+      (do
+        (statement_list
+          (let
+            (function_declaration
+              (function_head
+                (function_identifier (variable)))
+              (function_body (variable))))
+          (binary (variable) (variable_symbol) (variable))
+          (function_application (variable) (variable)))))))

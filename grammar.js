@@ -52,7 +52,9 @@ module.exports = grammar({
     [$._expression, $.function_application],
     [$.type_signature],
     [$.function_body, $.function_application],
-    [$.data_constructor]
+    [$.data_constructor],
+    [$.statement_list, $.function_application],
+    [$._parenthesized_variable_symbol, $._variable, $._op]
   ],
 
   rules: {
@@ -147,8 +149,10 @@ module.exports = grammar({
 
     function_declaration: $ => seq(
       $.function_head,
-      '=',
-      $.function_body
+      choice(
+        repeat1($._rhs_guards),
+        seq('=', $.function_body)
+      )
     ),
 
     _statement: $ => choice(
@@ -170,8 +174,27 @@ module.exports = grammar({
       $._variable,
       $.binary,
       $.arithmetic_sequence,
-      $.list_comprehension
+      $.list_comprehension,
+      $.otherwise,
+      $.left_section,
+      $.right_section
     ),
+
+    left_section: $ => seq(
+      '(',
+      $._expression,
+      $._op,
+      ')'
+    ),
+
+    right_section: $ => seq(
+      '(',
+      $._op,
+      $._expression,
+      ')'
+    ),
+
+    otherwise: $ => 'otherwise',
 
     arithmetic_sequence: $ => seq(
       '[',
@@ -288,6 +311,12 @@ module.exports = grammar({
       sep1(',', $.guard),
     ),
 
+    _rhs_guards: $ => seq(
+      $._guards,
+      '=',
+      $.function_body
+    ),
+
     guard: $ => choice(
       seq(
         $._lhs,
@@ -360,11 +389,17 @@ module.exports = grammar({
       $._variable_symbol
     ),
 
-    function_application: $ => prec.left(seq(
-      choice($._function_application_statements, $.function_application),
-      optional('('),
-      choice($._function_application_statements, $.function_application),
-      optional(')')
+    function_application: $ => prec.left(choice(
+      seq(
+        choice($._function_application_statements, $.function_application),
+        choice($._function_application_statements, $.function_application)
+      ),
+      seq(
+        choice($._function_application_statements, $.function_application),
+        '(',
+        choice($._function_application_statements, $.function_application),
+        ')'
+      )
     )),
 
     _function_application_statements: $ => choice(
@@ -422,8 +457,8 @@ module.exports = grammar({
     ),
 
     statement_list: $ => choice(
-      seq('{', repeat($._statement), '}'),
-      seq($._layout_open_brace, repeat($._statement), $._layout_close_brace)
+      seq('{', repeat(seq(choice($._statement, $.function_application, alias($._guard_let, $.let)), $._terminal)), '}'),
+      seq($._layout_open_brace, repeat(seq(choice($._statement, $.function_application, alias($._guard_let, $.let)), $._layout_semicolon)), $._layout_close_brace)
     ),
 
     if_statement: $ => seq(

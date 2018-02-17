@@ -13,7 +13,10 @@
     "nan": "^2.4.0"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "electron-rebuild": "^1.7.3",
+=======
+>>>>>>> 1c16f3c9bb2552b7afdeb4b35716324bd58a641f
     "tree-sitter-cli": "^0.9.2"
   },
   "watch": {
