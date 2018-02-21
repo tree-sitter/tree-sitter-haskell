@@ -512,6 +512,38 @@ f = let y = 42 in y
         (in_clause
           (variable))))))
 
+===================================================
+Function Declarations With wrong indentation in Let
+===================================================
+
+f = let y = x
+   z = 2
+        x = 1
+        in y
+
+---
+
+(module
+  (function_declaration
+    (function_head
+      (function_identifier (variable)))
+    (function_body
+      (let
+        (ERROR
+          (function_declaration
+            (function_head
+              (function_identifier (variable)))
+            (function_body (variable)))
+          (function_declaration
+            (function_head
+              (function_identifier (variable)))
+            (function_body
+              (function_application (integer) (variable)))))
+          (function_declaration
+            (function_head (function_identifier (variable_symbol (MISSING))))
+          (function_body (integer)))
+      (in_clause (variable))))))
+
 =================================================
 Function Declarations With Let
 =================================================
