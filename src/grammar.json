@@ -966,74 +966,11 @@
               ]
             },
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "_layout_open_brace"
-                },
-                {
-                  "type": "REPEAT1",
-                  "content": {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "_declaration"
-                      },
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "_terminal"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "_layout_semicolon"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "_declaration"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "_layout_close_brace"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "_layout_open_brace"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_declaration"
-                }
-              ]
+              "type": "REPEAT1",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_declaration"
+              }
             }
           ]
         },
