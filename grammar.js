@@ -68,7 +68,7 @@ module.exports = grammar({
       repeat(seq($._declaration, choice(';', $._layout_semicolon)))
     ),
 
-    _declarations: $ => choice(
+    _declarations: $ => prec.right(choice(
       seq(
         '{',
         repeat(seq($._declaration, $._terminal)),
@@ -79,7 +79,7 @@ module.exports = grammar({
         repeat(seq($._declaration, choice($._terminal, $._layout_semicolon))),
         $._layout_close_brace
       )
-    ),
+    )),
 
     module_exports: $ => seq(
       '(',
@@ -279,7 +279,15 @@ module.exports = grammar({
           repeat(seq($._declaration, $._terminal)),
           '}'
         ),
-        repeat1($._declaration)
+        seq(
+          $._layout_open_brace,
+          repeat1(seq($._declaration, choice($._terminal, $._layout_semicolon))),
+          choice(
+            seq($._declaration),
+            seq($._layout_close_brace)
+          )
+        ),
+        seq($._layout_open_brace, $._declaration)
       ),
       $.in_clause
     ),
