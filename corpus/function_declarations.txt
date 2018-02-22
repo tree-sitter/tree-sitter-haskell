@@ -552,6 +552,8 @@ f = let y = x
         x = 1
       in y
 
+f = let y = g; g = 1 in y
+
 f = let y = x
         x :: Int
         x = 1 in y
@@ -591,9 +593,26 @@ f = let { y :: Int;
             (function_identifier (variable)))
           (function_body
             (variable)))
+        (function_declaration
+          (function_head
+            (function_identifier (variable)))
+          (function_body
+            (integer)))
+        (in_clause
+          (variable)))))
+  (function_declaration
+    (function_head
+      (function_identifier (variable)))
+    (function_body
+      (let
+        (function_declaration
+          (function_head
+            (function_identifier (variable)))
+          (function_body
+            (variable)))
         (type_signature
-          (signature_identifier (variable)))
-          (type_constructor (identifier))
+          (signature_identifier (variable))
+          (type_constructor (identifier)))
         (function_declaration
           (function_head
             (function_identifier (variable)))

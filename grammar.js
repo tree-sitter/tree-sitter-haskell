@@ -68,7 +68,7 @@ module.exports = grammar({
       repeat(seq($._declaration, choice(';', $._layout_semicolon)))
     ),
 
-    _declarations: $ => prec.right(choice(
+    _declarations: $ => choice(
       seq(
         '{',
         repeat(seq($._declaration, $._terminal)),
@@ -79,7 +79,7 @@ module.exports = grammar({
         repeat(seq($._declaration, choice($._terminal, $._layout_semicolon))),
         $._layout_close_brace
       )
-    )),
+    ),
 
     module_exports: $ => seq(
       '(',
@@ -157,7 +157,6 @@ module.exports = grammar({
 
     _statement: $ => choice(
       $.do,
-      $.let,
       $.if_statement,
       $._expression,
       $.case
@@ -262,7 +261,7 @@ module.exports = grammar({
     ),
 
     function_body: $ => seq(
-      choice($._statement, $.function_application),
+      choice($._statement, $.function_application, $.let),
       optional($.where)
     ),
 
@@ -273,6 +272,7 @@ module.exports = grammar({
 
     let: $ => seq(
       'let',
+<<<<<<< HEAD
       choice(
         seq(
           '{',
@@ -289,6 +289,9 @@ module.exports = grammar({
         ),
         seq($._layout_open_brace, $._declaration)
       ),
+=======
+      $._declarations,
+>>>>>>> 92e21c2450dbac488deb279efa09060b8947a47b
       $.in_clause
     ),
 
