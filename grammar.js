@@ -109,16 +109,23 @@ module.exports = grammar({
 
     _import_spec: $ => seq(
       '(',
-      sep1(',', choice($.type_constructor, $.variable)),
+      sep1(',', choice($.type_constructor, $._variable, $._constructor_symbol, $._parenthesized_constructor_symbol)),
       ')'
     ),
 
     _empty_import_spec: $ => seq('(',')'),
 
     import_alias: $ => seq(
-      $.identifier,
+      choice(
+        $.identifier,
+        $.import_alias,
+        $.constructor_symbol,
+      ),
       'as',
-      $.identifier
+      choice(
+        $.identifier,
+        $.constructor_symbol,
+      )
     ),
 
     hidden_import: $ => seq(
@@ -143,7 +150,16 @@ module.exports = grammar({
 
     _parenthesized_variable_symbol: $ => seq(
       '(',
-      repeat1(choice($.variable_symbol, $._extra_variable_symbol)),
+      seq(
+        $.variable_symbol,
+        repeat(choice($.variable_symbol, $._extra_variable_symbol))
+      ),
+      ')'
+    ),
+
+    _parenthesized_constructor_symbol: $ => seq(
+      '(',
+      $.constructor_symbol,
       ')'
     ),
 
@@ -176,7 +192,8 @@ module.exports = grammar({
       $.list_comprehension,
       $.otherwise,
       $.left_section,
-      $.right_section
+      $.right_section,
+      $.field_update
     ),
 
     left_section: $ => seq(
@@ -324,12 +341,6 @@ module.exports = grammar({
       $.function_declaration
     ),
 
-    field_labels: $ => seq(
-      '{',
-      optional(sep1(',', $.field_label)),
-      '}'
-    ),
-
     irrefutable: $ => seq(
       '~',
       $._lhs
@@ -352,33 +363,26 @@ module.exports = grammar({
     as: $ => prec.right(1, seq(
       choice($._variable),
       '@',
-      choice($._variable, $.type_constructor)
+      choice($._lhs)
     )),
+
+    field_update: $ => seq(
+      $._variable,
+      $.fields
+    ),
 
     field_label: $ => seq(
       $._variable,
       '=',
-      $._literal
+      $._expression
     ),
 
     wildcard: $ => '_',
 
     _variable: $ => choice(
       $.variable,
-      $.qualified_variable,
       $.variable_symbol,
-      $.qualified_variable_symbol,
       $._parenthesized_variable_symbol
-    ),
-
-    qualified_variable: $ => seq(
-      $._constructor_pattern,
-      $._variable_pattern
-    ),
-
-    qualified_variable_symbol: $ => seq(
-      $._constructor_pattern,
-      $._variable_symbol
     ),
 
     function_application: $ => prec.left(choice(
@@ -497,8 +501,9 @@ module.exports = grammar({
       )
     ),
 
-    variable_symbol: $ => prec.right(choice(
-      repeat1($._variable_symbol)
+    variable_symbol: $ => prec.right(seq(
+      $._variable_symbol,
+      repeat(choice($._variable_symbol, $._extra_variable_symbol))
     )),
 
     constructor_symbol: $ => prec.right(seq(':', repeat($._constructor_symbol))),
@@ -579,7 +584,7 @@ module.exports = grammar({
 
     _constructed_value: $ => prec.right(seq(
       $._type_constructors,
-      repeat(choice($.variable, $._type_constructors, $._literal, $.wildcard))
+      repeat(choice($.variable, $._type_constructors, $._literal, $.wildcard, $.fields))
     )),
 
     context: $ => seq(
@@ -634,7 +639,7 @@ module.exports = grammar({
       choice(
         $.strict,
         $.variable,
-        alias($.type_constructor, $.type)
+        repeat1(alias($.type_constructor, $.type))
       )
     ),
 
@@ -667,12 +672,6 @@ module.exports = grammar({
 
     identifier: $ => prec.left($._constructor_pattern),
     _constructor_pattern: $ => /[A-Z](\w|'|\.)*/,
-
-    qualified_type_constructor: $ => prec.right(seq(
-      optional('.'),
-      $.identifier,
-      repeat($.variable)
-    )),
 
     comment: $ => token(choice(
       seq('--', /.*/),
@@ -784,11 +783,13 @@ module.exports = grammar({
       '>',
       '?',
       '^',
-      '-'
+      '-',
+      '*'
     ),
 
     _extra_variable_symbol: $ => choice(
-      '='
+      '=',
+      ':'
     ),
 
     _constructor_symbol: $ => prec(1, choice(

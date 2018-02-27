@@ -6,6 +6,7 @@ module A where
 
 import Maybe
 import Either()
+
 ---
 
 (module
@@ -21,6 +22,8 @@ Import Declaration With Constructor
 module A where
 
 import Data.Maybe (Maybe(..))
+import Data.Aeson ((.:))
+import Control.Comonad.Cofree ((:<))
 
 ---
 
@@ -29,7 +32,13 @@ import Data.Maybe (Maybe(..))
   (where
     (import
       (identifier)
-      (import_spec (type_constructor (identifier) (all_constructors))))))
+      (import_spec (type_constructor (identifier) (all_constructors))))
+    (import
+      (identifier)
+      (import_spec (variable_symbol)))
+    (import
+      (identifier)
+      (import_spec (constructor_symbol)))))
 
 =========================================
 Import Declaration With Functions
@@ -102,6 +111,8 @@ module A where
 
 import qualified Data.Maybe as DM
 import qualified Either as E ()
+import qualified Data.Aeson as JSON
+import qualified Data.Aeson as D.A
 
 ---
 
@@ -117,7 +128,13 @@ import qualified Either as E ()
       (qualified)
       (import_alias
         (identifier)
-        (identifier)))))
+        (identifier)))
+    (import
+      (qualified)
+      (import_alias (identifier) (identifier)))
+    (import
+      (qualified)
+      (import_alias (identifier) (identifier)))))
 
 =========================================
 Import Declaration With As, Constructor And Function
