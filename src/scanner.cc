@@ -10,6 +10,7 @@ enum TokenType {
   LAYOUT_SEMICOLON,
   LAYOUT_OPEN_BRACE,
   LAYOUT_CLOSE_BRACE,
+  ARROW
 };
 
 struct Scanner {
@@ -106,6 +107,28 @@ struct Scanner {
       }
     }
 
+    if (!valid_symbols[ARROW]) {
+      if (lexer->lookahead == '-') {
+        advance(lexer);
+        if (lexer->lookahead == '>') {
+          advance(lexer);
+          if (iswspace(lexer->lookahead)) {
+            indent_length_stack.pop_back();
+            if (valid_symbols[LAYOUT_CLOSE_BRACE]) {
+              lexer->result_symbol = LAYOUT_CLOSE_BRACE;
+              return true;
+            } else {
+              queued_close_brace_count++;
+              if (valid_symbols[LAYOUT_SEMICOLON]) {
+                lexer->result_symbol = LAYOUT_SEMICOLON;
+                return true;
+              }
+            }
+          }
+        }
+      }
+    }
+
     if (lexer->lookahead != '\n') return false;
     advance(lexer);
 
@@ -132,9 +155,12 @@ struct Scanner {
         }
         return false;
       } else {
-        if (lexer->lookahead == '-' || lexer->lookahead == '{') {
+        if (lexer->lookahead == '{') {
           advance(lexer);
-          next_token_is_comment = lexer->lookahead == '-';
+          if (lexer->lookahead == '-') {
+            advance(lexer);
+            next_token_is_comment = iswspace(lexer->lookahead);
+          }
         }
         break;
       }
@@ -143,6 +169,7 @@ struct Scanner {
     if (!next_token_is_comment) {
       if (indent_length < indent_length_stack.back()) {
         indent_length_stack.pop_back();
+        queued_close_brace_count++;
         while (indent_length < indent_length_stack.back()) {
           indent_length_stack.pop_back();
           queued_close_brace_count++;
@@ -152,7 +179,6 @@ struct Scanner {
           lexer->result_symbol = LAYOUT_CLOSE_BRACE;
           return true;
         } else {
-          queued_close_brace_count++;
           if (valid_symbols[LAYOUT_SEMICOLON]) {
             lexer->result_symbol = LAYOUT_SEMICOLON;
             return true;
