@@ -399,6 +399,48 @@ f a = c
         (variable_identifier)
         (function_body (integer)))))))
 
+==============================================================
+Function Declarations With Let and In on last declaration-line
+==============================================================
+
+f = let y = x
+        z = 2
+        x = 1 in y
+
+f = let y = 42 in y
+
+---
+
+(module
+  (function_declaration
+    (variable_identifier)
+    (function_body
+      (let_expression
+        (function_declaration
+          (variable_identifier)
+          (function_body
+            (variable_identifier)))
+        (function_declaration
+          (variable_identifier)
+          (function_body
+            (integer)))
+        (function_declaration
+          (variable_identifier)
+          (function_body
+            (integer)))
+        (in_clause
+          (variable_identifier)))))
+  (function_declaration
+    (variable_identifier)
+    (function_body
+      (let_expression
+        (function_declaration
+          (variable_identifier)
+          (function_body
+            (integer)))
+        (in_clause
+          (variable_identifier))))))
+
 =================================================
 Function Declarations With Let
 =================================================
