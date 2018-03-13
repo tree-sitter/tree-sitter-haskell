@@ -413,69 +413,33 @@ f = let y = 42 in y
 
 (module
   (function_declaration
-    (function_head
-      (function_identifier (variable)))
+    (variable_identifier)
     (function_body
-      (let
+      (let_expression
         (function_declaration
-          (function_head
-            (function_identifier (variable)))
+          (variable_identifier)
           (function_body
-            (variable)))
+            (variable_identifier)))
         (function_declaration
-          (function_head
-            (function_identifier (variable)))
+          (variable_identifier)
           (function_body
             (integer)))
         (function_declaration
-          (function_head
-            (function_identifier (variable)))
+          (variable_identifier)
           (function_body
             (integer)))
         (in_clause
-          (variable)))))
+          (variable_identifier)))))
   (function_declaration
-    (function_head
-      (function_identifier (variable)))
+    (variable_identifier)
     (function_body
-      (let
+      (let_expression
         (function_declaration
-          (function_head
-            (function_identifier (variable)))
+          (variable_identifier)
           (function_body
             (integer)))
         (in_clause
-          (variable))))))
-
-===================================================
-Function Declarations With wrong indentation in Let
-===================================================
-
-f = let y = x
-   z = 2
-        x = 1
-      in y
-
----
-
-(module
-  (function_declaration
-    (function_head
-      (function_identifier (variable)))
-    (function_body
-      (let
-        (ERROR
-          (function_declaration
-            (function_head
-              (function_identifier (variable)))
-            (function_body (variable))))
-          (function_declaration
-            (function_head
-              (function_identifier (variable)))
-            (ERROR
-              (function_application (integer) (variable)))
-          (function_body (integer)))
-      (in_clause (variable))))))
+          (variable_identifier))))))
 
 =================================================
 Function Declarations With Let
