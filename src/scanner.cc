@@ -49,7 +49,7 @@ struct Scanner {
     lexer->advance(lexer, false);
   }
 
-  bool advance_matching_and_whitespace(TSLexer *lexer, const char *match) {
+  bool advance_matching_chars(TSLexer *lexer, const char *match, const bool ends_with_wspace) {
     for( unsigned i = 0; i < strlen(match); i += 1 ){
       if (lexer->lookahead == match[i]) {
         advance(lexer);
@@ -57,7 +57,7 @@ struct Scanner {
         return false;
       }
     }
-    return (iswspace(lexer->lookahead));
+    return ends_with_wspace ? iswspace(lexer->lookahead) : true;
   }
 
   bool scan(TSLexer *lexer, const bool *valid_symbols) {
@@ -100,7 +100,7 @@ struct Scanner {
 
     lexer->mark_end(lexer);
 
-    if (advance_matching_and_whitespace(lexer, "in")) {
+    if (advance_matching_chars(lexer, "in", true)) {
       indent_length_stack.pop_back();
       if (valid_symbols[LAYOUT_CLOSE_BRACE]) {
         lexer->result_symbol = LAYOUT_CLOSE_BRACE;
@@ -115,7 +115,7 @@ struct Scanner {
     }
 
     if (!valid_symbols[ARROW]) {
-      if (advance_matching_and_whitespace(lexer, "->")) {
+      if (advance_matching_chars(lexer, "->", true)) {
         indent_length_stack.pop_back();
         if (valid_symbols[LAYOUT_CLOSE_BRACE]) {
           lexer->result_symbol = LAYOUT_CLOSE_BRACE;
@@ -156,7 +156,7 @@ struct Scanner {
         }
         return false;
       } else {
-        next_token_is_comment = advance_matching_and_whitespace(lexer, "{-");
+        next_token_is_comment = advance_matching_chars(lexer, "{-", false);
         break;
       }
     }
