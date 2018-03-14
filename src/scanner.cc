@@ -1,8 +1,6 @@
 #include <tree_sitter/parser.h>
 #include <vector>
 #include <cwctype>
-#include "string.h"
-
 namespace {
 
 using std::vector;
@@ -49,13 +47,24 @@ struct Scanner {
     lexer->advance(lexer, false);
   }
 
-  bool advance_matching_chars(TSLexer *lexer, const char *match, const bool ends_with_wspace) {
-    for( unsigned i = 0; i < strlen(match); i += 1 ){
-      if (lexer->lookahead == match[i]) {
+  bool advance_matching_chars_and_wspace(TSLexer *lexer, const char *match) {
+    return _advance_matching(lexer, match, true, -1);
+  }
+
+  bool advance_matching_chars_ends_not_by(TSLexer *lexer, const char *match, const char ends_not_with) {
+    return _advance_matching(lexer, match, false, ends_not_with);
+  }
+
+  bool _advance_matching(TSLexer *lexer, const char *match, const bool ends_with_wspace, const char ends_not_with) {
+    for (const char *c = match; *c; c++) {
+      if (lexer->lookahead == *c) {
         advance(lexer);
       } else {
         return false;
       }
+    }
+    if (ends_not_with != -1 && lexer->lookahead == ends_not_with) {
+      return false;
     }
     return ends_with_wspace ? iswspace(lexer->lookahead) : true;
   }
@@ -100,7 +109,7 @@ struct Scanner {
 
     lexer->mark_end(lexer);
 
-    if (advance_matching_chars(lexer, "in", true)) {
+    if (advance_matching_chars_and_wspace(lexer, "in")) {
       indent_length_stack.pop_back();
       if (valid_symbols[LAYOUT_CLOSE_BRACE]) {
         lexer->result_symbol = LAYOUT_CLOSE_BRACE;
@@ -115,7 +124,7 @@ struct Scanner {
     }
 
     if (!valid_symbols[ARROW]) {
-      if (advance_matching_chars(lexer, "->", true)) {
+      if (advance_matching_chars_and_wspace(lexer, "->")) {
         indent_length_stack.pop_back();
         if (valid_symbols[LAYOUT_CLOSE_BRACE]) {
           lexer->result_symbol = LAYOUT_CLOSE_BRACE;
@@ -156,7 +165,7 @@ struct Scanner {
         }
         return false;
       } else {
-        next_token_is_comment = advance_matching_chars(lexer, "{-", false);
+        next_token_is_comment = advance_matching_chars_ends_not_by(lexer, "{-", '#');
         break;
       }
     }
