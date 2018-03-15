@@ -12,6 +12,8 @@ packages:
   extra-dep: true
 - location: languages/json
   extra-dep: true
+- location: languages/java
+  extra-dep: true
 - location: languages/ruby
   extra-dep: true
 resolver: lts-10.0
