@@ -16,3 +16,6 @@
 [submodule "vendor/tree-sitter-typescript"]
 	path = languages/typescript/vendor/tree-sitter-typescript
 	url = https://github.com/tree-sitter/tree-sitter-typescript.git
+[submodule "languages/java/vendor/tree-sitter-java"]
+	path = languages/java/vendor/tree-sitter-java
+	url = https://github.com/tree-sitter/tree-sitter-java
