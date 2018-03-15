@@ -227,7 +227,7 @@ a = (a :<)
         (left_operator_section (variable_identifier) (constructor_operator (constructor_symbol)))))))
 
 ===============================
-Binary Operators
+Infix Operator Applications
 ===============================
 
 module A where
@@ -236,6 +236,14 @@ parseJSON (JSON.Object r) = IncPK <$>
   r .: "nullable_string" <*>
   r .: "non_nullable_string" <*>
   r .: "inserted_at"
+
+f = do
+  a <- b =<< c
+  b <- e >>= g
+
+g = h `i` j
+
+k = l `M.n` o
 
 ---
 
@@ -270,8 +278,40 @@ parseJSON (JSON.Object r) = IncPK <$>
                       (infix_operator_application
                         (variable_identifier)
                         (variable_operator (variable_symbol))
-                        (string)))))))))))))
+                        (string)))))))))))
 
+    (function_declaration
+      (variable_identifier)
+      (function_body
+        (do
+          (bind_pattern
+            (variable_identifier)
+            (infix_operator_application
+              (variable_identifier)
+              (variable_operator (variable_symbol))
+              (variable_identifier)))
+          (bind_pattern
+            (variable_identifier)
+            (infix_operator_application
+              (variable_identifier)
+              (variable_operator (variable_symbol))
+              (variable_identifier))))))
+
+    (function_declaration
+      (variable_identifier)
+      (function_body
+        (infix_operator_application
+          (variable_identifier)
+          (variable_operator (infix_variable_identifier))
+          (variable_identifier))))
+
+    (function_declaration
+      (variable_identifier)
+      (function_body
+        (infix_operator_application
+          (variable_identifier)
+          (variable_operator (qualified_infix_variable_identifier (qualified_variable_identifier (module_identifier) (variable_identifier))))
+          (variable_identifier))))))
 
 ===============================
 Lambda Abstractions
@@ -280,6 +320,10 @@ Lambda Abstractions
 f = \ x -> x
 
 f = \ (Just a) -> a
+
+f = \ x -> x : a : xs
+
+f = \ g a b -> g <$> a <*> b
 
 ---
 
@@ -296,4 +340,32 @@ f = \ (Just a) -> a
     (function_body
       (lambda
         (parenthesized_pattern (constructor_pattern (constructor_identifier) (variable_identifier)))
-        (lambda_body (variable_identifier))))))
+        (lambda_body (variable_identifier)))))
+  (function_declaration
+    (variable_identifier)
+    (function_body
+      (lambda
+        (variable_identifier)
+        (lambda_body
+          (infix_operator_application
+            (variable_identifier)
+            (constructor_operator (constructor_symbol))
+            (infix_operator_application
+              (variable_identifier)
+              (constructor_operator (constructor_symbol))
+              (variable_identifier)))))))
+  (function_declaration
+    (variable_identifier)
+    (function_body
+      (lambda
+        (variable_identifier)
+        (variable_identifier)
+        (variable_identifier)
+        (lambda_body
+          (infix_operator_application
+            (variable_identifier)
+            (variable_operator (variable_symbol))
+            (infix_operator_application
+              (variable_identifier)
+              (variable_operator (variable_symbol))
+              (variable_identifier))))))))
