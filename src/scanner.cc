@@ -109,7 +109,6 @@ struct Scanner {
 
     lexer->mark_end(lexer);
 
-<<<<<<< HEAD
     if (advance_matching_chars_and_wspace(lexer, "in")) {
       indent_length_stack.pop_back();
       if (valid_symbols[LAYOUT_CLOSE_BRACE]) {
@@ -120,24 +119,6 @@ struct Scanner {
         if (valid_symbols[LAYOUT_SEMICOLON]) {
           lexer->result_symbol = LAYOUT_SEMICOLON;
           return true;
-=======
-    if (lexer->lookahead == 'i') {
-      advance(lexer);
-      if (lexer->lookahead == 'n') {
-        advance(lexer);
-        if (iswspace(lexer->lookahead)) {
-          indent_length_stack.pop_back();
-          if (valid_symbols[LAYOUT_CLOSE_BRACE]) {
-            lexer->result_symbol = LAYOUT_CLOSE_BRACE;
-            return true;
-          } else {
-            queued_close_brace_count++;
-            if (valid_symbols[LAYOUT_SEMICOLON]) {
-              lexer->result_symbol = LAYOUT_SEMICOLON;
-              return true;
-            }
-          }
->>>>>>> 8e5d4764b54dd8ccd4d9f71cbdee7027a79326d0
         }
       }
     }
