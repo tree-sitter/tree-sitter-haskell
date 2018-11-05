@@ -317,7 +317,7 @@ module.exports = grammar({
     import: $ => choice(
       $._variable,
       $._qualified_constructor,
-      seq(
+      prec.dynamic(1, seq(
         $._qualified_type_constructor_identifier,
         optional(choice(
           $.all_constructors,
@@ -327,7 +327,7 @@ module.exports = grammar({
             ')'
           )
         ))
-      ),
+      )),
       seq(
         alias($._constructor_identifier, $.type_class_identifier),
         optional(choice(
