@@ -642,7 +642,7 @@ module.exports = grammar({
 
     type_application: $ => seq(
       '@',
-      choice($._pattern, $.parenthesized_expression)
+      choice($._type_pattern, $.parenthesized_type_pattern)
     ),
 
     lambda: $ => seq(
