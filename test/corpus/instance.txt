@@ -1,0 +1,191 @@
+=========================================
+instance: minimal
+=========================================
+
+instance A a
+
+---
+
+(module (decl_instance (instance_head (class_name (tyconid (conid))) (type_name (tyvar)))))
+
+=========================================
+instance: tyconid
+=========================================
+
+instance A A a A
+
+---
+
+(module
+ (decl_instance
+  (instance_head
+   (class_name (tyconid (conid)))
+   (type_name (tyconid (conid)))
+   (type_name (tyvar))
+   (type_name (tyconid (conid))))))
+
+=========================================
+instance: forall
+=========================================
+
+instance forall a (a :: *) . A
+
+---
+
+(module
+ (decl_instance
+  (forall
+   (tyvar)
+   (annotated_tyvar (tyvar) (annotation) (star))
+   (forall_dot))
+  (instance_head (class_name (tyconid (conid))))))
+
+=========================================
+instance: context
+=========================================
+
+instance A a => A
+instance (A a, A a) => A
+
+---
+
+(module
+ (decl_instance
+  (context (constraint (class_name (tyconid (conid))) (type_name (tyvar))) (carrow))
+  (instance_head (class_name (tyconid (conid)))))
+ (decl_instance
+  (context
+   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (comma)
+   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (carrow))
+  (instance_head (class_name (tyconid (conid))))))
+
+=========================================
+instance: method
+=========================================
+
+instance A a where a a = Just a
+
+---
+
+(module
+ (decl_instance
+  (instance_head (class_name (tyconid (conid))) (type_name (tyvar)))
+  (where)
+  (decl_fun
+    (funvar (varid) (pat_name (varid)))
+    (funrhs (equals) (exp_apply (exp_name (conid)) (exp_name (varid)))))))
+
+=========================================
+instance: signature
+=========================================
+
+instance A a where
+  a :: A a => a -> a
+  a a = a
+
+---
+
+(module
+ (decl_instance
+  (instance_head (class_name (tyconid (conid))) (type_name (tyvar)))
+  (where)
+  (decl_sig
+   (varid)
+   (annotation)
+   (context
+    (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+    (carrow)
+    (fun (type_name (tyvar)) (arrow) (type_name (tyvar)))))
+  (decl_fun
+   (funvar (varid) (pat_name (varid)))
+   (funrhs (equals) (exp_name (varid))))))
+
+=========================================
+instance: equality constraint
+=========================================
+
+instance A a ~ A a => A a
+instance A ~~ A => A a
+
+---
+
+(module
+ (decl_instance
+  (context
+   (constraint
+    (type_infix
+     left: (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))
+     op: (tyconop (tyconsym))
+     right: (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))
+   (carrow))
+  (instance_head class: (class_name (tyconid (conid))) (type_name (tyvar))))
+ (decl_instance
+  (context
+   (constraint
+    (type_infix
+     left: (type_name (tyconid (conid)))
+     op: (tyconop (tyconsym))
+     right: (type_name (tyconid (conid)))))
+   (carrow))
+  (instance_head class: (class_name (tyconid (conid))) (type_name (tyvar)))))
+
+=========================================
+instance: associated type instance
+=========================================
+
+instance A where
+  type A A a = A a
+  type instance A a = A
+
+---
+
+(module
+ (decl_instance
+  (instance_head
+   (class_name (tyconid (conid))))
+  (where)
+  (inst_tyinst
+   (type_name (tyconid (conid)))
+   (type_name (tyconid (conid)))
+   (type_name (tyvar))
+   (equals)
+   (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))
+  (inst_tyinst
+   (type_name (tyconid (conid)))
+   (type_name (tyvar))
+   (equals)
+   (type_name (tyconid (conid))))))
+
+=========================================
+instance: associated data instance
+=========================================
+
+instance A where
+  data A a = A a | A { a :: A }
+  data instance A a = A
+
+---
+
+(module
+ (decl_instance
+  (instance_head (class_name (tyconid (conid))))
+  (where)
+  (inst_datainst
+   (type_apply
+    (type_name (tyconid (conid)))
+    (type_name (tyvar)))
+   (equals)
+   (constrs
+    (constr (constr_id (conid)) (type_name (tyvar)))
+    (bar)
+    (constr_record
+     (constr_id (conid)) 
+     (record_fields (field (field_id (varid)) (annotation) (type_name (tyconid (conid))))))))
+  (inst_datainst
+   (type_apply
+    (type_name (tyconid (conid)))
+    (type_name (tyvar)))
+   (equals)
+   (constrs (constr (constr_id (conid)))))))

@@ -1,0 +1,249 @@
+=========================================
+class: minimal
+=========================================
+
+class A a
+
+---
+
+(module (decl_class (class_head class: (class_name (tyconid (conid))) (type_name (tyvar)))))
+
+=========================================
+class: context variants
+=========================================
+
+class A a => Read a
+class (A a, A a) => A a
+
+---
+
+(module
+ (decl_class
+  (context
+   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (carrow))
+  (class_head (class_name (tyconid (conid))) (type_name (tyvar))))
+ (decl_class
+  (context
+   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (comma)
+   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (carrow))
+  (class_head (class_name (tyconid (conid))) (type_name (tyvar)))))
+
+=========================================
+class: method with context
+=========================================
+
+class A a where a :: A a => a -> a
+
+---
+
+(module
+ (decl_class
+  (class_head class: (class_name (tyconid (conid))) (type_name (tyvar)))
+  (class_body
+   (where)
+   (decl_sig
+    name: (varid)
+    (annotation)
+    type: (context
+     (constraint class: (class_name (tyconid (conid))) (type_name (tyvar)))
+     (carrow)
+     (fun (type_name (tyvar)) (arrow) (type_name (tyvar))))))))
+
+=========================================
+class: braces
+=========================================
+
+class Foo a where {
+  a :: a;
+  a :: a;
+}
+
+---
+
+(module
+ (decl_class
+  (class_head (class_name (tyconid (conid))) (type_name (tyvar)))
+  (class_body
+   (where)
+   (decl_sig (varid) (annotation) (type_name (tyvar)))
+   (decl_sig (varid) (annotation) (type_name (tyvar))))))
+
+=========================================
+class: fixity
+=========================================
+
+class A where
+  infixl `op`
+  a :: Int
+  infixr 7 `op`
+  a = a
+  infix 7 `op`, `ip`, `ap`
+  infix <$>
+  infix 7 <$>
+  infix 7 :
+  infix 7 :.
+  infix 7 :<:
+
+---
+
+(module
+ (decl_class
+  (class_head (class_name (tyconid (conid))))
+  (class_body
+   (where)
+   (decl_fixity (varop (varid)))
+   (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
+   (decl_fixity (integer) (varop (varid)))
+   (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+   (decl_fixity (integer) (varop (varid)) (comma) (varop (varid)) (comma) (varop (varid)))
+   (decl_fixity (varop (varsym)))
+   (decl_fixity (integer) (varop (varsym)))
+   (decl_fixity (integer) (consym))
+   (decl_fixity (integer) (consym))
+   (decl_fixity (integer) (consym)))))
+
+=========================================
+class: multi method varsym
+=========================================
+
+class A where
+  (<), (<=), (>=), (>) :: a
+
+---
+
+(module
+ (decl_class
+  (class_head (class_name (tyconid (conid))))
+  (class_body
+   (where)
+   (decl_sig
+    (varsym)
+    (comma)
+    (varsym)
+    (comma)
+    (varsym)
+    (comma)
+    (varsym)
+    (annotation)
+    (type_name (tyvar))))))
+
+=========================================
+class: multi param
+=========================================
+
+class A a a a
+
+---
+
+(module (decl_class (class_head (class_name (tyconid (conid))) (type_name (tyvar)) (type_name (tyvar)) (type_name (tyvar)))))
+
+=========================================
+class: default signature
+=========================================
+
+class A where
+  a :: Int
+  default a :: Int
+
+---
+
+(module
+ (decl_class
+  (class_head (class_name (tyconid (conid))))
+  (class_body
+   (where)
+   (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
+   (default_signature (decl_sig (varid) (annotation) (type_name (tyconid (conid))))))))
+
+=========================================
+class: tyvar kind
+=========================================
+
+class A (a :: [*] -> k)
+
+---
+
+(module
+ (decl_class
+  (class_head
+   (class_name (tyconid (conid)))
+   (type_name
+    (annotated_tyvar
+     (tyvar)
+     (annotation)
+     (fun (list_type (star)) (arrow) (type_name (tyvar))))))))
+
+=========================================
+class: associated family
+=========================================
+
+class A a where
+  type A a :: a
+  type family A a :: a
+
+---
+
+(module
+ (decl_class
+  (class_head (class_name (tyconid (conid))) (type_name (tyvar)))
+  (class_body
+   (where)
+   (decl_type_sig (tyconid (conid)) (tyvar) (annotation) (type_name (tyvar)))
+   (decl_type_sig (tyconid (conid)) (tyvar) (annotation) (type_name (tyvar))))))
+
+=========================================
+class: associated data
+=========================================
+
+class A a where
+  data A a
+  data family A a :: * -> Type
+
+---
+
+(module
+ (decl_class
+  (class_head (class_name (tyconid (conid))) (type_name (tyvar)))
+  (class_body
+   (where)
+   (class_datafam (tyconid (conid)) (tyvar))
+   (class_datafam
+    (tyconid (conid))
+    (tyvar)
+    (annotation)
+    (fun (star) (arrow) (type_name (tyconid (conid))))))))
+
+=========================================
+class: fundeps
+=========================================
+
+class A | a -> a a, a a -> a
+
+---
+
+(module
+ (decl_class
+  (class_head class: (class_name (tyconid (conid))))
+  (fundeps
+   (fundep (tyvar) (arrow) (tyvar) (tyvar))
+   (comma)
+   (fundep (tyvar) (tyvar) (arrow) (tyvar)))))
+
+=========================================
+class: infix operator name
+=========================================
+
+class a ++ b
+
+---
+
+(module
+ (decl_class
+  (class_head
+   (type_infix
+    left: (type_name (tyvar))
+    op: (tyconop (tyconsym))
+    right: (type_name (tyvar))))))

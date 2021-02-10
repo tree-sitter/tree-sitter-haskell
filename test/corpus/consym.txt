@@ -1,0 +1,28 @@
+=================================================
+consym: valid
+=================================================
+
+data A = Int :+ Int
+
+---
+
+(module
+ (decl_adt
+  (tyconid (conid))
+  (equals)
+  (constrs
+   (constr_infix
+    (type_name (tyconid (conid)))
+    (consym)
+    (type_name (tyconid (conid)))))))
+
+
+=================================================
+consym: error: ::
+=================================================
+
+data A = Int :: Int
+
+---
+
+(module (decl_adt (tyconid (conid)) (ERROR (equals) (modid (conid))) (annotation) (type_name (tyconid (conid)))))

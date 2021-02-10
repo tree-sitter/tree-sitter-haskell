@@ -1,0 +1,389 @@
+=========================================
+type decl: basic
+=========================================
+
+type A = A
+type A a = A a
+type A = A A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_name (tyconid (conid))))
+ (decl_type
+  (tyconid (conid))
+  (tyvar)
+  (equals)
+  (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_apply (type_name (tyconid (conid))) (type_name (tyconid (conid))))))
+
+=========================================
+type decl: two tycons
+=========================================
+
+type A = A A
+
+---
+
+(module (decl_type (tyconid (conid)) (equals) (type_apply (type_name (tyconid (conid))) (type_name (tyconid (conid))))))
+
+=========================================
+type decl: promoted constructor
+=========================================
+
+type A = ' A
+type A = 'A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_name (promoted (tyconid (conid)))))
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_name (promoted (tyconid (conid))))))
+
+=========================================
+type decl: list plain
+=========================================
+
+type A = []
+type A = [A a]
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_literal (con_list)))
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (list_type (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))))
+
+=========================================
+type decl: parens
+=========================================
+
+type A = ()
+type A = (,)
+type A = (,,)
+type A = (->)
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_literal (con_unit)))
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_literal (con_tuple (comma))))
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_literal (con_tuple (comma) (comma))))
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_name (tycon_arrow (arrow)))))
+
+=========================================
+type decl: consym
+=========================================
+
+type A = A :++ A ':++ A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix
+   (type_name (tyconid (conid)))
+   (tyconop (tyconsym))
+   (type_infix
+    (type_name (tyconid (conid)))
+    (tyconop (promoted (tyconsym)))
+    (type_name (tyconid (conid)))))))
+
+=========================================
+type decl: list cons
+=========================================
+
+type A = A : A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix
+   (type_name (tyconid (conid)))
+   (tyconop (tyconsym))
+   (type_name (tyconid (conid))))))
+
+=========================================
+type decl: promoted list cons
+=========================================
+
+type A = A ': A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix
+   (type_name (tyconid (conid)))
+   (tyconop (promoted (tyconsym)))
+   (type_name (tyconid (conid))))))
+
+=========================================
+type decl: promoted list nil
+=========================================
+
+type A = '[]
+
+---
+
+(module (decl_type (tyconid (conid)) (equals) (type_literal (promoted (con_list)))))
+
+=========================================
+type decl: qualified consym
+=========================================
+
+type A = A A.A.:++ A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix
+   (type_name (tyconid (conid)))
+   (tyconop (qtyconsym (modid (conid)) (modid (conid)) (tyconsym)))
+   (type_name (tyconid (conid))))))
+
+=========================================
+type decl: promoted consym
+=========================================
+
+type A = A ':++ A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix
+   (type_name (tyconid (conid)))
+   (tyconop (promoted (tyconsym)))
+   (type_name (tyconid (conid))))))
+
+=========================================
+type decl: qualified promoted consym
+=========================================
+
+type A = A 'A.:++ A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix
+   (type_name (tyconid (conid)))
+   (tyconop (promoted (qtyconsym (modid (conid)) (tyconsym))))
+   (type_name (tyconid (conid))))))
+
+=========================================
+type decl: qualified ticked
+=========================================
+
+type A = A `A.A` A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix
+   (type_name (tyconid (conid)))
+   (tyconop (ticked (qtycon (modid (conid)) (tyconid (conid)))))
+   (type_name (tyconid (conid))))))
+
+
+=========================================
+type decl: equality
+=========================================
+
+type A = A ~ A
+type A = A ~~ A
+type A = ∀ a . (A a ~ A a) => A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix (type_name (tyconid (conid))) (tyconop (tyconsym)) (type_name (tyconid (conid)))))
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix (type_name (tyconid (conid))) (tyconop (tyconsym)) (type_name (tyconid (conid)))))
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (forall
+   (quantifiers (tyvar))
+   (forall_dot)
+   (context
+    (constraint
+     (type_infix
+      (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))
+      (tyconop (tyconsym))
+      (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))
+    )
+     (carrow)
+    (type_name (tyconid (conid)))))))
+
+=========================================
+type decl: mixed type_infix
+=========================================
+
+type A = A :++ A A ': A (A A a) : '[] ':++ A `A.A` '[]
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_infix
+   (type_name (tyconid (conid)))
+   (tyconop (tyconsym))
+   (type_infix
+    (type_apply
+     (type_name (tyconid (conid)))
+     (type_name (tyconid (conid))))
+    (tyconop (promoted (tyconsym)))
+    (type_infix
+     (type_apply
+      (type_name (tyconid (conid)))
+      (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyconid (conid))) (type_name (tyvar)))))
+     (tyconop (tyconsym))
+     (type_infix
+      (type_literal (promoted (con_list)))
+      (tyconop (promoted (tyconsym)))
+      (type_infix
+       (type_name (tyconid (conid)))
+       (tyconop (ticked (qtycon (modid (conid)) (tyconid (conid)))))
+       (type_literal (promoted (con_list))))))))))
+
+=========================================
+type decl: symbol
+=========================================
+
+type A = "a"
+type A = A (A "a")
+
+---
+
+(module
+ (decl_type (tyconid (conid)) (equals) (type_literal (string)))
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_apply
+   (type_name (tyconid (conid)))
+   (type_parens (type_apply (type_name (tyconid (conid))) (type_literal (string)))))))
+
+=========================================
+type decl: prefix notation symbol
+=========================================
+
+type A = (++) a a
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (type_apply
+   (type_name (tyconsym))
+   (type_name (tyvar))
+   (type_name (tyvar)))))
+
+=========================================
+type decl: nullary context
+=========================================
+
+type A = A => A
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (context (constraint (class_name (tyconid (conid)))) (carrow) (type_name (tyconid (conid))))))
+
+=========================================
+type decl: forall
+=========================================
+
+type A = ∀ a a . A => A
+type A = forall a a . A a => [A]
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (forall
+   (quantifiers (tyvar) (tyvar))
+   (forall_dot)
+   (context (constraint (class_name (tyconid (conid)))) (carrow) (type_name (tyconid (conid))))))
+  (decl_type
+   (tyconid (conid))
+   (equals)
+   (forall
+    (quantifiers (tyvar) (tyvar))
+    (forall_dot)
+    (context
+     (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+     (carrow)
+     (list_type (type_name (tyconid (conid))))))))
+
+=========================================
+type decl: lhs parens
+=========================================
+
+type (A a a) = A
+
+---
+
+(module (decl_type (tyconid (conid)) (tyvar) (tyvar) (equals) (type_name (tyconid (conid)))))

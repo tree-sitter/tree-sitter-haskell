@@ -1,0 +1,98 @@
+===============================
+template haskell: quasiquotes
+===============================
+
+f =
+  [|body|]
+  [quoter|body|with|bars
+and newline|]
+
+---
+
+(module
+ (decl_fun
+  (funvar
+   (varid))
+  (funrhs
+   (equals)
+   (exp_apply
+    (exp_qq
+     (qq_body)
+     (qq_end))
+    (exp_qq
+     (qq_body)
+     (qq_end))))))
+
+===============================
+template haskell: top level splice with parens
+===============================
+
+$(a ''Aa)
+$(a ''A.Aa)
+
+---
+
+(module
+ (top_splice (splice (exp_parens (exp_apply (exp_name (varid)) (exp_th_quoted_name (tyconid (conid)))))))
+ (top_splice
+  (splice
+   (exp_parens
+    (exp_apply
+     (exp_name (varid))
+     (exp_th_quoted_name (qtycon (modid (conid)) (tyconid (conid)))))))))
+
+===============================
+template haskell: inline splice varid
+===============================
+
+f = $a
+
+---
+
+(module (decl_fun (funvar (varid)) (funrhs (equals) (splice (exp_name (varid))))))
+
+===============================
+template haskell: inline splice parens
+===============================
+
+f = $(a . a $ a)
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (splice
+    (exp_parens
+     (exp_infix
+      (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))
+      (qvarop (varsym))
+      (exp_name (varid))))))))
+
+=================================================
+template haskell: inline splice in function application
+=================================================
+
+a = a $(a)
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_apply (exp_name (varid)) (splice (exp_parens (exp_name (varid))))))))
+
+===============================
+template haskell: top level splice without parens
+===============================
+
+derive ''Aa
+derive [''Aa]
+
+---
+
+(module
+ (top_splice (exp_apply (exp_name (varid)) (exp_th_quoted_name (tyconid (conid)))))
+ (top_splice (exp_apply (exp_name (varid)) (exp_list (exp_th_quoted_name (tyconid (conid)))))))

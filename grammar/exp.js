@@ -1,0 +1,236 @@
+const {parens, brackets, braces, sep1, layouted} = require('./util.js')
+
+module.exports = {
+  // ------------------------------------------------------------------------
+  // expression
+  // ------------------------------------------------------------------------
+
+  exp_parens: $ => parens($._exp),
+
+  /**
+    * This needs to be disambiguated from `gcon_tuple`, which is a constructor with _only_ commas.
+    * Tuple sections aren't allowed in patterns.
+    *
+    * Since tuple expressions can contain singular expressions in sections like `(a,)` and `(,a)`, it has to be ensured
+    * that there is _at least_ each one comma and one expression in there, but the comma may be on either side and be
+    * preceded by any number of further commas, like `(,,,a)`.
+    *
+    * The final `repeat` is simpler, it just has to ensure that no two `_exp`s can be successive, but this encoding
+    * means that the optional `_exp` after `(5,)` needs to be included in the `choice`, otherwise a simple pair would be
+    * impossible.
+    */
+  exp_tuple: $ => parens(
+    choice(seq(repeat1($.comma), $._exp), seq($._exp, $.comma, optional($._exp))),
+    repeat(seq($.comma, optional($._exp)))
+  ),
+
+  exp_list: $ => brackets(sep1($.comma, $._exp)),
+
+  // TODO same as pattern_guard?
+  bind_pattern: $ => seq(
+    $._pat,
+    $.larrow,
+    $._exp,
+  ),
+
+  exp_arithmetic_sequence: $ => brackets(
+    field('from', $._exp),
+    optional(seq($.comma, field('step', $._exp))),
+    '..',
+    optional(field('to', $._exp)),
+  ),
+
+  qual: $ => choice(
+    $.bind_pattern,
+    $.let,
+    $._exp,
+  ),
+
+  exp_list_comprehension: $ => brackets(
+    $._exp,
+    $.bar,
+    sep1($.comma, $.qual),
+  ),
+
+  exp_section_left: $ => parens(
+    $._exp_infix,
+    $._qop,
+  ),
+
+  exp_section_right: $ => parens(
+    $._qop,
+    $._exp_infix,
+  ),
+
+  qq_body: _ => repeat1(choice(/[^|]/, /\|[^\]]/)),
+
+  // TODO this regex is necessary because otherwise list comprehension overrides qqs with a named quoter.
+  // this is bad, because there's no node for the quoter.
+  // maybe move to scanner
+  exp_qq: $ => seq(
+    /\[([_a-z](\w|')*)?\|/,
+    optional($.qq_body),
+    alias(token('|]'), $.qq_end),
+  ),
+
+  exp_th_quoted_name: $ => choice(
+    seq(quote, choice($._qvarid, $._qconid)),
+    seq(quote + quote, choice($._qtycon)),
+  ),
+
+  fbind: $ => seq($._qvar, seq($.equals, $._exp)),
+
+  exp_tyapp: $ => seq($.tyapp, $._atype),
+
+  exp_lambda: $ => seq(
+    $.lambda,
+    repeat1($._apat),
+    $.arrow,
+    $._exp,
+  ),
+
+  exp_in: $ => seq('in', $._exp),
+
+  let: $ => seq('let', optional($.decls)),
+
+  exp_let: $ => seq($.let, $.exp_in),
+
+  exp_cond: $ => seq(
+    'if',
+    field('if', $._exp),
+    optional($._semicolon),
+    'then',
+    field('then', $._exp),
+    optional($._semicolon),
+    'else',
+    field('else', $._exp),
+  ),
+
+  exp_cond_guard: $ => seq('if', prec.left(repeat1($.gdpat))),
+
+  pattern_guard: $ => seq(
+    $._pat,
+    $.larrow,
+    $._exp_infix,
+  ),
+
+  guard: $ => choice(
+    $.pattern_guard,
+    $.let,
+    $._exp_infix,
+  ),
+
+  guards: $ => seq('|', sep1($.comma, $.guard)),
+
+  gdpat: $ => seq($.guards, $.arrow, $._exp),
+
+  _alt_variants: $ => choice(
+    seq($.arrow, $._exp),
+    repeat1($.gdpat),
+  ),
+
+  alt: $ => seq($._pat, $._alt_variants, optional(seq($.where, optional($.decls)))),
+
+  alts: $ => layouted($, $.alt),
+
+  exp_case: $ => seq('case', $._exp, 'of', $.alts),
+
+  exp_lambda_case: $ => prec.left(seq(
+    $.lambda,
+    'case',
+    optional($.alts),
+  )),
+
+  rec: $ => seq(
+    'rec',
+    layouted($, $.stmt),
+  ),
+
+  stmt: $ => choice(
+    $._exp,
+    $.bind_pattern,
+    $.let,
+    $.rec,
+  ),
+
+  exp_do: $ => seq(choice('mdo', 'do'), layouted($, seq($.stmt))),
+
+  exp_neg: $ => seq('-', $._aexp),
+
+  exp_record: $ => seq($._aexp, braces(sep1($.comma, $.fbind))),
+
+  exp_name: $ => choice(
+    $._qvar,
+    $._qcon,
+  ),
+
+  /**
+    * The tyapp here is an alternative to adding it as an `optional` at the end of `_aexp`, which appears to be causing
+    * problems with multiple consecutive tyapps.
+    * TODO investigate ^
+    */
+  _aexp: $ => choice(
+    $.exp_parens,
+    $.exp_tuple,
+    $.exp_list,
+    $.exp_arithmetic_sequence,
+    $.exp_list_comprehension,
+    $.exp_section_left,
+    $.exp_section_right,
+    $.exp_qq,
+    $.exp_th_quoted_name,
+    $.implicit_parid,
+    $.exp_tyapp,
+    $.exp_lambda_case,
+    $.exp_do,
+    $.splice,
+    $.exp_record,
+    alias($.literal, $.exp_literal),
+    $.exp_name,
+  ),
+
+  /**
+   * Function application.
+   */
+  exp_apply: $ => seq($._aexp, repeat1($._aexp)),
+
+  /**
+   * The point of this `choice` is to get a node for function application only if there is more than one expression
+   * present.
+   */
+  _fexp: $ => choice(
+    $._aexp,
+    $.exp_apply,
+  ),
+
+  _lexp: $ => choice(
+    $.exp_let,
+    $.exp_cond,
+    $.exp_cond_guard,
+    $.exp_case,
+    $.exp_neg,
+    $._fexp,
+    $.exp_lambda,
+  ),
+
+  /**
+   * This is left-associative, although in reality this would depend on the fixity declaration for the operator.
+   * The default is left, even though the reerence specifies it the other way around.
+   * In any case, this seems to be more stable.
+   */
+  exp_infix: $ => seq($._exp_infix, $._qop, $._lexp),
+
+  _exp_infix: $ => choice(
+    $.exp_infix,
+    $._lexp,
+  ),
+
+  /**
+   * `prec.right` because:
+   *
+   * let x = 1 in x :: Int
+   *
+   * here the type annotation binds to `x`, not the entire expression
+   */
+  _exp: $ => prec.right(seq($._exp_infix, optional($._type_annotation))),
+}

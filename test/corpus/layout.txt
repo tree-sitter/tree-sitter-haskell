@@ -1,0 +1,645 @@
+==================================
+layout: where on same level as case alt with nothing following
+==================================
+
+a =
+  case b of
+  c -> d
+  where e = f
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+
+==================================
+layout: error: where on same level as case alt with following alt
+==================================
+
+a = case a of
+  a -> a
+  where
+    a = a
+  a -> a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+ (ERROR (arrow)))
+
+==================================
+layout: where on deeper level as case alt with following alt
+==================================
+
+a = case b of
+  c -> d
+    where
+      e = f
+  g -> h
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_case
+    (exp_name (varid))
+    (alts
+     (alt (pat_name (varid)) (arrow) (exp_name (varid))
+      (where) (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
+     (alt (pat_name (varid)) (arrow) (exp_name (varid))))))))
+
+==================================
+layout: where with subsequent top decl
+==================================
+
+a =
+  a
+  where a = a
+a = a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+
+==================================
+layout: indented empty where with subsequent top decl
+==================================
+
+a =
+  a
+   where
+a = a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+
+=========================================
+layout: where after case alt in do, then immediate top level where indented further right
+=========================================
+
+x = do a <- b
+       case c of
+         _ -> d
+          where e = f
+              where g = h
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt
+     (bind_pattern
+      (pat_name (varid))
+      (larrow)
+      (exp_name (varid))))
+    (stmt
+     (exp_case
+      (exp_name (varid))
+      (alts
+       (alt
+        (pat_wildcard)
+        (arrow)
+        (exp_name (varid))
+        (where)
+        (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))))
+   (where)
+    (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+
+=========================================
+layout: where after case alt in do, then immediate toplevel where at minimum indent
+=========================================
+
+a = do
+  case a of
+    a -> a
+         where a = a
+  where a = a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt
+     (exp_case
+      (exp_name (varid))
+      (alts
+       (alt
+        (pat_name (varid))
+        (arrow)
+        (exp_name (varid))
+        (where)
+        (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+
+=========================================
+layout: where after case alt inline, then immediate toplevel where at minimum indent
+=========================================
+
+f = case a of
+  a -> a where a = a
+  where a = a
+---
+
+(module
+ (decl_fun
+  (funvar
+   (varid))
+  (funrhs
+   (equals)
+   (exp_case
+    (exp_name (varid))
+    (alts
+     (alt (pat_name (varid)) (arrow) (exp_name (varid))
+      (where)
+      (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+   (where)
+    (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+
+==================================
+layout: do nested
+==================================
+
+x = do a
+       b
+       do
+         c
+         d
+         do e
+            f
+         g
+       h
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt (exp_name (varid)))
+    (stmt (exp_name (varid)))
+    (stmt
+     (exp_do
+      (stmt (exp_name (varid)))
+      (stmt (exp_name (varid)))
+      (stmt
+       (exp_do
+        (stmt (exp_name (varid)))
+        (stmt (exp_name (varid)))))
+      (stmt (exp_name (varid)))))
+    (stmt (exp_name (varid)))))))
+
+==================================
+layout: do and indented where
+==================================
+
+a = do
+  b
+    where c = d
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do (stmt (exp_name (varid))))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+
+==================================
+layout: do and empty line
+==================================
+
+a = do
+  a <- a
+
+  a <- a
+  a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+    (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+    (stmt (exp_name (varid)))))))
+
+==================================
+layout: recursive do with rec keyword
+==================================
+
+f = mdo
+  a <- pure 5
+  rec
+    b <- pure c
+    c <- pure b
+  pure c
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_apply (exp_name (varid)) (exp_literal (integer)))))
+    (stmt
+     (rec
+      (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_apply (exp_name (varid)) (exp_name (varid)))))
+      (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_apply (exp_name (varid)) (exp_name (varid)))))))
+    (stmt (exp_apply (exp_name (varid)) (exp_name (varid))))))))
+
+==================================
+layout: in after let on same indent
+==================================
+
+a = let a = a
+        in a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_let
+    (let
+     (decls
+      (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
+    (exp_in (exp_name (varid)))))))
+
+==================================
+layout: identifier named "whe" in place of valid "where"
+==================================
+
+a =
+  case b of
+  whe -> d
+  where
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_case
+    (exp_name (varid))
+    (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))
+   (where))))
+
+==================================
+layout: identifier "i" should not prematurely fail the scanner due to "in" parser
+==================================
+
+a (i:a) = a
+
+---
+
+(module
+ (decl_fun
+  (funvar
+   (varid)
+   (pat_parens
+    (pat_infix
+     (pat_name (varid))
+     (consym)
+     (pat_name (varid)))))
+  (funrhs
+   (equals)
+   (exp_name (varid)))))
+
+=========================================
+layout: empty file
+=========================================
+
+
+---
+
+(module (empty_file))
+
+=========================================
+layout: indented let/in
+=========================================
+
+a = let
+           a = let
+            a = a
+            in a
+             in do
+         a <- a
+         a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_let
+    (let
+     (decls
+      (decl_fun
+       (funvar (varid))
+       (funrhs
+        (equals)
+        (exp_let
+         (let
+          (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
+         (exp_in (exp_name (varid))))))))
+    (exp_in (exp_do (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid)))) (stmt (exp_name (varid)))))))))
+
+=========================================
+layout: where after stmt, on deeper or same indent
+=========================================
+
+a = do
+  b
+      where d = e
+
+a = do
+  b
+  where d = e
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do (stmt (exp_name (varid))))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do (stmt (exp_name (varid))))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+
+=========================================
+layout: empty where, then indented decls after inline where
+=========================================
+
+c = d where
+e = f where
+  g = h
+i = j
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_name (varid)) (where)))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_name (varid)))))
+
+=========================================
+layout: parenthesized case inline
+=========================================
+
+a =
+  (\case a -> b) . c
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid))))))
+    (qvarop (varsym))
+    (exp_name (varid))))))
+
+=========================================
+layout: parenthesized case newline
+=========================================
+
+a =
+  (\case a -> b
+                ) . c
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid))))))
+    (qvarop (varsym))
+    (exp_name (varid))))))
+
+=================================================
+layout: comment between where and decl
+=================================================
+
+a = b where
+  {- comment -} c = d
+
+a = b where
+  -- comment
+  c = d
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)
+   (comment)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)
+   (comment)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+
+=================================================
+layout: comment in empty where on next line indented
+=================================================
+
+a = b where
+    {-# pragma #-}
+a = a where
+  {- comment
+-}
+
+a = a where
+  --
+a = b
+  where
+    {- comment -}
+c = d
+
+---
+
+(module
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)) (where)))
+ (pragma)
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)) (where)))
+ (comment)
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)) (where)))
+ (comment)
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)) (where)))
+ (comment)
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+
+=================================================
+layout: normal module
+=================================================
+
+module A where
+a = a
+
+---
+
+(module
+ (modid (conid))
+ (where)
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+
+=================================================
+layout: indented module keyword, decls further left
+=================================================
+
+    module A where
+  a = a
+
+---
+
+(module
+ (modid (conid))
+ (where)
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+
+=================================================
+layout: end two layouts at the same position
+=================================================
+
+a = case a of
+  a -> do a
+a :: a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_do (stmt (exp_name (varid)))))))))
+ (decl_sig (varid) (annotation) (type_name (tyvar))))
+
+=================================================
+layout: case in a list terminated by bracket
+=================================================
+
+a = [case a of a -> a]
+a = [case a of a -> a
+      ]
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_list (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid))))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_list (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))))))
+
+=================================================
+layout: case in a list terminated by comma
+=================================================
+
+a = [case a of a -> a, a]
+
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_list
+    (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))
+    (comma)
+    (exp_name (varid))))))

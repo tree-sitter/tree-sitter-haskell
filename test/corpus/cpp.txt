@@ -1,0 +1,68 @@
+=========================================
+cpp: restore layout ///// ERROR /////
+=========================================
+
+a = do
+  do
+    do
+      a <- a
+#ifndef Aaaa
+    a <- a
+    a
+  a
+#elif Aaa
+    a <- a
+#ifdef A
+    a <- a
+#endif
+    a
+  a
+#else
+    a <- a
+    a
+  a
+#endif
+    a <- a
+    a
+  a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt
+     (exp_do
+      (stmt (exp_do (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid)))) (cpp)))
+      (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+      (stmt (exp_name (varid)))))
+    (stmt (exp_name (varid)))
+    (cpp))))
+ (top_splice (exp_apply (exp_name (varid)) (ERROR (larrow)) (exp_name (varid))))
+ (cpp)
+ (top_splice (exp_apply (exp_name (varid)) (ERROR (larrow)) (exp_name (varid))))
+ (cpp)
+ (top_splice (exp_apply (exp_name (varid)) (exp_name (varid)) (cpp) (exp_name (varid))))
+ (ERROR (larrow))
+ (top_splice (exp_apply (exp_name (varid)) (exp_name (varid)) (exp_name (varid)) (cpp) (exp_name (varid))))
+ (ERROR (larrow))
+ (top_splice (exp_apply (exp_name (varid)) (exp_name (varid)) (exp_name (varid)))))
+
+=========================================
+cpp: multiline
+=========================================
+
+#if a \
+a \
+a
+
+a = a
+
+#endif
+
+---
+
+(module (cpp) (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))) (cpp))

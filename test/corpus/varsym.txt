@@ -1,0 +1,218 @@
+=================================================
+varsym: error: |
+=================================================
+
+f = a | a
+
+---
+
+(module (decl_fun (funvar (varid)) (funrhs (equals) (ERROR (exp_name (varid))) (exp_name (varid)))))
+
+=================================================
+varsym: error: lambda
+=================================================
+
+f = a \ a
+f = a \\ a
+
+---
+
+(module
+  (decl_fun
+   (funvar (varid))
+    (funrhs
+     (equals)
+     (exp_apply (exp_name (varid)) (ERROR (lambda)) (exp_name (varid)))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+)
+
+=================================================
+varsym: error: ..
+=================================================
+
+f = a .. a
+f = a ... a
+f = a . a
+
+---
+
+(module
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid)))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+)
+
+=================================================
+varsym: error: arrow
+=================================================
+
+f = a -> a
+f = a |> a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_apply (exp_name (varid)) (ERROR (arrow)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))
+
+=================================================
+varsym: error: carrow
+=================================================
+
+f = a => a
+f = a =>> a
+
+---
+
+(module
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR (carrow)) (exp_name (varid)))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+)
+
+=================================================
+varsym: error: larrow
+=================================================
+
+f = a < a
+f = a <- a
+f = a <-- a
+
+---
+
+(module
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR (larrow)) (exp_name (varid)))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+)
+
+=================================================
+varsym: error: @
+=================================================
+
+f = a @ a
+f = a @@ a
+
+---
+
+(module
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (exp_tyapp (tyapp) (type_name (tyvar))))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+)
+
+=================================================
+varsym: error: ~
+=================================================
+
+f = a ~ a
+f = a ~~ a
+
+---
+
+(module
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid)))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+)
+
+=================================================
+varsym: error: equals
+=================================================
+
+f = a = a
+f = a == a
+
+---
+
+(module
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid)))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+)
+
+=================================================
+varsym: error: leading :
+=================================================
+
+f = a :+ a
+f = a +: a
+
+---
+
+(module
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (consym) (exp_name (varid)))))
+  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+)
+
+=================================================
+varsym: dollar
+=================================================
+
+f = a $ a
+
+---
+
+(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))
+
+=================================================
+varsym: two-symbol dollar operator
+=================================================
+
+a = a $! a
+
+---
+
+(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))
+
+=================================================
+varsym: comment with more than two dashes
+=================================================
+
+a --- a
+a ----- a
+
+---
+
+(module (top_splice (exp_name (varid))) (comment) (top_splice (exp_name (varid))) (comment))
+
+=================================================
+varsym: operator with large number of dashes
+=================================================
+
+a = a ------> a ----- %
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+ (comment))
+
+=================================================
+varsym: implicit parameter
+=================================================
+
+a = ?a
+(?) = a
+a = a ? a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (implicit_parid)))
+ (decl_fun
+  (funvar (varsym))
+  (funrhs (equals) (exp_name (varid))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))

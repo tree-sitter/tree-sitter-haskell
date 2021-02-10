@@ -1,0 +1,218 @@
+=================================================
+family: closed, nullary
+=================================================
+
+type family A where
+  A = A
+
+---
+
+(module
+ (decl_tyfam
+  (tyfam_head (tyconid (conid)))
+  (where)
+  (tyfam_eq
+   (tyfam_pat (tyconid (conid)))
+   (equals)
+   (type_name (tyconid (conid))))))
+
+=================================================
+family: closed, tyvars
+=================================================
+
+type family A a b c where
+  A a b c = b c
+
+---
+
+(module
+ (decl_tyfam
+  (tyfam_head name: (tyconid (conid)) (tyvar) (tyvar) (tyvar))
+  (where)
+  (tyfam_eq
+   (tyfam_pat name: (tyconid (conid)) (type_name (tyvar)) (type_name (tyvar)) (type_name (tyvar)))
+   (equals)
+   (type_apply (type_name (tyvar)) (type_name (tyvar))))))
+
+=================================================
+family: closed, pattern matching
+=================================================
+
+type family A a b c where
+  A (Maybe a) [c] = a (Maybe c)
+
+---
+
+(module
+ (decl_tyfam
+  (tyfam_head (tyconid (conid)) (tyvar) (tyvar) (tyvar))
+  (where)
+  (tyfam_eq
+   (tyfam_pat
+    (tyconid (conid))
+    (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))
+    (list_type (type_name (tyvar))))
+   (equals)
+   (type_apply (type_name (tyvar)) (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))))))
+
+=================================================
+family: closed, signature
+=================================================
+
+type family A a :: (k -> *) -> 'Just k where
+  A a = a
+
+---
+
+(module
+ (decl_tyfam
+  (tyfam_head (tyconid (conid)) (tyvar))
+  (tyfam_sig
+   (annotation)
+   (fun
+    (type_parens (fun (type_name (tyvar)) (arrow) (star)))
+    (arrow)
+    (type_apply (type_name (promoted (tyconid (conid)))) (type_name (tyvar)))))
+(where)
+  (tyfam_eq
+   (tyfam_pat (tyconid (conid)) (type_name (tyvar)))
+   (equals)
+   (type_name (tyvar)))))
+
+=================================================
+family: closed, tyvar kind
+=================================================
+
+type family A (a :: ([k] -> *) -> k) where
+  A a = a
+
+---
+
+(module
+ (decl_tyfam
+  (tyfam_head
+   (tyconid
+    (conid))
+   (annotated_tyvar
+    (tyvar)
+    (annotation)
+    (fun
+     (type_parens (fun (list_type (type_name (tyvar))) (arrow) (star)))
+     (arrow)
+     (type_name (tyvar)))))
+  (where)
+  (tyfam_eq (tyfam_pat (tyconid (conid)) (type_name (tyvar))) (equals) (type_name (tyvar)))))
+
+=================================================
+family: open
+=================================================
+
+type family A (a :: a) :: *
+type instance A [A] = A
+type instance A (A A) = A
+
+---
+
+(module
+ (decl_tyfam
+  (tyfam_head
+   (tyconid (conid))
+   (annotated_tyvar (tyvar) (annotation) (type_name (tyvar))))
+  (tyfam_sig
+   (annotation)
+   (star)))
+ (decl_tyinst
+  (type_name (tyconid (conid)))
+  (list_type (type_name (tyconid (conid))))
+  (equals)
+  (type_name (tyconid (conid))))
+ (decl_tyinst
+  (type_name (tyconid (conid)))
+  (type_parens
+   (type_apply
+    (type_name (tyconid (conid)))
+    (type_name (tyconid (conid)))))
+  (equals)
+  (type_name (tyconid (conid)))))
+
+=================================================
+family: data family
+=================================================
+
+data family A a (a :: [a]) :: Type -> *
+
+---
+
+(module
+ (decl_datafam
+  (tyconid (conid))
+  (tyvar)
+  (annotated_tyvar (tyvar) (annotation) (list_type (type_name (tyvar))))
+  (annotation)
+  (fun (type_name (tyconid (conid))) (arrow) (star))))
+
+=================================================
+family: data instance adt
+=================================================
+
+data instance ∀ a . A a A =
+  A a A a
+  |
+  A { a :: A }
+
+---
+
+(module
+ (decl_datainst
+  (forall (tyvar) (forall_dot))
+  (type_apply
+   (type_name (tyconid (conid)))
+   (type_name (tyvar))
+   (type_name (tyconid (conid))))
+  (equals)
+  (constrs
+   (constr (constr_id (conid)) (type_name (tyvar)) (type_name (tyconid (conid))) (type_name (tyvar)))
+   (bar)
+   (constr_record
+    (constr_id (conid))
+    (record_fields (field (field_id (varid)) (annotation) (type_name (tyconid (conid)))))))))
+
+=================================================
+family: data instance gadt
+=================================================
+
+data instance A a where
+  A :: A -> A a
+  deriving (A, A)
+
+---
+
+(module
+ (decl_datainst
+  (type_apply
+   (type_name (tyconid (conid)))
+   (type_name (tyvar)))
+  (where)
+  (gadt_constr
+   (conid)
+   (annotation)
+   (fun (type_name (tyconid (conid))) (arrow) (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))
+  (deriving (tyconid (conid)) (comma) (tyconid (conid)))))
+
+=================================================
+family: data instance newtype
+=================================================
+
+newtype instance A a a = A a deriving A
+
+---
+
+(module
+ (decl_datainst
+  (type_apply
+   (type_name (tyconid (conid)))
+   (type_name (tyvar))
+   (type_name (tyvar)))
+  (equals)
+  (constr_newtype (constr_id (conid)) (type_name (tyvar)))
+  (deriving (tyconid (conid)))))

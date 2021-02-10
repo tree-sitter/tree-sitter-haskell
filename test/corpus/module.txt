@@ -1,0 +1,178 @@
+=========================================
+module: starting on first line
+=========================================
+module A where
+
+---
+
+(module module: (modid (conid)) (where))
+
+=========================================
+module: starting on second line
+=========================================
+
+module A where
+
+---
+
+(module (modid (conid)) (where))
+
+=========================================
+module: exports empty
+=========================================
+
+module A () where
+
+---
+
+(module (modid (conid)) (module_exports) (where))
+
+=========================================
+module: exports regular
+=========================================
+
+module A (
+  a',
+  A,
+  A(..),
+  A(a, a),
+) where
+
+---
+
+(module
+ (modid (conid))
+ (module_exports
+  (export (varid))
+  (comma)
+  (export (tyconid (conid)))
+  (comma)
+  (export (tyconid (conid)) (export_names (dotdot)))
+  (comma)
+  (export (tyconid (conid)) (export_names (varid) (comma) (varid))) (comma))
+ (where))
+
+=========================================
+module: exports symbolic
+=========================================
+
+module A (
+  (<>)((:<>), A),
+) where
+
+---
+
+(module
+ (modid (conid))
+ (module_exports (export (tyconsym) (export_names (consym) (comma) (conid))) (comma))
+ (where))
+
+=========================================
+module: exports type
+=========================================
+
+module A (
+  type A,
+  type (<>),
+) where
+
+---
+
+(module
+ (modid (conid))
+ (module_exports
+  (export (namespace) (tyconid (conid)))
+  (comma)
+  (export (namespace) (tyconsym))
+  (comma))
+ (where))
+
+=========================================
+module: exports pattern
+=========================================
+
+module A (
+  pattern A,
+  pattern (<>),
+) where
+
+---
+
+(module
+ (modid (conid))
+ (module_exports
+  (export (namespace) (tyconid (conid)))
+  (comma)
+  (export (namespace) (tyconsym))
+  (comma))
+ (where))
+
+=========================================
+module: exports module
+=========================================
+
+module A (
+  a,
+  module A,
+  module A.A.A,
+) where
+
+---
+
+(module
+ (modid (conid))
+ (module_exports
+  (export (varid))
+  (comma)
+  (export (modid (conid)))
+  (comma)
+  (export (qmodid (modid (conid)) (modid (conid)) (modid (conid))))
+  (comma))
+ (where))
+
+=========================================
+module: exports qualified
+=========================================
+
+module A (
+  A.A.a,
+  type (A.A.++),
+  type (A.A.:++),
+  A.A.A,
+  A.A.A((<=<), (:++), A, a),
+  type A.A((>>), A),
+  pattern A.A((>>), A),
+) where
+
+---
+
+(module
+ (modid (conid))
+ (module_exports
+  (export (qvarid (modid (conid)) (modid (conid)) (varid)))
+  (comma)
+  (export (namespace) (qtyconsym (modid (conid)) (modid (conid)) (tyconsym)))
+  (comma)
+  (export (namespace) (qtyconsym (modid (conid)) (modid (conid)) (tyconsym)))
+  (comma)
+  (export (qtycon (modid (conid)) (modid (conid)) (tyconid (conid))))
+  (comma)
+  (export
+   (qtycon (modid (conid)) (modid (conid)) (tyconid (conid)))
+   (export_names (varsym) (comma) (consym) (comma) (conid) (comma) (varid)))
+  (comma)
+  (export (namespace) (qtycon (modid (conid)) (tyconid (conid))) (export_names (varsym) (comma) (conid)))
+  (comma)
+  (export (namespace) (qtycon (modid (conid)) (tyconid (conid))) (export_names (varsym) (comma) (conid)))
+  (comma))
+ (where))
+
+=========================================
+module: qualified
+=========================================
+
+module A.A'.A where
+
+---
+
+(module (qmodid (modid (conid)) (modid (conid)) (modid (conid))) (where))

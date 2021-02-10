@@ -5,3 +5,8 @@ package-lock.json
 repos
 examples/*
 !examples/.gitkeep
+src/parser.c
+src/binding.cc
+src/grammar.json
+src/node-types.json
+src/tree_sitter/

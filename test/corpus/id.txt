@@ -1,0 +1,52 @@
+=========================================
+id: varid
+=========================================
+
+a = a
+_a0 = a
+_A0 = a
+a0 = a
+a9 = a
+aA = a
+aZ' = a
+
+---
+
+(module
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+
+=========================================
+id: conid
+=========================================
+
+data B = A
+       | A0
+       | A9
+       | Aa
+       | A_
+       | Az'
+
+---
+
+(module
+ (decl_adt
+  (tyconid (conid))
+  (equals)
+  (constrs
+   (constr (constr_id (conid)))
+   (bar)
+   (constr (constr_id (conid)))
+   (bar)
+   (constr (constr_id (conid)))
+   (bar)
+   (constr (constr_id (conid)))
+   (bar)
+   (constr (constr_id (conid)))
+   (bar)
+   (constr (constr_id (conid))))))

@@ -1,0 +1,150 @@
+=========================================
+pattern synonym: unidirectional simple
+=========================================
+
+pattern A a <- a:as
+
+---
+
+(module
+ (decl_pattern
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (larrow)
+  (pat_infix (pat_name (varid)) (consym) (pat_name (varid)))))
+
+=========================================
+pattern synonym: unidirectional strict
+=========================================
+
+pattern A a = A !a
+
+---
+
+(module
+ (decl_pattern
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (pat_apply (pat_name (conid)) (pat_strict (strict) (pat_name (varid))))))
+
+=========================================
+pattern synonym: explicit bidirectional list
+=========================================
+
+pattern HeadC a <- a:as where
+  HeadC a = [a]
+
+---
+
+(module
+ (decl_pattern
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (larrow)
+  (pat_infix (pat_name (varid)) (consym) (pat_name (varid)))
+  (where)
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (funrhs (equals) (exp_list (exp_name (varid))))))
+
+=========================================
+pattern synonym: explicit bidirectional strict
+=========================================
+
+pattern A a <- A !a where
+  A !a = A a
+
+---
+
+(module
+ (decl_pattern
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (larrow)
+  (pat_apply (pat_name (conid)) (pat_strict (strict) (pat_name (varid))))
+  (where)
+  (pat_apply (pat_name (conid)) (pat_strict (strict) (pat_name (varid))))
+  (funrhs (equals) (exp_apply (exp_name (conid)) (exp_name (varid))))))
+
+=========================================
+pattern synonym: explicit bidirectional record
+=========================================
+
+pattern A { a } <- A a where
+  A a = if a >= 0 then a else a
+
+---
+
+(module
+ (decl_pattern
+  (pat_name (conid))
+  (pat_record (fpat (varid)))
+  (larrow)
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (where)
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (funrhs
+   (equals)
+   (exp_cond
+    if: (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_literal (integer)))
+    then: (exp_name (varid))
+    else: (exp_name (varid))))))
+
+=========================================
+pattern synonym: explicit bidirectional guards
+=========================================
+
+pattern A a <- A a where
+  A a
+    | a >= 0    = (A a)
+    | otherwise = (A a)
+
+---
+
+(module
+ (decl_pattern
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (larrow)
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (where)
+  (pat_apply (pat_name (conid)) (pat_name (varid)))
+  (funrhs
+   (gdrhs
+    (guards (guard (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_literal (integer)))))
+    (equals)
+    (exp_parens (exp_apply (exp_name (conid)) (exp_name (varid)))))
+   (gdrhs
+    (guards (guard (exp_name (varid))))
+    (equals)
+    (exp_parens (exp_apply (exp_name (conid)) (exp_name (varid))))))))
+
+=========================================
+pattern synonym: signature
+=========================================
+
+pattern A :: A -> A -> (A, A)
+
+---
+
+(module
+ (decl_pattern
+  (conid)
+  (annotation)
+  (fun
+   (type_name (tyconid (conid)))
+   (arrow)
+   (fun
+    (type_name (tyconid (conid)))
+    (arrow)
+    (tuple_type
+     (type_name (tyconid (conid)))
+     (comma)
+     (type_name (tyconid (conid))))))))
+
+=========================================
+pattern synonym: unidirectional record
+=========================================
+
+pattern A {a, a} = (a, a)
+
+---
+
+(module
+ (decl_pattern
+  (pat_name (conid)) (pat_record (fpat (varid)) (comma) (fpat (varid)))
+  (pat_tuple (pat_name (varid)) (comma) (pat_name (varid)))))

@@ -1,0 +1,70 @@
+=========================================
+pragma: inline
+=========================================
+
+a = a
+{-# inline a #-}
+
+a = a
+{-# inline conlike [1] a #-}
+{-#INLINE [~2] a#-}
+
+---
+
+(module
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (pragma)
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (pragma)
+ (pragma))
+
+
+=========================================
+pragma: without module
+=========================================
+
+{-# LANGUAGE LambdaCase #-}
+{-# language ScopedTypeVariables, DataKinds #-}
+
+---
+
+(module (pragma) (pragma) (empty_file))
+
+=========================================
+pragma: before module
+=========================================
+
+{-# language LambdaCase #-}
+{-# language ScopedTypeVariables, DataKinds #-}
+module A where
+
+---
+
+(module
+  (pragma)
+  (pragma)
+  (modid (conid))
+  (where))
+
+=========================================
+pragma: instance
+=========================================
+
+instance {-# overlappable #-} A where
+
+---
+
+(module (decl_instance (pragma) (instance_head (class_name (tyconid (conid)))) (where)))
+
+=========================================
+pragma: multiline
+=========================================
+
+module A where
+{-# rules
+      "a/a" [2] forall a . a a = a
+  #-}
+
+---
+
+(module (modid (conid)) (where) (pragma))

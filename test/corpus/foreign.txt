@@ -1,0 +1,38 @@
+=========================================
+foreign: safety, calling convention
+=========================================
+
+foreign import ccall safe "safe import" a :: A
+foreign export stdcall unsafe "unsafe import" a :: A
+foreign export cplusplus safe "safe import" a :: A
+foreign import jvm unsafe "unsafe import" a :: A
+foreign import dotnet unsafe "unsafe import" a :: A
+
+---
+
+(module
+ (decl_foreign_import
+  (calling_convention)
+  (safety)
+  (impent (string))
+  (decl_sig (varid) (annotation) (type_name (tyconid (conid)))))
+ (decl_foreign_export
+  (calling_convention)
+  (safety)
+  (expent (string))
+  (decl_sig (varid) (annotation) (type_name (tyconid (conid)))))
+  (decl_foreign_export
+   (calling_convention)
+   (safety)
+   (expent (string))
+   (decl_sig (varid) (annotation) (type_name (tyconid (conid)))))
+  (decl_foreign_import
+   (calling_convention)
+   (safety)
+   (impent (string))
+   (decl_sig (varid) (annotation) (type_name (tyconid (conid)))))
+  (decl_foreign_import
+   (calling_convention)
+   (safety)
+   (impent (string))
+   (decl_sig (varid) (annotation) (type_name (tyconid (conid))))))

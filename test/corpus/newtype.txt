@@ -1,0 +1,94 @@
+=========================================
+newtype: basic
+=========================================
+
+newtype A = A A
+
+---
+
+(module
+ (decl_newtype
+  (tyconid (conid))
+  (equals)
+  (constr_newtype (constr_id (conid)) (type_name (tyconid (conid))))))
+
+=========================================
+newtype: context
+=========================================
+
+newtype A a => A a = A a
+
+---
+
+(module
+ (decl_newtype
+  (context (constraint (class_name (tyconid (conid))) (type_name (tyvar))) (carrow))
+  (tyconid (conid))
+  (tyvar)
+  (equals)
+  (constr_newtype (constr_id (conid)) (type_name (tyvar)))))
+
+=========================================
+newtype: record
+=========================================
+
+newtype A = A { a :: A a }
+
+---
+
+(module
+ (decl_newtype
+  (tyconid (conid))
+  (equals)
+  (constr_newtype
+   (constr_id (conid))
+   (field (field_id (varid)) (annotation) (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))))
+
+=========================================
+newtype: tyvar kind
+=========================================
+
+newtype A a (a :: [* -> *]) a =
+  A a
+
+---
+
+(module
+ (decl_newtype
+  (tyconid (conid))
+  (tyvar)
+  (annotated_tyvar
+   (tyvar)
+   (annotation)
+   (list_type (fun (star) (arrow) (star))))
+  (tyvar)
+  (equals)
+  (constr_newtype (constr_id (conid)) (type_name (tyvar)))))
+
+=========================================
+newtype: deriving
+=========================================
+
+newtype A = A a deriving A
+newtype A a =
+  A { a :: A }
+  deriving (A, A)
+  deriving newtype A
+  deriving A via (A a)
+
+---
+
+(module
+ (decl_newtype
+  (tyconid (conid))
+  (equals)
+  (constr_newtype (constr_id (conid)) (type_name (tyvar)))
+  (deriving (tyconid (conid))))
+ (decl_newtype
+  (tyconid (conid))
+  (tyvar)
+  (equals)
+  (constr_newtype (constr_id (conid)) (field (field_id (varid)) (annotation) (type_name (tyconid (conid)))))
+  (deriving (tyconid (conid)) (comma) (tyconid (conid)))
+  (deriving (tyconid (conid)))
+  (deriving (tyconid (conid)) (via (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))))))

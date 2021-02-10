@@ -1,0 +1,47 @@
+=========================================
+comment: line
+=========================================
+
+--
+-- a
+--
+-- a
+
+---
+
+(module (comment) (comment) (comment) (comment) (empty_file))
+
+=========================================
+comment: multi
+=========================================
+
+{- a
+   a
+   - a
+-}
+f = a
+{-a-}
+
+---
+
+(module (comment) (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))) (comment))
+
+=========================================
+comment: hash inside
+=========================================
+
+{- #comment -}
+
+---
+
+(module (comment) (empty_file))
+
+=========================================
+comment: newline termination
+=========================================
+
+--
+
+---
+
+(module (comment) (empty_file))

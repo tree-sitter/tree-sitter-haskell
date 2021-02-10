@@ -1,0 +1,226 @@
+=========================================
+import: single-segment module plain
+=========================================
+
+module A where
+
+import A
+
+---
+
+(module (modid (conid)) (where) (decl_import (modid (conid))))
+
+=========================================
+import: empty single-segment module
+=========================================
+
+import A ()
+
+---
+
+(module (decl_import (modid (conid)) (import_list)))
+
+=========================================
+import: single-segment module with alias
+=========================================
+
+import A as A
+
+---
+
+(module (decl_import (modid (conid)) (modid (conid))))
+
+=========================================
+import: multi-segment module
+=========================================
+
+import A.A
+
+---
+
+(module (decl_import (qmodid (modid (conid)) (modid (conid)))))
+
+=========================================
+import: var only
+=========================================
+
+import Aaa.A (aa)
+
+---
+
+(module (decl_import (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (varid)))))
+
+=========================================
+import: con only
+=========================================
+
+import Aaa.A (A)
+
+---
+
+(module (decl_import (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (conid)))))
+
+=========================================
+import: con with constructor
+=========================================
+
+import Aaa.A (A(A))
+
+---
+
+(module
+ (decl_import
+  (qmodid (modid (conid)) (modid (conid)))
+  (import_list (import_item (conid) (import_con_names (conid))))))
+
+=========================================
+import: con with var
+=========================================
+
+import Aaa.A (A(aa))
+
+---
+
+(module
+ (decl_import
+  (qmodid (modid (conid)) (modid (conid)))
+  (import_list (import_item (conid) (import_con_names (varid))))))
+
+=========================================
+import: con with symbolic var
+=========================================
+
+import Aaa.A (A((<>)))
+
+---
+
+(module
+ (decl_import
+  (qmodid (modid (conid)) (modid (conid)))
+  (import_list (import_item (conid) (import_con_names (varsym))))))
+
+=========================================
+import: con dotdot
+=========================================
+
+import Aaa.A (A(..))
+
+---
+
+(module
+ (decl_import
+  (qmodid (modid (conid)) (modid (conid)))
+  (import_list (import_item (conid) (import_con_names (dotdot))))))
+
+=========================================
+import: qualified basic
+=========================================
+
+import qualified Aaa.A
+import qualified A ()
+import qualified Aaa.A (a)
+import qualified Aaa.A hiding (A, a)
+
+---
+
+(module
+ (decl_import (qmodid (modid (conid)) (modid (conid))))
+ (decl_import (modid (conid)) (import_list)) (decl_import
+  (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (varid))))
+ (decl_import
+  (qmodid (modid (conid)) (modid (conid)))
+  (import_list (import_item (conid)) (comma) (import_item (varid)))))
+
+=========================================
+import: qualified as
+=========================================
+
+module A where
+
+import qualified Aaa.A as A
+import qualified Aaa.A as A (A(A, a), aa)
+import qualified A as A ()
+import qualified Aaa.A as A
+import qualified Aaa.A as Aaa.A
+import qualified Aaa.A as A hiding (a)
+
+---
+
+(module
+ (modid (conid))
+ (where)
+ (decl_import (qmodid (modid (conid)) (modid (conid))) (modid (conid)))
+ (decl_import
+  (qmodid (modid (conid)) (modid (conid)))
+  (modid (conid))
+  (import_list (import_item (conid) (import_con_names (conid) (comma) (varid))) (comma) (import_item (varid))))
+ (decl_import (modid (conid)) (modid (conid)) (import_list))
+ (decl_import (qmodid (modid (conid)) (modid (conid))) (modid (conid)))
+ (decl_import (qmodid (modid (conid)) (modid (conid))) (qmodid (modid (conid)) (modid (conid))))
+ (decl_import (qmodid (modid (conid)) (modid (conid))) (modid (conid)) (import_list (import_item (varid)))))
+
+=========================================
+import: prim
+=========================================
+
+import Aaa.Aa (Aa#, aa#)
+
+---
+
+(module
+ (decl_import
+  (qmodid (modid (conid)) (modid (conid)))
+  (import_list (import_item (conid)) (comma) (import_item (varid)))))
+
+=========================================
+import: package
+=========================================
+
+import "a" Aaa.Aa
+import "a" qualified Aaa.Aa as Aa (Aa(a))
+
+---
+
+(module
+ (decl_import (import_package) (qmodid (modid (conid)) (modid (conid))))
+ (decl_import
+  (import_package)
+  (qmodid (modid (conid)) (modid (conid)))
+  (modid (conid))
+  (import_list (import_item (conid) (import_con_names (varid))))))
+
+=================================================
+import: consym
+=================================================
+
+import A ((:<|>)((:<|>)))
+
+---
+
+(module (decl_import (modid (conid)) (import_list (import_item (consym) (import_con_names (consym))))))
+
+=================================================
+import: varsym
+=================================================
+
+import A ((<=<))
+
+---
+
+(module (decl_import (modid (conid)) (import_list (import_item (varsym)))))
+
+=================================================
+import: pattern/type
+=================================================
+
+import A (pattern A, type A)
+
+---
+
+(module
+ (decl_import
+  (modid (conid))
+  (import_list
+   (import_item (namespace) (conid))
+   (comma)
+   (import_item (namespace) (conid)))))

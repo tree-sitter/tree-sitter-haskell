@@ -1,0 +1,1140 @@
+===============================
+exp: application
+===============================
+
+a = a a
+a = a a a
+a = a A.a a a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_apply (exp_name (varid)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_apply (exp_name (varid)) (exp_name (varid)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_apply
+    (exp_name (varid))
+    (exp_name (qvarid (modid (conid)) (varid)))
+    (exp_name (varid))
+    (exp_name (varid))))))
+
+===============================
+exp: con application
+===============================
+
+a = A a a
+a = A a A
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_apply (exp_name (conid)) (exp_name (varid)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_apply (exp_name (conid)) (exp_name (varid)) (exp_name (conid))))))
+
+===============================
+exp: unit
+===============================
+
+a = ()
+
+---
+
+(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (con_unit)))))
+
+===============================
+exp: arithmetic sequence
+===============================
+
+a = [a..]
+a = [a,a..]
+a = [a..a]
+a = [a,a..a]
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_arithmetic_sequence (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_arithmetic_sequence (exp_name (varid)) (comma) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_arithmetic_sequence (exp_name (varid)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_arithmetic_sequence (exp_name (varid)) (comma) (exp_name (varid)) (exp_name (varid))))))
+
+===============================
+exp: comprehension
+===============================
+
+a = [a | a <- xs]
+a = [(a, a) | a <- xs, a <- ys]
+a = [ a | xs <- [ [(1,2),(3,4)], [(5,4),(3,2)] ], (3,a) <- xs ]
+a = [(a,a) | a <- [1,2],
+             a <- [1..4] ]
+a = [ [ (a,a) | a <- [1,2] ] | a <- [1..] ]
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_list_comprehension (exp_name (varid)) (bar)
+    (qual (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_list_comprehension
+    (exp_tuple (exp_name (varid)) (comma) (exp_name (varid)))
+    (bar)
+    (qual (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+    (comma)
+    (qual (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid)))))))
+  (decl_fun
+   (funvar (varid))
+   (funrhs
+    (equals)
+    (exp_list_comprehension (exp_name (varid)) (bar)
+     (qual
+      (bind_pattern
+       (pat_name (varid))
+       (larrow)
+       (exp_list
+        (exp_list
+         (exp_tuple (exp_literal (integer)) (comma) (exp_literal (integer)))
+         (comma)
+         (exp_tuple (exp_literal (integer)) (comma) (exp_literal (integer))))
+        (comma)
+        (exp_list
+         (exp_tuple (exp_literal (integer)) (comma) (exp_literal (integer)))
+         (comma)
+         (exp_tuple (exp_literal (integer)) (comma) (exp_literal (integer)))))))
+     (comma)
+     (qual
+      (bind_pattern
+       (pat_tuple (pat_literal (integer)) (comma) (pat_name (varid)))
+       (larrow)
+       (exp_name (varid)))))))
+  (decl_fun
+   (funvar (varid))
+   (funrhs
+    (equals)
+    (exp_list_comprehension
+     (exp_tuple (exp_name (varid)) (comma) (exp_name (varid)))
+     (bar)
+     (qual
+      (bind_pattern
+       (pat_name (varid))
+       (larrow)
+       (exp_list (exp_literal (integer)) (comma) (exp_literal (integer)))))
+     (comma)
+     (qual
+      (bind_pattern
+       (pat_name (varid))
+       (larrow)
+       (exp_arithmetic_sequence (exp_literal (integer)) (exp_literal (integer))))))))
+  (decl_fun
+   (funvar (varid))
+   (funrhs
+    (equals)
+    (exp_list_comprehension
+     (exp_list_comprehension
+      (exp_tuple (exp_name (varid)) (comma) (exp_name (varid)))
+      (bar)
+      (qual
+       (bind_pattern
+        (pat_name (varid))
+        (larrow)
+        (exp_list (exp_literal (integer)) (comma) (exp_literal (integer))))))
+     (bar)
+     (qual
+      (bind_pattern
+       (pat_name (varid))
+       (larrow)
+       (exp_arithmetic_sequence (exp_literal (integer)))))))))
+
+===============================
+exp: operator section right
+===============================
+
+a = (: a)
+a = (:< a)
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_section_right (consym) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_section_right (consym) (exp_name (varid))))))
+
+===============================
+exp: operator section left
+===============================
+
+a = (a :)
+a = (a :|)
+a = (a $)
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_section_left (exp_name (varid)) (consym))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_section_left (exp_name (varid)) (consym))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_section_left (exp_name (varid)) (qvarop (varsym))))))
+
+===============================
+exp: infix varsym
+===============================
+
+a = A <$>
+  a .: "a" <*>
+  a
+a = do
+  a <- a =<< a
+  a <- a >>= a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_infix
+     (exp_infix (exp_name (conid)) (qvarop (varsym)) (exp_name (varid)))
+     (qvarop (varsym))
+     (exp_literal (string)))
+    (qvarop (varsym)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt
+     (bind_pattern
+      (pat_name (varid))
+      (larrow)
+      (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+    (stmt
+     (bind_pattern
+      (pat_name (varid))
+      (larrow)
+      (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))))))
+
+===============================
+exp: infix con/var
+===============================
+
+a = a `a` a
+a = a `A.a` a
+a = a `A` a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix (exp_name (varid)) (qvarop (varid)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix (exp_name (varid)) (qvarop (qvarid (modid (conid)) (varid))) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix (exp_name (varid)) (conid) (exp_name (varid))))))
+
+===============================
+exp: error: infix quoted consym
+===============================
+
+a = a ':++ a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_apply (exp_name (varid)) (exp_th_quoted_name (ERROR (UNEXPECTED '+')) (varid))))))
+
+===============================
+exp: lambda simple
+===============================
+
+a = \ a -> a
+a = \ (A a) -> a
+
+---
+
+(module
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_lambda (lambda) (pat_name (varid)) (arrow) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_lambda (lambda) (pat_parens (pat_apply (pat_name (conid)) (pat_name (varid)))) (arrow) (exp_name (varid))))))
+
+=================================================
+exp: double lambda
+=================================================
+
+a = \ a -> a >>= \ a -> a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_lambda
+    (lambda)
+    (pat_name (varid))
+    (arrow)
+    (exp_infix
+     (exp_name (varid))
+     (qvarop (varsym))
+     (exp_lambda (lambda) (pat_name (varid)) (arrow) (exp_name (varid))))))))
+
+===============================
+exp: lambda and infix
+===============================
+
+a = \ a -> a : a : a
+a = \ a a a -> a <$> a <*> a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_lambda
+    (lambda)
+    (pat_name (varid))
+    (arrow)
+    (exp_infix
+     (exp_infix (exp_name (varid)) (consym) (exp_name (varid)))
+    (consym)
+    (exp_name (varid))))))
+ (decl_fun
+  (funvar
+   (varid))
+  (funrhs
+   (equals)
+   (exp_lambda
+    (lambda)
+    (pat_name (varid))
+    (pat_name (varid))
+    (pat_name (varid))
+    (arrow)
+    (exp_infix
+     (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))
+     (qvarop (varsym))
+     (exp_name (varid)))))))
+
+=================================================
+exp: parenthesized infix
+=================================================
+
+a = (a <$> a)
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_parens (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))))
+
+===============================
+exp: minus
+===============================
+
+a = (-)
+a = a - a
+a = (-a)
+a = -a
+a = -(a)
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_name (varsym))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_section_right (qvarop (varsym)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_neg (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_neg (exp_parens (exp_name (varid)))))))
+
+===============================
+exp: tuple section
+===============================
+
+a = (a,)
+a = (a,,)
+a = (,a,)
+a = (,,a)
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_tuple (exp_name (varid)) (comma))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_tuple (exp_name (varid)) (comma) (comma))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_tuple (comma) (exp_name (varid)) (comma))))
+ (decl_fun
+  (funvar
+   (varid))
+  (funrhs
+   (equals)
+   (exp_tuple (comma) (comma) (exp_name (varid))))))
+
+=================================================
+exp: conditional
+=================================================
+
+a = if a then a else a
+a = if a; then a; else a
+a = if (if a then a else a) then a else a
+a = if if a then a else a then a else a
+
+---
+
+(module
+ (decl_fun
+  (funvar name: (varid))
+  (funrhs
+   (equals)
+   (exp_cond if: (exp_name (varid)) then: (exp_name (varid)) else: (exp_name (varid)))))
+ (decl_fun
+  (funvar name: (varid))
+  (funrhs
+   (equals)
+   (exp_cond if: (exp_name (varid)) then: (exp_name (varid)) else: (exp_name (varid)))))
+ (decl_fun
+  (funvar name: (varid))
+  (funrhs
+   (equals)
+   (exp_cond
+    if: (exp_parens (exp_cond if: (exp_name (varid)) then: (exp_name (varid)) else: (exp_name (varid))))
+    then: (exp_name (varid))
+    else: (exp_name (varid)))))
+ (decl_fun
+  (funvar name: (varid))
+  (funrhs
+   (equals)
+   (exp_cond
+    if: (exp_cond if: (exp_name (varid)) then: (exp_name (varid)) else: (exp_name (varid)))
+    then: (exp_name (varid))
+    else: (exp_name (varid))))))
+
+=================================================
+exp: implicit
+=================================================
+
+a = aa (a ?cmp)
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_apply (exp_name (varid)) (exp_parens (exp_apply (exp_name (varid)) (implicit_parid)))))))
+
+=================================================
+exp: where
+=================================================
+
+a = a where a = a
+a =
+  a
+  where
+    a = a
+    a = a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)
+   (decls
+    (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+    (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+
+=================================================
+exp: let
+=================================================
+
+a = let a = a
+        a = a
+      in a
+
+a = let a = a; a = a in a
+
+a = let a = a
+        a :: A
+        a = a in a
+
+a = let { a :: A;
+          a = a;
+          a :: A;
+          a = a; } in a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_let
+    (let
+     (decls
+      (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+      (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
+    (exp_in (exp_name (varid))))))
+  (decl_fun
+   (funvar (varid))
+   (funrhs
+    (equals)
+    (exp_let
+     (let
+      (decls
+       (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+       (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
+     (exp_in (exp_name (varid))))))
+  (decl_fun
+   (funvar (varid))
+   (funrhs
+    (equals)
+    (exp_let
+     (let
+      (decls
+       (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+       (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
+       (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
+     (exp_in (exp_name (varid))))))
+  (decl_fun
+   (funvar (varid))
+   (funrhs
+    (equals)
+    (exp_let
+     (let
+      (decls
+       (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
+       (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+       (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
+       (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
+     (exp_in (exp_name (varid)))))))
+
+=================================================
+exp: case
+=================================================
+
+a = case a of
+  A a -> a
+  A -> a
+  where a = 1
+        a = 2
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_case
+    (exp_name (varid))
+    (alts
+     (alt (pat_apply (pat_name (conid)) (pat_name (varid))) (arrow) (exp_name (varid)))
+     (alt (pat_name (conid)) (arrow) (exp_name (varid)))))
+(where)
+  (decls
+   (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (integer))))
+   (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (integer))))))))
+
+
+=================================================
+exp: lambda case simple
+=================================================
+
+a = \case
+  A a -> a
+
+a = a >>= \case
+  A (A _ a) -> do
+    a <- a
+    a
+  _ -> a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_lambda_case
+    (lambda)
+    (alts (alt (pat_apply (pat_name (conid)) (pat_name (varid))) (arrow) (exp_name (varid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (varid))
+    (qvarop (varsym))
+    (exp_lambda_case
+     (lambda)
+     (alts
+      (alt
+       (pat_apply (pat_name (conid)) (pat_parens (pat_apply (pat_name (conid)) (pat_wildcard) (pat_name (varid)))))
+       (arrow)
+       (exp_do
+        (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+        (stmt (exp_name (varid)))))
+      (alt (pat_wildcard) (arrow) (exp_name (varid)))))))))
+
+=================================================
+exp: lambda case and exp_infix
+=================================================
+
+a = \case a -> a : a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_lambda_case
+    (lambda)
+    (alts
+     (alt
+      (pat_name (varid))
+      (arrow)
+      (exp_infix (exp_name (varid)) (consym) (exp_name (varid)))))))))
+
+=================================================
+exp: do and where
+=================================================
+
+a = do
+  a
+  where
+    a = a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do (stmt (exp_name (varid))))
+   (where)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+
+=================================================
+exp: do and let
+=================================================
+
+a a = do
+  let z = a
+  a <- a
+  let z = a
+  a <- a
+  pure a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid) (pat_name (varid)))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt (let (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+    (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+    (stmt (let (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+    (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+    (stmt (exp_apply (exp_name (varid)) (exp_name (varid))))))))
+
+=================================================
+exp: do, let, where
+=================================================
+
+a a = do
+  a <- a
+  let z = a
+  a
+  where a = pure a
+        a = 1
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid) (pat_name (varid)))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+    (stmt (let (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+    (stmt (exp_name (varid))))
+   (where)
+   (decls
+   (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (exp_name (varid)))))
+   (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (integer))))))))
+
+=================================================
+exp: do statement with pattern lhs
+=================================================
+
+a = do
+  ((), a) <- a
+  a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do
+    (stmt (bind_pattern (pat_tuple (pat_literal (con_unit)) (comma) (pat_name (varid))) (larrow) (exp_name (varid))))
+    (stmt (exp_name (varid)))))))
+
+=================================================
+exp: i at eol (scanner tests for `in`)
+=================================================
+
+a = a i
+
+---
+
+(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (exp_name (varid))))))
+
+=================================================
+exp: record update
+=================================================
+
+a = a { a = a, a = a ++ a }
+a = A { a = a } {a = a}
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_record
+    (exp_name (varid))
+    (fbind (varid) (equals) (exp_name (varid)))
+    (comma)
+    (fbind (varid) (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))))
+  (decl_fun
+   (funvar (varid))
+   (funrhs
+    (equals)
+    (exp_record
+     (exp_record (exp_name (conid)) (fbind (varid) (equals) (exp_name (varid))))
+     (fbind (varid) (equals) (exp_name (varid)))))))
+
+=================================================
+exp: type application
+=================================================
+
+a = a @A
+a = a @a a
+a = a @A.A a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_apply (exp_name (varid)) (exp_tyapp (tyapp) (type_name (tyconid (conid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_apply (exp_name (varid)) (exp_tyapp (tyapp) (type_name (tyvar))) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_apply
+    (exp_name (varid))
+    (exp_tyapp
+     (tyapp)
+     (type_name (qtycon (modid (conid)) (tyconid (conid)))))
+    (exp_name (varid))))))
+
+=================================================
+exp: composition and qualified names
+=================================================
+
+a = A.A.a . aa
+a = A.A.a . A.aa
+a = A.A.a. aa
+a = A.A.a. A.aa
+a = A.A.a .aa
+a = A.A.a .A.aa
+a = A.A.a.aa
+a = A.A.a.A.aa
+
+a = A.A.A . aa
+a = A.A.A . A.aa
+a = A.A.A. aa
+a = A.A.A. A.aa
+a = A.A.A .aa
+a = A.A.A .A.aa
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (qvarop (varsym))
+    (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (qvarop (varsym))
+    (exp_name (qvarid (modid (conid)) (varid))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (qvarop (varsym))
+    (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (qvarop (varsym))
+    (exp_name (qvarid (modid (conid)) (varid))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (qvarop (varsym))
+    (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (qvarop (varsym))
+    (exp_name (qvarid (modid (conid)) (varid))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (qvarop (varsym))
+    (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (qvarop (varsym))
+    (exp_name (qvarid (modid (conid)) (varid))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (qvarop (varsym))
+    (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (qvarop (varsym))
+    (exp_name (qvarid (modid (conid)) (varid))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (qvarop (varsym))
+    (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (qvarop (varsym))
+    (exp_name (qvarid (modid (conid)) (varid))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (qvarop (varsym))
+    (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (qvarop (varsym))
+    (exp_name (qvarid (modid (conid)) (varid)))))))
+
+=================================================
+exp: repeated type application
+=================================================
+
+a = a @A @A @A @A
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_apply
+    (exp_name (varid))
+    (exp_tyapp (tyapp) (type_name (tyconid (conid))))
+    (exp_tyapp (tyapp) (type_name (tyconid (conid))))
+    (exp_tyapp (tyapp) (type_name (tyconid (conid))))
+    (exp_tyapp (tyapp) (type_name (tyconid (conid))))))))
+
+=================================================
+exp: block argument: lambda case
+=================================================
+
+a = a \case a -> a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_apply
+    (exp_name (varid))
+    (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))))))
+
+=================================================
+exp: block argument: do
+=================================================
+
+a = a do a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_apply (exp_name (varid)) (exp_do (stmt (exp_name (varid))))))))
+
+=================================================
+exp: empty lambda case
+=================================================
+
+a = \case
+
+a = a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_lambda_case (lambda))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+
+=================================================
+exp: if guards
+=================================================
+
+a :: Int
+a = if | a -> a
+       | a -> a
+
+---
+
+(module
+ (decl_sig
+  (varid)
+  (annotation)
+  (type_name (tyconid (conid))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_cond_guard
+    (gdpat (guards (guard (exp_name (varid)))) (arrow) (exp_name (varid)))
+    (gdpat (guards (guard (exp_name (varid)))) (arrow) (exp_name (varid)))))))
+
+=================================================
+exp: let with sig on rhs
+=================================================
+
+a = let a = a in a :: A
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_let
+    (let (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
+    (exp_in (exp_name (varid)) (annotation) (type_name (tyconid (conid))))))))
+
+=================================================
+exp: list con
+=================================================
+
+a = []
+
+---
+
+(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (con_list)))))
+
+=================================================
+exp: tuple con
+=================================================
+
+a = (,,,)
+
+---
+
+(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (con_tuple (comma) (comma) (comma))))))
+
+=================================================
+exp: qualified symop
+=================================================
+a = a A.!? a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix
+    (exp_name (varid))
+    (qvarop (qvarsym (modid (conid)) (varsym)))
+    (exp_name (varid))))))
+
+=================================================
+exp: test
+=================================================
