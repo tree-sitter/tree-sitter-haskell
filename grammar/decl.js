@@ -18,7 +18,13 @@ module.exports = {
     $._pat,
   ),
 
-  funvar: $ => seq(field('name', $._var), repeat($._apat)),
+  /**
+    * The `implicit_parid` here is for:
+    * g = let ?par = Impy 5 in f
+    */
+  _fun_name: $ => field('name', choice($._var, $.implicit_parid)),
+
+  funvar: $ => seq($._fun_name, repeat($._apat)),
 
   gdrhs: $ => seq($.guards, $.equals, $._exp),
 
@@ -36,15 +42,8 @@ module.exports = {
     sep1($.comma, $._op),
   ),
 
-  /**
-    * The `implicit_parid` here is for:
-    * f :: (?par :: Impy) => Int
-    *
-    * g :: Int
-    * g = let ?par = Impy 5 in f
-    */
   decl_sig: $ => seq(
-    sep1($.comma, field('name', choice($._var, $.implicit_parid))),
+    sep1($.comma, field('name', $._var)),
     $._type_annotation,
   ),
 

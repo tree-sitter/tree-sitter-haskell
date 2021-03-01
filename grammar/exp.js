@@ -168,6 +168,7 @@ module.exports = {
   exp_name: $ => choice(
     $._qvar,
     $._qcon,
+    $.implicit_parid,
   ),
 
   _aexp: $ => choice(
@@ -180,7 +181,6 @@ module.exports = {
     $.exp_section_right,
     $.exp_qq,
     $.exp_th_quoted_name,
-    $.implicit_parid,
     $.exp_tyapp,
     $.exp_lambda_case,
     $.exp_do,

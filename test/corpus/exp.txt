@@ -1147,5 +1147,23 @@ a = a A.!? a
     (exp_name (varid))))))
 
 =================================================
+exp: implicit parameter in do-let
+=================================================
+
+a = do
+  let ?a = a
+  a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_do (stmt (let (decls (decl_fun (funvar (implicit_parid)) (funrhs (equals) (exp_name (varid)))))))
+    (stmt (exp_name (varid)))))))
+
+=================================================
 exp: test
 =================================================
