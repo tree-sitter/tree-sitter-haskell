@@ -81,7 +81,10 @@ module.exports = {
     seq(quote + quote, choice($._qtycon)),
   ),
 
-  fbind: $ => seq($._qvar, seq($.equals, $._exp)),
+  fbind: $ => choice(
+    $.dotdot,
+    seq($._qvar, seq($.equals, $._exp))
+  ),
 
   exp_tyapp: $ => seq($.tyapp, $._atype),
 

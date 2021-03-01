@@ -797,6 +797,17 @@ a = a i
 
 (module (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (exp_name (varid))))))
 
+
+=================================================
+exp: record construction with wildcard
+=================================================
+
+a = A { .. }
+
+---
+
+(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_record (exp_name (conid)) (fbind (dotdot))))))
+
 =================================================
 exp: record update
 =================================================
