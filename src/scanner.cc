@@ -78,8 +78,6 @@ Log & operator<<(Log & l, Endl) {
 
 template<class A, class B> A fst(pair<A, B> p) { return p.first; }
 
-// template<class A, class B> function<A(pair<A, B>)> fst = [](auto p) { return p.first; };
-
 template<class A, class B, class C> function<C(A)> operator*(function<C(B)> f, function<B(A)> g) {
   return [=](A a) { return f(g(a)); };
 }
@@ -114,14 +112,15 @@ namespace syms {
  *   - dot: For qualified modules `Data.List.null`, which have to be disambiguated from the `(.)` operator based on
  *     surrounding whitespace.
  *   - where: Parse an inline `where` token. This is necessary because `where` tokens can end layouts and it's necesary
- *     to know whether it is valid at that position, which can mean that it belongs to the last statement of the layout.
+ *     to know whether it is valid at that position, which can mean that it belongs to the last statement of the layout
  *   - splice: A TH splice starting with a `$`, to disambiguate from the operator
  *   - varsym: A symbolic operator
  *   - consym: A symbolic constructor
  *   - tyconsym: A symbolic type operator
  *   - comment: A line or block comment, because they interfere with operators, especially in QQs
  *   - cpp: A preprocessor directive. Needs to push and pop indent stacks
- *   - comma: Needed to terminate inline layouts like `of`, `do`.
+ *   - comma: Needed to terminate inline layouts like `of`, `do`
+ *   - qq_start: Disambiguate the opening oxford bracket from list comprehension
  *   - empty: The empty file
  *   - fail: special indicator of failure
  */
@@ -138,6 +137,7 @@ enum Sym: uint16_t {
   comment,
   cpp,
   comma,
+  qq_start,
   indent,
   empty,
   fail,
@@ -156,6 +156,7 @@ vector<string> names = {
   "comment",
   "cpp",
   "comma",
+  "qq_start",
   "indent",
   "empty",
 };
@@ -570,6 +571,10 @@ bool symop_needs_ws(const char c) {
   }
 }
 
+Condition varid_start_char(const char c) { return [=](auto _) { return c == '_' || islower(c); }; }
+
+Condition varid_char(const char c) { return [=](auto _) { return c == '_' || c == '\'' || isalnum(c); }; };
+
 }
 
 // --------------------------------------------------------------------------------------------------------
@@ -965,6 +970,17 @@ Parser where = token("where")(sym(Sym::where)(mark + success(Sym::where, "where"
 
 Parser in = token("in")(end_or_semicolon("in"));
 
+Parser qq_start =
+  parser::advance +
+  mark +
+  consume_while(cond::varid_start_char) +
+  consume_while(cond::varid_char) +
+  peek('|')(success(Sym::qq_start, "qq_start"))
+  ;
+
+Parser bracket_open =
+  sym(Sym::qq_start)(qq_start) + fail;
+
 /**
  * When a dollar is not followed by whitespace, parse a splice.
  */
@@ -1139,12 +1155,14 @@ Parser close_layout_in_list(const char next) {
  *   - `)` can end the layout of an `of`
  *   - symbolic operators are complicated to implement with regex
  *   - `$` can be a splice if not followed by whitespace
+ *   - '[' can be a list or a quasiquote
  */
 Parser inline_tokens(const char next) {
   return
     when(next == 'w')(where + fail) +
     when(next == 'i')(in + fail) +
     when(next == ')')(end_or_semicolon(")")) +
+    when(next == '[')(bracket_open) +
     sym(Sym::consym)(consym(next)) +
     sym(Sym::tyconsym)(tyconsym(next)) +
     sym(Sym::varsym)(varsym(next)) +

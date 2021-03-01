@@ -4,6 +4,7 @@ template haskell: quasiquotes
 
 f =
   [|body|]
+  [quoter|body|]
   [quoter|body|with|bars
 and newline|]
 
@@ -20,6 +21,11 @@ and newline|]
      (qq_body)
      (qq_end))
     (exp_qq
+     (quoter)
+     (qq_body)
+     (qq_end))
+    (exp_qq
+     (quoter)
      (qq_body)
      (qq_end))))))
 

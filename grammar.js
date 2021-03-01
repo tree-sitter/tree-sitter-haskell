@@ -44,6 +44,7 @@ module.exports = grammar({
     $.comment,
     $.cpp,
     $.comma,
+    $._qq_start,
     /\n/,
     $.empty_file,
   ],

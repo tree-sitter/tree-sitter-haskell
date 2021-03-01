@@ -26,7 +26,6 @@ module.exports = {
 
   exp_list: $ => brackets(sep1($.comma, $._exp)),
 
-  // TODO same as pattern_guard?
   bind_pattern: $ => seq(
     $._pat,
     $.larrow,
@@ -62,13 +61,17 @@ module.exports = {
     $._exp_infix,
   ),
 
-  qq_body: _ => repeat1(choice(/[^|]/, /\|[^\]]/)),
+  qq_body: _ => token(repeat1(choice(/[^|]/, /\|[^\]]/))),
 
-  // TODO this regex is necessary because otherwise list comprehension overrides qqs with a named quoter.
-  // this is bad, because there's no node for the quoter.
-  // maybe move to scanner
+  /**
+   * `_qq_start` is determined by the scanner.
+   * While the quoter and the bar may not be preceded by whitespace, this is not necessary to ensure here with
+   * `token.immediate` since the scanner already verifies it.
+   */
   exp_qq: $ => seq(
-    /\[([_a-z](\w|')*)?\|/,
+    $._qq_start,
+    optional(alias($._varid, $.quoter)),
+    '|',
     optional($.qq_body),
     alias(token('|]'), $.qq_end),
   ),
