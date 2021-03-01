@@ -26,7 +26,6 @@ function parse_examples {
 
   repo=examples/$name
 
-  # TODO: Fix known issues in known_failures_*.txt
   known_failures=$(cat "script/known-failures-$name.txt")
   examples_to_parse=$(
     for example in $(find "$repo" -name '*.hs'); do
