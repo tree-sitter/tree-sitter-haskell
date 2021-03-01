@@ -167,11 +167,6 @@ module.exports = {
     $._qcon,
   ),
 
-  /**
-    * The tyapp here is an alternative to adding it as an `optional` at the end of `_aexp`, which appears to be causing
-    * problems with multiple consecutive tyapps.
-    * TODO investigate ^
-    */
   _aexp: $ => choice(
     $.exp_parens,
     $.exp_tuple,

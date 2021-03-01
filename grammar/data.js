@@ -35,24 +35,6 @@ module.exports = {
     $.record_fields,
   ),
 
-  /**
-   * TODO doc isn't accurate anymore
-   *
-   * This uses `_btype_infix` for the infix constructor, even though this would allow symbols without leading `:`.
-   * The assumption is that for practical purposes this doesn't make a difference, since there is no ambiguity to avoid.
-   *
-   * data a +: b = a :+: b
-   * data a :+ b = a :*: b
-   * data A a b = (a :+ b) :++ (a +: b)
-   *
-   * Here the constructor `:++` is not ambiguous because of the parens, which are mandatory:
-   *
-   * data A a b = a :+ b :++ (a +: b)
-   *
-   * This is illegal: `Cannot parse an infix data constructor in a data/newtype declaration`
-   *
-   * And not creating an extra rule for this avoids a conflict.
-   */
   constrs: $ => sep1(
     $.bar,
     seq(

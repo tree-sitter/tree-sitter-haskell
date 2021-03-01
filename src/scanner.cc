@@ -318,6 +318,16 @@ CharCondition operator!(CharCondition con) {
   };
 }
 
+Condition cond_pure(bool result) { return [=](auto _) { return result; }; }
+
+CharCondition char_cond(Condition c) {
+  return [=](auto _) { return c; };
+}
+
+CharCondition char_cond(function<bool(char)> f) {
+  return [=](auto c) { return [=](auto _) { return f(c); }; };
+}
+
 /**
  * The set of conditions used in the parser implementation.
  */
@@ -327,27 +337,29 @@ namespace cond {
  * Require that the next character matches a predicate, without advancing the parser.
  * Returns the next char as well.
  */
-function<std::pair<bool, char>(State &)> peeks(function<bool(const char)> pred) {
+function<std::pair<bool, char>(State &)> peeks(CharCondition pred) {
   return [=](State & state) {
     auto c = state::next_char(state);
-    auto res = pred(c);
+    auto res = pred(c)(state);
     return std::make_pair(res, c);
   };
 }
 
-function<Condition(char)> eq(char c) {
-  return [=](auto c1) { return [=](auto _) { return c == c1; }; };
+Condition peek_with(CharCondition pred) {
+  return fst<bool, char> * peeks(pred);
 }
+
+CharCondition eq(char c) { return [=](auto c1) { return [=](auto _) { return c == c1; }; }; }
 
 /**
  * Require that the next character equals a concrete `c`, without advancing the parser.
  */
-Condition peek(const char c) { return fst<bool, char> * peeks(std::bind(equal_to<const char>(), c, _1)); }
+Condition peek(const char c) { return fst<bool, char> * peeks(eq(c)); }
 
 /**
  * Require that the next character matches a predicate, advancing the parser on success.
  */
-function<std::pair<bool, char>(State &)> consumes(function<bool(char)> pred) {
+function<std::pair<bool, char>(State &)> consumes(CharCondition pred) {
   return [=](auto state) {
     auto res = peeks(pred)(state);
     if (res.first) { state::advance(state); }
@@ -358,9 +370,9 @@ function<std::pair<bool, char>(State &)> consumes(function<bool(char)> pred) {
 /**
  * Require that the next character equals a concrete `c`, advancing the parser on success.
  */
-Condition consume(const char c) { return fst<bool, char> * consumes(std::bind(equal_to<char>(), c, _1)); }
+Condition consume(const char c) { return fst<bool, char> * consumes(eq(c)); }
 
-function<string(State &)> consume_while(function<Condition(char)> pred) {
+function<string(State &)> consume_while(CharCondition pred) {
   return [=](auto state) {
     string s = "";
     while (true) {
@@ -502,6 +514,34 @@ bool symbolic(const char c) {
   }
 }
 
+Condition symbolic_c(const char c) {
+  switch (c) {
+    case ':':
+    case '!':
+    case '#':
+    case '$':
+    case '%':
+    case '&':
+    case '*':
+    case '+':
+    case '.':
+    case '/':
+    case '<':
+    case '=':
+    case '>':
+    case '?':
+    case '@':
+    case '\\':
+    case '^':
+    case '|':
+    case '-':
+    case '~':
+      return cond_pure(true);
+    default:
+      return cond_pure(false);
+  }
+}
+
 bool valid_varsym_one_char(const char c) {
   switch (c) {
     case '!':
@@ -565,7 +605,9 @@ bool symop_needs_ws(const char c) {
   }
 }
 
-Condition varid_start_char(const char c) { return [=](auto _) { return c == '_' || islower(c); }; }
+bool varid_start_char(const char c) { return c == '_' || islower(c); }
+
+Condition varid_start_char_c(const char c) { return [=](auto _) { return c == '_' || islower(c); }; }
 
 Condition varid_char(const char c) { return [=](auto _) { return c == '_' || c == '\'' || isalnum(c); }; };
 
@@ -734,7 +776,7 @@ Modifier peek(const char c) { return iff(cond::peek(c)); }
  *
  * If the predicate for the next character is true, pass the consumed character to the next parser.
  */
-function<Parser(function<Parser(char)>)> peeks(function<bool(char)> pred) {
+function<Parser(function<Parser(char)>)> peeks(CharCondition pred) {
   return [=](auto next) {
     return [=](auto state) {
       auto res = cond::peeks(pred)(state);
@@ -755,7 +797,7 @@ Modifier consume(const char c) { return iff(cond::consume(c)); }
  * If the predicate for the next character is true, advance the lexer and pass the consumed character to the next
  * parser.
  */
-function<Parser(function<Parser(char)>)> consumes(function<bool(char)> pred) {
+function<Parser(function<Parser(char)>)> consumes(CharCondition pred) {
   return [=](auto next) {
     return [=](auto state) {
       auto res = cond::consumes(pred)(state);
@@ -974,7 +1016,7 @@ Parser in = token("in")(end_or_semicolon("in"));
 Parser qq_start =
   parser::advance +
   mark +
-  consume_while(cond::varid_start_char) +
+  consume_while(cond::varid_start_char_c) +
   consume_while(cond::varid_char) +
   peek('|')(success(Sym::qq_start, "qq_start"))
   ;
@@ -987,12 +1029,12 @@ Parser bracket_open =
   sym(Sym::qq_start)(qq_start) + fail;
 
 /**
- * When a dollar is not followed by whitespace, parse a splice.
+ * When a dollar is followed by a varid or opening paren, parse a splice.
  *
  * TODO non-parens splices can only be varids, apparently
  */
 Parser splice =
-  iff(!cond::token_end | cond::peek('('))(mark + success_sym(Sym::splice, "splice") + fail);
+  iff(cond::peek_with(cond::varid_start_char_c) | cond::peek('('))(mark + success_sym(Sym::splice, "splice") + fail);
 
 Parser inline_comment =
   consume_while(!cond::newline) + mark + success(Sym::comment, "inline_comment");
@@ -1012,7 +1054,7 @@ function<Parser(char)> symbolic_multi(const Sym s, bool all_dashes) {
 
 Parser symbolic_multi1(const Sym s, bool all_dashes) {
   return
-    consumes(cond::symbolic)(symbolic_multi(s, all_dashes)) +
+    consumes(cond::symbolic_c)(symbolic_multi(s, all_dashes)) +
     when(all_dashes)(inline_comment) +
     mark +
     success(s, "symbolic_multi1")
@@ -1041,7 +1083,7 @@ function<Parser(const char)> symbolic_c2(const Sym s, const char first_char) {
     return
       parser::advance +
       either(
-        fst<bool, char> * cond::peeks(cond::symbolic),
+        fst<bool, char> * cond::peeks(cond::symbolic_c),
         symbolic_multi1(s, both_dashes),
         two_symbols(s, first_char, second_char, both_dashes)
       );
@@ -1075,7 +1117,7 @@ Parser varsym(const char first_char) {
   return when(first_char != ':' && cond::symbolic(first_char))(
     parser::advance +
     either(
-      fst<bool, char> * cond::peeks(cond::symbolic),
+      fst<bool, char> * cond::peeks(cond::symbolic_c),
       with(state::next_char)(symbolic_c2(Sym::varsym, first_char)),
       single_varsym(first_char)
     )
@@ -1086,7 +1128,7 @@ Parser consym(const char first_char) {
   return when(first_char == ':')(
     parser::advance +
     either(
-      fst<bool, char> * cond::peeks(cond::symbolic),
+      fst<bool, char> * cond::peeks(cond::symbolic_c),
       with(state::next_char)(symbolic_c2(Sym::consym, first_char)),
       mark + success(Sym::consym, "consym")
     )
@@ -1105,10 +1147,10 @@ Parser single_tyconsym(const char c) {
 }
 
 Parser tyconsym(const char first_char) {
-  return when(cond::symbolic(first_char))(
+  return iff(cond::symbolic_c(first_char))(
     parser::advance +
     either(
-      fst<bool, char> * cond::peeks(cond::symbolic),
+      fst<bool, char> * cond::peeks(cond::symbolic_c),
       with(state::next_char)(symbolic_c2(Sym::tyconsym, first_char)),
       single_tyconsym(first_char)
     )
