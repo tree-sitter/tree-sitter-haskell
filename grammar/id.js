@@ -86,20 +86,11 @@ module.exports = {
   tycon_arrow: $ => parens($.arrow),
   con_tuple: $ => parens(repeat1($.comma)),
 
-  _type_literal: $ => choice(
+  type_literal: $ => choice(
+    $._literal,
     $.con_unit,
     $.con_list,
     $.con_tuple,
-  ),
-
-  _promoted_type_literal: $ => choice(
-    seq(quote, $._type_literal)
-  ),
-
-  type_literal: $ => choice(
-    $._literal,
-    $._type_literal,
-    alias($._promoted_type_literal, $.promoted),
   ),
 
   _promotable_tycon: $ => choice(

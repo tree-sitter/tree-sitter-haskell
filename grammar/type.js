@@ -30,15 +30,21 @@ module.exports = {
 
   type_parens: $ => parens($._type),
 
-  list_type: $ => seq(optional(quote), brackets(sep1($.comma, $._type))),
+  list_type: $ => brackets(sep1($.comma, $._type)),
 
-  // TODO remove regex
-  tuple_type: $ => seq(
-    choice(/'\s*\(/, '('),
-    $._type,
-    $.comma,
-    sep1($.comma, $._type),
-    ')',
+  tuple_type: $ => parens(sep2($.comma, $._type)),
+
+  _type_promotable_literal: $ => choice(
+    $.type_literal,
+    $.tuple_type,
+    $.list_type,
+  ),
+
+  _type_promoted_literal: $ => seq(quote, $._type_promotable_literal),
+
+  _type_literal: $ => choice(
+    alias($._type_promoted_literal, $.promoted),
+    $._type_promotable_literal,
   ),
 
   strict_type: $ => seq($._strict, $._atype),
@@ -50,10 +56,8 @@ module.exports = {
 
   _atype: $ => choice(
     $.type_name,
-    $.type_literal,
     $.star,
-    $.tuple_type,
-    $.list_type,
+    $._type_literal,
     $.type_parens,
   ),
 

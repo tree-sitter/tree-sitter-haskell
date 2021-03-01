@@ -341,7 +341,7 @@ data A :: (k -> '[ 'A]) -> *
     (fun
      (type_name (tyvar))
      (arrow)
-     (list_type (type_name (promoted (tyconid (conid)))))))
+     (promoted (list_type (type_name (promoted (tyconid (conid))))))))
    (arrow)
    (star))))
 

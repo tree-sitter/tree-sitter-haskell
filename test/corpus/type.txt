@@ -162,7 +162,7 @@ type A = '[]
 
 ---
 
-(module (decl_type (tyconid (conid)) (equals) (type_literal (promoted (con_list)))))
+(module (decl_type (tyconid (conid)) (equals) (promoted (type_literal (con_list)))))
 
 =========================================
 type decl: qualified consym
@@ -232,6 +232,23 @@ type A = A `A.A` A
    (tyconop (ticked (qtycon (modid (conid)) (tyconid (conid)))))
    (type_name (tyconid (conid))))))
 
+=========================================
+type decl: promoted tuple
+=========================================
+
+type A = '(A a, A)
+
+---
+
+(module
+ (decl_type
+  (tyconid (conid))
+  (equals)
+  (promoted
+   (tuple_type
+    (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))
+    (comma)
+    (type_name (tyconid (conid)))))))
 
 =========================================
 type decl: equality
@@ -269,7 +286,7 @@ type A = ∀ a . (A a ~ A a) => A
     (type_name (tyconid (conid)))))))
 
 =========================================
-type decl: mixed type_infix
+type decl: mixed infix
 =========================================
 
 type A = A :++ A A ': A (A A a) : '[] ':++ A `A.A` '[]
@@ -294,12 +311,12 @@ type A = A :++ A A ': A (A A a) : '[] ':++ A `A.A` '[]
       (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyconid (conid))) (type_name (tyvar)))))
      (tyconop (tyconsym))
      (type_infix
-      (type_literal (promoted (con_list)))
+      (promoted (type_literal (con_list)))
       (tyconop (promoted (tyconsym)))
       (type_infix
        (type_name (tyconid (conid)))
        (tyconop (ticked (qtycon (modid (conid)) (tyconid (conid)))))
-       (type_literal (promoted (con_list))))))))))
+       (promoted (type_literal (con_list))))))))))
 
 =========================================
 type decl: symbol
