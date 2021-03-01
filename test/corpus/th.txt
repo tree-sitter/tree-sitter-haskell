@@ -39,13 +39,13 @@ $(a ''A.Aa)
 ---
 
 (module
- (top_splice (splice (exp_parens (exp_apply (exp_name (varid)) (exp_th_quoted_name (tyconid (conid)))))))
+ (top_splice (splice (exp_parens (exp_apply (exp_name (varid)) (exp_th_quoted_name (type_name (tyconid (conid))))))))
  (top_splice
   (splice
    (exp_parens
     (exp_apply
      (exp_name (varid))
-     (exp_th_quoted_name (qtycon (modid (conid)) (tyconid (conid)))))))))
+     (exp_th_quoted_name (type_name (qtycon (modid (conid)) (tyconid (conid))))))))))
 
 ===============================
 template haskell: inline splice varid
@@ -100,5 +100,5 @@ derive [''Aa]
 ---
 
 (module
- (top_splice (exp_apply (exp_name (varid)) (exp_th_quoted_name (tyconid (conid)))))
- (top_splice (exp_apply (exp_name (varid)) (exp_list (exp_th_quoted_name (tyconid (conid)))))))
+ (top_splice (exp_apply (exp_name (varid)) (exp_th_quoted_name (type_name (tyconid (conid))))))
+ (top_splice (exp_apply (exp_name (varid)) (exp_list (exp_th_quoted_name (type_name (tyconid (conid))))))))

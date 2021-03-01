@@ -77,8 +77,8 @@ module.exports = {
   ),
 
   exp_th_quoted_name: $ => choice(
-    seq(quote, choice($._qvarid, $._qconid)),
-    seq(quote + quote, choice($._qtycon)),
+    seq(quote, choice($._qvar, $._qcon)),
+    seq(quote + quote, $._atype),
   ),
 
   fbind: $ => choice(

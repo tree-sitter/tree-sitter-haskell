@@ -72,6 +72,8 @@ module.exports = grammar({
     $._class_tycon,
     $._fun_apat,
     $._fun_lpat,
+    $._exp_qvar,
+    $._exp_qcon,
   ],
 
   precedences: _ => [

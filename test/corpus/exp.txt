@@ -507,7 +507,7 @@ a = aa (a ?cmp)
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_apply (exp_name (varid)) (exp_parens (exp_apply (exp_name (varid)) (implicit_parid)))))))
+   (exp_apply (exp_name (varid)) (exp_parens (exp_apply (exp_name (varid)) (exp_name (implicit_parid))))))))
 
 =================================================
 exp: where
@@ -1132,7 +1132,9 @@ a = (,,,)
 =================================================
 exp: qualified symop
 =================================================
+
 a = a A.!? a
+a = (A..!?)
 
 ---
 
@@ -1144,7 +1146,23 @@ a = a A.!? a
    (exp_infix
     (exp_name (varid))
     (qvarop (qvarsym (modid (conid)) (varsym)))
-    (exp_name (varid))))))
+    (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_name (qvarsym (modid (conid)) (varsym))))))
+
+=================================================
+exp: th-promoted qualified symop
+=================================================
+
+a = '(A..&)
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_th_quoted_name (qvarsym (modid (conid)) (varsym))))))
 
 =================================================
 exp: implicit parameter in do-let

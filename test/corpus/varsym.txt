@@ -207,7 +207,7 @@ a = a ? a
 (module
  (decl_fun
   (funvar (varid))
-  (funrhs (equals) (implicit_parid)))
+  (funrhs (equals) (exp_name (implicit_parid))))
  (decl_fun
   (funvar (varsym))
   (funrhs (equals) (exp_name (varid))))
