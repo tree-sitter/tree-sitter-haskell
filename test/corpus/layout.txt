@@ -507,6 +507,14 @@ a = b where
   -- comment
   c = d
 
+a = b where -- comment
+  c = d
+
+a = b where {- comment -}
+  c = d
+
+a = b where -1 = a
+
 ---
 
 (module
@@ -525,7 +533,30 @@ a = b where
    (exp_name (varid))
    (where)
    (comment)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)
+   (comment)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)
+   (comment)
+   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_name (varid))
+   (where)
+   (decls (decl_fun (funpat (pat_neg (integer))) (funrhs (equals) (exp_name (varid))))))))
 
 =================================================
 layout: comment in empty where on next line indented

@@ -455,11 +455,6 @@ Condition is_newline_where(uint32_t indent) {
   return keep_layout(indent) & (sym(Sym::semicolon) | sym(Sym::end)) & (!sym(Sym::where)) & peek('w');
 }
 
-/**
- * Require that the following characters cannot start an explicit layout or a comment.
- */
-Condition not_comment_or_brace = !(peek('{') | token("--"));
-
 CharCondition is_char(const char target) { return [=](const char c) { return [=](auto _){ return c == target; }; }; }
 
 CharCondition newline = is_char('\n');
@@ -1108,8 +1103,14 @@ Parser tyconsym(const char first_char) {
   );
 }
 
+/**
+ * To be called when it is certain that two minuses cannot succeed as a symbolic operator.
+ * Those cases are:
+ *   - `Sym::start` is valid
+ *   - Operator matching was done already
+ */
 Parser minus =
-  seq("--")(symbolic_multi1(Sym::fail, true)) + fail;
+  seq("--")(symbolic_multi1(Sym::fail, true) + fail);
 
 Parser multiline_comment(uint16_t);
 
@@ -1135,7 +1136,7 @@ Parser brace =
   ) + fail;
 
 Parser comment(const char next) {
-  return when(next == '-')(minus) + when(next == '{')(brace);
+  return when(next == '-')(minus + fail) + when(next == '{')(brace);
 }
 
 Parser close_layout_in_list(const char next) {
@@ -1173,15 +1174,24 @@ Parser inline_tokens(const char next) {
 }
 
 /**
- * If the symbol `Sym::start` is valid, opening a layout is almost always indicated, except when a manual brace or a
- * comment follows.
+ * If the symbol `Sym::start` is valid, starting a new layout is almost always indicated.
+ *
+ * If the next character is a left brace, it is either a comment, pragma or an explicit layout. In the comment case, the
+ * it must be parsed here.
+ * If the next character is a minus, it might be a comment.
+ *
+ * In all of those cases, the layout can't be started now. In the comment and pragma case, it will be started in the
+ * next run.
  *
  * This pushes the indentation of the first non-whitespace character onto the stack.
- *
- * TODO analyze whether the comment check is necessary
  */
 Parser layout_start(uint32_t column) {
-  return sym(Sym::start)(iff(cond::not_comment_or_brace)(push(column) + success(Sym::start, "layout_start")) + fail);
+  return sym(Sym::start)(
+    peek('{')(brace) +
+    peek('-')(minus) +
+    push(column) +
+    success(Sym::start, "layout_start")
+  );
 }
 
 /**
