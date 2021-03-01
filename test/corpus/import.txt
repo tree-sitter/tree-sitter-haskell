@@ -119,14 +119,16 @@ import: qualified basic
 import qualified Aaa.A
 import qualified A ()
 import qualified Aaa.A (a)
+import Aaa.A qualified (a)
 import qualified Aaa.A hiding (A, a)
 
 ---
 
 (module
  (decl_import (qmodid (modid (conid)) (modid (conid))))
- (decl_import (modid (conid)) (import_list)) (decl_import
-  (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (varid))))
+ (decl_import (modid (conid)) (import_list))
+ (decl_import (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (varid))))
+ (decl_import (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (varid))))
  (decl_import
   (qmodid (modid (conid)) (modid (conid)))
   (import_list (import_item (conid)) (comma) (import_item (varid)))))
@@ -177,7 +179,7 @@ import: package
 =========================================
 
 import "a" Aaa.Aa
-import "a" qualified Aaa.Aa as Aa (Aa(a))
+import qualified "a" Aaa.Aa as Aa (Aa(a))
 
 ---
 
