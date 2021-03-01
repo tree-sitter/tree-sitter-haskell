@@ -6,25 +6,24 @@ f = a | a
 
 ---
 
-(module (decl_fun (funvar (varid)) (funrhs (equals) (ERROR (exp_name (varid))) (exp_name (varid)))))
+(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid))))))
 
 =================================================
 varsym: error: lambda
 =================================================
 
-f = a \ a
 f = a \\ a
+f = a \ a
 
 ---
 
 (module
-  (decl_fun
-   (funvar (varid))
-    (funrhs
-     (equals)
-     (exp_apply (exp_name (varid)) (ERROR (lambda)) (exp_name (varid)))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
-)
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs (equals) (exp_name (varid)))) (ERROR (lambda) (varid)))
 
 =================================================
 varsym: error: ..

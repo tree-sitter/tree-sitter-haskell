@@ -192,8 +192,16 @@ module.exports = {
 
   /**
    * Function application.
+   *
+   * This convoluted rule is necessary because of BlockArguments with lambda – if `exp_lambda` is in `lexp` as is stated
+   * in the reference, it can only occur after an infix operator; if it is in `aexp`, it causes lots of problems.
+   * Furthermore, the strange way the recursion is done here is to avoid local conflicts.
    */
-  exp_apply: $ => seq($._aexp, repeat1($._aexp)),
+  _exp_apply: $ => choice(
+    $._aexp,
+    seq($._aexp, $._exp_apply),
+    seq($._aexp, $.exp_lambda),
+  ),
 
   /**
    * The point of this `choice` is to get a node for function application only if there is more than one expression
@@ -201,7 +209,7 @@ module.exports = {
    */
   _fexp: $ => choice(
     $._aexp,
-    $.exp_apply,
+    alias($._exp_apply, $.exp_apply),
   ),
 
   _lexp: $ => choice(

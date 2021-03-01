@@ -1024,6 +1024,23 @@ a = a @A @A @A @A
     (exp_tyapp (tyapp) (type_name (tyconid (conid))))))))
 
 =================================================
+exp: block argument: lambda basic
+=================================================
+
+a = a \ a -> a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_apply
+    (exp_name (varid))
+    (exp_lambda (lambda) (pat_name (varid)) (arrow) (exp_name (varid)))))))
+
+=================================================
 exp: block argument: lambda case
 =================================================
 

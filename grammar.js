@@ -159,8 +159,8 @@ module.exports = grammar({
     /**
      * For getting a node for function application, and no extra node if the expression only consists of one term.
      */
-    [$.exp_apply, $._fexp],
-    [$.exp_apply],
+    [$._exp_apply, $._fexp],
+    [$._exp_apply],
 
     /**
      * Same as `exp_apply`, but for patterns.
