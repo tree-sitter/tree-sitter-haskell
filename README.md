@@ -4,10 +4,16 @@
 
 Haskell grammar for [tree-sitter].
 
-## References
+# References
 
 * [Haskell 2010 Language Report – Syntax References](ref)
 * [GHC Language Extensions](ext)
+
+# Bugs
+
+Preprocessor `#elif` and `#else` directives cannot be handled correctly, since the parser state would have to be
+manually reset to what it was at the `#if`.
+As a workaround, the code blocks in the alternative branches are parsed as part of the directives.
 
 [tree-sitter]: https://github.com/tree-sitter/tree-sitter
 [ref]: https://www.haskell.org/onlinereport/haskell2010/haskellch10.html

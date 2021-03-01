@@ -231,3 +231,16 @@ a = a $[a]
   (funrhs
    (equals)
    (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_list (exp_name (varid)))))))
+
+=================================================
+varsym: bang as operator decl
+=================================================
+
+(!) :: A
+(!) = a
+
+---
+
+(module
+ (decl_sig (varsym) (annotation) (type_name (tyconid (conid))))
+ (decl_fun (funvar (varsym)) (funrhs (equals) (exp_name (varid)))))

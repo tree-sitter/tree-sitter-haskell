@@ -59,9 +59,7 @@ bool debug_next_token = false;
  * Print to stderr if the `debug` flag is `true`.
  */
 struct Log {
-  template<class A> void operator()(const A & msg) {
-    if (debug) cerr << msg << endl;
-  }
+  template<class A> void operator()(const A & msg) { if (debug) cerr << msg << endl; }
 } logger;
 
 struct Endl {} nl;
@@ -265,6 +263,8 @@ void advance(State & state) { state.lexer->advance(state.lexer, false); }
  */
 void skip(State & state) { state.lexer->advance(state.lexer, true); }
 
+void mark(State & state) { state.lexer->mark_end(state.lexer); }
+
 void cpp_push(State & state) {
   if (state.indents.empty()) state.indents.push_back(vector<uint16_t>());
   else (state.indents.push_back(state.indents.back()));
@@ -353,17 +353,38 @@ PeekResult consume_if(Peek pred) {
  */
 Condition consume(const char c) { return fst<bool, char> * consume_if(eq(c)); }
 
-function<string(State &)> consume_while(Peek pred) {
+/**
+ * Require that the argument string follows the current position, consuming all characters.
+ * Note: This leaves characters from a partial match consumed, there is no way to backtrack the parser.
+ */
+Condition seq(const string & s) {
+  return [=](auto state) { return all_of(s.begin(), s.end(), [=](auto a) { return consume(a)(state); }); };
+}
+
+function<void(State &)> consume_while(Peek pred) {
   return [=](auto state) {
-    string s = "";
     while (true) {
       auto c = state::next_char(state);
       auto res = pred(c);
       if (!res || c == 0) break;
       state::advance(state);
-      s += c;
     }
-    return s;
+  };
+}
+
+function<void(State &)> consume_until(string target) {
+  return [=](auto state) {
+    if (target.empty()) return;
+    char first = target[0];
+    while (true) {
+      auto c = state::next_char(state);
+      if (c == 0) break;
+      if (c == first) {
+        state::mark(state);
+        if (seq(target)(state)) break;
+      }
+      state::advance(state);
+    }
   };
 }
 
@@ -381,14 +402,6 @@ Condition peekws = [](const State & state) { return iswspace(state::next_char(st
  * Require that the next character is end-of-file.
  */
 Condition peekeof = peek(0);
-
-/**
- * Require that the argument string follows the current position, consuming all characters.
- * Note: This leaves characters from a partial match consumed, there is no way to backtrack the parser.
- */
-Condition seq(const string & s) {
-  return [=](auto state) { return all_of(s.begin(), s.end(), [=](auto a) { return consume(a)(state); }); };
-}
 
 /**
  * A token like a varsym can be terminated by whitespace of brackets.
@@ -793,6 +806,11 @@ Modifier consume(const char c) { return [=](Parser next) { return consume_if(con
 Parser consume_while(Peek pred) { return effect(cond::consume_while(pred)); }
 
 /**
+ * Consume all characters until the given sequence is encountered.
+ */
+Parser consume_until(string s) { return effect(cond::consume_until(s)); }
+
+/**
  * Advance the lexer.
  */
 Parser advance = effect(state::advance);
@@ -817,7 +835,7 @@ Modifier token(string s) { return iff(cond::token(s)); }
  * This is useful if the validity of the detected symbol depends on what follows, e.g. in the case of a layout end
  * before a `where` token.
  */
-Parser mark = effect([](auto state) { state.lexer->mark_end(state.lexer); });
+Parser mark = effect(state::mark);
 
 /**
  * If the parser returns `cont`, fail.
@@ -960,9 +978,22 @@ Parser cpp =
   consume('#')(
     seq("if")(effect(state::cpp_push)) +
     consume('e')(
-      seq("ndif")(effect(state::cpp_pop)) +
-      seq("l")(effect(state::cpp_pop) + effect(state::cpp_push))
+      peek('l')(effect(state::cpp_pop) + effect(state::cpp_push)) +
+      seq("ndif")(effect(state::cpp_pop))
     ) +
+    cpp_consume +
+    mark +
+    finish(Sym::cpp, "cpp")
+  );
+
+/**
+ * Parse a cpp directive.
+ *
+ * This is a workaround for the problem described in `cpp`. It will simply consume all code between `#else` or `#elif`
+ * and `#endif`.
+ */
+Parser cpp_workaround =
+  consume('#')(seq("el")(consume_until("#endif") + finish(Sym::cpp, "cpp-else")) +
     cpp_consume +
     mark +
     finish(Sym::cpp, "cpp")
@@ -971,7 +1002,7 @@ Parser cpp =
 /**
  * If the current column i 0, a cpp directive may begin.
  */
-Parser cpp_init = iff(cond::column(0))(cpp);
+Parser cpp_init = iff(cond::column(0))(cpp_workaround);
 
 /**
  * End a layout by removing an indentation from the stack, but only if the current column (which should be in the next
@@ -1117,11 +1148,15 @@ Parser tyconsym = symop(cond::symbolic, Sym::tyconsym, single_tyconsym);
 
 /**
  * Succeed if the symbolic character doesn't match a reserved operator, otherwise fail.
+ *
+ * Bangs can occur in patterns as strictness annotations and in expressions as operators.
+ * This can usually be disambiguated by whether `Sym::strict` is valid at the position, but in situations like the
+ * funvar decl `(!) :: A`, both are valid.
  */
 Parser single_varsym(const char c) {
   return when(cond::valid_varsym_one_char(c))(
     mark +
-    when(c == '!')(success_sym(Sym::strict, "single_varsym")) +
+    when(c == '!')(iff(!cond::peek(')'))(success_sym(Sym::strict, "single_varsym"))) +
     when(cond::symop_needs_token_end(c))(
       when(c == '$')(splice) +
       iff(cond::token_end)(finish(Sym::varsym, "single_varsym")) +
@@ -1335,7 +1370,7 @@ Parser main =
   mark +
   either(
     cond::consume('\n'),
-    cpp + with(count_indent)(newline),
+    cpp_workaround + with(count_indent)(newline),
     with(state::column)(immediate)
   );
 
