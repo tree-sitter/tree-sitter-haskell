@@ -216,3 +216,18 @@ a = a ? a
   (funrhs
    (equals)
    (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))
+
+=================================================
+varsym: dollar terminated by opening bracket
+=================================================
+
+a = a $[a]
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_list (exp_name (varid)))))))

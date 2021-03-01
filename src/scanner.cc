@@ -397,18 +397,17 @@ Condition seq(const string & s) {
   return [=](auto state) { return all_of(s.begin(), s.end(), [&](auto a) { return consume(a)(state); }); };
 }
 
-// TODO more?
-// opening parens can also terminate a symbolic op
+/**
+ * A token like a varsym can be terminated by whitespace of brackets.
+ */
 Condition token_end =
-  peekeof | peekws | peek(')') | peek(']');
+  peekeof | peekws | peek(')') | peek(']') | peek('[') | peek('(');
 
 /**
  * Require that the argument string follows the current position and is followed by whitespace.
  * See `seq`
- *
- * TODO try using `token_end` for this
  */
-Condition token(const string & s) { return seq(s) & (peekeof | peekws); }
+Condition token(const string & s) { return seq(s) & token_end; }
 
 /**
  * Require that the stack of layout indentations is not empty.
@@ -963,8 +962,15 @@ Parser newline_semicolon(uint32_t indent) {
  */
 Parser where = token("where")(sym(Sym::where)(mark + success(Sym::where, "where")) + layout_end("where"));
 
+/**
+ * An `in` token ends the layout openend by a `let`.
+ */
 Parser in = token("in")(end_or_semicolon("in"));
 
+/**
+ * Detect the start of a quasiquote: An opening bracket followed by an optional varid and a vertical bar, all without
+ * whitespace in between.
+ */
 Parser qq_start =
   parser::advance +
   mark +
@@ -973,14 +979,20 @@ Parser qq_start =
   peek('|')(success(Sym::qq_start, "qq_start"))
   ;
 
+/**
+ * When an opening bracket was encountered, this parser tests for a quasiquote or fails, for the grammar to parser the
+ * bracket literally.
+ */
 Parser bracket_open =
   sym(Sym::qq_start)(qq_start) + fail;
 
 /**
  * When a dollar is not followed by whitespace, parse a splice.
+ *
+ * TODO non-parens splices can only be varids, apparently
  */
 Parser splice =
-  iff(!cond::token_end)(mark + success_sym(Sym::splice, "splice") + fail);
+  iff(!cond::token_end | cond::peek('('))(mark + success_sym(Sym::splice, "splice") + fail);
 
 Parser inline_comment =
   consume_while(!cond::newline) + mark + success(Sym::comment, "inline_comment");
@@ -1043,8 +1055,8 @@ Parser single_varsym(const char c) {
   return when(cond::valid_varsym_one_char(c))(
     mark +
     when(cond::symop_needs_ws(c))(
-      iff(cond::token_end)(success(Sym::varsym, "single_varsym")) +
       when(c == '$')(splice) +
+      iff(cond::token_end)(success(Sym::varsym, "single_varsym")) +
       fail
     ) + success(Sym::varsym, "single_varsym")
   ) + fail;
