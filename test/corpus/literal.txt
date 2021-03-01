@@ -1,4 +1,25 @@
 =========================================
+literal: decimal
+=========================================
+
+a = 0
+a = 100_00_532
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_literal (integer))))
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_literal (integer)))))
+
+=========================================
 literal: octal
 =========================================
 
@@ -17,10 +38,12 @@ literal: hex
 
 a = 0xA8
 a = 0XEF84Fe23
+a = 0xa_e_123_4
 
 ---
 
 (module
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (integer))))
  (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (integer))))
  (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (integer)))))
 
@@ -46,3 +69,16 @@ a = 99E-01
  (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (float))))
  (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (float))))
  (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (float)))))
+
+=========================================
+literal: binary
+=========================================
+
+a = 0b01110
+a = 0B10010
+
+---
+
+(module
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (integer))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (integer)))))
