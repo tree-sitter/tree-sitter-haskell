@@ -21,7 +21,7 @@ module.exports = {
 
   pat_list: $ => brackets(sep1($.comma, $._pat)),
 
-  pat_strict: $ => seq($.strict, $._apat),
+  pat_strict: $ => seq($._strict, $._apat),
 
   pat_irrefutable: $ => seq('~', $._apat),
 

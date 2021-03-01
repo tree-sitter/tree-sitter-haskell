@@ -23,7 +23,7 @@ pattern A a = A !a
 (module
  (decl_pattern
   (pat_apply (pat_name (conid)) (pat_name (varid)))
-  (pat_apply (pat_name (conid)) (pat_strict (strict) (pat_name (varid))))))
+  (pat_apply (pat_name (conid)) (pat_strict (pat_name (varid))))))
 
 =========================================
 pattern synonym: explicit bidirectional list
@@ -56,9 +56,9 @@ pattern A a <- A !a where
  (decl_pattern
   (pat_apply (pat_name (conid)) (pat_name (varid)))
   (larrow)
-  (pat_apply (pat_name (conid)) (pat_strict (strict) (pat_name (varid))))
+  (pat_apply (pat_name (conid)) (pat_strict (pat_name (varid))))
   (where)
-  (pat_apply (pat_name (conid)) (pat_strict (strict) (pat_name (varid))))
+  (pat_apply (pat_name (conid)) (pat_strict (pat_name (varid))))
   (funrhs (equals) (exp_apply (exp_name (conid)) (exp_name (varid))))))
 
 =========================================

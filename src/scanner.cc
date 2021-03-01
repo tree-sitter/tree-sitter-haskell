@@ -18,13 +18,13 @@ using std::placeholders::_1;
  * A simple parser can look like this:
  *
  * Result layout_start_brace(State & state) {
- *   if (next_char(state) == '{') return result::success(Sym::start);
+ *   if (next_char(state) == '{') return result::finish(Sym::start);
  *   else return result::cont;
  * }
  *
  * With the provided combinators in `namespace `parser`, this can be rewritten as:
  *
- * Parser layout_start_brace = peek('{')(success(Sym::start));
+ * Parser layout_start_brace = peek('{')(finish(Sym::start));
  *
  * In the API function `scan`, this parser can be executed:
  *
@@ -36,7 +36,7 @@ using std::placeholders::_1;
  *
  * peek('w')(handle_w) + peek('i')(handle_i)
  *
- * If `handle_w` terminates with `result::success` or `result::fail` instead of `result::cont`, `handle_i` is not
+ * If `handle_w` terminates with `result::finish` or `result::fail` instead of `result::cont`, `handle_i` is not
  * executed.
  */
 
@@ -90,6 +90,8 @@ template<class A, class B, class C> function<C(A)> operator*(C (&f)(B), function
   return [=](A a) { return f(g(a)); };
 }
 
+template<class A, class B> function<B(A)> const_(B b) { return [=](auto _) { return b; }; }
+
 // --------------------------------------------------------------------------------------------------------
 // Symbols
 // --------------------------------------------------------------------------------------------------------
@@ -121,6 +123,7 @@ namespace syms {
  *   - cpp: A preprocessor directive. Needs to push and pop indent stacks
  *   - comma: Needed to terminate inline layouts like `of`, `do`
  *   - qq_start: Disambiguate the opening oxford bracket from list comprehension
+ *   - strict: Disambiguate strictness annotation `!` from symbolic operators
  *   - empty: The empty file
  *   - fail: special indicator of failure
  */
@@ -138,6 +141,7 @@ enum Sym: uint16_t {
   cpp,
   comma,
   qq_start,
+  strict,
   indent,
   empty,
   fail,
@@ -157,6 +161,7 @@ vector<string> names = {
   "cpp",
   "comma",
   "qq_start",
+  "strict",
   "indent",
   "empty",
 };
@@ -242,13 +247,13 @@ namespace state {
 /**
  * The parser's position in the current line.
  */
-uint32_t column(State & state) { return state.lexer->get_column(state.lexer); }
+uint32_t column(const State & state) { return state.lexer->get_column(state.lexer); }
 
 /**
  * The next character that would be parsed.
  * Does not advance the parser position (consume the character).
  */
-char next_char(State & state) { return static_cast<char>(state.lexer->lookahead); }
+char next_char(const State & state) { return static_cast<char>(state.lexer->lookahead); }
 
 /**
  * Move the parser position one character to the right, treating the consumed character as part of the parsed token.
@@ -274,59 +279,35 @@ void cpp_pop(State & state) { if (!state.indents.empty()) state.indents.pop_back
 // --------------------------------------------------------------------------------------------------------
 
 /**
+ * A predicate for the next character.
+ *
+ * With the provided operator overloads, conditions can be logically combined without having to write lambdas for
+ * passing along the character.
+ */
+typedef function<bool(const char)> Peek;
+
+Peek operator&(const Peek & l, const Peek & r) { return [=](char c) { return l(c) && r(c); }; }
+Peek operator|(const Peek & l, const Peek & r) { return [=](char c) { return l(c) || r(c); }; }
+Peek operator!(Peek con) { return [=](char c) { return !con(c); }; }
+
+/**
  * This type abstracts over a boolean predicate of the current state.
- * It is used whenever a boolean condition should guard a nested parser.
+ * It is used whenever a condition should guard a nested parser.
  *
  * With the provided operator overloads, conditions can be logically combined without having to write lambdas for
  * passing along the `State`.
- *
- * TODO make this ( const State & -> char -> bool) and move the consuming part to Parser
  */
-typedef function<bool(State&)> Condition;
-typedef function<Condition(const char)> CharCondition;
+typedef function<bool(const State&)> Condition;
 
-Condition operator&(const Condition & l, const Condition & r) {
-  return [=](State & state) { return l(state) && r(state); };
-}
+Condition operator&(const Condition & l, const Condition & r) { return [=](auto s) { return l(s) && r(s); }; }
+Condition operator|(const Condition & l, const Condition & r) { return [=](auto s) { return l(s) || r(s); }; }
+Condition operator!(const Condition & c) { return [=](auto state) { return !c(state); }; }
 
-Condition operator|(const Condition & l, const Condition & r) {
-  return [=](State & state) { return l(state) || r(state); };
-}
-
-Condition operator!(const Condition & c) { return [=](State & state) { return !c(state); }; }
-
-CharCondition operator&(const CharCondition & l, const CharCondition & r) {
-  return [=](char c) {
-    return [=](State & state) {
-     return l(c)(state) && r(c)(state);
-    };
-  };
-}
-
-CharCondition operator|(const CharCondition & l, const CharCondition & r) {
-  return [=](char c) {
-    return [=](State & state) {
-     return l(c)(state) || r(c)(state);
-    };
-  };
-}
-
-CharCondition operator!(CharCondition con) {
-  return [=](char c) {
-    return [=](State & state) {
-     return !con(c)(state); };
-  };
-}
-
-Condition cond_pure(bool result) { return [=](auto _) { return result; }; }
-
-CharCondition char_cond(Condition c) {
-  return [=](auto _) { return c; };
-}
-
-CharCondition char_cond(function<bool(char)> f) {
-  return [=](auto c) { return [=](auto _) { return f(c); }; };
-}
+/**
+ * Peeking the next character uses the `State` to access the lexer and returns the predicate success as well as the
+ * character itself.
+ */
+typedef function<pair<bool, char>(const State &)> PeekResult;
 
 /**
  * The set of conditions used in the parser implementation.
@@ -337,19 +318,19 @@ namespace cond {
  * Require that the next character matches a predicate, without advancing the parser.
  * Returns the next char as well.
  */
-function<std::pair<bool, char>(State &)> peeks(CharCondition pred) {
-  return [=](State & state) {
+function<std::pair<bool, char>(const State &)> peeks(Peek pred) {
+  return [=](auto state) {
     auto c = state::next_char(state);
-    auto res = pred(c)(state);
+    auto res = pred(c);
     return std::make_pair(res, c);
   };
 }
 
-Condition peek_with(CharCondition pred) {
+Condition peek_with(Peek pred) {
   return fst<bool, char> * peeks(pred);
 }
 
-CharCondition eq(char c) { return [=](auto c1) { return [=](auto _) { return c == c1; }; }; }
+Peek eq(char c) { return [=](auto c1) { { return c == c1; }; }; }
 
 /**
  * Require that the next character equals a concrete `c`, without advancing the parser.
@@ -359,7 +340,7 @@ Condition peek(const char c) { return fst<bool, char> * peeks(eq(c)); }
 /**
  * Require that the next character matches a predicate, advancing the parser on success.
  */
-function<std::pair<bool, char>(State &)> consumes(CharCondition pred) {
+PeekResult consume_if(Peek pred) {
   return [=](auto state) {
     auto res = peeks(pred)(state);
     if (res.first) { state::advance(state); }
@@ -370,14 +351,14 @@ function<std::pair<bool, char>(State &)> consumes(CharCondition pred) {
 /**
  * Require that the next character equals a concrete `c`, advancing the parser on success.
  */
-Condition consume(const char c) { return fst<bool, char> * consumes(eq(c)); }
+Condition consume(const char c) { return fst<bool, char> * consume_if(eq(c)); }
 
-function<string(State &)> consume_while(CharCondition pred) {
+function<string(State &)> consume_while(Peek pred) {
   return [=](auto state) {
     string s = "";
     while (true) {
       auto c = state::next_char(state);
-      auto res = pred(c)(state);
+      auto res = pred(c);
       if (!res || c == 0) break;
       state::advance(state);
       s += c;
@@ -394,7 +375,7 @@ Condition sym(Sym t) { return [=](auto state) { return state.symbols[t]; }; }
 /**
  * Require that the next character is whitespace (space or newline) without advancing the parser.
  */
-Condition peekws = [](State & state) { return iswspace(state::next_char(state)); };
+Condition peekws = [](const State & state) { return iswspace(state::next_char(state)); };
 
 /**
  * Require that the next character is end-of-file.
@@ -406,7 +387,7 @@ Condition peekeof = peek(0);
  * Note: This leaves characters from a partial match consumed, there is no way to backtrack the parser.
  */
 Condition seq(const string & s) {
-  return [=](auto state) { return all_of(s.begin(), s.end(), [&](auto a) { return consume(a)(state); }); };
+  return [=](auto state) { return all_of(s.begin(), s.end(), [=](auto a) { return consume(a)(state); }); };
 }
 
 /**
@@ -466,9 +447,9 @@ Condition is_newline_where(uint32_t indent) {
   return keep_layout(indent) & (sym(Sym::semicolon) | sym(Sym::end)) & (!sym(Sym::where)) & peek('w');
 }
 
-CharCondition is_char(const char target) { return [=](const char c) { return [=](auto _){ return c == target; }; }; }
+Peek is_char(const char target) { return [=](const char c) { return c == target; }; }
 
-CharCondition newline = is_char('\n');
+Peek newline = is_char('\n');
 
 /**
  * Require that the state has not been initialized after parsing has started.
@@ -514,34 +495,6 @@ bool symbolic(const char c) {
   }
 }
 
-Condition symbolic_c(const char c) {
-  switch (c) {
-    case ':':
-    case '!':
-    case '#':
-    case '$':
-    case '%':
-    case '&':
-    case '*':
-    case '+':
-    case '.':
-    case '/':
-    case '<':
-    case '=':
-    case '>':
-    case '?':
-    case '@':
-    case '\\':
-    case '^':
-    case '|':
-    case '-':
-    case '~':
-      return cond_pure(true);
-    default:
-      return cond_pure(false);
-  }
-}
-
 bool valid_varsym_one_char(const char c) {
   switch (c) {
     case '!':
@@ -564,10 +517,10 @@ bool valid_varsym_one_char(const char c) {
   }
 }
 
-// TODO remove `!` again after fixing strictness
+Peek valid_first_varsym = !eq(':') & symbolic;
+
 bool valid_tyconsym_one_char(const char c) {
   switch (c) {
-    case '!':
     case '*':
       return false;
     case '~':
@@ -578,7 +531,10 @@ bool valid_tyconsym_one_char(const char c) {
   }
 }
 
-bool valid_symop_two_chars(const Sym s, const char first_char, const char second_char) {
+/**
+ * Test for reserved operators of two characters.
+ */
+bool valid_symop_two_chars(const char first_char, const char second_char) {
   switch (first_char) {
     case '-':
       return second_char != '-' && second_char != '>';
@@ -595,7 +551,7 @@ bool valid_symop_two_chars(const Sym s, const char first_char, const char second
   }
 }
 
-bool symop_needs_ws(const char c) {
+bool symop_needs_token_end(const char c) {
   switch (c) {
     case '$':
     case '?':
@@ -609,7 +565,7 @@ bool varid_start_char(const char c) { return c == '_' || islower(c); }
 
 Condition varid_start_char_c(const char c) { return [=](auto _) { return c == '_' || islower(c); }; }
 
-Condition varid_char(const char c) { return [=](auto _) { return c == '_' || c == '\'' || isalnum(c); }; };
+bool varid_char(const char c) { return c == '_' || c == '\'' || isalnum(c); };
 
 }
 
@@ -641,9 +597,8 @@ template<class A> ostream & operator<<(ostream & out, const Result & res) {
 namespace result {
 
 Result cont = Result(Sym::fail, false);
-// TODO rename to `finish`
-Result success(Sym t) { return Result(t, true); }
-Result fail = success(Sym::fail);
+Result finish(Sym t) { return Result(t, true); }
+Result fail = finish(Sym::fail);
 
 }
 
@@ -657,6 +612,11 @@ namespace parser {
  * The main function shape for all parser combinators.
  */
 typedef function<Result(State&)> Parser;
+
+/**
+ * Parsers that depend on the next character.
+ */
+typedef function<Parser(const char)> CharParser;
 
 /**
  * Convenience alias for a function that attaches conditions to a parser.
@@ -674,8 +634,15 @@ typedef function<void(State&)> Effect;
 template<class A> function<Parser(function<Parser(A)>)> with(A (&fa)(State &)) {
   return [&](function<Parser(A)> f) {
     return [=](auto state) {
-      auto a = fa(state);
-      return f(a)(state);
+      return f(fa(state))(state);
+    };
+  };
+}
+
+template<class A> function<Parser(function<Parser(A)>)> with(A (&fa)(const State &)) {
+  return [&](function<Parser(A)> f) {
+    return [=](auto state) {
+      return f(fa(state))(state);
     };
   };
 }
@@ -700,9 +667,9 @@ Parser either(Condition c, Parser match, Parser nomatch) {
 }
 
 /**
- * Helper for lifting `Result` into a parser.
+ * Depending on the result of a condition, execute one of the supplied parsers.
  */
-Parser const_(Result r) { return [=](auto state) { return r; }; }
+Parser either(bool c, Parser match, Parser nomatch) { return either(const_<State>(c), match, nomatch); }
 
 /**
  * Lazy evaluation for recursion.
@@ -724,17 +691,21 @@ Parser effect(Effect eff) {
 /**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
-Parser success(const Sym s, string desc) {
+Parser finish(const Sym s, string desc) {
   return [=](auto _) {
-    logger << "success: " << desc << nl;
-    return result::success(s);
+    logger << "finish: " << desc << nl;
+    return result::finish(s);
   };
 }
 
 /**
  * Parser that terminates the execution unsuccessfully;
  */
-Parser fail = const_(result::fail);
+Parser fail = ::const_<State>(result::fail);
+
+CharParser as_char_parser(CharParser p) { return p; }
+CharParser as_char_parser(Parser p) { return ::const_<char>(p); }
+CharParser as_char_parser(Result r) { return ::const_<char>(::const_<State>(r)); }
 
 /**
  * Require a condition to be true for the next parser to be executed.
@@ -745,19 +716,12 @@ Parser fail = const_(result::fail);
  *
  * iff(cond::after_error)(fail)
  */
-Modifier iff(const Condition & c) {
-  return [=](const Parser & chk) {
-    return [=](auto state) {
-      if (c(state)) return chk(state);
-      else return result::cont;
-    };
-  };
-}
+Modifier iff(Condition c) { return [=](Parser next) { return either(c, next, const_<State>(result::cont)); }; }
 
 /**
  * Require a plain `bool` to be true for the next parser to be executed.
  */
-Modifier when(const bool c) { return iff([=] (auto _) { return c; }); }
+Modifier when(const bool c) { return iff(::const_<State>(c)); }
 
 /**
  * Require the given symbol to be valid for the next parser to be executed.
@@ -767,47 +731,66 @@ Modifier sym(const Sym s) { return iff(cond::sym(s)); }
 /**
  * Parser that terminates the execution with the successful detection of the given symbol, but only if it is expected.
  */
-Parser success_sym(const Sym s, string desc) { return sym(s)(success(s, desc)); }
-
-Modifier peek(const char c) { return iff(cond::peek(c)); }
+Parser success_sym(const Sym s, string desc) { return sym(s)(finish(s, desc)); }
 
 /**
- * :: (bool -> Parser) -> (char -> bool) -> Parser
+ * :: (State -> (bool, char)) -> (char -> Parser) -> (char -> Parser) -> Parser
  *
- * If the predicate for the next character is true, pass the consumed character to the next parser.
+ * If the predicate is true, pass the character to the `match` parser, otherwise the `nomatch`
+ * parser.
+ *
+ * The template allows passing in `Parser` or `Result` for the `(char -> Parser)` parameters.
  */
-function<Parser(function<Parser(char)>)> peeks(CharCondition pred) {
-  return [=](auto next) {
-    return [=](auto state) {
-      auto res = cond::peeks(pred)(state);
-      if (res.first) return next(res.second)(state);
-      else return result::cont;
-    };
+template<class A, class B> Parser either(function<pair<bool, char>(const State &)> con, A match, B nomatch) {
+  return [=](auto state) {
+    auto res = con(state);
+    return res.first ? as_char_parser(match)(res.second)(state) : as_char_parser(nomatch)(res.second)(state);
   };
+}
+
+/**
+ * :: (char -> bool) -> (char -> Parser) -> (char -> Parser) -> Parser
+ *
+ * If the predicate for the next character is true, pass the character to the `match` parser, otherwise the `nomatch`
+ * parser.
+ *
+ * The template allows passing in `Parser` or `Result` for the `(char -> Parser)` parameters.
+ */
+template<class A, class B> Parser peeks(Peek pred, A match, B nomatch) {
+  return either(cond::peeks(pred), match, nomatch);
+}
+
+/**
+ * :: (char -> bool) -> Parser -> Parser
+ *
+ * Specialization for a conditional parser that's executed in the success case.
+ */
+Modifier peeks(Peek pred) { return [=](Parser next) { return peeks(pred, next, result::cont); }; }
+
+/**
+ * Requires the next character to be `c` for the next parser to be executed.
+ */
+Modifier peek(const char c) { return peeks(cond::eq(c)); }
+
+/**
+ * :: (char -> bool) -> (char -> Parser) -> Parser
+ *
+ * If the predicate for the next character is true, advance the lexer and pass the consumed character to the next
+ * parser.
+ */
+function<Parser(CharParser)> consume_if(Peek pred) {
+  return [=](const CharParser & next) { return either(cond::consume_if(pred), next, result::cont); };
 }
 
 /**
  * Require the next character to be `c` for the next parser to be executed, advancing the lexer in the success case.
  */
-Modifier consume(const char c) { return iff(cond::consume(c)); }
+Modifier consume(const char c) { return [=](Parser next) { return consume_if(cond::eq(c))(as_char_parser(next)); }; }
 
 /**
- * :: (bool -> Parser) -> (char -> bool) -> Parser
- *
- * If the predicate for the next character is true, advance the lexer and pass the consumed character to the next
- * parser.
+ * Consume all characters while the predicate holds.
  */
-function<Parser(function<Parser(char)>)> consumes(CharCondition pred) {
-  return [=](auto next) {
-    return [=](auto state) {
-      auto res = cond::consumes(pred)(state);
-      if (res.first) return next(res.second)(state);
-      else return result::cont;
-    };
-  };
-}
-
-Parser consume_while(function<Condition(char)> pred) { return effect(cond::consume_while(pred)); }
+Parser consume_while(Peek pred) { return effect(cond::consume_while(pred)); }
 
 /**
  * Advance the lexer.
@@ -872,7 +855,7 @@ Parser skipspace =
 /**
  * If a layout end is valid at this position, remove one indentation layer and succeed with layout end.
  */
-Parser layout_end(string desc) { return sym(Sym::end)(effect(pop) + success(Sym::end, desc)); }
+Parser layout_end(string desc) { return sym(Sym::end)(effect(pop) + finish(Sym::end, desc)); }
 
 /**
  * Convenience parser, since those two are often used together.
@@ -896,7 +879,7 @@ using namespace parser;
  * Advance the parser until a non-whitespace character is encountered, while counting whitespace according to the rules
  * in the syntax reference, resetting the counter on each newline.
  *
- * This advances to the first non-white character in the next nonempty line and determines its indentation.
+ * This advances to the first nonwhite character in the next nonempty line and determines its indentation.
  */
 uint32_t count_indent(State & state) {
   uint32_t indent = 0;
@@ -922,14 +905,14 @@ uint32_t count_indent(State & state) {
  *
  * If those cases do not apply, parsing fails.
  */
-Parser eof = peek(0)(sym(Sym::empty)(success(Sym::empty, "eof")) + end_or_semicolon("eof") + fail);
+Parser eof = peek(0)(sym(Sym::empty)(finish(Sym::empty, "eof")) + end_or_semicolon("eof") + fail);
 
 /**
  * Push the initial indentation at the beginning of the file or module decl to the column of first nonwhite character,
  * then succeed with the dummy symbol `Sym::indent`.
  */
 Parser initialize(uint32_t column) {
-  return when(column == 0)(skip_ws + mark + push(column) + success(Sym::indent, "init"));
+  return when(column == 0)(skip_ws + mark + push(column) + finish(Sym::indent, "init"));
 }
 
 /**
@@ -950,16 +933,29 @@ Parser initialize_without_module =
  * Since the dot is consumed here, the alternative interpretation, a `Sym::varsym`, has to be emitted here.
  * A `Sym::tyconsym` is invalid here, because the dot is only expected in expressions.
  */
-Parser dot = sym(Sym::dot)(consume('.')(peekws(success_sym(Sym::varsym, "dot")) + mark + success(Sym::dot, "dot")));
+Parser dot = sym(Sym::dot)(consume('.')(peekws(success_sym(Sym::varsym, "dot")) + mark + finish(Sym::dot, "dot")));
 
+/**
+ * Consume the body of a cpp directive.
+ *
+ * Since they can contain escaped newlines, they have to be consumed, after which the parser recurses.
+ */
 Parser cpp_consume =
   [](auto state) {
     auto p =
       consume_while(!cond::newline & !cond::is_char('\\')) +
-      consume('\\')(peek('\n')(parser::advance) + cpp_consume);
+      consume('\\')(parser::advance + cpp_consume);
     return p(state);
   };
 
+/**
+ * Parse a cpp directive.
+ *
+ * `#else` directives can reset the parse tree to a previous node. There is no functionality in the API that allows for
+ * this to be compensated for, so it will result in corruption.
+ *
+ * However, the indent stack will be saved and restored here.
+ */
 Parser cpp =
   consume('#')(
     seq("if")(effect(state::cpp_push)) +
@@ -969,11 +965,13 @@ Parser cpp =
     ) +
     cpp_consume +
     mark +
-    success(Sym::cpp, "cpp")
+    finish(Sym::cpp, "cpp")
   );
 
-Parser cpp_init =
-  iff(cond::column(0))(cpp);
+/**
+ * If the current column i 0, a cpp directive may begin.
+ */
+Parser cpp_init = iff(cond::column(0))(cpp);
 
 /**
  * End a layout by removing an indentation from the stack, but only if the current column (which should be in the next
@@ -994,7 +992,7 @@ Parser newline_where(uint32_t indent) {
  * Succeed for `Sym::semicolon` if the indent of the next line is equal to the current layout's.
  */
 Parser newline_semicolon(uint32_t indent) {
-  return sym(Sym::semicolon)(iff(cond::same_indent(indent))(mark + success(Sym::semicolon, "newline_semicolon")));
+  return sym(Sym::semicolon)(iff(cond::same_indent(indent))(mark + finish(Sym::semicolon, "newline_semicolon")));
 }
 
 /**
@@ -1002,7 +1000,7 @@ Parser newline_semicolon(uint32_t indent) {
  *
  * Necessary because `is_newline_where` needs to know that no `where` may follow.
  */
-Parser where = token("where")(sym(Sym::where)(mark + success(Sym::where, "where")) + layout_end("where"));
+Parser where = token("where")(sym(Sym::where)(mark + finish(Sym::where, "where")) + layout_end("where"));
 
 /**
  * An `in` token ends the layout openend by a `let`.
@@ -1016,49 +1014,36 @@ Parser in = token("in")(end_or_semicolon("in"));
 Parser qq_start =
   parser::advance +
   mark +
-  consume_while(cond::varid_start_char_c) +
+  consume_while(cond::varid_start_char) +
   consume_while(cond::varid_char) +
-  peek('|')(success(Sym::qq_start, "qq_start"))
+  peek('|')(finish(Sym::qq_start, "qq_start"))
   ;
 
 /**
- * When an opening bracket was encountered, this parser tests for a quasiquote or fails, for the grammar to parser the
- * bracket literally.
- */
-Parser bracket_open =
-  sym(Sym::qq_start)(qq_start) + fail;
-
-/**
  * When a dollar is followed by a varid or opening paren, parse a splice.
- *
- * TODO non-parens splices can only be varids, apparently
  */
 Parser splice =
-  iff(cond::peek_with(cond::varid_start_char_c) | cond::peek('('))(mark + success_sym(Sym::splice, "splice") + fail);
-
-Parser inline_comment =
-  consume_while(!cond::newline) + mark + success(Sym::comment, "inline_comment");
-
-Parser symbolic_multi1(const Sym s, bool all_dashes);
+  iff(cond::peek_with(cond::varid_start_char) | cond::peek('('))(mark + success_sym(Sym::splice, "splice") + fail);
 
 /**
- * Recurse while the next character is symbolic, then successd with `Sym::varsym`.
- * TODO use a `skipwhile` combinator
+ * Consume all characters up to the end of line and succeed with `Sym::commment`.
  */
-function<Parser(char)> symbolic_multi(const Sym s, bool all_dashes) {
-  return [=](const char next) {
-    auto still_dashes = all_dashes && next == '-';
-    return symbolic_multi1(s, still_dashes);
-  };
-};
+Parser inline_comment = consume_while(!cond::newline) + mark + finish(Sym::comment, "inline_comment");
 
-Parser symbolic_multi1(const Sym s, bool all_dashes) {
-  return
-    consumes(cond::symbolic_c)(symbolic_multi(s, all_dashes)) +
-    when(all_dashes)(inline_comment) +
-    mark +
-    success(s, "symbolic_multi1")
-    ;
+/**
+ * Starting with the third character, any sequence of symbolic characters is an operator, except for a sequence of
+ * dashes, which should have been excluded before this.
+ *
+ * Consume them all and succeed with the specified symbol.
+ */
+Parser third_sym_char(const Sym s) { return consume_while(cond::symbolic) + mark + finish(s, "third_sym_char"); }
+
+/**
+ * Assuming that the preceding characters are `--`, consume all remaining `-`. Then, if the next character is symbolic
+ * as well, the token is an operator. Otherwise, it is an inline commment.
+ */
+Parser symbolic_or_comment(const Sym s) {
+  return consume_while(cond::eq('-')) + peeks(cond::symbolic)(third_sym_char(s)) + inline_comment;
 }
 
 /**
@@ -1067,7 +1052,7 @@ Parser symbolic_multi1(const Sym s, bool all_dashes) {
 Parser two_symbols(const Sym s, const char first_char, const char second_char, bool both_dashes) {
   return
     when(both_dashes)(inline_comment) +
-    when(cond::valid_symop_two_chars(s, first_char, second_char))(mark + success(s, "two_symbols")) +
+    when(cond::valid_symop_two_chars(first_char, second_char))(mark + finish(s, "two_symbols")) +
     fail;
 }
 
@@ -1077,18 +1062,58 @@ Parser two_symbols(const Sym s, const char first_char, const char second_char, b
  * following symbolic characters will be consumed.
  * If it is not, check whether the two characters match a reserved operator.
  */
-function<Parser(const char)> symbolic_c2(const Sym s, const char first_char) {
-  return [=](const char second_char) {
-    auto both_dashes = first_char == '-' && second_char == '-';
-    return
-      parser::advance +
-      either(
-        fst<bool, char> * cond::peeks(cond::symbolic_c),
-        symbolic_multi1(s, both_dashes),
-        two_symbols(s, first_char, second_char, both_dashes)
-      );
+function<function<Parser(const char)>(const char)> second_sym_char(const Sym s) {
+  return [=](const char first_char) {
+    return [=](const char second_char) {
+      auto both_dashes = first_char == '-' && second_char == '-';
+      return
+        parser::advance +
+        peeks(
+          cond::symbolic,
+          either(both_dashes, symbolic_or_comment(s), third_sym_char(s)),
+          two_symbols(s, first_char, second_char, both_dashes)
+        );
+    };
   };
 }
+
+/**
+ * Generic logic for the three symbolic operator types.
+ *
+ * THe predicate `start` determines whether the first character is valid for the respective operator `s`.
+ * The nomatch parser is called when only one character is symbolic.
+ */
+Parser symop(Peek start, Sym s, CharParser nomatch) {
+  return consume_if(start)([=](const char first_char) {
+    return peeks(
+      cond::symbolic,
+      second_sym_char(s)(first_char),
+      nomatch(first_char)
+    );
+  });
+}
+
+/**
+ * Parse a symbolic constructor, starting with a colon.
+ */
+Parser consym = symop(cond::eq(':'), Sym::consym, const_<char>(mark + finish(Sym::consym, "consym")));
+
+/**
+ * Succeed if the symbolic character doesn't match a reserved operator for tycons, otherwise fail.
+ *
+ * If the character is `!`, it may be overridden by strictness annotation.
+ */
+Parser single_tyconsym(const char c) {
+  return
+    when(cond::valid_tyconsym_one_char(c))(
+    mark +
+    when(c == '!')(success_sym(Sym::strict, "single_tyconsym")) +
+    when(cond::symop_needs_token_end(c))(iff(cond::token_end)(finish(Sym::tyconsym, "single_tyconsym")) + fail) +
+    finish(Sym::tyconsym, "single_tyconsym")
+  ) + fail;
+}
+
+Parser tyconsym = symop(cond::symbolic, Sym::tyconsym, single_tyconsym);
 
 /**
  * Succeed if the symbolic character doesn't match a reserved operator, otherwise fail.
@@ -1096,66 +1121,22 @@ function<Parser(const char)> symbolic_c2(const Sym s, const char first_char) {
 Parser single_varsym(const char c) {
   return when(cond::valid_varsym_one_char(c))(
     mark +
-    when(cond::symop_needs_ws(c))(
+    when(c == '!')(success_sym(Sym::strict, "single_varsym")) +
+    when(cond::symop_needs_token_end(c))(
       when(c == '$')(splice) +
-      iff(cond::token_end)(success(Sym::varsym, "single_varsym")) +
+      iff(cond::token_end)(finish(Sym::varsym, "single_varsym")) +
       fail
-    ) + success(Sym::varsym, "single_varsym")
+    ) + finish(Sym::varsym, "single_varsym")
   ) + fail;
 }
 
 /**
  * Check whether the first char is symbolic and not a `:` (constructor marker).
  * If so, check whether the next character is symbolic as well.
- * If it is, continue with `varsym_c2`.
+ * If it is, continue with `third_sym_char`.
  * If it is not, check whether the character matches a reserved operator.
- *
- * TODO use consumes(valid_first_varsym) to call this, then again to call the next (`eithers`)
- * TODO generalize all parsers to take one character as arg
  */
-Parser varsym(const char first_char) {
-  return when(first_char != ':' && cond::symbolic(first_char))(
-    parser::advance +
-    either(
-      fst<bool, char> * cond::peeks(cond::symbolic_c),
-      with(state::next_char)(symbolic_c2(Sym::varsym, first_char)),
-      single_varsym(first_char)
-    )
-  );
-}
-
-Parser consym(const char first_char) {
-  return when(first_char == ':')(
-    parser::advance +
-    either(
-      fst<bool, char> * cond::peeks(cond::symbolic_c),
-      with(state::next_char)(symbolic_c2(Sym::consym, first_char)),
-      mark + success(Sym::consym, "consym")
-    )
-  );
-}
-
-/**
- * Succeed if the symbolic character doesn't match a reserved operator for tycons, otherwise fail.
- */
-Parser single_tyconsym(const char c) {
-  return when(cond::valid_tyconsym_one_char(c))(
-    mark +
-    when(cond::symop_needs_ws(c))(iff(cond::token_end)(success(Sym::tyconsym, "single_tyconsym")) + fail) +
-    success(Sym::tyconsym, "single_tyconsym")
-  ) + fail;
-}
-
-Parser tyconsym(const char first_char) {
-  return iff(cond::symbolic_c(first_char))(
-    parser::advance +
-    either(
-      fst<bool, char> * cond::peeks(cond::symbolic_c),
-      with(state::next_char)(symbolic_c2(Sym::tyconsym, first_char)),
-      single_tyconsym(first_char)
-    )
-  );
-}
+Parser varsym = symop(cond::valid_first_varsym, Sym::varsym, single_varsym);
 
 /**
  * To be called when it is certain that two minuses cannot succeed as a symbolic operator.
@@ -1163,44 +1144,72 @@ Parser tyconsym(const char first_char) {
  *   - `Sym::start` is valid
  *   - Operator matching was done already
  */
-Parser minus =
-  seq("--")(symbolic_multi1(Sym::fail, true) + fail);
+Parser minus = seq("--")(symbolic_or_comment(Sym::fail) + fail);
+
+/**
+ * Succeed for a comment.
+ */
+Parser multiline_comment_success = mark + finish(Sym::comment, "multiline_comment");
 
 Parser multiline_comment(uint16_t);
 
-Parser multiline_comment_check(uint16_t level) {
+/**
+ * Mutually recursive with `multiline_comment`.
+ *
+ * Since {- -} comments can be nested arbitrarily, this has to keep track of how many have been openend, so that the
+ * outermost comment isn't closed prematurely.
+ *
+ * This part looks for the comment markers at the current position and recurses with an adjusted nesting level.
+ */
+Parser nested_comment(uint16_t level) {
   return [=](auto state) {
-    auto c =
-      iff(cond::peekeof)(fail) +
+    auto p =
+      eof +
       seq("{-")(multiline_comment(level + 1) + fail) +
-      seq("-}")(when(level <= 1)(mark + success(Sym::comment, "multiline_comment_check")) + multiline_comment(level - 1) + fail) +
-      parser::advance + multiline_comment(level)
+      seq("-}")(when(level <= 1)(multiline_comment_success) + multiline_comment(level - 1) + fail) +
+      parser::advance +
+      multiline_comment(level)
       ;
-    return c(state);
+    return p(state);
   };
 }
 
+/**
+ * See `nested_comment`.
+ *
+ * This part consumes all characters until the next potential comment marker to call `nested_comment`, or eof.
+ */
 Parser multiline_comment(uint16_t level) {
-  return consume_while(!cond::eq('{') & !cond::eq('-') & !cond::eq(0)) + multiline_comment_check(level) + fail;
+  return consume_while(!cond::eq('{') & !cond::eq('-') & !cond::eq(0)) + nested_comment(level) + fail;
 }
 
-Parser brace =
-  iff(cond::seq("{-"))(
-    iff(!cond::consume('#'))(multiline_comment(1))
-  ) + fail;
+/**
+ * When a brace is encountered, it can be an explicitly started layout, a pragma, or a comment. In the latter case, the
+ * comment is parsed, otherwise parsing fails to delegate to the corresponding grammar rule.
+ */
+Parser brace = seq("{-")(peeks(!cond::eq('#'))(multiline_comment(1))) + fail;
 
-Parser comment(const char next) {
-  return when(next == '-')(minus + fail) + when(next == '{')(brace);
-}
+/**
+ * Parse either inline or block comments.
+ */
+Parser comment = peek('-')(minus + fail) + peek('{')(brace);
 
-Parser close_layout_in_list(const char next) {
-  return
-    when(next == ']')(layout_end("bracket")) +
-    when(next == ',')(
-      sym(Sym::comma)(parser::advance + mark + success(Sym::comma, "commma")) +
-      layout_end("comma")
-    );
-}
+/**
+ * `case` can open a layout in a list:
+ *
+ * [case a of a -> a, case a of a -> a]
+ *
+ * Both commas and closing brackets are able to close those.
+ *
+ * Because commas can also occur in class layouts at the top level, e.g. in fixity decls, the comma rule has to be
+ * parsed here as well.
+ */
+Parser close_layout_in_list =
+  peek(']')(layout_end("bracket")) +
+  consume(',')(
+    sym(Sym::comma)(mark + finish(Sym::comma, "commma")) +
+    layout_end("comma")
+  );
 
 /**
  * Parse special tokens before the first newline that can't be reliably detected by tree-sitter:
@@ -1212,20 +1221,19 @@ Parser close_layout_in_list(const char next) {
  *   - `$` can be a splice if not followed by whitespace
  *   - '[' can be a list or a quasiquote
  */
-Parser inline_tokens(const char next) {
-  return
-    when(next == 'w')(where + fail) +
-    when(next == 'i')(in + fail) +
-    when(next == ')')(end_or_semicolon(")")) +
-    when(next == '[')(bracket_open) +
-    sym(Sym::consym)(consym(next)) +
-    sym(Sym::tyconsym)(tyconsym(next)) +
-    sym(Sym::varsym)(varsym(next)) +
-    comment(next) +
-    sym(Sym::splice)(consume('$')(splice)) +
-    close_layout_in_list(next)
-    ;
-}
+Parser inline_tokens =
+  peek('w')(where + fail) +
+  peek('i')(in + fail) +
+  peek(')')(layout_end(")") + fail) +
+  sym(Sym::qq_start)(peek('[')(qq_start + fail)) +
+  sym(Sym::consym)(consym) +
+  sym(Sym::tyconsym)(tyconsym) +
+  sym(Sym::varsym)(varsym) +
+  comment +
+  sym(Sym::strict)(consume('!')(mark + finish(Sym::strict, "inline_tokens"))) +
+  sym(Sym::splice)(consume('$')(splice)) +
+  close_layout_in_list
+  ;
 
 /**
  * If the symbol `Sym::start` is valid, starting a new layout is almost always indicated.
@@ -1244,7 +1252,7 @@ Parser layout_start(uint32_t column) {
     peek('{')(brace) +
     peek('-')(minus) +
     push(column) +
-    success(Sym::start, "layout_start")
+    finish(Sym::start, "layout_start")
   );
 }
 
@@ -1264,7 +1272,7 @@ Parser layout_start(uint32_t column) {
  * semicolon. Since `f` is on the same indent as the outer `do`'s layout, this parser matches.
  */
 Parser post_end_semicolon(uint32_t column) {
-  return sym(Sym::semicolon)(iff(cond::same_indent(column))(success(Sym::semicolon, "post_end_semicolon")));
+  return sym(Sym::semicolon)(iff(cond::same_indent(column))(finish(Sym::semicolon, "post_end_semicolon")));
 }
 
 /**
@@ -1282,11 +1290,11 @@ Parser repeat_end(uint32_t column) {
 Parser newline(uint32_t indent) {
   return
     eof +
-    with(state::next_char)(comment) +
+    comment +
     dedent(indent) +
     newline_where(indent) +
     newline_semicolon(indent) +
-    with(state::next_char)(close_layout_in_list)
+    close_layout_in_list
     ;
 }
 
@@ -1304,7 +1312,7 @@ Parser immediate(uint32_t column) {
     layout_start(column) +
     post_end_semicolon(column) +
     repeat_end(column) +
-    with(state::next_char)(inline_tokens)
+    inline_tokens
     ;
 }
 
@@ -1345,7 +1353,7 @@ Parser all = init + main;
 namespace eval {
 
 /**
-  * Helper that consumes all characters up to the next whitespace, for debugging after a run.
+  * Helper that consume_if all characters up to the next whitespace, for debugging after a run.
   *
   * Note: This may break the parser, since not all paths use `mark`.
   */

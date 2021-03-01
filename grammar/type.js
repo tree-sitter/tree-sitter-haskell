@@ -32,6 +32,7 @@ module.exports = {
 
   list_type: $ => seq(optional(quote), brackets(sep1($.comma, $._type))),
 
+  // TODO remove regex
   tuple_type: $ => seq(
     choice(/'\s*\(/, '('),
     $._type,
@@ -40,7 +41,7 @@ module.exports = {
     ')',
   ),
 
-  strict_type: $ => seq('!', $._atype),
+  strict_type: $ => seq($._strict, $._atype),
 
   type_name: $ => choice(
     $._tyvar,

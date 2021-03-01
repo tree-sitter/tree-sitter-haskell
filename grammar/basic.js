@@ -11,7 +11,7 @@ module.exports = {
   float: _ => token(seq(
     decimal,
     choice(
-      seq(/\.[0-9_]+/, optional(exponent)), 
+      seq(/\.[0-9_]+/, optional(exponent)),
       exponent,
     ),
   )),
@@ -75,7 +75,6 @@ module.exports = {
   carrow: _ => '=>',
   lambda: _ => '\\',
   tyapp: _ => '@',
-  strict: _ => '!',
   bar: _ => '|',
   equals: _ => '=',
   annotation: _ => '::',
