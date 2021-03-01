@@ -159,22 +159,49 @@ a ~(~(a, a), a) = a
   (funrhs (equals) (exp_name (varid)))))
 
 =================================================
-pat: view
+pat: view pattern in funvar
 =================================================
 
 a (a a -> Aa a a) = a
+a (a -> a, a -> a) = a
 
 ---
 
 (module
  (decl_fun
-  (funvar
-   (varid)
-   (pat_view
-    (exp_apply (exp_name (varid)) (exp_name (varid)))
+  (funvar (varid)
+   (pat_parens
+    (pat_view
+     (exp_apply (exp_name (varid)) (exp_name (varid)))
+     (arrow)
+     (pat_apply (pat_name (conid)) (pat_name (varid)) (pat_name (varid))))))
+  (funrhs (equals) (exp_name (varid))))
+  (decl_fun
+   (funvar (varid)
+    (pat_tuple
+     (pat_view (exp_name (varid)) (arrow) (pat_name (varid)))
+     (comma)
+     (pat_view (exp_name (varid)) (arrow) (pat_name (varid)))))
+   (funrhs (equals) (exp_name (varid)))))
+
+=================================================
+pat: view pattern in lambda
+=================================================
+
+a = \ (a -> a) -> a
+
+---
+
+(module
+ (decl_fun
+  (funvar (varid))
+  (funrhs
+   (equals)
+   (exp_lambda
+    (lambda)
+    (pat_parens (pat_view (exp_name (varid)) (arrow) (pat_name (varid))))
     (arrow)
-    (pat_apply (pat_name (conid)) (pat_name (varid)) (pat_name (varid)))))
-  (funrhs (equals) (exp_name (varid)))))
+    (exp_name (varid))))))
 
 =================================================
 pat: annotation

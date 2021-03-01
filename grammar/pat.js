@@ -13,13 +13,13 @@ module.exports = {
 
   pat_as: $ => seq(field('var', $.varid), $.as_pat, field('pat', $._apat)),
 
-  pat_parens: $ => parens($._pat, optional($._type_annotation)),
+  pat_parens: $ => parens($._nested_pat, optional($._type_annotation)),
 
-  pat_view: $ => parens($._exp, $.arrow, $._pat, optional($._type_annotation)),
+  pat_view: $ => seq($._exp, $.arrow, $._nested_pat),
 
-  pat_tuple: $ => parens(sep2($.comma, $._pat)),
+  pat_tuple: $ => parens(sep2($.comma, $._nested_pat)),
 
-  pat_list: $ => brackets(sep1($.comma, $._pat)),
+  pat_list: $ => brackets(sep1($.comma, $._nested_pat)),
 
   pat_strict: $ => seq($._strict, $._apat),
 
@@ -38,7 +38,6 @@ module.exports = {
     alias($.literal, $.pat_literal),
     alias($.wildcard, $.pat_wildcard),
     $.pat_parens,
-    $.pat_view,
     $.pat_tuple,
     $.pat_list,
     $.pat_strict,
@@ -65,4 +64,12 @@ module.exports = {
     prec(2, $.pat_infix),
     prec(1, $._lpat),
   ),
+
+  /**
+   *
+   */
+  _nested_pat: $ => choice(
+    $._pat,
+    $.pat_view,
+  )
 }
