@@ -9,7 +9,7 @@
 (pragma) @pragma
 (comment) @comment
 (signature name: (variable) @fun_type_name)
-(funvar name: (variable) @fun_name)
+(function name: (variable) @fun_name)
 (constraint class: (class_name (type)) @class)
 (class (class_head class: (class_name (type)) @class))
 (instance (instance_head class: (class_name (type)) @class))

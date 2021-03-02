@@ -1,6 +1,6 @@
-=========================================
+================================================================================
 pattern synonym: unidirectional simple
-=========================================
+================================================================================
 
 pattern A a <- a:as
 
@@ -11,9 +11,9 @@ pattern A a <- a:as
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (pat_infix (pat_name (variable)) (consym) (pat_name (variable)))))
 
-=========================================
+================================================================================
 pattern synonym: unidirectional strict
-=========================================
+================================================================================
 
 pattern A a = A !a
 
@@ -24,9 +24,9 @@ pattern A a = A !a
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (pat_apply (pat_name (constructor)) (pat_strict (pat_name (variable))))))
 
-=========================================
+================================================================================
 pattern synonym: explicit bidirectional list
-=========================================
+================================================================================
 
 pattern HeadC a <- a:as where
   HeadC a = [a]
@@ -39,11 +39,11 @@ pattern HeadC a <- a:as where
   (pat_infix (pat_name (variable)) (consym) (pat_name (variable)))
   (where)
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
-  (funrhs (exp_list (exp_name (variable))))))
+  (exp_list (exp_name (variable)))))
 
-=========================================
+================================================================================
 pattern synonym: explicit bidirectional strict
-=========================================
+================================================================================
 
 pattern A a <- A !a where
   A !a = A a
@@ -56,11 +56,11 @@ pattern A a <- A !a where
   (pat_apply (pat_name (constructor)) (pat_strict (pat_name (variable))))
   (where)
   (pat_apply (pat_name (constructor)) (pat_strict (pat_name (variable))))
-  (funrhs (exp_apply (exp_name (constructor)) (exp_name (variable))))))
+  (exp_apply (exp_name (constructor)) (exp_name (variable)))))
 
-=========================================
+================================================================================
 pattern synonym: explicit bidirectional record
-=========================================
+================================================================================
 
 pattern A { a } <- A a where
   A a = if a >= 0 then a else a
@@ -74,15 +74,14 @@ pattern A { a } <- A a where
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (where)
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
-  (funrhs
-   (exp_cond
-    if: (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_literal (integer)))
-    then: (exp_name (variable))
-    else: (exp_name (variable))))))
+  rhs: (exp_cond
+   if: (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_literal (integer)))
+   then: (exp_name (variable))
+   else: (exp_name (variable)))))
 
-=========================================
+================================================================================
 pattern synonym: explicit bidirectional guards
-=========================================
+================================================================================
 
 pattern A a <- A a where
   A a
@@ -97,17 +96,16 @@ pattern A a <- A a where
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (where)
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
-  (funrhs
-   (gdrhs
-    (guards (guard (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_literal (integer)))))
-    (exp_parens (exp_apply (exp_name (constructor)) (exp_name (variable)))))
-   (gdrhs
-    (guards (guard (exp_name (variable))))
-    (exp_parens (exp_apply (exp_name (constructor)) (exp_name (variable))))))))
+  (guard_equation
+   (guards (guard (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_literal (integer)))))
+   (exp_parens (exp_apply (exp_name (constructor)) (exp_name (variable)))))
+  (guard_equation
+   (guards (guard (exp_name (variable))))
+   (exp_parens (exp_apply (exp_name (constructor)) (exp_name (variable)))))))
 
-=========================================
+================================================================================
 pattern synonym: signature
-=========================================
+================================================================================
 
 pattern A :: A -> A -> (A, A)
 
@@ -120,14 +118,14 @@ pattern A :: A -> A -> (A, A)
    (type_name (type))
    (fun
     (type_name (type))
-    (tuple_type
+    (type_tuple
      (type_name (type))
      (comma)
      (type_name (type)))))))
 
-=========================================
+================================================================================
 pattern synonym: unidirectional record
-=========================================
+================================================================================
 
 pattern A {a, a} = (a, a)
 

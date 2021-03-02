@@ -15,9 +15,9 @@ module.exports = {
   _cdecl: $ => choice(
     $._gendecl,
     $.default_signature,
-    $.decl_fun,
+    alias($._funvar, $.function),
     $.decl_type_sig,
-    $.class_datafam,
+    alias($.class_datafam, $.data_family),
   ),
 
   fundep: $ => seq(repeat1($.type_variable), $._arrow, repeat1($.type_variable)),
@@ -76,7 +76,7 @@ module.exports = {
   ),
 
   _idecl: $ => choice(
-    $.decl_fun,
+    alias($._funvar, $.function),
     $.signature,
     $.inst_datainst,
     $.inst_tyinst,

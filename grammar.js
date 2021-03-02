@@ -126,10 +126,10 @@ module.exports = grammar({
      * Top-level expression splices fundamentally conflict with decls, and since decls start with either `var` or `pat`,
      * they cannot be disambiguated.
      *
-     * funvar:
+     * function_variable:
      * func (A a) = a
      *
-     * funpat:
+     * function_pattern:
      * Just 1 = Just 1
      * a : as = [1, 2, 3]
      *

@@ -1,6 +1,6 @@
-=========================================
+================================================================================
 char: [a-zA-Z0-9_]
-=========================================
+================================================================================
 
 a = 'a'
 a = 'b'
@@ -14,18 +14,18 @@ a = ','
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char))))
 
-=========================================
+================================================================================
 char: symbols
-=========================================
+================================================================================
 
 a = '!'
 a = '#'
@@ -50,29 +50,29 @@ a = '"'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char))))
 
-=========================================
+================================================================================
 char: special symbols
-=========================================
+================================================================================
 
 a = '('
 a = ')'
@@ -86,18 +86,18 @@ a = '}'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char))))
 
-=========================================
+================================================================================
 char: character escape
-=========================================
+================================================================================
 
 a = '\a'
 a = '\b'
@@ -114,31 +114,31 @@ a = '\&'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char))))
 
-=========================================
+================================================================================
 char: space
-=========================================
+================================================================================
 
 a = ' '
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
+(module (function (variable) (exp_literal (char))))
 
-=========================================
+================================================================================
 char: escape ascii
-=========================================
+================================================================================
 
 a = '\NUL'
 a = '\SOH'
@@ -178,44 +178,44 @@ a = '\DEL'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char))))
 
-=========================================
+================================================================================
 char: Escape Control Characters
-=========================================
+================================================================================
 
 a = '\^A'
 a = '\^Z'
@@ -229,11 +229,11 @@ a = '\^_'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char)))
+ (function (variable) (exp_literal (char))))

@@ -7,16 +7,16 @@ module.exports = {
 
   type_variable: $ => $._varid,
 
-  annotated_tyvar: $ => parens($.type_variable, $._type_annotation),
+  annotated_type_variable: $ => parens($.type_variable, $._type_annotation),
 
   _tyvar: $ => choice(
-    $.annotated_tyvar,
+    $.annotated_type_variable,
     $.type_variable,
   ),
 
   _forall_kw: _ => choice('forall', '∀'),
 
-  forall_dot: $ => choice('.', $._arrow),
+  _forall_dot: $ => choice('.', $._arrow),
 
   _forall: $ => seq(
     $._forall_kw,
@@ -25,19 +25,19 @@ module.exports = {
 
   forall: $ => seq(
     $._forall,
-    $.forall_dot,
+    $._forall_dot,
   ),
 
   type_parens: $ => parens($._type),
 
-  list_type: $ => brackets(sep1($.comma, $._type)),
+  type_list: $ => brackets(sep1($.comma, $._type)),
 
-  tuple_type: $ => parens(sep2($.comma, $._type)),
+  type_tuple: $ => parens(sep2($.comma, $._type)),
 
   _type_promotable_literal: $ => choice(
     $.type_literal,
-    $.tuple_type,
-    $.list_type,
+    $.type_tuple,
+    $.type_list,
   ),
 
   _type_promoted_literal: $ => seq(quote, $._type_promotable_literal),
@@ -108,7 +108,7 @@ module.exports = {
 
   _type_quantifiers: $ => seq(
     alias($._forall, $.quantifiers),
-    $.forall_dot,
+    $._forall_dot,
     $._type,
   ),
 
@@ -169,6 +169,7 @@ module.exports = {
   // type family
   // ------------------------------------------------------------------------
 
+  // TODO what's this?
   tyfam_sig: $ => seq(
     // optional(sep1($.comma, choice($._variable, $.implicit_parid))),
     $._annotation,
@@ -183,7 +184,7 @@ module.exports = {
   ),
 
   tyfam_eq: $ => seq(
-    $.tyfam_pat,
+    alias($.tyfam_pat, $.pattern),
     $._equals,
     $._type,
   ),
@@ -191,9 +192,9 @@ module.exports = {
   decl_tyfam: $ => seq(
     'type',
     'family',
-    $.tyfam_head,
-    optional($.tyfam_sig),
-    optional(where($, $.tyfam_eq)),
+    alias($.tyfam_head, $.head),
+    optional(alias($.tyfam_sig, $.signature)),
+    optional(where($, alias($.tyfam_eq, $.equation))),
   ),
 
   decl_tyinst: $ => seq(

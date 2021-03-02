@@ -1,6 +1,6 @@
-===============================
+================================================================================
 exp: application
-===============================
+================================================================================
 
 a = a a
 a = a a a
@@ -9,24 +9,23 @@ a = a A.a a a
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_apply (exp_name (variable)) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_apply (exp_name (variable)) (exp_name (variable)) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
+ (function
+  (variable)
+  (exp_apply (exp_name (variable)) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_apply (exp_name (variable)) (exp_name (variable)) (exp_name (variable))))
+ (function
+  (variable)
    (exp_apply
     (exp_name (variable))
     (exp_name (qualified_variable (modid (constructor)) (variable)))
     (exp_name (variable))
-    (exp_name (variable))))))
+    (exp_name (variable)))))
 
-===============================
+================================================================================
 exp: con application
-===============================
+================================================================================
 
 a = A a a
 a = A a A
@@ -34,26 +33,26 @@ a = A a A
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (constructor))))))
+ (function
+  name: (variable)
+  rhs: (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (variable))))
+ (function
+  name: (variable)
+  rhs: (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (constructor)))))
 
-===============================
+================================================================================
 exp: unit
-===============================
+================================================================================
 
 a = ()
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (exp_literal (con_unit)))))
+(module (function (variable) (exp_literal (con_unit))))
 
-===============================
+================================================================================
 exp: arithmetic sequence
-===============================
+================================================================================
 
 a = [a..]
 a = [a,a..]
@@ -63,26 +62,22 @@ a = [a,a..a]
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_arithmetic_sequence (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_arithmetic_sequence (exp_name (variable)) (comma) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_arithmetic_sequence (exp_name (variable)) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_arithmetic_sequence (exp_name (variable)) (comma) (exp_name (variable)) (exp_name (variable))))))
+ (function
+  (variable)
+   (exp_arithmetic_sequence (exp_name (variable))))
+ (function
+  (variable)
+   (exp_arithmetic_sequence (exp_name (variable)) (comma) (exp_name (variable))))
+ (function
+  (variable)
+   (exp_arithmetic_sequence (exp_name (variable)) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_arithmetic_sequence (exp_name (variable)) (comma) (exp_name (variable)) (exp_name (variable)))))
 
-===============================
+================================================================================
 exp: comprehension
-===============================
+================================================================================
 
 a = [a | a <- xs]
 a = [(a, a) | a <- xs, a <- ys]
@@ -94,22 +89,19 @@ a = [ [ (a,a) | a <- [1,2] ] | a <- [1..] ]
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
+ (function
+  (variable)
    (exp_list_comprehension (exp_name (variable))
-    (qual (bind_pattern (pat_name (variable)) (exp_name (variable)))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
+    (qual (bind_pattern (pat_name (variable)) (exp_name (variable))))))
+ (function
+  (variable)
    (exp_list_comprehension
     (exp_tuple (exp_name (variable)) (comma) (exp_name (variable)))
     (qual (bind_pattern (pat_name (variable)) (exp_name (variable))))
     (comma)
-    (qual (bind_pattern (pat_name (variable)) (exp_name (variable)))))))
-  (decl_fun
-   (funvar (variable))
-   (funrhs
+    (qual (bind_pattern (pat_name (variable)) (exp_name (variable))))))
+  (function
+   (variable)
     (exp_list_comprehension (exp_name (variable))
      (qual
       (bind_pattern
@@ -128,10 +120,9 @@ a = [ [ (a,a) | a <- [1,2] ] | a <- [1..] ]
      (qual
       (bind_pattern
        (pat_tuple (pat_literal (integer)) (comma) (pat_name (variable)))
-       (exp_name (variable)))))))
-  (decl_fun
-   (funvar (variable))
-   (funrhs
+       (exp_name (variable))))))
+  (function
+   (variable)
     (exp_list_comprehension
      (exp_tuple (exp_name (variable)) (comma) (exp_name (variable)))
      (qual
@@ -142,10 +133,9 @@ a = [ [ (a,a) | a <- [1,2] ] | a <- [1..] ]
      (qual
       (bind_pattern
        (pat_name (variable))
-       (exp_arithmetic_sequence (exp_literal (integer)) (exp_literal (integer))))))))
-  (decl_fun
-   (funvar (variable))
-   (funrhs
+       (exp_arithmetic_sequence (exp_literal (integer)) (exp_literal (integer)))))))
+  (function
+   (variable)
     (exp_list_comprehension
      (exp_list_comprehension
       (exp_tuple (exp_name (variable)) (comma) (exp_name (variable)))
@@ -156,11 +146,11 @@ a = [ [ (a,a) | a <- [1,2] ] | a <- [1..] ]
      (qual
       (bind_pattern
        (pat_name (variable))
-       (exp_arithmetic_sequence (exp_literal (integer)))))))))
+       (exp_arithmetic_sequence (exp_literal (integer))))))))
 
-===============================
+================================================================================
 exp: operator section right
-===============================
+================================================================================
 
 a = (: a)
 a = (:< a)
@@ -168,18 +158,16 @@ a = (:< a)
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_section_right (consym) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_section_right (consym) (exp_name (variable))))))
+ (function
+  (variable)
+  (exp_section_right (consym) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_section_right (consym) (exp_name (variable)))))
 
-===============================
+================================================================================
 exp: operator section left
-===============================
+================================================================================
 
 a = (a :)
 a = (a :|)
@@ -188,19 +176,19 @@ a = (a $)
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_section_left (exp_name (variable)) (consym))))
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_section_left (exp_name (variable)) (consym))))
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_section_left (exp_name (variable)) (qvarop (operator))))))
+ (function
+  (variable)
+  (exp_section_left (exp_name (variable)) (consym)))
+ (function
+  (variable)
+  (exp_section_left (exp_name (variable)) (consym)))
+ (function
+  (variable)
+  (exp_section_left (exp_name (variable)) (qvarop (operator)))))
 
-===============================
+================================================================================
 exp: infix operator
-===============================
+================================================================================
 
 a = A <$>
   a .: "a" <*>
@@ -212,31 +200,29 @@ a = do
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
+ (function
+  (variable)
+  (exp_infix
    (exp_infix
-    (exp_infix
-     (exp_infix (exp_name (constructor)) (qvarop (operator)) (exp_name (variable)))
-     (qvarop (operator))
-     (exp_literal (string)))
-    (qvarop (operator)) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_do
-    (stmt
-     (bind_pattern
-      (pat_name (variable))
-      (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
-    (stmt
-     (bind_pattern
-      (pat_name (variable))
-      (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))))))
+    (exp_infix (exp_name (constructor)) (qvarop (operator)) (exp_name (variable)))
+    (qvarop (operator))
+    (exp_literal (string)))
+   (qvarop (operator)) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_do
+   (stmt
+    (bind_pattern
+     (pat_name (variable))
+     (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+   (stmt
+    (bind_pattern
+     (pat_name (variable))
+     (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))))
 
-===============================
+================================================================================
 exp: infix con/var
-===============================
+================================================================================
 
 a = a `a` a
 a = a `A.a` a
@@ -245,35 +231,32 @@ a = a `A` a
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix (exp_name (variable)) (qvarop (variable)) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix (exp_name (variable)) (qvarop (qualified_variable (modid (constructor)) (variable))) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix (exp_name (variable)) (constructor) (exp_name (variable))))))
+ (function
+  (variable)
+  (exp_infix (exp_name (variable)) (qvarop (variable)) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_infix (exp_name (variable)) (qvarop (qualified_variable (modid (constructor)) (variable))) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_infix (exp_name (variable)) (constructor) (exp_name (variable)))))
 
-===============================
+================================================================================
 exp: error: infix quoted consym
-===============================
+================================================================================
 
 a = a ':++ a
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_apply (exp_name (variable)) (exp_th_quoted_name (ERROR (UNEXPECTED '+')) (variable))))))
+ (function
+  (variable)
+  (exp_apply (exp_name (variable)) (exp_th_quoted_name (ERROR (UNEXPECTED '+')) (variable)))))
 
-===============================
+================================================================================
 exp: lambda simple
-===============================
+================================================================================
 
 a = \ a -> a
 a = \ (A a) -> a
@@ -281,34 +264,32 @@ a = \ (A a) -> a
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (exp_lambda (pat_name (variable)) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_lambda (pat_parens (pat_apply (pat_name (constructor)) (pat_name (variable)))) (exp_name (variable))))))
+ (function (variable) (exp_lambda (pat_name (variable)) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_lambda (pat_parens (pat_apply (pat_name (constructor)) (pat_name (variable)))) (exp_name (variable)))))
 
-=================================================
+================================================================================
 exp: double lambda
-=================================================
+================================================================================
 
 a = \ a -> a >>= \ a -> a
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_lambda
-    (pat_name (variable))
-    (exp_infix
-     (exp_name (variable))
-     (qvarop (operator))
-     (exp_lambda (pat_name (variable)) (exp_name (variable))))))))
+ (function
+  (variable)
+  (exp_lambda
+   (pat_name (variable))
+   (exp_infix
+    (exp_name (variable))
+    (qvarop (operator))
+    (exp_lambda (pat_name (variable)) (exp_name (variable)))))))
 
-===============================
+================================================================================
 exp: lambda and infix
-===============================
+================================================================================
 
 a = \ a -> a : a : a
 a = \ a a a -> a <$> a <*> a
@@ -316,45 +297,41 @@ a = \ a a a -> a <$> a <*> a
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_lambda
-    (pat_name (variable))
-    (exp_infix
-     (exp_infix (exp_name (variable)) (consym) (exp_name (variable)))
+ (function
+  (variable)
+  (exp_lambda
+   (pat_name (variable))
+   (exp_infix
+    (exp_infix (exp_name (variable)) (consym) (exp_name (variable)))
     (consym)
+    (exp_name (variable)))))
+ (function
+  (variable)
+  (exp_lambda
+   (pat_name (variable))
+   (pat_name (variable))
+   (pat_name (variable))
+   (exp_infix
+    (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))
+    (qvarop (operator))
     (exp_name (variable))))))
- (decl_fun
-  (funvar
-   (variable))
-  (funrhs
-   (exp_lambda
-    (pat_name (variable))
-    (pat_name (variable))
-    (pat_name (variable))
-    (exp_infix
-     (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))
-     (qvarop (operator))
-     (exp_name (variable)))))))
 
-=================================================
+================================================================================
 exp: parenthesized infix
-=================================================
+================================================================================
 
 a = (a <$> a)
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_parens (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))))
+ (function
+  (variable)
+  (exp_parens (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
 
-===============================
+================================================================================
 exp: minus
-===============================
+================================================================================
 
 a = (-)
 a = a - a
@@ -365,25 +342,25 @@ a = -(a)
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_name (operator))))
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_section_right (qvarop (operator)) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_negation (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_negation (exp_parens (exp_name (variable)))))))
+ (function
+  (variable)
+  (exp_name (operator)))
+ (function
+  (variable)
+  (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_section_right (qvarop (operator)) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_negation (exp_name (variable))))
+ (function
+  (variable)
+  (exp_negation (exp_parens (exp_name (variable))))))
 
-===============================
+================================================================================
 exp: tuple section
-===============================
+================================================================================
 
 a = (a,)
 a = (a,,)
@@ -393,27 +370,22 @@ a = (,,a)
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_tuple (exp_name (variable)) (comma))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_tuple (exp_name (variable)) (comma) (comma))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_tuple (comma) (exp_name (variable)) (comma))))
- (decl_fun
-  (funvar
-   (variable))
-  (funrhs
-   (exp_tuple (comma) (comma) (exp_name (variable))))))
+ (function
+  (variable)
+  (exp_tuple (exp_name (variable)) (comma)))
+ (function
+  (variable)
+  (exp_tuple (exp_name (variable)) (comma) (comma)))
+ (function
+  (variable)
+  (exp_tuple (comma) (exp_name (variable)) (comma)))
+ (function
+  (variable)
+  (exp_tuple (comma) (comma) (exp_name (variable)))))
 
-=================================================
+================================================================================
 exp: conditional
-=================================================
+================================================================================
 
 a = if a then a else a
 a = if a; then a; else a
@@ -423,46 +395,41 @@ a = if if a then a else a then a else a
 ---
 
 (module
- (decl_fun
-  (funvar name: (variable))
-  (funrhs
-   (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable)))))
- (decl_fun
-  (funvar name: (variable))
-  (funrhs
-   (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable)))))
- (decl_fun
-  (funvar name: (variable))
-  (funrhs
-   (exp_cond
-    if: (exp_parens (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable))))
-    then: (exp_name (variable))
-    else: (exp_name (variable)))))
- (decl_fun
-  (funvar name: (variable))
-  (funrhs
-   (exp_cond
-    if: (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable)))
-    then: (exp_name (variable))
-    else: (exp_name (variable))))))
+ (function
+  name: (variable)
+  rhs: (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable))))
+ (function
+  name: (variable)
+  rhs: (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable))))
+ (function
+  name: (variable)
+  rhs: (exp_cond
+   if: (exp_parens (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable))))
+   then: (exp_name (variable))
+   else: (exp_name (variable))))
+ (function
+  name: (variable)
+  rhs: (exp_cond
+   if: (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable)))
+   then: (exp_name (variable))
+   else: (exp_name (variable)))))
 
-=================================================
+================================================================================
 exp: implicit
-=================================================
+================================================================================
 
 a = aa (a ?cmp)
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_apply (exp_name (variable)) (exp_parens (exp_apply (exp_name (variable)) (exp_name (implicit_parid))))))))
+ (function
+  (variable)
+  (exp_apply (exp_name (variable)) (exp_parens (exp_apply (exp_name (variable)) (exp_name (implicit_parid)))))))
 
-=================================================
+================================================================================
 exp: where
-=================================================
+================================================================================
 
 a = a where a = a
 a =
@@ -474,24 +441,22 @@ a =
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_name (variable))
-   (where)
-   (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_name (variable))
-   (where)
-   (decls
-    (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
-    (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))))
+ (function
+  (variable)
+  (exp_name (variable))
+  (where)
+  (decls (function (variable) (exp_name (variable)))))
+ (function
+  (variable)
+  (exp_name (variable))
+  (where)
+  (decls
+   (function (variable) (exp_name (variable)))
+   (function (variable) (exp_name (variable))))))
 
-=================================================
+================================================================================
 exp: let
-=================================================
+================================================================================
 
 a = let a = a
         a = a
@@ -511,49 +476,45 @@ a = let { a :: A;
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
+ (function
+  (variable)
+  (exp_let
+   (let
+    (decls
+     (function (variable) (exp_name (variable)))
+     (function (variable) (exp_name (variable)))))
+   (exp_in (exp_name (variable)))))
+ (function
+  (variable)
+  (exp_let
+   (let
+    (decls
+     (function (variable) (exp_name (variable)))
+     (function (variable) (exp_name (variable)))))
+   (exp_in (exp_name (variable)))))
+ (function
+  (variable)
+  (exp_let
+   (let
+    (decls
+     (function (variable) (exp_name (variable)))
+     (signature (variable) (type_name (type)))
+     (function (variable) (exp_name (variable)))))
+   (exp_in (exp_name (variable)))))
+  (function
+   (variable)
    (exp_let
     (let
      (decls
-      (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
-      (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
+      (signature (variable) (type_name (type)))
+      (function (variable) (exp_name (variable)))
+      (signature (variable) (type_name (type)))
+      (function (variable) (exp_name (variable)))))
     (exp_in (exp_name (variable))))))
-  (decl_fun
-   (funvar (variable))
-   (funrhs
-    (exp_let
-     (let
-      (decls
-       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
-       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
-     (exp_in (exp_name (variable))))))
-  (decl_fun
-   (funvar (variable))
-   (funrhs
-    (exp_let
-     (let
-      (decls
-       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
-       (signature (variable) (type_name (type)))
-       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
-     (exp_in (exp_name (variable))))))
-  (decl_fun
-   (funvar (variable))
-   (funrhs
-    (exp_let
-     (let
-      (decls
-       (signature (variable) (type_name (type)))
-       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
-       (signature (variable) (type_name (type)))
-       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
-     (exp_in (exp_name (variable)))))))
 
-=================================================
+================================================================================
 exp: case
-=================================================
+================================================================================
 
 a = case a of
   A a -> a
@@ -564,23 +525,22 @@ a = case a of
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
+ (function
+  (variable)
    (exp_case
     (exp_name (variable))
     (alts
      (alt (pat_apply (pat_name (constructor)) (pat_name (variable))) (exp_name (variable)))
      (alt (pat_name (constructor)) (exp_name (variable)))))
-(where)
-  (decls
-   (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))
-   (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))))))
+   (where)
+   (decls
+    (function (variable) (exp_literal (integer)))
+    (function (variable) (exp_literal (integer))))))
 
 
-=================================================
+================================================================================
 exp: lambda case simple
-=================================================
+================================================================================
 
 a = \case
   A a -> a
@@ -594,47 +554,45 @@ a = a >>= \case
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
+ (function
+  (variable)
+  (exp_lambda_case (alts (alt (pat_apply (pat_name (constructor)) (pat_name (variable))) (exp_name (variable))))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (variable))
+   (qvarop (operator))
    (exp_lambda_case
-    (alts (alt (pat_apply (pat_name (constructor)) (pat_name (variable))) (exp_name (variable)))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (variable))
-    (qvarop (operator))
-    (exp_lambda_case
-     (alts
-      (alt
-       (pat_apply (pat_name (constructor)) (pat_parens (pat_apply (pat_name (constructor)) (pat_wildcard) (pat_name (variable)))))
-       (exp_do
-        (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-        (stmt (exp_name (variable)))))
-      (alt (pat_wildcard) (exp_name (variable)))))))))
+    (alts
+     (alt
+      (pat_apply
+       (pat_name (constructor))
+       (pat_parens (pat_apply (pat_name (constructor)) (pat_wildcard) (pat_name (variable)))))
+      (exp_do
+       (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+       (stmt (exp_name (variable)))))
+     (alt (pat_wildcard) (exp_name (variable))))))))
 
-=================================================
+================================================================================
 exp: lambda case and exp_infix
-=================================================
+================================================================================
 
 a = \case a -> a : a
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_lambda_case
-    (alts
-     (alt
-      (pat_name (variable))
-      (exp_infix (exp_name (variable)) (consym) (exp_name (variable)))))))))
+ (function
+  (variable)
+  (exp_lambda_case
+   (alts
+    (alt
+     (pat_name (variable))
+     (exp_infix (exp_name (variable)) (consym) (exp_name (variable))))))))
 
-=================================================
+================================================================================
 exp: do and where
-=================================================
+================================================================================
 
 a = do
   a
@@ -644,16 +602,15 @@ a = do
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_do (stmt (exp_name (variable))))
-   (where)
-   (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))))
+ (function
+  (variable)
+  (exp_do (stmt (exp_name (variable))))
+  (where)
+  (decls (function (variable) (exp_name (variable))))))
 
-=================================================
+================================================================================
 exp: do and let
-=================================================
+================================================================================
 
 a a = do
   let z = a
@@ -665,19 +622,19 @@ a a = do
 ---
 
 (module
- (decl_fun
-  (funvar (variable) (pat_name (variable)))
-  (funrhs
-   (exp_do
-    (stmt (let (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))))
-    (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-    (stmt (let (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))))
-    (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-    (stmt (exp_apply (exp_name (variable)) (exp_name (variable))))))))
+ (function
+  name: (variable)
+  patterns: (patterns (pat_name (variable)))
+  rhs: (exp_do
+   (stmt (let (decls (function name: (variable) rhs: (exp_name (variable))))))
+   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+   (stmt (let (decls (function name: (variable) rhs: (exp_name (variable))))))
+   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+   (stmt (exp_apply (exp_name (variable)) (exp_name (variable)))))))
 
-=================================================
+================================================================================
 exp: do, let, where
-=================================================
+================================================================================
 
 a a = do
   a <- a
@@ -689,21 +646,21 @@ a a = do
 ---
 
 (module
- (decl_fun
-  (funvar (variable) (pat_name (variable)))
-  (funrhs
-   (exp_do
-    (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-    (stmt (let (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))))
-    (stmt (exp_name (variable))))
-   (where)
-   (decls
-   (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (exp_name (variable)))))
-   (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))))))
+ (function
+  (variable)
+  (patterns (pat_name (variable)))
+  (exp_do
+   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+   (stmt (let (decls (function (variable) (exp_name (variable))))))
+   (stmt (exp_name (variable))))
+  (where)
+  (decls
+   (function (variable) (exp_apply (exp_name (variable)) (exp_name (variable))))
+   (function (variable) (exp_literal (integer))))))
 
-=================================================
+================================================================================
 exp: do statement with pattern lhs
-=================================================
+================================================================================
 
 a = do
   ((), a) <- a
@@ -712,37 +669,36 @@ a = do
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_do
-    (stmt (bind_pattern (pat_tuple (pat_literal (con_unit)) (comma) (pat_name (variable))) (exp_name (variable))))
-    (stmt (exp_name (variable)))))))
+ (function
+  (variable)
+  (exp_do
+   (stmt (bind_pattern (pat_tuple (pat_literal (con_unit)) (comma) (pat_name (variable))) (exp_name (variable))))
+   (stmt (exp_name (variable))))))
 
-=================================================
+================================================================================
 exp: i at eol (scanner tests for `in`)
-=================================================
+================================================================================
 
 a = a i
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (exp_name (variable))))))
+(module (function (variable) (exp_apply (exp_name (variable)) (exp_name (variable)))))
 
 
-=================================================
+================================================================================
 exp: record construction with wildcard
-=================================================
+================================================================================
 
 a = A { .. }
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (exp_record (exp_name (constructor)) (fbind (wildcard))))))
+(module (function (variable) (exp_record (exp_name (constructor)) (fbind (wildcard)))))
 
-=================================================
+================================================================================
 exp: record update
-=================================================
+================================================================================
 
 a = a { a = a, a = a ++ a }
 a = A { a = a } {a = a}
@@ -750,24 +706,22 @@ a = A { a = a } {a = a}
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_record
-    (exp_name (variable))
-    (fbind (variable) (exp_name (variable)))
-    (comma)
-    (fbind (variable) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))))
-  (decl_fun
-   (funvar (variable))
-   (funrhs
-    (exp_record
-     (exp_record (exp_name (constructor)) (fbind (variable) (exp_name (variable))))
-     (fbind (variable) (exp_name (variable)))))))
+ (function
+  (variable)
+  (exp_record
+   (exp_name (variable))
+   (fbind (variable) (exp_name (variable)))
+   (comma)
+   (fbind (variable) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
+ (function
+  (variable)
+  (exp_record
+   (exp_record (exp_name (constructor)) (fbind (variable) (exp_name (variable))))
+   (fbind (variable) (exp_name (variable))))))
 
-=================================================
+================================================================================
 exp: type application
-=================================================
+================================================================================
 
 a = a @A
 a = a @a a
@@ -776,26 +730,23 @@ a = a @A.A a
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_apply (exp_name (variable)) (exp_type_application (type_name (type))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_apply (exp_name (variable)) (exp_type_application (type_name (type_variable))) (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_apply
-    (exp_name (variable))
-    (exp_type_application
-     (type_name (qualified_type (modid (constructor)) (type))))
-    (exp_name (variable))))))
+ (function
+  (variable)
+  (exp_apply (exp_name (variable)) (exp_type_application (type_name (type)))))
+ (function
+  (variable)
+  (exp_apply (exp_name (variable)) (exp_type_application (type_name (type_variable))) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_apply
+   (exp_name (variable))
+   (exp_type_application
+    (type_name (qualified_type (modid (constructor)) (type))))
+   (exp_name (variable)))))
 
-=================================================
+================================================================================
 exp: composition and qualified names
-=================================================
+================================================================================
 
 a = A.A.a . aa
 a = A.A.a . A.aa
@@ -816,172 +767,155 @@ a = A.A.A .A.aa
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
-    (qvarop (operator))
-    (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
-    (qvarop (operator))
-    (exp_name (qualified_variable (modid (constructor)) (variable))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
-    (qvarop (operator))
-    (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
-    (qvarop (operator))
-    (exp_name (qualified_variable (modid (constructor)) (variable))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
-    (qvarop (operator))
-    (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
-    (qvarop (operator))
-    (exp_name (qualified_variable (modid (constructor)) (variable))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
-    (qvarop (operator))
-    (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
-    (qvarop (operator))
-    (exp_name (qualified_variable (modid (constructor)) (variable))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
-    (qvarop (operator))
-    (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
-    (qvarop (operator))
-    (exp_name (qualified_variable (modid (constructor)) (variable))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
-    (qvarop (operator))
-    (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
-    (qvarop (operator))
-    (exp_name (qualified_variable (modid (constructor)) (variable))))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
-    (qvarop (operator))
-    (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
-    (qvarop (operator))
-    (exp_name (qualified_variable (modid (constructor)) (variable)))))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
+   (qvarop (operator))
+   (exp_name (variable))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
+   (qvarop (operator))
+   (exp_name (qualified_variable (modid (constructor)) (variable)))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
+   (qvarop (operator))
+   (exp_name (variable))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
+   (qvarop (operator))
+   (exp_name (qualified_variable (modid (constructor)) (variable)))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
+   (qvarop (operator))
+   (exp_name (variable))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
+   (qvarop (operator))
+   (exp_name (qualified_variable (modid (constructor)) (variable)))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
+   (qvarop (operator))
+   (exp_name (variable))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
+   (qvarop (operator))
+   (exp_name (qualified_variable (modid (constructor)) (variable)))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
+   (qvarop (operator))
+   (exp_name (variable))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
+   (qvarop (operator))
+   (exp_name (qualified_variable (modid (constructor)) (variable)))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
+   (qvarop (operator))
+   (exp_name (variable))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
+   (qvarop (operator))
+   (exp_name (qualified_variable (modid (constructor)) (variable)))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
+   (qvarop (operator))
+   (exp_name (variable))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
+   (qvarop (operator))
+   (exp_name (qualified_variable (modid (constructor)) (variable))))))
 
-=================================================
+================================================================================
 exp: repeated type application
-=================================================
+================================================================================
 
 a = a @A @A @A @A
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
+ (function
+  (variable)
    (exp_apply
     (exp_name (variable))
     (exp_type_application (type_name (type)))
     (exp_type_application (type_name (type)))
     (exp_type_application (type_name (type)))
-    (exp_type_application (type_name (type)))))))
+    (exp_type_application (type_name (type))))))
 
-=================================================
+================================================================================
 exp: block argument: lambda basic
-=================================================
+================================================================================
 
 a = a \ a -> a
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_apply
-    (exp_name (variable))
-    (exp_lambda (pat_name (variable)) (exp_name (variable)))))))
+ (function
+  (variable)
+  (exp_apply
+   (exp_name (variable))
+   (exp_lambda (pat_name (variable)) (exp_name (variable))))))
 
-=================================================
+================================================================================
 exp: block argument: lambda case
-=================================================
+================================================================================
 
 a = a \case a -> a
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_apply
-    (exp_name (variable))
-    (exp_lambda_case (alts (alt (pat_name (variable)) (exp_name (variable)))))))))
+ (function
+  (variable)
+  (exp_apply
+   (exp_name (variable))
+   (exp_lambda_case (alts (alt (pat_name (variable)) (exp_name (variable))))))))
 
-=================================================
+================================================================================
 exp: block argument: do
-=================================================
+================================================================================
 
 a = a do a
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_apply (exp_name (variable)) (exp_do (stmt (exp_name (variable))))))))
+ (function
+  (variable)
+  (exp_apply (exp_name (variable)) (exp_do (stmt (exp_name (variable)))))))
 
-=================================================
+================================================================================
 exp: empty lambda case
-=================================================
+================================================================================
 
 a = \case
 
@@ -990,14 +924,12 @@ a = a
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_lambda_case)))
- (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))
+ (function (variable) (exp_lambda_case))
+ (function (variable) (exp_name (variable))))
 
-=================================================
+================================================================================
 exp: if guards
-=================================================
+================================================================================
 
 a :: Int
 a = if | a -> a
@@ -1009,52 +941,50 @@ a = if | a -> a
  (signature
   (variable)
   (type_name (type)))
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_if_guard
-    (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))
-    (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))))))
+ (function
+  (variable)
+  (exp_if_guard
+   (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))
+   (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable))))))
 
-=================================================
+================================================================================
 exp: let with sig on rhs
-=================================================
+================================================================================
 
 a = let a = a in a :: A
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_let
-    (let (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
-    (exp_in (exp_name (variable)) (type_name (type)))))))
+ (function
+  (variable)
+  (exp_let
+   (let (decls (function (variable) (exp_name (variable)))))
+   (exp_in (exp_name (variable)) (type_name (type))))))
 
-=================================================
+================================================================================
 exp: list con
-=================================================
+================================================================================
 
 a = []
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (exp_literal (con_list)))))
+(module (function (variable) (exp_literal (con_list))))
 
-=================================================
+================================================================================
 exp: tuple con
-=================================================
+================================================================================
 
 a = (,,,)
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (exp_literal (con_tuple (comma) (comma) (comma))))))
+(module (function (variable) (exp_literal (con_tuple (comma) (comma) (comma)))))
 
-=================================================
+================================================================================
 exp: qualified symop
-=================================================
+================================================================================
 
 a = a A.!? a
 a = (A..!?)
@@ -1062,33 +992,32 @@ a = (A..!?)
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_infix
-    (exp_name (variable))
-    (qvarop (qualified_operator (modid (constructor)) (operator)))
-    (exp_name (variable)))))
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_name (qualified_operator (modid (constructor)) (operator))))))
+ (function
+  (variable)
+  (exp_infix
+   (exp_name (variable))
+   (qvarop (qualified_operator (modid (constructor)) (operator)))
+   (exp_name (variable))))
+ (function
+  (variable)
+  (exp_name (qualified_operator (modid (constructor)) (operator)))))
 
-=================================================
+================================================================================
 exp: th-promoted qualified symop
-=================================================
+================================================================================
 
 a = '(A..&)
 
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs (exp_th_quoted_name (qualified_operator (modid (constructor)) (operator))))))
+ (function
+  (variable)
+  (exp_th_quoted_name (qualified_operator (modid (constructor)) (operator)))))
 
-=================================================
+================================================================================
 exp: implicit parameter in do-let
-=================================================
+================================================================================
 
 a = do
   let ?a = a
@@ -1097,12 +1026,11 @@ a = do
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_do (stmt (let (decls (decl_fun (funvar (implicit_parid)) (funrhs (exp_name (variable)))))))
-    (stmt (exp_name (variable)))))))
+ (function
+  (variable)
+  (exp_do (stmt (let (decls (function (implicit_parid) (exp_name (variable))))))
+   (stmt (exp_name (variable))))))
 
-=================================================
+================================================================================
 exp: test
-=================================================
+================================================================================

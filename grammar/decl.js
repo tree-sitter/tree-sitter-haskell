@@ -13,9 +13,12 @@ module.exports = {
 
   _funpat_infix: $ => seq(field('lhs', $._pat), field('op', $.varop), field('rhs', $._pat)),
 
-  funpat: $ => choice(
-    alias($._funpat_infix, $.infix),
-    $._pat,
+  _funpat: $ => seq(
+    field('pattern', choice(
+      alias($._funpat_infix, $.infix),
+      $._pat,
+    )),
+    $._funrhs,
   ),
 
   /**
@@ -24,17 +27,21 @@ module.exports = {
     */
   _fun_name: $ => field('name', choice($._var, $.implicit_parid)),
 
-  funvar: $ => seq($._fun_name, repeat($._apat)),
+  guard_equation: $ => seq($.guards, $._equals, $._exp),
 
-  gdrhs: $ => seq($.guards, $._equals, $._exp),
+  _fun_guards: $ => repeat1($.guard_equation),
 
-  funrhs: $ => seq(
+  _funrhs: $ => seq(
     choice(
-      seq($._equals, $._exp),
-      repeat1($.gdrhs),
+      seq($._equals, field('rhs', $._exp)),
+      $._fun_guards,
     ),
     optional(seq($.where, optional($.decls))),
   ),
+
+  _fun_patterns: $ => repeat1($._apat),
+
+  _funvar: $ => seq($._fun_name, field('patterns', optional(alias($._fun_patterns, $.patterns))), $._funrhs),
 
   fixity: $ => seq(
     choice('infixl', 'infixr', 'infix'),
@@ -60,17 +67,14 @@ module.exports = {
     * Since patterns can be `variable`s, the `funpat` lhs of the second example cannot be distinguished from a `funvar`.
     * These precedences solve this.
     */
-  decl_fun: $ => seq(
-    choice(
-      prec.dynamic(2, $.funvar),
-      prec.dynamic(1, $.funpat)
-    ),
-    $.funrhs,
+  _decl_fun: $ => choice(
+    prec.dynamic(2, $._funvar),
+    prec.dynamic(1, $._funpat)
   ),
 
   _decl: $ => choice(
     $._gendecl,
-    $.decl_fun,
+    alias($._decl_fun, $.function),
   ),
 
   decls: $ => layouted($, $._decl),

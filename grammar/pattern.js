@@ -18,7 +18,7 @@ module.exports = {
 
   _pattern_decl: $ => seq(
     $._pat,
-    $.funrhs,
+    $._funrhs,
   ),
 
   _pattern_arrow: $ => seq(

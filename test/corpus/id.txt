@@ -1,6 +1,6 @@
-=========================================
+================================================================================
 id: variable
-=========================================
+================================================================================
 
 a = a
 _a0 = a
@@ -13,17 +13,17 @@ aZ' = a
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))
+ (function (variable) (exp_name (variable)))
+ (function (variable) (exp_name (variable)))
+ (function (variable) (exp_name (variable)))
+ (function (variable) (exp_name (variable)))
+ (function (variable) (exp_name (variable)))
+ (function (variable) (exp_name (variable)))
+ (function (variable) (exp_name (variable))))
 
-=========================================
+================================================================================
 id: constructor
-=========================================
+================================================================================
 
 data B = A
        | A0

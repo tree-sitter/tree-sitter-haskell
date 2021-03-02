@@ -1,6 +1,6 @@
-=========================================
+================================================================================
 cpp: restore layout
-=========================================
+================================================================================
 
 a = do
   do
@@ -24,26 +24,25 @@ a = do
 ---
 
 (module
- (decl_fun
-  (funvar (variable))
-  (funrhs
-   (exp_do
-    (stmt
-     (exp_do
-      (stmt
-       (exp_do
-        (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-        (cpp)))
-      (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-      (cpp)
-      (cpp)
-      (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-      (stmt (exp_name (variable)))))
-  (stmt (exp_name (variable)))))))
+ (function
+  (variable)
+  (exp_do
+   (stmt
+    (exp_do
+     (stmt
+      (exp_do
+       (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+       (cpp)))
+     (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+     (cpp)
+     (cpp)
+     (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+     (stmt (exp_name (variable)))))
+   (stmt (exp_name (variable))))))
 
-=========================================
+================================================================================
 cpp: multiline
-=========================================
+================================================================================
 
 #if a \
 a \
@@ -55,4 +54,4 @@ a = a
 
 ---
 
-(module (cpp) (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))) (cpp))
+(module (cpp) (function (variable) (exp_name (variable))) (cpp))

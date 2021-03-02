@@ -1151,7 +1151,7 @@ Parser tyconsym = symop(cond::symbolic, Sym::tyconsym, single_tyconsym);
  *
  * Bangs can occur in patterns as strictness annotations and in expressions as operators.
  * This can usually be disambiguated by whether `Sym::strict` is valid at the position, but in situations like the
- * funvar decl `(!) :: A`, both are valid.
+ * function_variable decl `(!) :: A`, both are valid.
  */
 Parser single_varsym(const char c) {
   return when(cond::valid_varsym_one_char(c))(
