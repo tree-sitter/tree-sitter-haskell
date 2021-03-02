@@ -5420,10 +5420,6 @@
         "required": false,
         "types": [
           {
-            "type": "infix",
-            "named": true
-          },
-          {
             "type": "pat_apply",
             "named": true
           },
@@ -5706,6 +5702,10 @@
         },
         {
           "type": "guard_equation",
+          "named": true
+        },
+        {
+          "type": "infix",
           "named": true
         },
         {

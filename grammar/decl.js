@@ -14,10 +14,7 @@ module.exports = {
   _funpat_infix: $ => seq(field('lhs', $._pat), field('op', $.varop), field('rhs', $._pat)),
 
   _funpat: $ => seq(
-    field('pattern', choice(
-      alias($._funpat_infix, $.infix),
-      $._pat,
-    )),
+    field('pattern', $._pat),
     $._funrhs,
   ),
 
@@ -41,7 +38,17 @@ module.exports = {
 
   _fun_patterns: $ => repeat1($._apat),
 
-  _funvar: $ => seq($._fun_name, field('patterns', optional(alias($._fun_patterns, $.patterns))), $._funrhs),
+  _funvar: $ => seq($._fun_name, field('patterns', optional(alias($._fun_patterns, $.patterns)))),
+
+  _funlhs: $ => choice(
+    prec.dynamic(2, $._funvar),
+    prec.dynamic(1, alias($._funpat_infix, $.infix)),
+  ),
+
+  function: $ => seq(
+    $._funlhs,
+    $._funrhs,
+  ),
 
   fixity: $ => seq(
     choice('infixl', 'infixr', 'infix'),
@@ -68,13 +75,13 @@ module.exports = {
     * These precedences solve this.
     */
   _decl_fun: $ => choice(
-    prec.dynamic(2, $._funvar),
-    prec.dynamic(1, $._funpat)
+    $.function,
+    prec.dynamic(1, alias($._funpat, $.function)),
   ),
 
   _decl: $ => choice(
     $._gendecl,
-    alias($._decl_fun, $.function),
+    $._decl_fun,
   ),
 
   decls: $ => layouted($, $._decl),

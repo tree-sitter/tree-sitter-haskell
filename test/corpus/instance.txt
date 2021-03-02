@@ -177,10 +177,27 @@ instance A where
    (constrs
     (data_constructor (constructor) (type_name (type_variable)))
     (data_constructor_record
-     (constructor) 
+     (constructor)
      (record_fields (field (variable) (type_name (type)))))))
   (inst_datainst
    (type_apply
     (type_name (type))
     (type_name (type_variable)))
    (constrs (data_constructor (constructor))))))
+
+================================================================================
+instance: infix pattern lhs method
+================================================================================
+
+instance A where
+  a == a = a
+
+---
+
+(module
+ (instance
+  (instance_head (class_name (type)))
+  (where)
+  (function
+   (infix (pat_name (variable)) (varop (operator)) (pat_name (variable)))
+   (exp_name (variable)))))
