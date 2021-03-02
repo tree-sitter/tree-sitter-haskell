@@ -6,7 +6,7 @@ a = "\\\"\a\b\f\n\r\t\v\&\NUL\SOH\STX\ETX\EOT\ENQ\ACK\BEL\BS\HT\LF\VT\FF\CR\SO\S
 
 ---
 
-(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (string)))))
+(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (string)))))
 
 =========================================
 string: gap
@@ -21,5 +21,5 @@ a = "start\
 ---
 
 (module
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (string))))
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (string)))))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (string))))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (string)))))

@@ -42,7 +42,7 @@ newtype A = A { a :: A a }
   (equals)
   (constr_newtype
    (constr_id (constructor))
-   (field (field_id (varid)) (annotation) (type_apply (type_name (type)) (type_name (tyvar)))))))
+   (field (field_id (variable)) (annotation) (type_apply (type_name (type)) (type_name (tyvar)))))))
 
 =========================================
 newtype: tyvar kind
@@ -88,7 +88,7 @@ newtype A a =
   (type)
   (tyvar)
   (equals)
-  (constr_newtype (constr_id (constructor)) (field (field_id (varid)) (annotation) (type_name (type))))
+  (constr_newtype (constr_id (constructor)) (field (field_id (variable)) (annotation) (type_name (type))))
   (deriving (type) (comma) (type))
   (deriving (type))
   (deriving (type) (via (type_parens (type_apply (type_name (type)) (type_name (tyvar))))))))

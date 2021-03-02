@@ -11,12 +11,12 @@ a =
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid)))))
+   (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable)))))
    (where)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))
 
 ==================================
 layout: error: where on same level as case alt with following alt
@@ -32,12 +32,12 @@ a = case a of
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid)))))
+   (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable)))))
    (where)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
  (ERROR))
 
 ==================================
@@ -54,15 +54,15 @@ a = case b of
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_case
-    (exp_name (varid))
+    (exp_name (variable))
     (alts
-     (alt (pat_name (varid)) (exp_name (varid))
-      (where) (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
-     (alt (pat_name (varid)) (exp_name (varid))))))))
+     (alt (pat_name (variable)) (exp_name (variable))
+      (where) (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))
+     (alt (pat_name (variable)) (exp_name (variable))))))))
 
 ==================================
 layout: where with subsequent top decl
@@ -77,13 +77,13 @@ a = a
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_name (varid))
+   (exp_name (variable))
    (where)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))
 
 ==================================
 layout: indented empty where with subsequent top decl
@@ -98,12 +98,12 @@ a = a
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_name (varid))
+   (exp_name (variable))
    (where)))
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))
 
 =========================================
 layout: where after case alt in do, then immediate top level where indented further right
@@ -119,26 +119,26 @@ x = do a <- b
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_do
     (stmt
      (bind_pattern
-      (pat_name (varid))
+      (pat_name (variable))
       (larrow)
-      (exp_name (varid))))
+      (exp_name (variable))))
     (stmt
      (exp_case
-      (exp_name (varid))
+      (exp_name (variable))
       (alts
        (alt
         (pat_wildcard)
-        (exp_name (varid))
+        (exp_name (variable))
         (where)
-        (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))))
+        (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))))
    (where)
-    (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+    (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))
 
 =========================================
 layout: where after case alt in do, then immediate toplevel where at minimum indent
@@ -154,21 +154,21 @@ a = do
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_do
     (stmt
      (exp_case
-      (exp_name (varid))
+      (exp_name (variable))
       (alts
        (alt
-        (pat_name (varid))
-        (exp_name (varid))
+        (pat_name (variable))
+        (exp_name (variable))
         (where)
-        (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))))
+        (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))))
    (where)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))
 
 =========================================
 layout: where after case alt inline, then immediate toplevel where at minimum indent
@@ -182,17 +182,17 @@ f = case a of
 (module
  (decl_fun
   (funvar
-   (varid))
+   (variable))
   (funrhs
    (equals)
    (exp_case
-    (exp_name (varid))
+    (exp_name (variable))
     (alts
-     (alt (pat_name (varid)) (exp_name (varid))
+     (alt (pat_name (variable)) (exp_name (variable))
       (where)
-      (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+      (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))
    (where)
-    (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+    (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))
 
 ==================================
 layout: do nested
@@ -212,22 +212,22 @@ x = do a
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_do
-    (stmt (exp_name (varid)))
-    (stmt (exp_name (varid)))
+    (stmt (exp_name (variable)))
+    (stmt (exp_name (variable)))
     (stmt
      (exp_do
-      (stmt (exp_name (varid)))
-      (stmt (exp_name (varid)))
+      (stmt (exp_name (variable)))
+      (stmt (exp_name (variable)))
       (stmt
        (exp_do
-        (stmt (exp_name (varid)))
-        (stmt (exp_name (varid)))))
-      (stmt (exp_name (varid)))))
-    (stmt (exp_name (varid)))))))
+        (stmt (exp_name (variable)))
+        (stmt (exp_name (variable)))))
+      (stmt (exp_name (variable)))))
+    (stmt (exp_name (variable)))))))
 
 ==================================
 layout: do and indented where
@@ -241,12 +241,12 @@ a = do
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_do (stmt (exp_name (varid))))
+   (exp_do (stmt (exp_name (variable))))
    (where)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))
 
 ==================================
 layout: do and empty line
@@ -262,13 +262,13 @@ a = do
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_do
-    (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
-    (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
-    (stmt (exp_name (varid)))))))
+    (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
+    (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
+    (stmt (exp_name (variable)))))))
 
 ==================================
 layout: recursive do with rec keyword
@@ -285,16 +285,16 @@ f = mdo
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_do
-    (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_apply (exp_name (varid)) (exp_literal (integer)))))
+    (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_apply (exp_name (variable)) (exp_literal (integer)))))
     (stmt
      (rec
-      (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_apply (exp_name (varid)) (exp_name (varid)))))
-      (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_apply (exp_name (varid)) (exp_name (varid)))))))
-    (stmt (exp_apply (exp_name (varid)) (exp_name (varid))))))))
+      (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_apply (exp_name (variable)) (exp_name (variable)))))
+      (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_apply (exp_name (variable)) (exp_name (variable)))))))
+    (stmt (exp_apply (exp_name (variable)) (exp_name (variable))))))))
 
 ==================================
 layout: in after let on same indent
@@ -307,14 +307,14 @@ a = let a = a
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_let
     (let
      (decls
-      (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
-    (exp_in (exp_name (varid)))))))
+      (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))
+    (exp_in (exp_name (variable)))))))
 
 ==================================
 layout: identifier named "whe" in place of valid "where"
@@ -329,12 +329,12 @@ a =
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_case
-    (exp_name (varid))
-    (alts (alt (pat_name (varid)) (exp_name (varid)))))
+    (exp_name (variable))
+    (alts (alt (pat_name (variable)) (exp_name (variable)))))
    (where))))
 
 ==================================
@@ -348,15 +348,15 @@ a (i:a) = a
 (module
  (decl_fun
   (funvar
-   (varid)
+   (variable)
    (pat_parens
     (pat_infix
-     (pat_name (varid))
+     (pat_name (variable))
      (consym)
-     (pat_name (varid)))))
+     (pat_name (variable)))))
   (funrhs
    (equals)
-   (exp_name (varid)))))
+   (exp_name (variable)))))
 
 =========================================
 layout: empty file
@@ -383,21 +383,21 @@ a = let
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_let
     (let
      (decls
       (decl_fun
-       (funvar (varid))
+       (funvar (variable))
        (funrhs
         (equals)
         (exp_let
          (let
-          (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
-         (exp_in (exp_name (varid))))))))
-    (exp_in (exp_do (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid)))) (stmt (exp_name (varid)))))))))
+          (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))
+         (exp_in (exp_name (variable))))))))
+    (exp_in (exp_do (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable)))) (stmt (exp_name (variable)))))))))
 
 =========================================
 layout: where after stmt, on deeper or same indent
@@ -415,19 +415,19 @@ a = do
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_do (stmt (exp_name (varid))))
+   (exp_do (stmt (exp_name (variable))))
    (where)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_do (stmt (exp_name (varid))))
+   (exp_do (stmt (exp_name (variable))))
    (where)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))
 
 =========================================
 layout: empty where, then indented decls after inline where
@@ -442,18 +442,18 @@ i = j
 
 (module
  (decl_fun
-  (funvar (varid))
-  (funrhs (equals) (exp_name (varid)) (where)))
+  (funvar (variable))
+  (funrhs (equals) (exp_name (variable)) (where)))
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_name (varid))
+   (exp_name (variable))
    (where)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
  (decl_fun
-  (funvar (varid))
-  (funrhs (equals) (exp_name (varid)))))
+  (funvar (variable))
+  (funrhs (equals) (exp_name (variable)))))
 
 =========================================
 layout: parenthesized case inline
@@ -466,13 +466,13 @@ a =
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_infix
-    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (exp_name (varid))))))
-    (qvarop (varsym))
-    (exp_name (varid))))))
+    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (variable)) (exp_name (variable))))))
+    (qvarop (operator))
+    (exp_name (variable))))))
 
 =========================================
 layout: parenthesized case newline
@@ -486,13 +486,13 @@ a =
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_infix
-    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (exp_name (varid))))))
-    (qvarop (varsym))
-    (exp_name (varid))))))
+    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (variable)) (exp_name (variable))))))
+    (qvarop (operator))
+    (exp_name (variable))))))
 
 =================================================
 layout: comment between where and decl
@@ -517,44 +517,44 @@ a = b where -1 = a
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_name (varid))
+   (exp_name (variable))
    (where)
    (comment)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_name (varid))
+   (exp_name (variable))
    (where)
    (comment)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_name (varid))
+   (exp_name (variable))
    (where)
    (comment)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_name (varid))
+   (exp_name (variable))
    (where)
    (comment)
-   (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_name (varid))
+   (exp_name (variable))
    (where)
-   (decls (decl_fun (funpat (pat_neg (integer))) (funrhs (equals) (exp_name (varid))))))))
+   (decls (decl_fun (funpat (pat_neg (integer))) (funrhs (equals) (exp_name (variable))))))))
 
 =================================================
 layout: comment in empty where on next line indented
@@ -576,15 +576,15 @@ c = d
 ---
 
 (module
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)) (where)))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)) (where)))
  (pragma)
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)) (where)))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)) (where)))
  (comment)
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)) (where)))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)) (where)))
  (comment)
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)) (where)))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)) (where)))
  (comment)
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))
 
 =================================================
 layout: normal module
@@ -598,7 +598,7 @@ a = a
 (module
  (modid (constructor))
  (where)
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))
 
 =================================================
 layout: indented module keyword, decls further left
@@ -612,7 +612,7 @@ layout: indented module keyword, decls further left
 (module
  (modid (constructor))
  (where)
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))
 
 =================================================
 layout: end two layouts at the same position
@@ -626,11 +626,11 @@ a :: a
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_do (stmt (exp_name (varid)))))))))
- (decl_sig (varid) (annotation) (type_name (tyvar))))
+   (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_do (stmt (exp_name (variable)))))))))
+ (decl_sig (variable) (annotation) (type_name (tyvar))))
 
 =================================================
 layout: case in a list terminated by bracket
@@ -644,15 +644,15 @@ a = [case a of a -> a
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_list (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid))))))))
+   (exp_list (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable))))))))
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_list (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid)))))))))
+   (exp_list (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable)))))))))
 
 =================================================
 layout: case in a list terminated by comma
@@ -665,10 +665,10 @@ a = [case a of a -> a, a]
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_list
-    (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid)))))
+    (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable)))))
     (comma)
-    (exp_name (varid))))))
+    (exp_name (variable))))))

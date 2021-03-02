@@ -8,9 +8,9 @@ pattern A a <- a:as
 
 (module
  (pattern_synonym
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (larrow)
-  (pat_infix (pat_name (varid)) (consym) (pat_name (varid)))))
+  (pat_infix (pat_name (variable)) (consym) (pat_name (variable)))))
 
 =========================================
 pattern synonym: unidirectional strict
@@ -22,8 +22,8 @@ pattern A a = A !a
 
 (module
  (pattern_synonym
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
-  (pat_apply (pat_name (constructor)) (pat_strict (pat_name (varid))))))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
+  (pat_apply (pat_name (constructor)) (pat_strict (pat_name (variable))))))
 
 =========================================
 pattern synonym: explicit bidirectional list
@@ -36,12 +36,12 @@ pattern HeadC a <- a:as where
 
 (module
  (pattern_synonym
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (larrow)
-  (pat_infix (pat_name (varid)) (consym) (pat_name (varid)))
+  (pat_infix (pat_name (variable)) (consym) (pat_name (variable)))
   (where)
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
-  (funrhs (equals) (exp_list (exp_name (varid))))))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
+  (funrhs (equals) (exp_list (exp_name (variable))))))
 
 =========================================
 pattern synonym: explicit bidirectional strict
@@ -54,12 +54,12 @@ pattern A a <- A !a where
 
 (module
  (pattern_synonym
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (larrow)
-  (pat_apply (pat_name (constructor)) (pat_strict (pat_name (varid))))
+  (pat_apply (pat_name (constructor)) (pat_strict (pat_name (variable))))
   (where)
-  (pat_apply (pat_name (constructor)) (pat_strict (pat_name (varid))))
-  (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (varid))))))
+  (pat_apply (pat_name (constructor)) (pat_strict (pat_name (variable))))
+  (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (variable))))))
 
 =========================================
 pattern synonym: explicit bidirectional record
@@ -73,17 +73,17 @@ pattern A { a } <- A a where
 (module
  (pattern_synonym
   (pat_name (constructor))
-  (pat_record (fpat (varid)))
+  (pat_record (fpat (variable)))
   (larrow)
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (where)
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (funrhs
    (equals)
    (exp_cond
-    if: (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_literal (integer)))
-    then: (exp_name (varid))
-    else: (exp_name (varid))))))
+    if: (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_literal (integer)))
+    then: (exp_name (variable))
+    else: (exp_name (variable))))))
 
 =========================================
 pattern synonym: explicit bidirectional guards
@@ -98,20 +98,20 @@ pattern A a <- A a where
 
 (module
  (pattern_synonym
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (larrow)
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (where)
-  (pat_apply (pat_name (constructor)) (pat_name (varid)))
+  (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (funrhs
    (gdrhs
-    (guards (guard (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_literal (integer)))))
+    (guards (guard (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_literal (integer)))))
     (equals)
-    (exp_parens (exp_apply (exp_name (constructor)) (exp_name (varid)))))
+    (exp_parens (exp_apply (exp_name (constructor)) (exp_name (variable)))))
    (gdrhs
-    (guards (guard (exp_name (varid))))
+    (guards (guard (exp_name (variable))))
     (equals)
-    (exp_parens (exp_apply (exp_name (constructor)) (exp_name (varid))))))))
+    (exp_parens (exp_apply (exp_name (constructor)) (exp_name (variable))))))))
 
 =========================================
 pattern synonym: signature
@@ -144,5 +144,5 @@ pattern A {a, a} = (a, a)
 
 (module
  (pattern_synonym
-  (pat_name (constructor)) (pat_record (fpat (varid)) (comma) (fpat (varid)))
-  (pat_tuple (pat_name (varid)) (comma) (pat_name (varid)))))
+  (pat_name (constructor)) (pat_record (fpat (variable)) (comma) (fpat (variable)))
+  (pat_tuple (pat_name (variable)) (comma) (pat_name (variable)))))

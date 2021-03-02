@@ -6,19 +6,19 @@ module.exports = {
   // ------------------------------------------------------------------------
 
   _varid: _ => /[_a-z](\w|')*#?/,
-  varid: $ => $._varid,
-  qvarid: $ => qualified($, $.varid),
-  _qvarid: $ => choice($.qvarid, $.varid),
+  variable: $ => $._varid,
+  qualified_variable: $ => qualified($, $.variable),
+  _qvarid: $ => choice($.qualified_variable, $.variable),
 
-  varsym: $ => $._varsym,
-  qvarsym: $ => qualified($, $.varsym),
-  _qvarsym: $ => choice($.qvarsym, $.varsym),
+  operator: $ => $._varsym,
+  qualified_operator: $ => qualified($, $.operator),
+  _qvarsym: $ => choice($.qualified_operator, $.operator),
 
-  _var: $ => choice($.varid, parens($.varsym)),
+  _var: $ => choice($.variable, parens($.operator)),
 
   _qvar: $ => choice($._qvarid, parens($._qvarsym)),
 
-  varop: $ => choice($.varsym, ticked($.varid)),
+  varop: $ => choice($.operator, ticked($.variable)),
 
   qvarop: $ => choice($._qvarsym, ticked($._qvarid)),
 

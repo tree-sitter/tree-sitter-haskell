@@ -96,13 +96,13 @@ data A a = A { a :: A, a, a :: A, a :: {-# unpack #-} !a, a :: !A }
    (constr_record
     (constr_id (constructor))
     (record_fields
-     (field (field_id (varid)) (annotation) (type_name (type)))
+     (field (field_id (variable)) (annotation) (type_name (type)))
      (comma)
-     (field (field_id (varid)) (comma) (field_id (varid)) (annotation) (type_name (type)))
+     (field (field_id (variable)) (comma) (field_id (variable)) (annotation) (type_name (type)))
      (comma)
-     (field (field_id (varid)) (annotation) (pragma) (strict_type (type_name (tyvar))))
+     (field (field_id (variable)) (annotation) (pragma) (strict_type (type_name (tyvar))))
      (comma)
-     (field (field_id (varid)) (annotation) (strict_type (type_name (type)))))))))
+     (field (field_id (variable)) (annotation) (strict_type (type_name (type)))))))))
 
 =========================================
 plain adt: multiple cons
@@ -142,14 +142,14 @@ data A =
    (constr_record
     (constr_id (constructor))
     (record_fields
-     (field (field_id (varid)) (annotation) (type_name (type)))
+     (field (field_id (variable)) (annotation) (type_name (type)))
      (comma)
-     (field (field_id (varid)) (annotation) (strict_type (type_name (type))))))
+     (field (field_id (variable)) (annotation) (strict_type (type_name (type))))))
    (bar)
    (constr_record
     (constr_id (constructor))
     (record_fields
-     (field (field_id (varid)) (annotation) (type_name (type))))))))
+     (field (field_id (variable)) (annotation) (type_name (type))))))))
 
 =========================================
 plain adt: deriving basic

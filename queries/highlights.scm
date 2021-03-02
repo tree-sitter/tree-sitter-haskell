@@ -1,5 +1,5 @@
-(varid) @variable
-(varsym) @operator
+(variable) @variable
+(operator) @operator
 (exp_name (constructor) @constructor)
 (consym) @operator
 (modid (constructor) @module_name)
@@ -8,8 +8,8 @@
 (constr_id) @constructor
 (pragma) @pragma
 (comment) @comment
-(decl_sig name: (varid) @fun_type_name)
-(funvar name: (varid) @fun_name)
+(decl_sig name: (variable) @fun_type_name)
+(funvar name: (variable) @fun_name)
 (constraint class: (class_name (type)) @class)
 (class (class_head class: (class_name (type)) @class))
 (instance (instance_head class: (class_name (type)) @class))

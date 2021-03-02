@@ -57,7 +57,7 @@ module.exports = {
     * `decl` allows the lhs to be a `pat`, as in:
     * let Just 5 = prog
     * let a = prog
-    * Since patterns can be `varid`s, the `funpat` lhs of the second example cannot be distinguished from a `funvar`.
+    * Since patterns can be `variable`s, the `funpat` lhs of the second example cannot be distinguished from a `funvar`.
     * These precedences solve this.
     */
   decl_fun: $ => seq(

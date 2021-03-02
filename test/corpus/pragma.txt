@@ -12,9 +12,9 @@ a = a
 ---
 
 (module
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
  (pragma)
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
  (pragma)
  (pragma))
 

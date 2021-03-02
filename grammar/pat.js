@@ -11,7 +11,7 @@ module.exports = {
    */
   pat_record: $ => braces(optional(sep1($.comma, $.fpat))),
 
-  pat_as: $ => seq(field('var', $.varid), $.as_pat, field('pat', $._apat)),
+  pat_as: $ => seq(field('var', $.variable), $.as_pat, field('pat', $._apat)),
 
   pat_parens: $ => parens($._nested_pat, optional($._type_annotation)),
 
@@ -27,7 +27,7 @@ module.exports = {
 
   pat_neg: $ => seq('-', choice($.integer, $.float)),
 
-  pat_name: $ => $.varid,
+  pat_name: $ => $.variable,
 
   pat_con: $ => $._qcon,
 

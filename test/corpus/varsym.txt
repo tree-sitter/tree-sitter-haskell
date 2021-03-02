@@ -1,15 +1,15 @@
 =================================================
-varsym: error: |
+operator: error: |
 =================================================
 
 f = a | a
 
 ---
 
-(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid))))))
+(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable))))))
 
 =================================================
-varsym: error: lambda
+operator: error: lambda
 =================================================
 
 f = a \\ a
@@ -19,14 +19,14 @@ f = a \ a
 
 (module
  (decl_fun
-  (funvar (varid))
-  (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (funvar (variable))
+  (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
  (decl_fun
-  (funvar (varid))
-  (funrhs (equals) (exp_name (varid)))) (ERROR (lambda) (varid)))
+  (funvar (variable))
+  (funrhs (equals) (exp_name (variable)))) (ERROR (lambda) (variable)))
 
 =================================================
-varsym: error: ..
+operator: error: ..
 =================================================
 
 f = a .. a
@@ -36,13 +36,13 @@ f = a . a
 ---
 
 (module
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid)))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
-varsym: error: _arrow
+operator: error: _arrow
 =================================================
 
 f = a -> a
@@ -52,18 +52,18 @@ f = a |> a
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid)))))
+   (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))
+   (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
 
 =================================================
-varsym: error: carrow
+operator: error: carrow
 =================================================
 
 f = a => a
@@ -72,12 +72,12 @@ f = a =>> a
 ---
 
 (module
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR (carrow)) (exp_name (varid)))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR (carrow)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
-varsym: error: larrow
+operator: error: larrow
 =================================================
 
 f = a < a
@@ -87,13 +87,13 @@ f = a <-- a
 ---
 
 (module
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR (larrow)) (exp_name (varid)))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR (larrow)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
-varsym: error: @
+operator: error: @
 =================================================
 
 f = a @ a
@@ -102,12 +102,12 @@ f = a @@ a
 ---
 
 (module
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (exp_tyapp (tyapp) (type_name (tyvar))))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (exp_tyapp (tyapp) (type_name (tyvar))))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
-varsym: error: ~
+operator: error: ~
 =================================================
 
 f = a ~ a
@@ -116,12 +116,12 @@ f = a ~~ a
 ---
 
 (module
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid)))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
-varsym: error: equals
+operator: error: equals
 =================================================
 
 f = a = a
@@ -130,12 +130,12 @@ f = a == a
 ---
 
 (module
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid)))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
-varsym: error: leading :
+operator: error: leading :
 =================================================
 
 f = a :+ a
@@ -144,32 +144,32 @@ f = a +: a
 ---
 
 (module
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (consym) (exp_name (varid)))))
-  (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (consym) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
-varsym: dollar
+operator: dollar
 =================================================
 
 f = a $ a
 
 ---
 
-(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))
+(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
 
 =================================================
-varsym: two-symbol dollar operator
+operator: two-symbol dollar operator
 =================================================
 
 a = a $! a
 
 ---
 
-(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))
+(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
 
 =================================================
-varsym: comment with more than two dashes
+operator: comment with more than two dashes
 =================================================
 
 a --- a
@@ -177,10 +177,10 @@ a ----- a
 
 ---
 
-(module (top_splice (exp_name (varid))) (comment) (top_splice (exp_name (varid))) (comment))
+(module (top_splice (exp_name (variable))) (comment) (top_splice (exp_name (variable))) (comment))
 
 =================================================
-varsym: operator with large number of dashes
+operator: operator with large number of dashes
 =================================================
 
 a = a ------> a ----- %
@@ -189,12 +189,12 @@ a = a ------> a ----- %
 
 (module
  (decl_fun
-  (funvar (varid))
-  (funrhs (equals) (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))))
+  (funvar (variable))
+  (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
  (comment))
 
 =================================================
-varsym: implicit parameter
+operator: implicit parameter
 =================================================
 
 a = ?a
@@ -205,19 +205,19 @@ a = a ? a
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs (equals) (exp_name (implicit_parid))))
  (decl_fun
-  (funvar (varsym))
-  (funrhs (equals) (exp_name (varid))))
+  (funvar (operator))
+  (funrhs (equals) (exp_name (variable))))
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))
+   (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
 
 =================================================
-varsym: dollar terminated by opening bracket
+operator: dollar terminated by opening bracket
 =================================================
 
 a = a $[a]
@@ -226,13 +226,13 @@ a = a $[a]
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
-   (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_list (exp_name (varid)))))))
+   (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_list (exp_name (variable)))))))
 
 =================================================
-varsym: bang as operator decl
+operator: bang as operator decl
 =================================================
 
 (!) :: A
@@ -241,5 +241,5 @@ varsym: bang as operator decl
 ---
 
 (module
- (decl_sig (varsym) (annotation) (type_name (type)))
- (decl_fun (funvar (varsym)) (funrhs (equals) (exp_name (varid)))))
+ (decl_sig (operator) (annotation) (type_name (type)))
+ (decl_fun (funvar (operator)) (funrhs (equals) (exp_name (variable)))))

@@ -460,11 +460,11 @@
       "type": "PATTERN",
       "value": "[_a-z](\\w|')*#?"
     },
-    "varid": {
+    "variable": {
       "type": "SYMBOL",
       "name": "_varid"
     },
-    "qvarid": {
+    "qualified_variable": {
       "type": "SEQ",
       "members": [
         {
@@ -473,7 +473,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "varid"
+          "name": "variable"
         }
       ]
     },
@@ -482,19 +482,19 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "qvarid"
+          "name": "qualified_variable"
         },
         {
           "type": "SYMBOL",
-          "name": "varid"
+          "name": "variable"
         }
       ]
     },
-    "varsym": {
+    "operator": {
       "type": "SYMBOL",
       "name": "_varsym"
     },
-    "qvarsym": {
+    "qualified_operator": {
       "type": "SEQ",
       "members": [
         {
@@ -503,7 +503,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "varsym"
+          "name": "operator"
         }
       ]
     },
@@ -512,11 +512,11 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "qvarsym"
+          "name": "qualified_operator"
         },
         {
           "type": "SYMBOL",
-          "name": "varsym"
+          "name": "operator"
         }
       ]
     },
@@ -525,7 +525,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "varid"
+          "name": "variable"
         },
         {
           "type": "SEQ",
@@ -536,7 +536,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "varsym"
+              "name": "operator"
             },
             {
               "type": "STRING",
@@ -577,7 +577,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "varsym"
+          "name": "operator"
         },
         {
           "type": "SEQ",
@@ -588,7 +588,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "varid"
+              "name": "variable"
             },
             {
               "type": "STRING",
@@ -3953,7 +3953,7 @@
           "name": "var",
           "content": {
             "type": "SYMBOL",
-            "name": "varid"
+            "name": "variable"
           }
         },
         {
@@ -4142,7 +4142,7 @@
     },
     "pat_name": {
       "type": "SYMBOL",
-      "name": "varid"
+      "name": "variable"
     },
     "pat_con": {
       "type": "SYMBOL",
@@ -5037,7 +5037,7 @@
     },
     "field_id": {
       "type": "SYMBOL",
-      "name": "varid"
+      "name": "variable"
     },
     "field": {
       "type": "SEQ",

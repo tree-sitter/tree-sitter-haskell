@@ -8,7 +8,7 @@ a :: a -> A -> A a
 
 (module
  (decl_sig
-  name: (varid)
+  name: (variable)
   (annotation)
   type: (fun
    (type_name (tyvar))
@@ -26,7 +26,7 @@ a :: forall a (a :: * -> Type) . (∀ a . a -> a) -> A a
 
 (module
  (decl_sig
-  (varid)
+  (variable)
   (annotation)
   (forall
    (quantifiers
@@ -55,7 +55,7 @@ a ::
 
 (module
  (decl_sig
-  (varid)
+  (variable)
   (annotation)
   (context
    (constraint (class_name (type)) (type_name (tyvar)) (type_name (tyvar)))
@@ -82,7 +82,7 @@ a :: A a a => (A a, A a) => a
 
 (module
  (decl_sig
-  (varid)
+  (variable)
   (annotation)
   (context
    (constraint (class_name (type)) (type_name (tyvar)) (type_name (tyvar)))
@@ -95,7 +95,7 @@ a :: A a a => (A a, A a) => a
     (type_name (tyvar))))))
 
 =========================================
-gendecl: varsym context
+gendecl: operator context
 =========================================
 
 a :: a ++ a => a
@@ -104,7 +104,7 @@ a :: a ++ a => a
 
 (module
  (decl_sig
-  name: (varid)
+  name: (variable)
   (annotation)
   type: (context
    (constraint (type_infix left: (type_name (tyvar)) op: (tyconop (type_operator)) right: (type_name (tyvar))))
@@ -121,7 +121,7 @@ sort :: (?aaa :: a -> a -> a) => [a] -> [a]
 
 (module
  (decl_sig
-  (varid)
+  (variable)
   (annotation)
   (context
    (implicit_param
@@ -135,7 +135,7 @@ sort :: (?aaa :: a -> a -> a) => [a] -> [a]
 
 
 =========================================
-gendecl: multi method varsym
+gendecl: multi method operator
 =========================================
 
 (<), (<=), (>=), (>) :: a
@@ -144,13 +144,13 @@ gendecl: multi method varsym
 
 (module
  (decl_sig
-  (varsym)
+  (operator)
   (comma)
-  (varsym)
+  (operator)
   (comma)
-  (varsym)
+  (operator)
   (comma)
-  (varsym)
+  (operator)
   (annotation)
   (type_name (tyvar))))
 
@@ -165,7 +165,7 @@ a :: A a => ∀ a . a ++ a => a -> ∀ a . a -> A => A => A a
 
 (module
  (decl_sig
-  name: (varid)
+  name: (variable)
   (annotation)
   type: (context
    (constraint class: (class_name (type)) (type_name (tyvar)))
@@ -192,14 +192,14 @@ a :: A a => ∀ a . a ++ a => a -> ∀ a . a -> A => A => A a
           (type_apply (type_name (type)) (type_name (tyvar)))))))))))))
 
 =================================================
-gendecl: parenthesized varsym fun
+gendecl: parenthesized operator fun
 =================================================
 
 (<>) = a
 
 ---
 
-(module (decl_fun (funvar (varsym)) (funrhs (equals) (exp_name (varid)))))
+(module (decl_fun (funvar (operator)) (funrhs (equals) (exp_name (variable)))))
 
 =================================================
 gendecl: HKT annotation
@@ -211,7 +211,7 @@ a :: (a :: (* -> *) -> *) -> a
 
 (module
  (decl_sig
-  (varid)
+  (variable)
   (annotation)
   (fun
    (type_name

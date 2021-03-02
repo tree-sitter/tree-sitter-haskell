@@ -5,7 +5,7 @@ module.exports = {
   // adt
   // ------------------------------------------------------------------------
 
-  field_id: $ => $.varid,
+  field_id: $ => $.variable,
 
   field: $ => seq(
     sep1($.comma, $.field_id),

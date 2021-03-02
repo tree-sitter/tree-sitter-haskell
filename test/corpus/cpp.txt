@@ -25,7 +25,7 @@ a = do
 
 (module
  (decl_fun
-  (funvar (varid))
+  (funvar (variable))
   (funrhs
    (equals)
    (exp_do
@@ -33,14 +33,14 @@ a = do
      (exp_do
       (stmt
        (exp_do
-        (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+        (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
         (cpp)))
-      (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
+      (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
       (cpp)
       (cpp)
-      (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
-      (stmt (exp_name (varid)))))
-  (stmt (exp_name (varid)))))))
+      (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
+      (stmt (exp_name (variable)))))
+  (stmt (exp_name (variable)))))))
 
 =========================================
 cpp: multiline
@@ -56,4 +56,4 @@ a = a
 
 ---
 
-(module (cpp) (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))) (cpp))
+(module (cpp) (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))) (cpp))

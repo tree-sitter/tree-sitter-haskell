@@ -43,13 +43,13 @@ module A (
 (module
  (modid (constructor))
  (module_exports
-  (export (varid))
+  (export (variable))
   (comma)
   (export (type))
   (comma)
   (export (type) (export_names (all_names)))
   (comma)
-  (export (type) (export_names (varid) (comma) (varid))) (comma))
+  (export (type) (export_names (variable) (comma) (variable))) (comma))
  (where))
 
 =========================================
@@ -122,7 +122,7 @@ module A (
 (module
  (modid (constructor))
  (module_exports
-  (export (varid))
+  (export (variable))
   (comma)
   (export (modid (constructor)))
   (comma)
@@ -149,7 +149,7 @@ module A (
 (module
  (modid (constructor))
  (module_exports
-  (export (qvarid (modid (constructor)) (modid (constructor)) (varid)))
+  (export (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
   (comma)
   (export (namespace) (qualified_type_operator (modid (constructor)) (modid (constructor)) (type_operator)))
   (comma)
@@ -159,11 +159,11 @@ module A (
   (comma)
   (export
    (qualified_type (modid (constructor)) (modid (constructor)) (type))
-   (export_names (varsym) (comma) (consym) (comma) (constructor) (comma) (varid)))
+   (export_names (operator) (comma) (consym) (comma) (constructor) (comma) (variable)))
   (comma)
-  (export (namespace) (qualified_type (modid (constructor)) (type)) (export_names (varsym) (comma) (constructor)))
+  (export (namespace) (qualified_type (modid (constructor)) (type)) (export_names (operator) (comma) (constructor)))
   (comma)
-  (export (namespace) (qualified_type (modid (constructor)) (type)) (export_names (varsym) (comma) (constructor)))
+  (export (namespace) (qualified_type (modid (constructor)) (type)) (export_names (operator) (comma) (constructor)))
   (comma))
  (where))
 

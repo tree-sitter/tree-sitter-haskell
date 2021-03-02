@@ -74,8 +74,8 @@ instance A a where a a = Just a
   (instance_head (class_name (type)) (type_name (tyvar)))
   (where)
   (decl_fun
-    (funvar (varid) (pat_name (varid)))
-    (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (varid)))))))
+    (funvar (variable) (pat_name (variable)))
+    (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (variable)))))))
 
 =========================================
 instance: signature
@@ -92,15 +92,15 @@ instance A a where
   (instance_head (class_name (type)) (type_name (tyvar)))
   (where)
   (decl_sig
-   (varid)
+   (variable)
    (annotation)
    (context
     (constraint (class_name (type)) (type_name (tyvar)))
     (carrow)
     (fun (type_name (tyvar)) (type_name (tyvar)))))
   (decl_fun
-   (funvar (varid) (pat_name (varid)))
-   (funrhs (equals) (exp_name (varid))))))
+   (funvar (variable) (pat_name (variable)))
+   (funrhs (equals) (exp_name (variable))))))
 
 =========================================
 instance: equality constraint
@@ -182,7 +182,7 @@ instance A where
     (bar)
     (constr_record
      (constr_id (constructor)) 
-     (record_fields (field (field_id (varid)) (annotation) (type_name (type)))))))
+     (record_fields (field (field_id (variable)) (annotation) (type_name (type)))))))
   (inst_datainst
    (type_apply
     (type_name (type))

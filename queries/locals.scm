@@ -1,4 +1,4 @@
-(decl_sig name: (varid)) @local.definition
-(funvar name: (varid)) @local.definition
-(pat_name (varid)) @local.definition
-(exp_name (varid)) @local.reference
+(decl_sig name: (variable)) @local.definition
+(funvar name: (variable)) @local.definition
+(pat_name (variable)) @local.definition
+(exp_name (variable)) @local.reference

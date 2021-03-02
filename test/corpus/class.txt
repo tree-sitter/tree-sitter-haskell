@@ -45,7 +45,7 @@ class A a where a :: A a => a -> a
   (class_body
    (where)
    (decl_sig
-    name: (varid)
+    name: (variable)
     (annotation)
     type: (context
      (constraint class: (class_name (type)) (type_name (tyvar)))
@@ -68,8 +68,8 @@ class Foo a where {
   (class_head (class_name (type)) (type_name (tyvar)))
   (class_body
    (where)
-   (decl_sig (varid) (annotation) (type_name (tyvar)))
-   (decl_sig (varid) (annotation) (type_name (tyvar))))))
+   (decl_sig (variable) (annotation) (type_name (tyvar)))
+   (decl_sig (variable) (annotation) (type_name (tyvar))))))
 
 =========================================
 class: fixity
@@ -94,19 +94,19 @@ class A where
   (class_head (class_name (type)))
   (class_body
    (where)
-   (decl_fixity (varop (varid)))
-   (decl_sig (varid) (annotation) (type_name (type)))
-   (decl_fixity (integer) (varop (varid)))
-   (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
-   (decl_fixity (integer) (varop (varid)) (comma) (varop (varid)) (comma) (varop (varid)))
-   (decl_fixity (varop (varsym)))
-   (decl_fixity (integer) (varop (varsym)))
+   (decl_fixity (varop (variable)))
+   (decl_sig (variable) (annotation) (type_name (type)))
+   (decl_fixity (integer) (varop (variable)))
+   (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
+   (decl_fixity (integer) (varop (variable)) (comma) (varop (variable)) (comma) (varop (variable)))
+   (decl_fixity (varop (operator)))
+   (decl_fixity (integer) (varop (operator)))
    (decl_fixity (integer) (consym))
    (decl_fixity (integer) (consym))
    (decl_fixity (integer) (consym)))))
 
 =========================================
-class: multi method varsym
+class: multi method operator
 =========================================
 
 class A where
@@ -120,13 +120,13 @@ class A where
   (class_body
    (where)
    (decl_sig
-    (varsym)
+    (operator)
     (comma)
-    (varsym)
+    (operator)
     (comma)
-    (varsym)
+    (operator)
     (comma)
-    (varsym)
+    (operator)
     (annotation)
     (type_name (tyvar))))))
 
@@ -155,8 +155,8 @@ class A where
   (class_head (class_name (type)))
   (class_body
    (where)
-   (decl_sig (varid) (annotation) (type_name (type)))
-   (default_signature (decl_sig (varid) (annotation) (type_name (type)))))))
+   (decl_sig (variable) (annotation) (type_name (type)))
+   (default_signature (decl_sig (variable) (annotation) (type_name (type)))))))
 
 =========================================
 class: tyvar kind

@@ -172,7 +172,7 @@ data instance ∀ a . A a A =
    (bar)
    (constr_record
     (constr_id (constructor))
-    (record_fields (field (field_id (varid)) (annotation) (type_name (type))))))))
+    (record_fields (field (field_id (variable)) (annotation) (type_name (type))))))))
 
 =================================================
 family: data instance gadt

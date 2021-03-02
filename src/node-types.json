@@ -1629,11 +1629,11 @@
             "named": false
           },
           {
-            "type": "varid",
+            "type": "operator",
             "named": true
           },
           {
-            "type": "varsym",
+            "type": "variable",
             "named": true
           }
         ]
@@ -4233,6 +4233,10 @@
           "named": true
         },
         {
+          "type": "operator",
+          "named": true
+        },
+        {
           "type": "qconsym",
           "named": true
         },
@@ -4241,19 +4245,15 @@
           "named": true
         },
         {
-          "type": "qvarid",
+          "type": "qualified_operator",
           "named": true
         },
         {
-          "type": "qvarsym",
+          "type": "qualified_variable",
           "named": true
         },
         {
-          "type": "varid",
-          "named": true
-        },
-        {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         }
       ]
@@ -4881,6 +4881,10 @@
           "named": true
         },
         {
+          "type": "operator",
+          "named": true
+        },
+        {
           "type": "promoted",
           "named": true
         },
@@ -4893,11 +4897,11 @@
           "named": true
         },
         {
-          "type": "qvarid",
+          "type": "qualified_operator",
           "named": true
         },
         {
-          "type": "qvarsym",
+          "type": "qualified_variable",
           "named": true
         },
         {
@@ -4921,11 +4925,7 @@
           "named": true
         },
         {
-          "type": "varid",
-          "named": true
-        },
-        {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         }
       ]
@@ -5191,6 +5191,14 @@
           "named": true
         },
         {
+          "type": "operator",
+          "named": true
+        },
+        {
+          "type": "qualified_operator",
+          "named": true
+        },
+        {
           "type": "qualified_type",
           "named": true
         },
@@ -5199,11 +5207,7 @@
           "named": true
         },
         {
-          "type": "qvarid",
-          "named": true
-        },
-        {
-          "type": "qvarsym",
+          "type": "qualified_variable",
           "named": true
         },
         {
@@ -5215,11 +5219,7 @@
           "named": true
         },
         {
-          "type": "varid",
-          "named": true
-        },
-        {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         }
       ]
@@ -5250,11 +5250,11 @@
           "named": true
         },
         {
-          "type": "varid",
+          "type": "operator",
           "named": true
         },
         {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         }
       ]
@@ -5424,11 +5424,15 @@
           "named": true
         },
         {
-          "type": "qvarid",
+          "type": "operator",
           "named": true
         },
         {
-          "type": "qvarsym",
+          "type": "qualified_operator",
+          "named": true
+        },
+        {
+          "type": "qualified_variable",
           "named": true
         },
         {
@@ -5436,11 +5440,7 @@
           "named": true
         },
         {
-          "type": "varid",
-          "named": true
-        },
-        {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         },
         {
@@ -5534,7 +5534,7 @@
       "required": true,
       "types": [
         {
-          "type": "varid",
+          "type": "variable",
           "named": true
         }
       ]
@@ -5687,6 +5687,10 @@
           "named": true
         },
         {
+          "type": "operator",
+          "named": true
+        },
+        {
           "type": "pat_apply",
           "named": true
         },
@@ -5739,19 +5743,15 @@
           "named": true
         },
         {
-          "type": "qvarid",
+          "type": "qualified_operator",
           "named": true
         },
         {
-          "type": "qvarsym",
+          "type": "qualified_variable",
           "named": true
         },
         {
-          "type": "varid",
-          "named": true
-        },
-        {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         },
         {
@@ -6128,11 +6128,11 @@
             "named": true
           },
           {
-            "type": "varid",
+            "type": "operator",
             "named": true
           },
           {
-            "type": "varsym",
+            "type": "variable",
             "named": true
           }
         ]
@@ -6883,11 +6883,11 @@
           "named": true
         },
         {
-          "type": "varid",
+          "type": "operator",
           "named": true
         },
         {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         }
       ]
@@ -6918,11 +6918,11 @@
           "named": true
         },
         {
-          "type": "varid",
+          "type": "operator",
           "named": true
         },
         {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         }
       ]
@@ -7668,6 +7668,11 @@
     }
   },
   {
+    "type": "operator",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "pat_apply",
     "named": true,
     "fields": {},
@@ -7773,7 +7778,7 @@
         "required": true,
         "types": [
           {
-            "type": "varid",
+            "type": "variable",
             "named": true
           }
         ]
@@ -8055,7 +8060,7 @@
           "named": true
         },
         {
-          "type": "varid",
+          "type": "variable",
           "named": true
         }
       ]
@@ -9141,6 +9146,25 @@
     }
   },
   {
+    "type": "qualified_operator",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "modid",
+          "named": true
+        },
+        {
+          "type": "operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "qualified_type",
     "named": true,
     "fields": {},
@@ -9179,6 +9203,25 @@
     }
   },
   {
+    "type": "qualified_variable",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "modid",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "quantifiers",
     "named": true,
     "fields": {},
@@ -9198,25 +9241,6 @@
     }
   },
   {
-    "type": "qvarid",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "modid",
-          "named": true
-        },
-        {
-          "type": "varid",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "qvarop",
     "named": true,
     "fields": {},
@@ -9225,38 +9249,19 @@
       "required": true,
       "types": [
         {
-          "type": "qvarid",
+          "type": "operator",
           "named": true
         },
         {
-          "type": "qvarsym",
+          "type": "qualified_operator",
           "named": true
         },
         {
-          "type": "varid",
+          "type": "qualified_variable",
           "named": true
         },
         {
-          "type": "varsym",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "qvarsym",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "modid",
-          "named": true
-        },
-        {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         }
       ]
@@ -10528,7 +10533,7 @@
     "fields": {}
   },
   {
-    "type": "varid",
+    "type": "variable",
     "named": true,
     "fields": {}
   },
@@ -10541,20 +10546,15 @@
       "required": true,
       "types": [
         {
-          "type": "varid",
+          "type": "operator",
           "named": true
         },
         {
-          "type": "varsym",
+          "type": "variable",
           "named": true
         }
       ]
     }
-  },
-  {
-    "type": "varsym",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "via",
