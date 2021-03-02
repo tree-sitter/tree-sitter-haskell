@@ -28,7 +28,7 @@ module.exports = {
 
   bind_pattern: $ => seq(
     $._pat,
-    $._larrow,
+    '<-',
     $._exp,
   ),
 
@@ -47,7 +47,7 @@ module.exports = {
 
   exp_list_comprehension: $ => brackets(
     $._exp,
-    $._bar,
+    '|',
     sep1($.comma, $.qual),
   ),
 
@@ -82,16 +82,16 @@ module.exports = {
   ),
 
   fbind: $ => choice(
-    alias($._dotdot, $.wildcard),
-    seq($._qvar, seq($._equals, $._exp))
+    alias('..', $.wildcard),
+    seq($._qvar, seq('=', $._exp))
   ),
 
-  exp_type_application: $ => seq($._tyapp, $._atype),
+  exp_type_application: $ => seq('@', $._atype),
 
   exp_lambda: $ => seq(
-    $._lambda,
+    '\\',
     repeat1($._apat),
-    $._arrow,
+    '->',
     $._exp,
   ),
 
@@ -104,10 +104,10 @@ module.exports = {
   exp_cond: $ => seq(
     'if',
     field('if', $._exp),
-    optional($._semicolon),
+    optional(';'),
     'then',
     field('then', $._exp),
-    optional($._semicolon),
+    optional(';'),
     'else',
     field('else', $._exp),
   ),
@@ -116,7 +116,7 @@ module.exports = {
 
   pattern_guard: $ => seq(
     $._pat,
-    $._larrow,
+    '<-',
     $._exp_infix,
   ),
 
@@ -128,10 +128,10 @@ module.exports = {
 
   guards: $ => seq('|', sep1($.comma, $.guard)),
 
-  gdpat: $ => seq($.guards, $._arrow, $._exp),
+  gdpat: $ => seq($.guards, '->', $._exp),
 
   _alt_variants: $ => choice(
-    seq($._arrow, $._exp),
+    seq('->', $._exp),
     repeat1($.gdpat),
   ),
 
@@ -142,7 +142,7 @@ module.exports = {
   exp_case: $ => seq('case', $._exp, 'of', $.alts),
 
   exp_lambda_case: $ => prec.left(seq(
-    $._lambda,
+    '\\',
     'case',
     optional($.alts),
   )),

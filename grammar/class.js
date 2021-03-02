@@ -20,7 +20,7 @@ module.exports = {
     alias($.class_datafam, $.data_family),
   ),
 
-  fundep: $ => seq(repeat1($.type_variable), $._arrow, repeat1($.type_variable)),
+  fundep: $ => seq(repeat1($.type_variable), '->', repeat1($.type_variable)),
 
   fundeps: $ => seq('|', sep1($.comma, $.fundep)),
 
@@ -71,7 +71,7 @@ module.exports = {
     'type',
     optional('instance'),
     repeat($._atype),
-    $._equals,
+    '=',
     $._type,
   ),
 

@@ -7,7 +7,7 @@ module.exports = {
 
   field: $ => seq(
     sep1($.comma, $.variable),
-    $._annotation,
+    '::',
     choice($.strict_type, $._type),
   ),
 
@@ -32,7 +32,7 @@ module.exports = {
   ),
 
   constrs: $ => sep1(
-    $._bar,
+    '|',
     seq(
       optional($.forall),
       optional($.context),
@@ -59,12 +59,12 @@ module.exports = {
   ),
 
   _adt_rhs: $ => seq(
-    $._equals,
+    '=',
     $.constrs,
     repeat($.deriving),
   ),
 
-  _gadt_fun: $ => seq(choice($.strict_type, $._type_infix), $._arrow, $._gadt_sig),
+  _gadt_fun: $ => seq(choice($.strict_type, $._type_infix), '->', $._gadt_sig),
 
   _gadt_sig: $ => choice(
     alias($._gadt_fun, $.fun),
@@ -72,10 +72,10 @@ module.exports = {
   ),
 
   _gadt_constr_type: $ => seq(
-    $._annotation,
+    '::',
     optional($.forall),
     optional($.context),
-    choice($._gadt_sig, seq($.record_fields, $._arrow, $._gadt_sig)),
+    choice($._gadt_sig, seq($.record_fields, '->', $._gadt_sig)),
   ),
 
   gadt_constructor: $ => seq(
@@ -106,7 +106,7 @@ module.exports = {
   ),
 
   _newtype: $ => seq(
-    $._equals,
+    '=',
     $.newtype_constructor,
     repeat($.deriving),
   ),

@@ -27,8 +27,8 @@ sep2 = (sep, rule) => seq(rule, repeat1(seq(sep, rule)))
   * clauses.
   */
 terminated = ($, rule) => seq(
-  sep1(prec.dynamic(1, choice($._semicolon, $._layout_semicolon)), rule),
-  optional(choice($._semicolon, $._layout_semicolon)),
+  sep1(prec.dynamic(1, choice(';', $._layout_semicolon)), rule),
+  optional(choice(';', $._layout_semicolon)),
 )
 
 /**
@@ -41,7 +41,7 @@ terminated = ($, rule) => seq(
   * If explicit braces are provided, the scanner isn't relevant.
   */
 layouted = ($, rule) => choice(
-  braces(sep($._semicolon, rule), optional($._semicolon)),
+  braces(sep(';', rule), optional(';')),
   seq($._layout_start, optional(terminated($, rule)), $._layout_end),
 )
 

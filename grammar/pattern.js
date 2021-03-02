@@ -23,7 +23,7 @@ module.exports = {
 
   _pattern_arrow: $ => seq(
     $._pat,
-    $._larrow,
+    '<-',
     $._pat,
     optional(seq($.where, layouted($, $._pattern_decl))),
   ),

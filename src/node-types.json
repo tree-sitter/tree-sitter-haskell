@@ -112,11 +112,6 @@
     }
   },
   {
-    "type": "all_names",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "alt",
     "named": true,
     "fields": {
@@ -1745,6 +1740,10 @@
         "required": true,
         "types": [
           {
+            "type": "::",
+            "named": false
+          },
+          {
             "type": "context",
             "named": true
           },
@@ -1895,6 +1894,10 @@
         "required": false,
         "types": [
           {
+            "type": "::",
+            "named": false
+          },
+          {
             "type": "context",
             "named": true
           },
@@ -2044,6 +2047,10 @@
         "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": "::",
+            "named": false
+          },
           {
             "type": "context",
             "named": true
@@ -2431,6 +2438,10 @@
         "required": true,
         "types": [
           {
+            "type": "::",
+            "named": false
+          },
+          {
             "type": "context",
             "named": true
           },
@@ -2581,6 +2592,10 @@
         "required": true,
         "types": [
           {
+            "type": "::",
+            "named": false
+          },
+          {
             "type": "context",
             "named": true
           },
@@ -2730,6 +2745,10 @@
         "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": "::",
+            "named": false
+          },
           {
             "type": "context",
             "named": true
@@ -5472,6 +5491,10 @@
         "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": "::",
+            "named": false
+          },
           {
             "type": "context",
             "named": true
@@ -8388,6 +8411,10 @@
         "required": false,
         "types": [
           {
+            "type": "::",
+            "named": false
+          },
+          {
             "type": "context",
             "named": true
           },
@@ -9197,6 +9224,10 @@
         "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": "::",
+            "named": false
+          },
           {
             "type": "context",
             "named": true
@@ -10422,11 +10453,6 @@
     }
   },
   {
-    "type": "wildcard",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "'",
     "named": false
   },
@@ -10447,6 +10473,10 @@
     "named": false
   },
   {
+    "type": "->",
+    "named": false
+  },
+  {
     "type": ".",
     "named": false
   },
@@ -10455,11 +10485,35 @@
     "named": false
   },
   {
+    "type": "::",
+    "named": false
+  },
+  {
+    "type": ";",
+    "named": false
+  },
+  {
+    "type": "<-",
+    "named": false
+  },
+  {
     "type": "=",
     "named": false
   },
   {
+    "type": "=>",
+    "named": false
+  },
+  {
+    "type": "@",
+    "named": false
+  },
+  {
     "type": "[",
+    "named": false
+  },
+  {
+    "type": "\\",
     "named": false
   },
   {
@@ -10469,6 +10523,10 @@
   {
     "type": "`",
     "named": false
+  },
+  {
+    "type": "all_names",
+    "named": true
   },
   {
     "type": "anyclass",
@@ -10688,6 +10746,10 @@
   },
   {
     "type": "where",
+    "named": true
+  },
+  {
+    "type": "wildcard",
     "named": true
   },
   {

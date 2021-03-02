@@ -27,13 +27,13 @@ module.exports = {
     */
   _fun_name: $ => field('name', choice($._var, $.implicit_parid)),
 
-  guard_equation: $ => seq($.guards, $._equals, $._exp),
+  guard_equation: $ => seq($.guards, '=', $._exp),
 
   _fun_guards: $ => repeat1($.guard_equation),
 
   _funrhs: $ => seq(
     choice(
-      seq($._equals, field('rhs', $._exp)),
+      seq('=', field('rhs', $._exp)),
       $._fun_guards,
     ),
     optional(seq($.where, optional($.decls))),

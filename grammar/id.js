@@ -83,7 +83,7 @@ module.exports = {
 
   con_unit: _ => prec('con_unit', parens()),
   con_list: _ => brackets(),
-  tycon_arrow: $ => parens($._arrow),
+  tycon_arrow: _ => parens('->'),
   con_tuple: $ => parens(repeat1($.comma)),
 
   type_literal: $ => choice(

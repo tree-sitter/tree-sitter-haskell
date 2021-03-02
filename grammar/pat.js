@@ -2,17 +2,17 @@ const {parens} = require('./util.js')
 
 module.exports = {
   pat_record_binder: $ => choice(
-    alias($._dotdot, $.wildcard),
-    seq($._qvar, optional(seq($._equals, $._pat))),
+    alias('..', $.wildcard),
+    seq($._qvar, optional(seq('=', $._pat))),
   ),
 
   pat_record: $ => braces(optional(sep1($.comma, $.pat_record_binder))),
 
-  pat_as: $ => seq(field('var', $.variable), $._as_pat, field('pat', $._apat)),
+  pat_as: $ => seq(field('var', $.variable), token.immediate('@'), field('pat', $._apat)),
 
   pat_parens: $ => parens($._nested_pat, optional($._type_annotation)),
 
-  pat_view: $ => seq($._exp, $._arrow, $._nested_pat),
+  pat_view: $ => seq($._exp, '->', $._nested_pat),
 
   pat_tuple: $ => parens(sep2($.comma, $._nested_pat)),
 
@@ -28,12 +28,14 @@ module.exports = {
 
   pat_constructor: $ => $._qcon,
 
+  pat_wildcard: _ => '_',
+
   _apat: $ => choice(
     $.pat_name,
     $.pat_as,
     seq(alias($.pat_constructor, $.pat_name), optional($.pat_record)),
     alias($.literal, $.pat_literal),
-    alias($._wildcard, $.pat_wildcard),
+    $.pat_wildcard,
     $.pat_parens,
     $.pat_tuple,
     $.pat_list,

@@ -16,7 +16,7 @@ module.exports = {
 
   _forall_kw: _ => choice('forall', '∀'),
 
-  _forall_dot: $ => choice('.', $._arrow),
+  _forall_dot: $ => choice('.', '->'),
 
   _forall: $ => seq(
     $._forall_kw,
@@ -104,7 +104,7 @@ module.exports = {
     ),
   ),
 
-  context: $ => seq($._context, $._carrow),
+  context: $ => seq($._context, '=>'),
 
   _type_quantifiers: $ => seq(
     alias($._forall, $.quantifiers),
@@ -114,11 +114,11 @@ module.exports = {
 
   _type_context: $ => seq(
     $._context,
-    $._carrow,
+    '=>',
     $._type,
   ),
 
-  _type_fun: $ => prec('function-type', seq($._type_infix, $._arrow, $._type)),
+  _type_fun: $ => prec('function-type', seq($._type_infix, '->', $._type)),
 
   _type: $ => prec('type', choice(
     alias($._type_quantifiers, $.forall),
@@ -128,7 +128,7 @@ module.exports = {
   )),
 
   _type_annotation: $ => seq(
-    $._annotation,
+    '::',
     field('type', $._type),
   ),
 
@@ -154,7 +154,7 @@ module.exports = {
   decl_type: $ => seq(
     'type',
     $._simpletype,
-    $._equals,
+    '=',
     $._type,
   ),
 
@@ -172,7 +172,7 @@ module.exports = {
   // TODO what's this?
   tyfam_sig: $ => seq(
     // optional(sep1($.comma, choice($._variable, $.implicit_parid))),
-    $._annotation,
+    '::',
     $._type
   ),
 
@@ -185,7 +185,7 @@ module.exports = {
 
   tyfam_eq: $ => seq(
     alias($.tyfam_pat, $.pattern),
-    $._equals,
+    '=',
     $._type,
   ),
 
@@ -201,7 +201,7 @@ module.exports = {
     'type',
     'instance',
     repeat($._atype),
-    $._equals,
+    '=',
     $._type,
   ),
 }

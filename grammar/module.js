@@ -17,7 +17,7 @@ module.exports = {
     $._qatyconsym,
   ),
 
-  export_names: $ => parens(optional(choice(alias($._dotdot, $.all_names), sep($.comma, $._name)))),
+  export_names: $ => parens(optional(choice(alias('..', $.all_names), sep($.comma, $._name)))),
 
   export: $ => choice(
     $._qvar,
