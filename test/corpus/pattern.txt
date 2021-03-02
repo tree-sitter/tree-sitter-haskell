@@ -70,7 +70,7 @@ pattern A { a } <- A a where
 (module
  (pattern_synonym
   (pat_name (constructor))
-  (pat_record (fpat (variable)))
+  (pat_record (pat_record_binder (variable)))
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (where)
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
@@ -135,5 +135,5 @@ pattern A {a, a} = (a, a)
 
 (module
  (pattern_synonym
-  (pat_name (constructor)) (pat_record (fpat (variable)) (comma) (fpat (variable)))
+  (pat_name (constructor)) (pat_record (pat_record_binder (variable)) (comma) (pat_record_binder (variable)))
   (pat_tuple (pat_name (variable)) (comma) (pat_name (variable)))))

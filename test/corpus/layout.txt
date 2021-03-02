@@ -526,7 +526,7 @@ a = b where -1 = a
   (funrhs
    (exp_name (variable))
    (where)
-   (decls (decl_fun (funpat (pat_neg (integer))) (funrhs (exp_name (variable))))))))
+   (decls (decl_fun (funpat (pat_negation (integer))) (funrhs (exp_name (variable))))))))
 
 =================================================
 layout: comment in empty where on next line indented

@@ -89,16 +89,16 @@ data A a = A { a :: A, a, a :: A, a :: {-# unpack #-} !a, a :: !A }
   (type)
   (type_variable)
   (constrs
-   (constr_record
+   (data_constructor_record
     (constructor)
     (record_fields
-     (field (field_id (variable)) (type_name (type)))
+     (field (variable) (type_name (type)))
      (comma)
-     (field (field_id (variable)) (comma) (field_id (variable)) (type_name (type)))
+     (field (variable) (comma) (variable) (type_name (type)))
      (comma)
-     (field (field_id (variable)) (pragma) (strict_type (type_name (type_variable))))
+     (field (variable) (pragma) (strict_type (type_name (type_variable))))
      (comma)
-     (field (field_id (variable)) (strict_type (type_name (type)))))))))
+     (field (variable) (strict_type (type_name (type)))))))))
 
 =========================================
 plain adt: multiple cons
@@ -131,16 +131,16 @@ data A =
  (adt
   (type)
   (constrs
-   (constr_record
+   (data_constructor_record
     (constructor)
     (record_fields
-     (field (field_id (variable)) (type_name (type)))
+     (field (variable) (type_name (type)))
      (comma)
-     (field (field_id (variable)) (strict_type (type_name (type))))))
-   (constr_record
+     (field (variable) (strict_type (type_name (type))))))
+   (data_constructor_record
     (constructor)
     (record_fields
-     (field (field_id (variable)) (type_name (type))))))))
+     (field (variable) (type_name (type))))))))
 
 =========================================
 plain adt: deriving basic
@@ -169,7 +169,7 @@ data A = A deriving (A, A) deriving stock (A)
   (type)
   (constrs (data_constructor (constructor)))
   (deriving (type) (comma) (type))
-  (deriving (type))))
+  (deriving (deriving_strategy) (type))))
 
 =========================================
 plain adt: deriving via
@@ -332,4 +332,4 @@ data a +++ b = a :+++ b
 (module
  (adt
   (type_infix (type_variable) (type_operator) (type_variable))
-  (constrs (constr_infix (type_name (type_variable)) (consym) (type_name (type_variable))))))
+  (constrs (data_constructor_infix (type_name (type_variable)) (consym) (type_name (type_variable))))))

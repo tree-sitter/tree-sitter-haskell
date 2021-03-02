@@ -5,10 +5,8 @@ module.exports = {
   // adt
   // ------------------------------------------------------------------------
 
-  field_id: $ => $.variable,
-
   field: $ => seq(
-    sep1($.comma, $.field_id),
+    sep1($.comma, $.variable),
     $._annotation,
     choice($.strict_type, $._type),
   ),
@@ -18,7 +16,7 @@ module.exports = {
     repeat(choice($.strict_type, $._atype))
   ),
 
-  constr_infix: $ => seq(
+  data_constructor_infix: $ => seq(
     choice($.strict_type, $._type_infix),
     $._conop,
     choice($.strict_type, $._type_infix),
@@ -28,7 +26,7 @@ module.exports = {
 
   record_fields: $ => braces(sep1($.comma, $.field)),
 
-  constr_record: $ => seq(
+  data_constructor_record: $ => seq(
     $.constructor,
     $.record_fields,
   ),
@@ -40,19 +38,19 @@ module.exports = {
       optional($.context),
       choice(
         $.data_constructor,
-        $.constr_infix,
-        $.constr_record,
+        $.data_constructor_infix,
+        $.data_constructor_record,
       ),
     )
   ),
 
   via: $ => seq('via', $._atype),
 
-  _deriving_strategy: _ => choice('stock', 'newtype', 'anyclass'),
+  deriving_strategy: _ => choice('stock', 'newtype', 'anyclass'),
 
   deriving: $ => seq(
     'deriving',
-    optional($._deriving_strategy),
+    optional($.deriving_strategy),
     choice(
       field('class', $._qtycon),
       parens(optional(sep1($.comma, field('class', $._qtycon))))
@@ -80,12 +78,12 @@ module.exports = {
     choice($._gadt_sig, seq($.record_fields, $._arrow, $._gadt_sig)),
   ),
 
-  gadt_constr: $ => seq(
+  gadt_constructor: $ => seq(
     $._con,
     $._gadt_constr_type,
   ),
 
-  _gadt_rhs: $ => where($, choice($.gadt_constr, $.deriving)),
+  _gadt_rhs: $ => where($, choice($.gadt_constructor, $.deriving)),
 
   _adt: $ => seq(
     choice($._adt_rhs, $._gadt_rhs),

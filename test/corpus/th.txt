@@ -16,17 +16,14 @@ and newline|]
    (variable))
   (funrhs
    (exp_apply
-    (exp_qq
-     (qq_body)
-     (qq_end))
-    (exp_qq
+    (exp_quasiquote
+     (quasiquote_body))
+    (exp_quasiquote
      (quoter)
-     (qq_body)
-     (qq_end))
-    (exp_qq
+     (quasiquote_body))
+    (exp_quasiquote
      (quoter)
-     (qq_body)
-     (qq_end))))))
+     (quasiquote_body))))))
 
 ===============================
 template haskell: top level splice with parens

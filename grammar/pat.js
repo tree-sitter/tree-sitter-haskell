@@ -1,15 +1,12 @@
 const {parens} = require('./util.js')
 
 module.exports = {
-  fpat: $ => choice(
+  pat_record_binder: $ => choice(
     alias($._dotdot, $.wildcard),
     seq($._qvar, optional(seq($._equals, $._pat))),
   ),
 
-  /**
-   * { [_qvar [ = _pat] [, ...] ] | .. }
-   */
-  pat_record: $ => braces(optional(sep1($.comma, $.fpat))),
+  pat_record: $ => braces(optional(sep1($.comma, $.pat_record_binder))),
 
   pat_as: $ => seq(field('var', $.variable), $._as_pat, field('pat', $._apat)),
 
@@ -25,16 +22,16 @@ module.exports = {
 
   pat_irrefutable: $ => seq('~', $._apat),
 
-  pat_neg: $ => seq('-', choice($.integer, $.float)),
+  pat_negation: $ => seq('-', choice($.integer, $.float)),
 
   pat_name: $ => $.variable,
 
-  pat_con: $ => $._qcon,
+  pat_constructor: $ => $._qcon,
 
   _apat: $ => choice(
     $.pat_name,
     $.pat_as,
-    seq(alias($.pat_con, $.pat_name), optional($.pat_record)),
+    seq(alias($.pat_constructor, $.pat_name), optional($.pat_record)),
     alias($.literal, $.pat_literal),
     alias($._wildcard, $.pat_wildcard),
     $.pat_parens,
@@ -47,11 +44,11 @@ module.exports = {
   /**
    * In patterns, application is only legal if the first element is a con.
    */
-  pat_apply: $ => seq(alias($.pat_con, $.pat_name), repeat1($._apat)),
+  pat_apply: $ => seq(alias($.pat_constructor, $.pat_name), repeat1($._apat)),
 
   _lpat: $ => choice(
     $._apat,
-    $.pat_neg,
+    $.pat_negation,
     $.pat_apply,
   ),
 

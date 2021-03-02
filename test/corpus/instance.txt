@@ -174,9 +174,9 @@ instance A where
     (type_name (type_variable)))
    (constrs
     (data_constructor (constructor) (type_name (type_variable)))
-    (constr_record
+    (data_constructor_record
      (constructor) 
-     (record_fields (field (field_id (variable)) (type_name (type)))))))
+     (record_fields (field (variable) (type_name (type)))))))
   (inst_datainst
    (type_apply
     (type_name (type))

@@ -2531,7 +2531,7 @@
         }
       ]
     },
-    "qq_body": {
+    "quasiquote_body": {
       "type": "TOKEN",
       "content": {
         "type": "REPEAT1",
@@ -2550,7 +2550,7 @@
         }
       }
     },
-    "exp_qq": {
+    "exp_quasiquote": {
       "type": "SEQ",
       "members": [
         {
@@ -2583,7 +2583,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "qq_body"
+              "name": "quasiquote_body"
             },
             {
               "type": "BLANK"
@@ -2591,16 +2591,11 @@
           ]
         },
         {
-          "type": "ALIAS",
+          "type": "TOKEN",
           "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "|]"
-            }
-          },
-          "named": true,
-          "value": "qq_end"
+            "type": "STRING",
+            "value": "|]"
+          }
         }
       ]
     },
@@ -2680,7 +2675,7 @@
         }
       ]
     },
-    "exp_tyapp": {
+    "exp_type_application": {
       "type": "SEQ",
       "members": [
         {
@@ -2829,7 +2824,7 @@
         }
       ]
     },
-    "exp_cond_guard": {
+    "exp_if_guard": {
       "type": "SEQ",
       "members": [
         {
@@ -3563,7 +3558,7 @@
         }
       ]
     },
-    "exp_neg": {
+    "exp_negation": {
       "type": "SEQ",
       "members": [
         {
@@ -3673,7 +3668,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "exp_qq"
+          "name": "exp_quasiquote"
         },
         {
           "type": "SYMBOL",
@@ -3681,7 +3676,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "exp_tyapp"
+          "name": "exp_type_application"
         },
         {
           "type": "SYMBOL",
@@ -3780,7 +3775,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "exp_cond_guard"
+          "name": "exp_if_guard"
         },
         {
           "type": "SYMBOL",
@@ -3788,7 +3783,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "exp_neg"
+          "name": "exp_negation"
         },
         {
           "type": "SYMBOL",
@@ -3855,7 +3850,7 @@
         ]
       }
     },
-    "fpat": {
+    "pat_record_binder": {
       "type": "CHOICE",
       "members": [
         {
@@ -3914,7 +3909,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "fpat"
+                  "name": "pat_record_binder"
                 },
                 {
                   "type": "REPEAT",
@@ -3927,7 +3922,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "fpat"
+                        "name": "pat_record_binder"
                       }
                     ]
                   }
@@ -4118,7 +4113,7 @@
         }
       ]
     },
-    "pat_neg": {
+    "pat_negation": {
       "type": "SEQ",
       "members": [
         {
@@ -4144,7 +4139,7 @@
       "type": "SYMBOL",
       "name": "variable"
     },
-    "pat_con": {
+    "pat_constructor": {
       "type": "SYMBOL",
       "name": "_qcon"
     },
@@ -4166,7 +4161,7 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "pat_con"
+                "name": "pat_constructor"
               },
               "named": true,
               "value": "pat_name"
@@ -4232,7 +4227,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "pat_con"
+            "name": "pat_constructor"
           },
           "named": true,
           "value": "pat_name"
@@ -4255,7 +4250,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "pat_neg"
+          "name": "pat_negation"
         },
         {
           "type": "SYMBOL",
@@ -5035,10 +5030,6 @@
         }
       ]
     },
-    "field_id": {
-      "type": "SYMBOL",
-      "name": "variable"
-    },
     "field": {
       "type": "SEQ",
       "members": [
@@ -5047,7 +5038,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "field_id"
+              "name": "variable"
             },
             {
               "type": "REPEAT",
@@ -5060,7 +5051,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "field_id"
+                    "name": "variable"
                   }
                 ]
               }
@@ -5111,7 +5102,7 @@
         }
       ]
     },
-    "constr_infix": {
+    "data_constructor_infix": {
       "type": "SEQ",
       "members": [
         {
@@ -5201,7 +5192,7 @@
         }
       ]
     },
-    "constr_record": {
+    "data_constructor_record": {
       "type": "SEQ",
       "members": [
         {
@@ -5253,11 +5244,11 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "constr_infix"
+                  "name": "data_constructor_infix"
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "constr_record"
+                  "name": "data_constructor_record"
                 }
               ]
             }
@@ -5308,11 +5299,11 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "constr_infix"
+                        "name": "data_constructor_infix"
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "constr_record"
+                        "name": "data_constructor_record"
                       }
                     ]
                   }
@@ -5336,7 +5327,7 @@
         }
       ]
     },
-    "_deriving_strategy": {
+    "deriving_strategy": {
       "type": "CHOICE",
       "members": [
         {
@@ -5365,7 +5356,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_deriving_strategy"
+              "name": "deriving_strategy"
             },
             {
               "type": "BLANK"
@@ -5585,7 +5576,7 @@
         }
       ]
     },
-    "gadt_constr": {
+    "gadt_constructor": {
       "type": "SEQ",
       "members": [
         {
@@ -5629,7 +5620,7 @@
                               "members": [
                                 {
                                   "type": "SYMBOL",
-                                  "name": "gadt_constr"
+                                  "name": "gadt_constructor"
                                 },
                                 {
                                   "type": "SYMBOL",
@@ -5651,7 +5642,7 @@
                                     "members": [
                                       {
                                         "type": "SYMBOL",
-                                        "name": "gadt_constr"
+                                        "name": "gadt_constructor"
                                       },
                                       {
                                         "type": "SYMBOL",
@@ -5708,7 +5699,7 @@
                                   "members": [
                                     {
                                       "type": "SYMBOL",
-                                      "name": "gadt_constr"
+                                      "name": "gadt_constructor"
                                     },
                                     {
                                       "type": "SYMBOL",
@@ -5743,7 +5734,7 @@
                                         "members": [
                                           {
                                             "type": "SYMBOL",
-                                            "name": "gadt_constr"
+                                            "name": "gadt_constructor"
                                           },
                                           {
                                             "type": "SYMBOL",
@@ -6435,7 +6426,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_deriving_strategy"
+              "name": "deriving_strategy"
             },
             {
               "type": "BLANK"
@@ -7852,7 +7843,7 @@
     ],
     [
       "exp_name",
-      "pat_con"
+      "pat_constructor"
     ],
     [
       "exp_name",
@@ -7863,7 +7854,7 @@
       "_apat"
     ],
     [
-      "pat_neg",
+      "pat_negation",
       "_literal"
     ],
     [

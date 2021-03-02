@@ -61,19 +61,19 @@ module.exports = {
     $._exp_infix,
   ),
 
-  qq_body: _ => token(repeat1(choice(/[^|]/, /\|[^\]]/))),
+  quasiquote_body: _ => token(repeat1(choice(/[^|]/, /\|[^\]]/))),
 
   /**
    * `_qq_start` is determined by the scanner.
    * While the quoter and the bar may not be preceded by whitespace, this is not necessary to ensure here with
    * `token.immediate` since the scanner already verifies it.
    */
-  exp_qq: $ => seq(
+  exp_quasiquote: $ => seq(
     $._qq_start,
     optional(alias($._varid, $.quoter)),
     '|',
-    optional($.qq_body),
-    alias(token('|]'), $.qq_end),
+    optional($.quasiquote_body),
+    token('|]'),
   ),
 
   exp_th_quoted_name: $ => choice(
@@ -86,7 +86,7 @@ module.exports = {
     seq($._qvar, seq($._equals, $._exp))
   ),
 
-  exp_tyapp: $ => seq($._tyapp, $._atype),
+  exp_type_application: $ => seq($._tyapp, $._atype),
 
   exp_lambda: $ => seq(
     $._lambda,
@@ -112,7 +112,7 @@ module.exports = {
     field('else', $._exp),
   ),
 
-  exp_cond_guard: $ => seq('if', prec.left(repeat1($.gdpat))),
+  exp_if_guard: $ => seq('if', prec.left(repeat1($.gdpat))),
 
   pattern_guard: $ => seq(
     $._pat,
@@ -161,7 +161,7 @@ module.exports = {
 
   exp_do: $ => seq(choice('mdo', 'do'), layouted($, seq($.stmt))),
 
-  exp_neg: $ => seq('-', $._aexp),
+  exp_negation: $ => seq('-', $._aexp),
 
   exp_record: $ => seq($._aexp, braces(sep1($.comma, $.fbind))),
 
@@ -179,9 +179,9 @@ module.exports = {
     $.exp_list_comprehension,
     $.exp_section_left,
     $.exp_section_right,
-    $.exp_qq,
+    $.exp_quasiquote,
     $.exp_th_quoted_name,
-    $.exp_tyapp,
+    $.exp_type_application,
     $.exp_lambda_case,
     $.exp_do,
     $.splice,
@@ -215,9 +215,9 @@ module.exports = {
   _lexp: $ => choice(
     $.exp_let,
     $.exp_cond,
-    $.exp_cond_guard,
+    $.exp_if_guard,
     $.exp_case,
-    $.exp_neg,
+    $.exp_negation,
     $._fexp,
     $.exp_lambda,
   ),

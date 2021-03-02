@@ -93,7 +93,7 @@
           "named": true
         },
         {
-          "type": "gadt_constr",
+          "type": "gadt_constructor",
           "named": true
         },
         {
@@ -200,11 +200,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -240,7 +240,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -248,7 +248,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -272,7 +272,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -308,7 +308,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -507,11 +507,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -547,7 +547,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -555,7 +555,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -579,7 +579,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -611,7 +611,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -927,84 +927,6 @@
     "fields": {}
   },
   {
-    "type": "constr_infix",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "constructor",
-          "named": true
-        },
-        {
-          "type": "consym",
-          "named": true
-        },
-        {
-          "type": "list_type",
-          "named": true
-        },
-        {
-          "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "strict_type",
-          "named": true
-        },
-        {
-          "type": "tuple_type",
-          "named": true
-        },
-        {
-          "type": "type_apply",
-          "named": true
-        },
-        {
-          "type": "type_infix",
-          "named": true
-        },
-        {
-          "type": "type_literal",
-          "named": true
-        },
-        {
-          "type": "type_name",
-          "named": true
-        },
-        {
-          "type": "type_parens",
-          "named": true
-        },
-        {
-          "type": "type_star",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "constr_record",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "constructor",
-          "named": true
-        },
-        {
-          "type": "record_fields",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "constraint",
     "named": true,
     "fields": {
@@ -1067,19 +989,19 @@
       "required": true,
       "types": [
         {
-          "type": "constr_infix",
-          "named": true
-        },
-        {
-          "type": "constr_record",
-          "named": true
-        },
-        {
           "type": "context",
           "named": true
         },
         {
           "type": "data_constructor",
+          "named": true
+        },
+        {
+          "type": "data_constructor_infix",
+          "named": true
+        },
+        {
+          "type": "data_constructor_record",
           "named": true
         },
         {
@@ -1212,6 +1134,84 @@
         },
         {
           "type": "type_star",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "data_constructor_infix",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "consym",
+          "named": true
+        },
+        {
+          "type": "list_type",
+          "named": true
+        },
+        {
+          "type": "promoted",
+          "named": true
+        },
+        {
+          "type": "strict_type",
+          "named": true
+        },
+        {
+          "type": "tuple_type",
+          "named": true
+        },
+        {
+          "type": "type_apply",
+          "named": true
+        },
+        {
+          "type": "type_infix",
+          "named": true
+        },
+        {
+          "type": "type_literal",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        },
+        {
+          "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "data_constructor_record",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "record_fields",
           "named": true
         }
       ]
@@ -1389,7 +1389,7 @@
           "named": true
         },
         {
-          "type": "gadt_constr",
+          "type": "gadt_constructor",
           "named": true
         },
         {
@@ -1671,6 +1671,10 @@
           "named": true
         },
         {
+          "type": "deriving_strategy",
+          "named": true
+        },
+        {
           "type": "via",
           "named": true
         }
@@ -1690,11 +1694,20 @@
           "named": true
         },
         {
+          "type": "deriving_strategy",
+          "named": true
+        },
+        {
           "type": "instance_head",
           "named": true
         }
       ]
     }
+  },
+  {
+    "type": "deriving_strategy",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "exp_apply",
@@ -1741,7 +1754,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -1765,7 +1778,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -1804,11 +1817,11 @@
             "named": true
           },
           {
-            "type": "exp_cond_guard",
+            "type": "exp_do",
             "named": true
           },
           {
-            "type": "exp_do",
+            "type": "exp_if_guard",
             "named": true
           },
           {
@@ -1844,7 +1857,7 @@
             "named": true
           },
           {
-            "type": "exp_neg",
+            "type": "exp_negation",
             "named": true
           },
           {
@@ -1852,7 +1865,7 @@
             "named": true
           },
           {
-            "type": "exp_qq",
+            "type": "exp_quasiquote",
             "named": true
           },
           {
@@ -1876,7 +1889,7 @@
             "named": true
           },
           {
-            "type": "exp_tyapp",
+            "type": "exp_type_application",
             "named": true
           },
           {
@@ -1954,11 +1967,11 @@
             "named": true
           },
           {
-            "type": "exp_cond_guard",
+            "type": "exp_do",
             "named": true
           },
           {
-            "type": "exp_do",
+            "type": "exp_if_guard",
             "named": true
           },
           {
@@ -1994,7 +2007,7 @@
             "named": true
           },
           {
-            "type": "exp_neg",
+            "type": "exp_negation",
             "named": true
           },
           {
@@ -2002,7 +2015,7 @@
             "named": true
           },
           {
-            "type": "exp_qq",
+            "type": "exp_quasiquote",
             "named": true
           },
           {
@@ -2026,7 +2039,7 @@
             "named": true
           },
           {
-            "type": "exp_tyapp",
+            "type": "exp_type_application",
             "named": true
           },
           {
@@ -2104,11 +2117,11 @@
             "named": true
           },
           {
-            "type": "exp_cond_guard",
+            "type": "exp_do",
             "named": true
           },
           {
-            "type": "exp_do",
+            "type": "exp_if_guard",
             "named": true
           },
           {
@@ -2144,7 +2157,7 @@
             "named": true
           },
           {
-            "type": "exp_neg",
+            "type": "exp_negation",
             "named": true
           },
           {
@@ -2152,7 +2165,7 @@
             "named": true
           },
           {
-            "type": "exp_qq",
+            "type": "exp_quasiquote",
             "named": true
           },
           {
@@ -2176,7 +2189,7 @@
             "named": true
           },
           {
-            "type": "exp_tyapp",
+            "type": "exp_type_application",
             "named": true
           },
           {
@@ -2379,11 +2392,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -2419,7 +2432,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -2427,7 +2440,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -2451,7 +2464,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -2490,11 +2503,11 @@
             "named": true
           },
           {
-            "type": "exp_cond_guard",
+            "type": "exp_do",
             "named": true
           },
           {
-            "type": "exp_do",
+            "type": "exp_if_guard",
             "named": true
           },
           {
@@ -2530,7 +2543,7 @@
             "named": true
           },
           {
-            "type": "exp_neg",
+            "type": "exp_negation",
             "named": true
           },
           {
@@ -2538,7 +2551,7 @@
             "named": true
           },
           {
-            "type": "exp_qq",
+            "type": "exp_quasiquote",
             "named": true
           },
           {
@@ -2562,7 +2575,7 @@
             "named": true
           },
           {
-            "type": "exp_tyapp",
+            "type": "exp_type_application",
             "named": true
           },
           {
@@ -2640,11 +2653,11 @@
             "named": true
           },
           {
-            "type": "exp_cond_guard",
+            "type": "exp_do",
             "named": true
           },
           {
-            "type": "exp_do",
+            "type": "exp_if_guard",
             "named": true
           },
           {
@@ -2680,7 +2693,7 @@
             "named": true
           },
           {
-            "type": "exp_neg",
+            "type": "exp_negation",
             "named": true
           },
           {
@@ -2688,7 +2701,7 @@
             "named": true
           },
           {
-            "type": "exp_qq",
+            "type": "exp_quasiquote",
             "named": true
           },
           {
@@ -2712,7 +2725,7 @@
             "named": true
           },
           {
-            "type": "exp_tyapp",
+            "type": "exp_type_application",
             "named": true
           },
           {
@@ -2790,11 +2803,11 @@
             "named": true
           },
           {
-            "type": "exp_cond_guard",
+            "type": "exp_do",
             "named": true
           },
           {
-            "type": "exp_do",
+            "type": "exp_if_guard",
             "named": true
           },
           {
@@ -2830,7 +2843,7 @@
             "named": true
           },
           {
-            "type": "exp_neg",
+            "type": "exp_negation",
             "named": true
           },
           {
@@ -2838,7 +2851,7 @@
             "named": true
           },
           {
-            "type": "exp_qq",
+            "type": "exp_quasiquote",
             "named": true
           },
           {
@@ -2862,7 +2875,7 @@
             "named": true
           },
           {
-            "type": "exp_tyapp",
+            "type": "exp_type_application",
             "named": true
           },
           {
@@ -2972,21 +2985,6 @@
     }
   },
   {
-    "type": "exp_cond_guard",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "gdpat",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "exp_do",
     "named": true,
     "fields": {},
@@ -2996,6 +2994,21 @@
       "types": [
         {
           "type": "stmt",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "exp_if_guard",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "gdpat",
           "named": true
         }
       ]
@@ -3081,11 +3094,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -3121,7 +3134,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -3129,7 +3142,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -3153,7 +3166,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -3196,11 +3209,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -3236,7 +3249,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -3244,7 +3257,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -3268,7 +3281,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -3370,11 +3383,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -3410,7 +3423,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -3418,7 +3431,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -3442,7 +3455,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -3610,11 +3623,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -3650,7 +3663,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -3658,7 +3671,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -3682,7 +3695,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -3776,11 +3789,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -3816,7 +3829,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -3824,7 +3837,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -3848,7 +3861,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -3949,7 +3962,7 @@
     }
   },
   {
-    "type": "exp_neg",
+    "type": "exp_negation",
     "named": true,
     "fields": {},
     "children": {
@@ -3989,7 +4002,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -4013,7 +4026,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -4103,11 +4116,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -4143,7 +4156,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -4151,7 +4164,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -4175,7 +4188,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -4186,19 +4199,15 @@
     }
   },
   {
-    "type": "exp_qq",
+    "type": "exp_quasiquote",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
-          "type": "qq_body",
-          "named": true
-        },
-        {
-          "type": "qq_end",
+          "type": "quasiquote_body",
           "named": true
         },
         {
@@ -4253,7 +4262,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -4277,7 +4286,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -4324,11 +4333,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -4364,7 +4373,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -4372,7 +4381,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -4396,7 +4405,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -4451,11 +4460,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -4491,7 +4500,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -4499,7 +4508,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -4523,7 +4532,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -4700,11 +4709,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -4740,7 +4749,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -4748,7 +4757,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -4772,7 +4781,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -4783,7 +4792,7 @@
     }
   },
   {
-    "type": "exp_tyapp",
+    "type": "exp_type_application",
     "named": true,
     "fields": {},
     "children": {
@@ -5017,11 +5026,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -5057,7 +5066,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -5065,7 +5074,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -5089,7 +5098,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -5133,10 +5142,6 @@
         },
         {
           "type": "context",
-          "named": true
-        },
-        {
-          "type": "field_id",
           "named": true
         },
         {
@@ -5186,18 +5191,7 @@
         {
           "type": "type_star",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "field_id",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
+        },
         {
           "type": "variable",
           "named": true
@@ -5371,89 +5365,6 @@
     }
   },
   {
-    "type": "fpat",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "operator",
-          "named": true
-        },
-        {
-          "type": "pat_apply",
-          "named": true
-        },
-        {
-          "type": "pat_as",
-          "named": true
-        },
-        {
-          "type": "pat_infix",
-          "named": true
-        },
-        {
-          "type": "pat_irrefutable",
-          "named": true
-        },
-        {
-          "type": "pat_list",
-          "named": true
-        },
-        {
-          "type": "pat_literal",
-          "named": true
-        },
-        {
-          "type": "pat_name",
-          "named": true
-        },
-        {
-          "type": "pat_neg",
-          "named": true
-        },
-        {
-          "type": "pat_parens",
-          "named": true
-        },
-        {
-          "type": "pat_record",
-          "named": true
-        },
-        {
-          "type": "pat_strict",
-          "named": true
-        },
-        {
-          "type": "pat_tuple",
-          "named": true
-        },
-        {
-          "type": "pat_wildcard",
-          "named": true
-        },
-        {
-          "type": "qualified_operator",
-          "named": true
-        },
-        {
-          "type": "qualified_variable",
-          "named": true
-        },
-        {
-          "type": "variable",
-          "named": true
-        },
-        {
-          "type": "wildcard",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "fun",
     "named": true,
     "fields": {},
@@ -5591,7 +5502,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -5701,11 +5612,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -5741,7 +5652,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -5749,7 +5660,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -5773,7 +5684,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -5870,7 +5781,7 @@
     }
   },
   {
-    "type": "gadt_constr",
+    "type": "gadt_constructor",
     "named": true,
     "fields": {},
     "children": {
@@ -6024,11 +5935,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -6064,7 +5975,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -6072,7 +5983,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -6096,7 +6007,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -6190,11 +6101,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -6230,7 +6141,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -6238,7 +6149,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -6262,7 +6173,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -6301,11 +6212,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -6341,7 +6252,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -6349,7 +6260,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -6373,7 +6284,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -6648,7 +6559,7 @@
             "named": true
           },
           {
-            "type": "pat_neg",
+            "type": "pat_negation",
             "named": true
           },
           {
@@ -6716,7 +6627,7 @@
             "named": true
           },
           {
-            "type": "pat_neg",
+            "type": "pat_negation",
             "named": true
           },
           {
@@ -6823,7 +6734,7 @@
           "named": true
         },
         {
-          "type": "gadt_constr",
+          "type": "gadt_constructor",
           "named": true
         },
         {
@@ -7525,7 +7436,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -7651,7 +7562,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -7752,7 +7663,7 @@
     }
   },
   {
-    "type": "pat_neg",
+    "type": "pat_negation",
     "named": true,
     "fields": {},
     "children": {
@@ -7862,7 +7773,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -7905,7 +7816,90 @@
           "named": true
         },
         {
-          "type": "fpat",
+          "type": "pat_record_binder",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "pat_record_binder",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "operator",
+          "named": true
+        },
+        {
+          "type": "pat_apply",
+          "named": true
+        },
+        {
+          "type": "pat_as",
+          "named": true
+        },
+        {
+          "type": "pat_infix",
+          "named": true
+        },
+        {
+          "type": "pat_irrefutable",
+          "named": true
+        },
+        {
+          "type": "pat_list",
+          "named": true
+        },
+        {
+          "type": "pat_literal",
+          "named": true
+        },
+        {
+          "type": "pat_name",
+          "named": true
+        },
+        {
+          "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_parens",
+          "named": true
+        },
+        {
+          "type": "pat_record",
+          "named": true
+        },
+        {
+          "type": "pat_strict",
+          "named": true
+        },
+        {
+          "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_wildcard",
+          "named": true
+        },
+        {
+          "type": "qualified_operator",
+          "named": true
+        },
+        {
+          "type": "qualified_variable",
+          "named": true
+        },
+        {
+          "type": "variable",
+          "named": true
+        },
+        {
+          "type": "wildcard",
           "named": true
         }
       ]
@@ -8003,7 +7997,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -8113,11 +8107,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -8153,7 +8147,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -8161,7 +8155,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -8185,7 +8179,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -8217,7 +8211,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -8276,11 +8270,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -8316,7 +8310,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -8324,7 +8318,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -8348,7 +8342,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -8380,7 +8374,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -8510,7 +8504,7 @@
           "named": true
         },
         {
-          "type": "pat_neg",
+          "type": "pat_negation",
           "named": true
         },
         {
@@ -8701,11 +8695,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -8741,7 +8735,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -8749,7 +8743,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -8773,7 +8767,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -9116,7 +9110,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -9140,7 +9134,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -9234,11 +9228,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -9274,7 +9268,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -9282,7 +9276,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -9306,7 +9300,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -9407,11 +9401,11 @@
           "named": true
         },
         {
-          "type": "exp_cond_guard",
+          "type": "exp_do",
           "named": true
         },
         {
-          "type": "exp_do",
+          "type": "exp_if_guard",
           "named": true
         },
         {
@@ -9447,7 +9441,7 @@
           "named": true
         },
         {
-          "type": "exp_neg",
+          "type": "exp_negation",
           "named": true
         },
         {
@@ -9455,7 +9449,7 @@
           "named": true
         },
         {
-          "type": "exp_qq",
+          "type": "exp_quasiquote",
           "named": true
         },
         {
@@ -9479,7 +9473,7 @@
           "named": true
         },
         {
-          "type": "exp_tyapp",
+          "type": "exp_type_application",
           "named": true
         },
         {
@@ -10558,16 +10552,12 @@
     "named": true
   },
   {
-    "type": "qq_body",
-    "named": true
-  },
-  {
-    "type": "qq_end",
-    "named": true
-  },
-  {
     "type": "qualified",
     "named": false
+  },
+  {
+    "type": "quasiquote_body",
+    "named": true
   },
   {
     "type": "quoter",
@@ -10623,6 +10613,10 @@
   },
   {
     "type": "|",
+    "named": false
+  },
+  {
+    "type": "|]",
     "named": false
   },
   {

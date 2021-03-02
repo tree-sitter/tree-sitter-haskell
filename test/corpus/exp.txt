@@ -376,10 +376,10 @@ a = -(a)
   (funrhs (exp_section_right (qvarop (operator)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
-  (funrhs (exp_neg (exp_name (variable)))))
+  (funrhs (exp_negation (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
-  (funrhs (exp_neg (exp_parens (exp_name (variable)))))))
+  (funrhs (exp_negation (exp_parens (exp_name (variable)))))))
 
 ===============================
 exp: tuple section
@@ -779,17 +779,17 @@ a = a @A.A a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (exp_apply (exp_name (variable)) (exp_tyapp (type_name (type))))))
+   (exp_apply (exp_name (variable)) (exp_type_application (type_name (type))))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (exp_apply (exp_name (variable)) (exp_tyapp (type_name (type_variable))) (exp_name (variable)))))
+   (exp_apply (exp_name (variable)) (exp_type_application (type_name (type_variable))) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
    (exp_apply
     (exp_name (variable))
-    (exp_tyapp
+    (exp_type_application
      (type_name (qualified_type (modid (constructor)) (type))))
     (exp_name (variable))))))
 
@@ -929,10 +929,10 @@ a = a @A @A @A @A
   (funrhs
    (exp_apply
     (exp_name (variable))
-    (exp_tyapp (type_name (type)))
-    (exp_tyapp (type_name (type)))
-    (exp_tyapp (type_name (type)))
-    (exp_tyapp (type_name (type)))))))
+    (exp_type_application (type_name (type)))
+    (exp_type_application (type_name (type)))
+    (exp_type_application (type_name (type)))
+    (exp_type_application (type_name (type)))))))
 
 =================================================
 exp: block argument: lambda basic
@@ -1012,7 +1012,7 @@ a = if | a -> a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (exp_cond_guard
+   (exp_if_guard
     (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))
     (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))))))
 

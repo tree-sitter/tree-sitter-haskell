@@ -24,14 +24,14 @@ data A a where
   (type)
   (type_variable)
   (where)
-  (gadt_constr
+  (gadt_constructor
    (constructor)
    (fun
     (type_name (type))
     (fun
      (strict_type (type_parens (type_apply (type_name (type)) (type_name (type_variable)))))
      (type_apply (type_name (type)) (type_name (type_variable))))))
-  (gadt_constr
+  (gadt_constructor
    (constructor)
    (pragma)
    (fun
@@ -51,12 +51,12 @@ data A where
  (adt
   (type)
   (where)
-  (gadt_constr
+  (gadt_constructor
    (constructor)
    (record_fields
-    (field (field_id (variable)) (type_name (type)))
+    (field (variable) (type_name (type)))
     (comma)
-    (field (field_id (variable)) (strict_type (type_name (type)))))
+    (field (variable) (strict_type (type_name (type)))))
    (type_name (type)))))
 
 =========================================
@@ -102,7 +102,7 @@ data A where
  (adt
   (type)
   (where)
-  (gadt_constr
+  (gadt_constructor
    (constructor)
    (context
     (constraint (class_name (type)) (type_name (type_variable)))
@@ -122,7 +122,7 @@ data A where
  (adt
   (type)
   (where)
-  (gadt_constr
+  (gadt_constructor
    (constructor)
    (forall (type_variable) (forall_dot))
    (type_name (type)))))
@@ -141,7 +141,7 @@ data A where
  (adt
   (type)
   (where)
-  (gadt_constr (constructor) (type_name (type)))
+  (gadt_constructor (constructor) (type_name (type)))
   (deriving (type))))
 
 =========================================
@@ -157,7 +157,7 @@ data a +++ b where
  (adt
   (type_infix (type_variable) (type_operator) (type_variable))
   (where)
-  (gadt_constr
+  (gadt_constructor
    (consym)
    (fun
     (type_name (type_variable))

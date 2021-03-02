@@ -10,7 +10,7 @@ data A = Int :+ Int
  (adt
   (type)
   (constrs
-   (constr_infix
+   (data_constructor_infix
     (type_name (type))
     (consym)
     (type_name (type))))))

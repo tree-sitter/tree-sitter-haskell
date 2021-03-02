@@ -100,7 +100,7 @@ f = a @@ a
 ---
 
 (module
-  (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (exp_tyapp (type_name (type_variable))))))
+  (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (exp_type_application (type_name (type_variable))))))
   (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 

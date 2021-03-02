@@ -40,7 +40,7 @@ module.exports = {
 
   decl_deriving: $ => seq(
     'deriving',
-    optional($._deriving_strategy),
+    optional($.deriving_strategy),
     'instance',
     optional($.context),
     alias($.constraint, $.instance_head),
