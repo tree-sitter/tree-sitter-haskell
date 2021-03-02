@@ -1,18 +1,18 @@
 (varid) @variable
 (varsym) @operator
-(exp_name (conid) @constructor)
+(exp_name (constructor) @constructor)
 (consym) @operator
-(modid (conid) @module_name)
-(tyconid) @type
-(tyconid (conid)) @class
+(modid (constructor) @module_name)
+(type) @type
+(type) @class
 (constr_id) @constructor
 (pragma) @pragma
 (comment) @comment
 (decl_sig name: (varid) @fun_type_name)
 (funvar name: (varid) @fun_name)
-(constraint class: (class_name (tyconid)) @class)
-(decl_class (class_head class: (class_name (tyconid)) @class))
-(decl_instance (instance_head class: (class_name (tyconid)) @class))
+(constraint class: (class_name (type)) @class)
+(class (class_head class: (class_name (type)) @class))
+(instance (instance_head class: (class_name (type)) @class))
 (integer) @literal
 (exp_literal (float)) @literal
 (char) @literal

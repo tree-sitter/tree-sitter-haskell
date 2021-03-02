@@ -14,7 +14,7 @@ a =
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))
+   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid)))))
    (where)
    (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
 
@@ -35,10 +35,10 @@ a = case a of
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))
+   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid)))))
    (where)
    (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))))
- (ERROR (arrow)))
+ (ERROR))
 
 ==================================
 layout: where on deeper level as case alt with following alt
@@ -60,9 +60,9 @@ a = case b of
    (exp_case
     (exp_name (varid))
     (alts
-     (alt (pat_name (varid)) (arrow) (exp_name (varid))
+     (alt (pat_name (varid)) (exp_name (varid))
       (where) (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
-     (alt (pat_name (varid)) (arrow) (exp_name (varid))))))))
+     (alt (pat_name (varid)) (exp_name (varid))))))))
 
 ==================================
 layout: where with subsequent top decl
@@ -134,7 +134,6 @@ x = do a <- b
       (alts
        (alt
         (pat_wildcard)
-        (arrow)
         (exp_name (varid))
         (where)
         (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))))
@@ -165,7 +164,6 @@ a = do
       (alts
        (alt
         (pat_name (varid))
-        (arrow)
         (exp_name (varid))
         (where)
         (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))))
@@ -190,7 +188,7 @@ f = case a of
    (exp_case
     (exp_name (varid))
     (alts
-     (alt (pat_name (varid)) (arrow) (exp_name (varid))
+     (alt (pat_name (varid)) (exp_name (varid))
       (where)
       (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))))
    (where)
@@ -336,7 +334,7 @@ a =
    (equals)
    (exp_case
     (exp_name (varid))
-    (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))
+    (alts (alt (pat_name (varid)) (exp_name (varid)))))
    (where))))
 
 ==================================
@@ -472,7 +470,7 @@ a =
   (funrhs
    (equals)
    (exp_infix
-    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid))))))
+    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (exp_name (varid))))))
     (qvarop (varsym))
     (exp_name (varid))))))
 
@@ -492,7 +490,7 @@ a =
   (funrhs
    (equals)
    (exp_infix
-    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid))))))
+    (exp_parens (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (exp_name (varid))))))
     (qvarop (varsym))
     (exp_name (varid))))))
 
@@ -598,7 +596,7 @@ a = a
 ---
 
 (module
- (modid (conid))
+ (modid (constructor))
  (where)
  (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
 
@@ -612,7 +610,7 @@ layout: indented module keyword, decls further left
 ---
 
 (module
- (modid (conid))
+ (modid (constructor))
  (where)
  (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
 
@@ -631,7 +629,7 @@ a :: a
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_do (stmt (exp_name (varid)))))))))
+   (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_do (stmt (exp_name (varid)))))))))
  (decl_sig (varid) (annotation) (type_name (tyvar))))
 
 =================================================
@@ -649,12 +647,12 @@ a = [case a of a -> a
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_list (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid))))))))
+   (exp_list (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid))))))))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_list (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))))))
+   (exp_list (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid)))))))))
 
 =================================================
 layout: case in a list terminated by comma
@@ -671,6 +669,6 @@ a = [case a of a -> a, a]
   (funrhs
    (equals)
    (exp_list
-    (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))
+    (exp_case (exp_name (varid)) (alts (alt (pat_name (varid)) (exp_name (varid)))))
     (comma)
     (exp_name (varid))))))

@@ -11,28 +11,28 @@ foreign import dotnet unsafe "unsafe import" a :: A
 ---
 
 (module
- (decl_foreign_import
+ (foreign_import
   (calling_convention)
   (safety)
   (impent (string))
-  (decl_sig (varid) (annotation) (type_name (tyconid (conid)))))
- (decl_foreign_export
+  (decl_sig (varid) (annotation) (type_name (type))))
+ (foreign_export
   (calling_convention)
   (safety)
   (expent (string))
-  (decl_sig (varid) (annotation) (type_name (tyconid (conid)))))
-  (decl_foreign_export
+  (decl_sig (varid) (annotation) (type_name (type))))
+  (foreign_export
    (calling_convention)
    (safety)
    (expent (string))
-   (decl_sig (varid) (annotation) (type_name (tyconid (conid)))))
-  (decl_foreign_import
+   (decl_sig (varid) (annotation) (type_name (type))))
+  (foreign_import
    (calling_convention)
    (safety)
    (impent (string))
-   (decl_sig (varid) (annotation) (type_name (tyconid (conid)))))
-  (decl_foreign_import
+   (decl_sig (varid) (annotation) (type_name (type))))
+  (foreign_import
    (calling_convention)
    (safety)
    (impent (string))
-   (decl_sig (varid) (annotation) (type_name (tyconid (conid))))))
+   (decl_sig (varid) (annotation) (type_name (type)))))

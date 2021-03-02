@@ -7,10 +7,10 @@ newtype A = A A
 ---
 
 (module
- (decl_newtype
-  (tyconid (conid))
+ (newtype
+  (type)
   (equals)
-  (constr_newtype (constr_id (conid)) (type_name (tyconid (conid))))))
+  (constr_newtype (constr_id (constructor)) (type_name (type)))))
 
 =========================================
 newtype: context
@@ -21,12 +21,12 @@ newtype A a => A a = A a
 ---
 
 (module
- (decl_newtype
-  (context (constraint (class_name (tyconid (conid))) (type_name (tyvar))) (carrow))
-  (tyconid (conid))
+ (newtype
+  (context (constraint (class_name (type)) (type_name (tyvar))) (carrow))
+  (type)
   (tyvar)
   (equals)
-  (constr_newtype (constr_id (conid)) (type_name (tyvar)))))
+  (constr_newtype (constr_id (constructor)) (type_name (tyvar)))))
 
 =========================================
 newtype: record
@@ -37,12 +37,12 @@ newtype A = A { a :: A a }
 ---
 
 (module
- (decl_newtype
-  (tyconid (conid))
+ (newtype
+  (type)
   (equals)
   (constr_newtype
-   (constr_id (conid))
-   (field (field_id (varid)) (annotation) (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))))
+   (constr_id (constructor))
+   (field (field_id (varid)) (annotation) (type_apply (type_name (type)) (type_name (tyvar)))))))
 
 =========================================
 newtype: tyvar kind
@@ -54,16 +54,16 @@ newtype A a (a :: [* -> *]) a =
 ---
 
 (module
- (decl_newtype
-  (tyconid (conid))
+ (newtype
+  (type)
   (tyvar)
   (annotated_tyvar
    (tyvar)
    (annotation)
-   (list_type (fun (star) (arrow) (star))))
+   (list_type (fun (star) (star))))
   (tyvar)
   (equals)
-  (constr_newtype (constr_id (conid)) (type_name (tyvar)))))
+  (constr_newtype (constr_id (constructor)) (type_name (tyvar)))))
 
 =========================================
 newtype: deriving
@@ -79,16 +79,16 @@ newtype A a =
 ---
 
 (module
- (decl_newtype
-  (tyconid (conid))
+ (newtype
+  (type)
   (equals)
-  (constr_newtype (constr_id (conid)) (type_name (tyvar)))
-  (deriving (tyconid (conid))))
- (decl_newtype
-  (tyconid (conid))
+  (constr_newtype (constr_id (constructor)) (type_name (tyvar)))
+  (deriving (type)))
+ (newtype
+  (type)
   (tyvar)
   (equals)
-  (constr_newtype (constr_id (conid)) (field (field_id (varid)) (annotation) (type_name (tyconid (conid)))))
-  (deriving (tyconid (conid)) (comma) (tyconid (conid)))
-  (deriving (tyconid (conid)))
-  (deriving (tyconid (conid)) (via (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))))))
+  (constr_newtype (constr_id (constructor)) (field (field_id (varid)) (annotation) (type_name (type))))
+  (deriving (type) (comma) (type))
+  (deriving (type))
+  (deriving (type) (via (type_parens (type_apply (type_name (type)) (type_name (tyvar))))))))

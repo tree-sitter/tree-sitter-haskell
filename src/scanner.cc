@@ -116,7 +116,7 @@ namespace syms {
  *   - splice: A TH splice starting with a `$`, to disambiguate from the operator
  *   - varsym: A symbolic operator
  *   - consym: A symbolic constructor
- *   - tyconsym: A symbolic type operator
+ *   - type_operator: A symbolic type operator
  *   - comment: A line or block comment, because they interfere with operators, especially in QQs
  *   - cpp: A preprocessor directive. Needs to push and pop indent stacks
  *   - comma: Needed to terminate inline layouts like `of`, `do`
@@ -134,7 +134,7 @@ enum Sym: uint16_t {
   splice,
   varsym,
   consym,
-  tyconsym,
+  type_operator,
   comment,
   cpp,
   comma,
@@ -154,7 +154,7 @@ vector<string> names = {
   "splice",
   "varsym",
   "consym",
-  "tyconsym",
+  "type_operator",
   "comment",
   "cpp",
   "comma",
@@ -945,11 +945,11 @@ Parser initialize_without_module =
  * If a dot is neither preceded nor succeded by whitespace, it may be parsed as a qualified module dot.
  *
  * The preceding space is ensured by sequencing this parser before `skipspace` in `init`.
- * Since this parser cannot look back to see whether the preceding name is a conid, this has to be ensured by the
+ * Since this parser cannot look back to see whether the preceding name is a constructor, this has to be ensured by the
  * grammar, represented here by the requirement of a valid symbol `Sym::dot`.
  *
  * Since the dot is consumed here, the alternative interpretation, a `Sym::varsym`, has to be emitted here.
- * A `Sym::tyconsym` is invalid here, because the dot is only expected in expressions.
+ * A `Sym::type_operator` is invalid here, because the dot is only expected in expressions.
  */
 Parser dot = sym(Sym::dot)(consume('.')(peekws(success_sym(Sym::varsym, "dot")) + mark + finish(Sym::dot, "dot")));
 
@@ -1139,12 +1139,12 @@ Parser single_tyconsym(const char c) {
     when(cond::valid_tyconsym_one_char(c))(
     mark +
     when(c == '!')(success_sym(Sym::strict, "single_tyconsym")) +
-    when(cond::symop_needs_token_end(c))(iff(cond::token_end)(finish(Sym::tyconsym, "single_tyconsym")) + fail) +
-    finish(Sym::tyconsym, "single_tyconsym")
+    when(cond::symop_needs_token_end(c))(iff(cond::token_end)(finish(Sym::type_operator, "single_tyconsym")) + fail) +
+    finish(Sym::type_operator, "single_tyconsym")
   ) + fail;
 }
 
-Parser tyconsym = symop(cond::symbolic, Sym::tyconsym, single_tyconsym);
+Parser type_operator = symop(cond::symbolic, Sym::type_operator, single_tyconsym);
 
 /**
  * Succeed if the symbolic character doesn't match a reserved operator, otherwise fail.
@@ -1262,7 +1262,7 @@ Parser inline_tokens =
   peek(')')(layout_end(")") + fail) +
   sym(Sym::qq_start)(peek('[')(qq_start + fail)) +
   sym(Sym::consym)(consym) +
-  sym(Sym::tyconsym)(tyconsym) +
+  sym(Sym::type_operator)(type_operator) +
   sym(Sym::varsym)(varsym) +
   comment +
   sym(Sym::strict)(consume('!')(mark + finish(Sym::strict, "inline_tokens"))) +

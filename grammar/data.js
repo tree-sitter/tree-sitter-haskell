@@ -68,7 +68,7 @@ module.exports = {
     repeat($.deriving),
   ),
 
-  _gadt_fun: $ => seq(choice($.strict_type, $._type_infix), $.arrow, $._gadt_sig),
+  _gadt_fun: $ => seq(choice($.strict_type, $._type_infix), $._arrow, $._gadt_sig),
 
   _gadt_sig: $ => choice(
     alias($._gadt_fun, $.fun),
@@ -79,7 +79,7 @@ module.exports = {
     $.annotation,
     optional($.forall),
     optional($.context),
-    choice($._gadt_sig, seq($.record_fields, $.arrow, $._gadt_sig)),
+    choice($._gadt_sig, seq($.record_fields, $._arrow, $._gadt_sig)),
   ),
 
   gadt_constr: $ => seq(

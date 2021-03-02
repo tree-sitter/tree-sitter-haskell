@@ -6,10 +6,10 @@ instance A a
 
 ---
 
-(module (decl_instance (instance_head (class_name (tyconid (conid))) (type_name (tyvar)))))
+(module (instance (instance_head (class_name (type)) (type_name (tyvar)))))
 
 =========================================
-instance: tyconid
+instance: type
 =========================================
 
 instance A A a A
@@ -17,12 +17,12 @@ instance A A a A
 ---
 
 (module
- (decl_instance
+ (instance
   (instance_head
-   (class_name (tyconid (conid)))
-   (type_name (tyconid (conid)))
+   (class_name (type))
+   (type_name (type))
    (type_name (tyvar))
-   (type_name (tyconid (conid))))))
+   (type_name (type)))))
 
 =========================================
 instance: forall
@@ -33,12 +33,12 @@ instance forall a (a :: *) . A
 ---
 
 (module
- (decl_instance
+ (instance
   (forall
    (tyvar)
    (annotated_tyvar (tyvar) (annotation) (star))
    (forall_dot))
-  (instance_head (class_name (tyconid (conid))))))
+  (instance_head (class_name (type)))))
 
 =========================================
 instance: context
@@ -50,16 +50,16 @@ instance (A a, A a) => A
 ---
 
 (module
- (decl_instance
-  (context (constraint (class_name (tyconid (conid))) (type_name (tyvar))) (carrow))
-  (instance_head (class_name (tyconid (conid)))))
- (decl_instance
+ (instance
+  (context (constraint (class_name (type)) (type_name (tyvar))) (carrow))
+  (instance_head (class_name (type))))
+ (instance
   (context
-   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (tyvar)))
    (comma)
-   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (tyvar)))
    (carrow))
-  (instance_head (class_name (tyconid (conid))))))
+  (instance_head (class_name (type)))))
 
 =========================================
 instance: method
@@ -70,12 +70,12 @@ instance A a where a a = Just a
 ---
 
 (module
- (decl_instance
-  (instance_head (class_name (tyconid (conid))) (type_name (tyvar)))
+ (instance
+  (instance_head (class_name (type)) (type_name (tyvar)))
   (where)
   (decl_fun
     (funvar (varid) (pat_name (varid)))
-    (funrhs (equals) (exp_apply (exp_name (conid)) (exp_name (varid)))))))
+    (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (varid)))))))
 
 =========================================
 instance: signature
@@ -88,16 +88,16 @@ instance A a where
 ---
 
 (module
- (decl_instance
-  (instance_head (class_name (tyconid (conid))) (type_name (tyvar)))
+ (instance
+  (instance_head (class_name (type)) (type_name (tyvar)))
   (where)
   (decl_sig
    (varid)
    (annotation)
    (context
-    (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+    (constraint (class_name (type)) (type_name (tyvar)))
     (carrow)
-    (fun (type_name (tyvar)) (arrow) (type_name (tyvar)))))
+    (fun (type_name (tyvar)) (type_name (tyvar)))))
   (decl_fun
    (funvar (varid) (pat_name (varid)))
    (funrhs (equals) (exp_name (varid))))))
@@ -112,24 +112,24 @@ instance A ~~ A => A a
 ---
 
 (module
- (decl_instance
+ (instance
   (context
    (constraint
     (type_infix
-     left: (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))
-     op: (tyconop (tyconsym))
-     right: (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))
+     left: (type_apply (type_name (type)) (type_name (tyvar)))
+     op: (tyconop (type_operator))
+     right: (type_apply (type_name (type)) (type_name (tyvar)))))
    (carrow))
-  (instance_head class: (class_name (tyconid (conid))) (type_name (tyvar))))
- (decl_instance
+  (instance_head class: (class_name (type)) (type_name (tyvar))))
+ (instance
   (context
    (constraint
     (type_infix
-     left: (type_name (tyconid (conid)))
-     op: (tyconop (tyconsym))
-     right: (type_name (tyconid (conid)))))
+     left: (type_name (type))
+     op: (tyconop (type_operator))
+     right: (type_name (type))))
    (carrow))
-  (instance_head class: (class_name (tyconid (conid))) (type_name (tyvar)))))
+  (instance_head class: (class_name (type)) (type_name (tyvar)))))
 
 =========================================
 instance: associated type instance
@@ -142,21 +142,21 @@ instance A where
 ---
 
 (module
- (decl_instance
+ (instance
   (instance_head
-   (class_name (tyconid (conid))))
+   (class_name (type)))
   (where)
   (inst_tyinst
-   (type_name (tyconid (conid)))
-   (type_name (tyconid (conid)))
+   (type_name (type))
+   (type_name (type))
    (type_name (tyvar))
    (equals)
-   (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))
+   (type_apply (type_name (type)) (type_name (tyvar))))
   (inst_tyinst
-   (type_name (tyconid (conid)))
+   (type_name (type))
    (type_name (tyvar))
    (equals)
-   (type_name (tyconid (conid))))))
+   (type_name (type)))))
 
 =========================================
 instance: associated data instance
@@ -169,23 +169,23 @@ instance A where
 ---
 
 (module
- (decl_instance
-  (instance_head (class_name (tyconid (conid))))
+ (instance
+  (instance_head (class_name (type)))
   (where)
   (inst_datainst
    (type_apply
-    (type_name (tyconid (conid)))
+    (type_name (type))
     (type_name (tyvar)))
    (equals)
    (constrs
-    (constr (constr_id (conid)) (type_name (tyvar)))
+    (constr (constr_id (constructor)) (type_name (tyvar)))
     (bar)
     (constr_record
-     (constr_id (conid)) 
-     (record_fields (field (field_id (varid)) (annotation) (type_name (tyconid (conid))))))))
+     (constr_id (constructor)) 
+     (record_fields (field (field_id (varid)) (annotation) (type_name (type)))))))
   (inst_datainst
    (type_apply
-    (type_name (tyconid (conid)))
+    (type_name (type))
     (type_name (tyvar)))
    (equals)
-   (constrs (constr (constr_id (conid)))))))
+   (constrs (constr (constr_id (constructor)))))))

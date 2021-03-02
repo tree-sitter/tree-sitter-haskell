@@ -102,5 +102,8 @@ module.exports = {
 
   decl_foreign_export: $ => foreign($, 'export', $.expent),
 
-  _decl_foreign: $ => choice($.decl_foreign_import, $.decl_foreign_export),
+  _decl_foreign: $ => choice(
+    alias($.decl_foreign_import, $.foreign_import),
+    alias($.decl_foreign_export, $.foreign_export)
+  ),
 }

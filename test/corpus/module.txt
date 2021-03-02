@@ -5,7 +5,7 @@ module A where
 
 ---
 
-(module module: (modid (conid)) (where))
+(module module: (modid (constructor)) (where))
 
 =========================================
 module: starting on second line
@@ -15,7 +15,7 @@ module A where
 
 ---
 
-(module (modid (conid)) (where))
+(module (modid (constructor)) (where))
 
 =========================================
 module: exports empty
@@ -25,7 +25,7 @@ module A () where
 
 ---
 
-(module (modid (conid)) (module_exports) (where))
+(module (modid (constructor)) (module_exports) (where))
 
 =========================================
 module: exports regular
@@ -41,15 +41,15 @@ module A (
 ---
 
 (module
- (modid (conid))
+ (modid (constructor))
  (module_exports
   (export (varid))
   (comma)
-  (export (tyconid (conid)))
+  (export (type))
   (comma)
-  (export (tyconid (conid)) (export_names (dotdot)))
+  (export (type) (export_names (all_names)))
   (comma)
-  (export (tyconid (conid)) (export_names (varid) (comma) (varid))) (comma))
+  (export (type) (export_names (varid) (comma) (varid))) (comma))
  (where))
 
 =========================================
@@ -63,8 +63,8 @@ module A (
 ---
 
 (module
- (modid (conid))
- (module_exports (export (tyconsym) (export_names (consym) (comma) (conid))) (comma))
+ (modid (constructor))
+ (module_exports (export (type_operator) (export_names (consym) (comma) (constructor))) (comma))
  (where))
 
 =========================================
@@ -79,11 +79,11 @@ module A (
 ---
 
 (module
- (modid (conid))
+ (modid (constructor))
  (module_exports
-  (export (namespace) (tyconid (conid)))
+  (export (namespace) (type))
   (comma)
-  (export (namespace) (tyconsym))
+  (export (namespace) (type_operator))
   (comma))
  (where))
 
@@ -99,11 +99,11 @@ module A (
 ---
 
 (module
- (modid (conid))
+ (modid (constructor))
  (module_exports
-  (export (namespace) (tyconid (conid)))
+  (export (namespace) (type))
   (comma)
-  (export (namespace) (tyconsym))
+  (export (namespace) (type_operator))
   (comma))
  (where))
 
@@ -120,13 +120,13 @@ module A (
 ---
 
 (module
- (modid (conid))
+ (modid (constructor))
  (module_exports
   (export (varid))
   (comma)
-  (export (modid (conid)))
+  (export (modid (constructor)))
   (comma)
-  (export (qmodid (modid (conid)) (modid (conid)) (modid (conid))))
+  (export (qmodid (modid (constructor)) (modid (constructor)) (modid (constructor))))
   (comma))
  (where))
 
@@ -147,23 +147,23 @@ module A (
 ---
 
 (module
- (modid (conid))
+ (modid (constructor))
  (module_exports
-  (export (qvarid (modid (conid)) (modid (conid)) (varid)))
+  (export (qvarid (modid (constructor)) (modid (constructor)) (varid)))
   (comma)
-  (export (namespace) (qtyconsym (modid (conid)) (modid (conid)) (tyconsym)))
+  (export (namespace) (qualified_type_operator (modid (constructor)) (modid (constructor)) (type_operator)))
   (comma)
-  (export (namespace) (qtyconsym (modid (conid)) (modid (conid)) (tyconsym)))
+  (export (namespace) (qualified_type_operator (modid (constructor)) (modid (constructor)) (type_operator)))
   (comma)
-  (export (qtycon (modid (conid)) (modid (conid)) (tyconid (conid))))
+  (export (qualified_type (modid (constructor)) (modid (constructor)) (type)))
   (comma)
   (export
-   (qtycon (modid (conid)) (modid (conid)) (tyconid (conid)))
-   (export_names (varsym) (comma) (consym) (comma) (conid) (comma) (varid)))
+   (qualified_type (modid (constructor)) (modid (constructor)) (type))
+   (export_names (varsym) (comma) (consym) (comma) (constructor) (comma) (varid)))
   (comma)
-  (export (namespace) (qtycon (modid (conid)) (tyconid (conid))) (export_names (varsym) (comma) (conid)))
+  (export (namespace) (qualified_type (modid (constructor)) (type)) (export_names (varsym) (comma) (constructor)))
   (comma)
-  (export (namespace) (qtycon (modid (conid)) (tyconid (conid))) (export_names (varsym) (comma) (conid)))
+  (export (namespace) (qualified_type (modid (constructor)) (type)) (export_names (varsym) (comma) (constructor)))
   (comma))
  (where))
 
@@ -175,4 +175,4 @@ module A.A'.A where
 
 ---
 
-(module (qmodid (modid (conid)) (modid (conid)) (modid (conid))) (where))
+(module (qmodid (modid (constructor)) (modid (constructor)) (modid (constructor))) (where))

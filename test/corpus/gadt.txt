@@ -6,7 +6,7 @@ data A where
 
 ---
 
-(module (decl_adt (tyconid (conid)) (where)))
+(module (adt (type) (where)))
 
 =========================================
 gadt: basic
@@ -20,28 +20,25 @@ data A a where
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (tyvar)
   (where)
   (gadt_constr
-   (conid)
+   (constructor)
    (annotation)
    (fun
-    (type_name (tyconid (conid)))
-    (arrow)
+    (type_name (type))
     (fun
-     (strict_type (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))
-     (arrow)
-     (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))))
+     (strict_type (type_parens (type_apply (type_name (type)) (type_name (tyvar)))))
+     (type_apply (type_name (type)) (type_name (tyvar))))))
   (gadt_constr
-   (conid)
+   (constructor)
    (annotation)
    (pragma)
    (fun
-    (type_name (tyconid (conid)))
-    (arrow)
-    (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))))
+    (type_name (type))
+    (type_apply (type_name (type)) (type_name (tyvar)))))))
 
 =========================================
 gadt: record
@@ -53,18 +50,17 @@ data A where
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (where)
   (gadt_constr
-   (conid)
+   (constructor)
    (annotation)
    (record_fields
-    (field (field_id (varid)) (annotation) (type_name (tyconid (conid))))
+    (field (field_id (varid)) (annotation) (type_name (type)))
     (comma)
-    (field (field_id (varid)) (annotation) (strict_type (type_name (tyconid (conid))))))
-   (arrow)
-   (type_name (tyconid (conid))))))
+    (field (field_id (varid)) (annotation) (strict_type (type_name (type)))))
+   (type_name (type)))))
 
 =========================================
 gadt: signature
@@ -75,11 +71,11 @@ data A :: [*] -> * where
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (annotation)
   (fun
-   (list_type (star)) (arrow)
+   (list_type (star))
    (star))
   (where)))
 
@@ -92,9 +88,9 @@ data A a => A where
 ---
 
 (module
- (decl_adt
-  (context (constraint (class_name (tyconid (conid))) (type_name (tyvar))) (carrow))
-  (tyconid (conid))
+ (adt
+  (context (constraint (class_name (type)) (type_name (tyvar))) (carrow))
+  (type)
   (where)))
 
 =========================================
@@ -107,16 +103,16 @@ data A where
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (where)
   (gadt_constr
-   (conid)
+   (constructor)
    (annotation)
    (context
-    (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+    (constraint (class_name (type)) (type_name (tyvar)))
     (carrow))
-   (type_name (tyconid (conid))))))
+   (type_name (type)))))
 
 =========================================
 gadt: forall
@@ -128,14 +124,14 @@ data A where
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (where)
   (gadt_constr
-   (conid)
+   (constructor)
    (annotation)
    (forall (tyvar) (forall_dot))
-   (type_name (tyconid (conid))))))
+   (type_name (type)))))
 
 =========================================
 gadt: deriving
@@ -148,11 +144,11 @@ data A where
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (where)
-  (gadt_constr (conid) (annotation) (type_name (tyconid (conid))))
-  (deriving (tyconid (conid)))))
+  (gadt_constr (constructor) (annotation) (type_name (type)))
+  (deriving (type))))
 
 =========================================
 gadt: symbolic
@@ -164,19 +160,17 @@ data a +++ b where
 ---
 
 (module
- (decl_adt
-  (type_infix (tyvar) (tyconsym) (tyvar))
+ (adt
+  (type_infix (tyvar) (type_operator) (tyvar))
   (where)
   (gadt_constr
    (consym)
    (annotation)
    (fun
     (type_name (tyvar))
-    (arrow)
     (fun
      (type_name (tyvar))
-     (arrow)
      (type_infix
       (type_name (tyvar))
-      (tyconop (tyconsym))
+      (tyconop (type_operator))
       (type_name (tyvar))))))))

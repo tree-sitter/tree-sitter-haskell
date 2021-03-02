@@ -64,6 +64,7 @@ module.exports = grammar({
     $._op,
     $._gcon_literal,
     $._gcon,
+    $._tycon,
     $._qtycon,
     $._qtyconsym,
     $._tyconops,
@@ -154,7 +155,7 @@ module.exports = grammar({
      *
      * both start with two tycons.
      */
-    [$.tyconid, $.constr_id],
+    [$.type_name, $.constr_id],
 
     /**
      * For getting a node for function application, and no extra node if the expression only consists of one term.
@@ -185,21 +186,21 @@ module.exports = grammar({
     ),
 
     _topdecl: $ => choice(
-      $.decl_type,
-      $.decl_tyfam,
-      $.decl_tyinst,
-      $.decl_adt,
-      $.decl_newtype,
-      $.decl_datafam,
-      $.decl_datainst,
-      $.decl_import,
-      $.decl_class,
-      $.decl_instance,
-      $.decl_default,
+      alias($.decl_type, $.type_alias),
+      alias($.decl_tyfam, $.type_family),
+      alias($.decl_tyinst, $.type_instance),
+      alias($.decl_adt, $.adt),
+      alias($.decl_newtype, $.newtype),
+      alias($.decl_datafam, $.data_family),
+      alias($.decl_datainst, $.data_instance),
+      alias($.decl_import, $.import),
+      alias($.decl_class, $.class),
+      alias($.decl_instance, $.instance),
+      alias($.decl_default, $.default_declaration),
       $._decl_foreign,
-      $.decl_deriving,
+      alias($.decl_deriving, $.deriving_declaration),
       $._decl,
-      $.decl_pattern,
+      alias($.decl_pattern, $.pattern_synonym),
       $.top_splice,
     ),
 

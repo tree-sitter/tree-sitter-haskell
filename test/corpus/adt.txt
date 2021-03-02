@@ -6,7 +6,7 @@ data A
 
 ---
 
-(module (decl_adt (tyconid (conid))))
+(module (adt (type)))
 
 =========================================
 plain adt: one nullary con
@@ -16,7 +16,7 @@ data A = A
 
 ---
 
-(module (decl_adt (tyconid (conid)) (equals) (constrs (constr (constr_id (conid))))))
+(module (adt (type) (equals) (constrs (constr (constr_id (constructor))))))
 
 =========================================
 plain adt: one unary con
@@ -26,7 +26,7 @@ data A = A A
 
 ---
 
-(module (decl_adt (tyconid (conid)) (equals) (constrs (constr (constr_id (conid)) (type_name (tyconid (conid)))))))
+(module (adt (type) (equals) (constrs (constr (constr_id (constructor)) (type_name (type))))))
 
 =========================================
 plain adt: strict
@@ -37,14 +37,14 @@ data A = A !A !(A A)
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
   (constrs
    (constr
-    (constr_id (conid))
-    (strict_type (type_name (tyconid (conid))))
-    (strict_type (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyconid (conid))))))))))
+    (constr_id (constructor))
+    (strict_type (type_name (type)))
+    (strict_type (type_parens (type_apply (type_name (type)) (type_name (type)))))))))
 
 =========================================
 plain adt: tyvars
@@ -55,14 +55,14 @@ data A a a a = A a !a [a]
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (tyvar)
   (tyvar)
   (tyvar)
   (equals)
   (constrs
-   (constr (constr_id (conid)) (type_name (tyvar)) (strict_type (type_name (tyvar))) (list_type (type_name (tyvar)))))))
+   (constr (constr_id (constructor)) (type_name (tyvar)) (strict_type (type_name (tyvar))) (list_type (type_name (tyvar)))))))
 
 =========================================
 plain adt: unpack strict
@@ -73,11 +73,11 @@ data A = A {-# unpack #-} !A
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
   (constrs
-   (constr (constr_id (conid)) (pragma) (strict_type (type_name (tyconid (conid))))))))
+   (constr (constr_id (constructor)) (pragma) (strict_type (type_name (type)))))))
 
 =========================================
 plain adt: record
@@ -88,21 +88,21 @@ data A a = A { a :: A, a, a :: A, a :: {-# unpack #-} !a, a :: !A }
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (tyvar)
   (equals)
   (constrs
    (constr_record
-    (constr_id (conid))
+    (constr_id (constructor))
     (record_fields
-     (field (field_id (varid)) (annotation) (type_name (tyconid (conid))))
+     (field (field_id (varid)) (annotation) (type_name (type)))
      (comma)
-     (field (field_id (varid)) (comma) (field_id (varid)) (annotation) (type_name (tyconid (conid))))
+     (field (field_id (varid)) (comma) (field_id (varid)) (annotation) (type_name (type)))
      (comma)
      (field (field_id (varid)) (annotation) (pragma) (strict_type (type_name (tyvar))))
      (comma)
-     (field (field_id (varid)) (annotation) (strict_type (type_name (tyconid (conid))))))))))
+     (field (field_id (varid)) (annotation) (strict_type (type_name (type)))))))))
 
 =========================================
 plain adt: multiple cons
@@ -113,15 +113,15 @@ data A = A | A A | A !A A
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
   (constrs
-   (constr (constr_id (conid)))
+   (constr (constr_id (constructor)))
    (bar)
-   (constr (constr_id (conid)) (type_name (tyconid (conid))))
+   (constr (constr_id (constructor)) (type_name (type)))
    (bar)
-   (constr (constr_id (conid)) (strict_type (type_name (tyconid (conid)))) (type_name (tyconid (conid)))))))
+   (constr (constr_id (constructor)) (strict_type (type_name (type))) (type_name (type))))))
 
 =========================================
 plain adt: multiple records
@@ -135,21 +135,21 @@ data A =
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
   (constrs
    (constr_record
-    (constr_id (conid))
+    (constr_id (constructor))
     (record_fields
-     (field (field_id (varid)) (annotation) (type_name (tyconid (conid))))
+     (field (field_id (varid)) (annotation) (type_name (type)))
      (comma)
-     (field (field_id (varid)) (annotation) (strict_type (type_name (tyconid (conid)))))))
+     (field (field_id (varid)) (annotation) (strict_type (type_name (type))))))
    (bar)
    (constr_record
-    (constr_id (conid))
+    (constr_id (constructor))
     (record_fields
-     (field (field_id (varid)) (annotation) (type_name (tyconid (conid)))))))))
+     (field (field_id (varid)) (annotation) (type_name (type))))))))
 
 =========================================
 plain adt: deriving basic
@@ -160,11 +160,11 @@ data A = A deriving A
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
-  (constrs (constr (constr_id (conid))))
-  (deriving (tyconid (conid)))))
+  (constrs (constr (constr_id (constructor))))
+  (deriving (type))))
 
 =========================================
 plain adt: deriving multi, strategy
@@ -175,12 +175,12 @@ data A = A deriving (A, A) deriving stock (A)
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
-  (constrs (constr (constr_id (conid))))
-  (deriving (tyconid (conid)) (comma) (tyconid (conid)))
-  (deriving (tyconid (conid)))))
+  (constrs (constr (constr_id (constructor))))
+  (deriving (type) (comma) (type))
+  (deriving (type))))
 
 =========================================
 plain adt: deriving via
@@ -191,13 +191,13 @@ data A = A deriving (A) via (A A)
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
-  (constrs (constr (constr_id (conid))))
+  (constrs (constr (constr_id (constructor))))
   (deriving
-   (tyconid (conid))
-   (via (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyconid (conid)))))))))
+   (type)
+   (via (type_parens (type_apply (type_name (type)) (type_name (type))))))))
 
 =========================================
 plain adt: deriving on newline, multiple
@@ -215,18 +215,18 @@ data A =
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
-  (constrs (constr (constr_id (conid))))
-  (deriving (tyconid (conid)))
-  (deriving (tyconid (conid))))
- (decl_adt
-  (tyconid (conid))
+  (constrs (constr (constr_id (constructor))))
+  (deriving (type))
+  (deriving (type)))
+ (adt
+  (type)
   (equals)
-  (constrs (constr (constr_id (conid))))
-  (deriving (tyconid (conid)))
-  (deriving (tyconid (conid)))))
+  (constrs (constr (constr_id (constructor))))
+  (deriving (type))
+  (deriving (type))))
 
 =========================================
 plain adt: context
@@ -238,25 +238,25 @@ data (A a, A a) => A = A
 ---
 
 (module
- (decl_adt
+ (adt
   (context
    (constraint
-    (class_name (tyconid (conid)))
+    (class_name (type))
     (type_name (tyvar))
-    (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))
+    (type_parens (type_apply (type_name (type)) (type_name (tyvar)))))
     (carrow))
-  (tyconid (conid))
+  (type)
   (equals)
-  (constrs (constr (constr_id (conid)))))
- (decl_adt
+  (constrs (constr (constr_id (constructor)))))
+ (adt
   (context
-   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (tyvar)))
    (comma)
-   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (tyvar)))
    (carrow))
-  (tyconid (conid))
+  (type)
   (equals)
-  (constrs (constr (constr_id (conid))))))
+  (constrs (constr (constr_id (constructor))))))
 
 =========================================
 plain adt: prim
@@ -267,10 +267,10 @@ data A = A !A#
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
-  (constrs (constr (constr_id (conid)) (strict_type (type_name (tyconid (conid))))))))
+  (constrs (constr (constr_id (constructor)) (strict_type (type_name (type)))))))
 
 =========================================
 plain adt: forall
@@ -281,15 +281,15 @@ data A = forall a . A | ∀ a . A
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
   (constrs
    (forall (tyvar) (forall_dot))
-   (constr (constr_id (conid)))
+   (constr (constr_id (constructor)))
    (bar)
    (forall (tyvar) (forall_dot))
-   (constr (constr_id (conid))))))
+   (constr (constr_id (constructor))))))
 
 =========================================
 plain adt: con context
@@ -300,13 +300,13 @@ data A = ∀ a . A a => A
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
   (constrs
    (forall (tyvar) (forall_dot))
-   (context (constraint (class_name (tyconid (conid))) (type_name (tyvar))) (carrow))
-   (constr (constr_id (conid))))))
+   (context (constraint (class_name (type)) (type_name (tyvar))) (carrow))
+   (constr (constr_id (constructor))))))
 
 =========================================
 plain adt: tyvar kind
@@ -317,12 +317,12 @@ data A (a :: * -> 'A)
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (annotated_tyvar
    (tyvar)
    (annotation)
-   (fun (star) (arrow) (type_name (promoted (tyconid (conid))))))))
+   (fun (star) (type_name (promoted (type)))))))
 
 =========================================
 plain adt: signature
@@ -333,16 +333,14 @@ data A :: (k -> '[ 'A]) -> *
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (annotation)
   (fun
    (type_parens
     (fun
      (type_name (tyvar))
-     (arrow)
-     (promoted (list_type (type_name (promoted (tyconid (conid))))))))
-   (arrow)
+     (promoted (list_type (type_name (promoted (type)))))))
    (star))))
 
 =========================================
@@ -354,7 +352,7 @@ data a +++ b = a :+++ b
 ---
 
 (module
- (decl_adt
-  (type_infix (tyvar) (tyconsym) (tyvar))
+ (adt
+  (type_infix (tyvar) (type_operator) (tyvar))
   (equals)
   (constrs (constr_infix (type_name (tyvar)) (consym) (type_name (tyvar))))))

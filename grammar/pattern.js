@@ -6,7 +6,7 @@ module.exports = {
   // ------------------------------------------------------------------------
 
   _pattern_type: $ => seq(
-    $.conid,
+    $.constructor,
     $._type_annotation,
   ),
 

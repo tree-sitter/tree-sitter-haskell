@@ -7,14 +7,14 @@ data A = Int :+ Int
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
   (constrs
    (constr_infix
-    (type_name (tyconid (conid)))
+    (type_name (type))
     (consym)
-    (type_name (tyconid (conid)))))))
+    (type_name (type))))))
 
 
 =================================================
@@ -25,4 +25,4 @@ data A = Int :: Int
 
 ---
 
-(module (decl_adt (tyconid (conid)) (ERROR (equals) (modid (conid))) (annotation) (type_name (tyconid (conid)))))
+(module (adt (type) (ERROR (equals) (modid (constructor))) (annotation) (type_name (type))))

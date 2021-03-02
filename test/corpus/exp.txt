@@ -21,7 +21,7 @@ a = a A.a a a
    (equals)
    (exp_apply
     (exp_name (varid))
-    (exp_name (qvarid (modid (conid)) (varid)))
+    (exp_name (qvarid (modid (constructor)) (varid)))
     (exp_name (varid))
     (exp_name (varid))))))
 
@@ -37,10 +37,10 @@ a = A a A
 (module
  (decl_fun
   (funvar (varid))
-  (funrhs (equals) (exp_apply (exp_name (conid)) (exp_name (varid)) (exp_name (varid)))))
+  (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (varid)) (exp_name (varid)))))
  (decl_fun
   (funvar (varid))
-  (funrhs (equals) (exp_apply (exp_name (conid)) (exp_name (varid)) (exp_name (conid))))))
+  (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (varid)) (exp_name (constructor))))))
 
 ===============================
 exp: unit
@@ -240,7 +240,7 @@ a = do
    (equals)
    (exp_infix
     (exp_infix
-     (exp_infix (exp_name (conid)) (qvarop (varsym)) (exp_name (varid)))
+     (exp_infix (exp_name (constructor)) (qvarop (varsym)) (exp_name (varid)))
      (qvarop (varsym))
      (exp_literal (string)))
     (qvarop (varsym)) (exp_name (varid)))))
@@ -280,12 +280,12 @@ a = a `A` a
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_infix (exp_name (varid)) (qvarop (qvarid (modid (conid)) (varid))) (exp_name (varid)))))
+   (exp_infix (exp_name (varid)) (qvarop (qvarid (modid (constructor)) (varid))) (exp_name (varid)))))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_infix (exp_name (varid)) (conid) (exp_name (varid))))))
+   (exp_infix (exp_name (varid)) (constructor) (exp_name (varid))))))
 
 ===============================
 exp: error: infix quoted consym
@@ -310,12 +310,12 @@ a = \ (A a) -> a
 ---
 
 (module
- (decl_fun (funvar (varid)) (funrhs (equals) (exp_lambda (lambda) (pat_name (varid)) (arrow) (exp_name (varid)))))
+ (decl_fun (funvar (varid)) (funrhs (equals) (exp_lambda (lambda) (pat_name (varid)) (exp_name (varid)))))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_lambda (lambda) (pat_parens (pat_apply (pat_name (conid)) (pat_name (varid)))) (arrow) (exp_name (varid))))))
+   (exp_lambda (lambda) (pat_parens (pat_apply (pat_name (constructor)) (pat_name (varid)))) (exp_name (varid))))))
 
 =================================================
 exp: double lambda
@@ -333,11 +333,10 @@ a = \ a -> a >>= \ a -> a
    (exp_lambda
     (lambda)
     (pat_name (varid))
-    (arrow)
     (exp_infix
      (exp_name (varid))
      (qvarop (varsym))
-     (exp_lambda (lambda) (pat_name (varid)) (arrow) (exp_name (varid))))))))
+     (exp_lambda (lambda) (pat_name (varid)) (exp_name (varid))))))))
 
 ===============================
 exp: lambda and infix
@@ -356,7 +355,6 @@ a = \ a a a -> a <$> a <*> a
    (exp_lambda
     (lambda)
     (pat_name (varid))
-    (arrow)
     (exp_infix
      (exp_infix (exp_name (varid)) (consym) (exp_name (varid)))
     (consym)
@@ -371,7 +369,6 @@ a = \ a a a -> a <$> a <*> a
     (pat_name (varid))
     (pat_name (varid))
     (pat_name (varid))
-    (arrow)
     (exp_infix
      (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid)))
      (qvarop (varsym))
@@ -590,7 +587,7 @@ a = let { a :: A;
      (let
       (decls
        (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
-       (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
+       (decl_sig (varid) (annotation) (type_name (type)))
        (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
      (exp_in (exp_name (varid))))))
   (decl_fun
@@ -600,9 +597,9 @@ a = let { a :: A;
     (exp_let
      (let
       (decls
-       (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
+       (decl_sig (varid) (annotation) (type_name (type)))
        (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
-       (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
+       (decl_sig (varid) (annotation) (type_name (type)))
        (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
      (exp_in (exp_name (varid)))))))
 
@@ -626,8 +623,8 @@ a = case a of
    (exp_case
     (exp_name (varid))
     (alts
-     (alt (pat_apply (pat_name (conid)) (pat_name (varid))) (arrow) (exp_name (varid)))
-     (alt (pat_name (conid)) (arrow) (exp_name (varid)))))
+     (alt (pat_apply (pat_name (constructor)) (pat_name (varid))) (exp_name (varid)))
+     (alt (pat_name (constructor)) (exp_name (varid)))))
 (where)
   (decls
    (decl_fun (funvar (varid)) (funrhs (equals) (exp_literal (integer))))
@@ -656,7 +653,7 @@ a = a >>= \case
    (equals)
    (exp_lambda_case
     (lambda)
-    (alts (alt (pat_apply (pat_name (conid)) (pat_name (varid))) (arrow) (exp_name (varid)))))))
+    (alts (alt (pat_apply (pat_name (constructor)) (pat_name (varid))) (exp_name (varid)))))))
  (decl_fun
   (funvar (varid))
   (funrhs
@@ -668,12 +665,11 @@ a = a >>= \case
      (lambda)
      (alts
       (alt
-       (pat_apply (pat_name (conid)) (pat_parens (pat_apply (pat_name (conid)) (pat_wildcard) (pat_name (varid)))))
-       (arrow)
+       (pat_apply (pat_name (constructor)) (pat_parens (pat_apply (pat_name (constructor)) (pat_wildcard) (pat_name (varid)))))
        (exp_do
         (stmt (bind_pattern (pat_name (varid)) (larrow) (exp_name (varid))))
         (stmt (exp_name (varid)))))
-      (alt (pat_wildcard) (arrow) (exp_name (varid)))))))))
+      (alt (pat_wildcard) (exp_name (varid)))))))))
 
 =================================================
 exp: lambda case and exp_infix
@@ -693,7 +689,6 @@ a = \case a -> a : a
     (alts
      (alt
       (pat_name (varid))
-      (arrow)
       (exp_infix (exp_name (varid)) (consym) (exp_name (varid)))))))))
 
 =================================================
@@ -806,7 +801,7 @@ a = A { .. }
 
 ---
 
-(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_record (exp_name (conid)) (fbind (dotdot))))))
+(module (decl_fun (funvar (varid)) (funrhs (equals) (exp_record (exp_name (constructor)) (fbind (wildcard))))))
 
 =================================================
 exp: record update
@@ -832,7 +827,7 @@ a = A { a = a } {a = a}
    (funrhs
     (equals)
     (exp_record
-     (exp_record (exp_name (conid)) (fbind (varid) (equals) (exp_name (varid))))
+     (exp_record (exp_name (constructor)) (fbind (varid) (equals) (exp_name (varid))))
      (fbind (varid) (equals) (exp_name (varid)))))))
 
 =================================================
@@ -850,7 +845,7 @@ a = a @A.A a
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_apply (exp_name (varid)) (exp_tyapp (tyapp) (type_name (tyconid (conid)))))))
+   (exp_apply (exp_name (varid)) (exp_tyapp (tyapp) (type_name (type))))))
  (decl_fun
   (funvar (varid))
   (funrhs
@@ -864,7 +859,7 @@ a = a @A.A a
     (exp_name (varid))
     (exp_tyapp
      (tyapp)
-     (type_name (qtycon (modid (conid)) (tyconid (conid)))))
+     (type_name (qualified_type (modid (constructor)) (type))))
     (exp_name (varid))))))
 
 =================================================
@@ -895,7 +890,7 @@ a = A.A.A .A.aa
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (exp_name (qvarid (modid (constructor)) (modid (constructor)) (varid)))
     (qvarop (varsym))
     (exp_name (varid)))))
  (decl_fun
@@ -903,15 +898,15 @@ a = A.A.A .A.aa
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (exp_name (qvarid (modid (constructor)) (modid (constructor)) (varid)))
     (qvarop (varsym))
-    (exp_name (qvarid (modid (conid)) (varid))))))
+    (exp_name (qvarid (modid (constructor)) (varid))))))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (exp_name (qvarid (modid (constructor)) (modid (constructor)) (varid)))
     (qvarop (varsym))
     (exp_name (varid)))))
  (decl_fun
@@ -919,15 +914,15 @@ a = A.A.A .A.aa
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (exp_name (qvarid (modid (constructor)) (modid (constructor)) (varid)))
     (qvarop (varsym))
-    (exp_name (qvarid (modid (conid)) (varid))))))
+    (exp_name (qvarid (modid (constructor)) (varid))))))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (exp_name (qvarid (modid (constructor)) (modid (constructor)) (varid)))
     (qvarop (varsym))
     (exp_name (varid)))))
  (decl_fun
@@ -935,15 +930,15 @@ a = A.A.A .A.aa
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (exp_name (qvarid (modid (constructor)) (modid (constructor)) (varid)))
     (qvarop (varsym))
-    (exp_name (qvarid (modid (conid)) (varid))))))
+    (exp_name (qvarid (modid (constructor)) (varid))))))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (exp_name (qvarid (modid (constructor)) (modid (constructor)) (varid)))
     (qvarop (varsym))
     (exp_name (varid)))))
  (decl_fun
@@ -951,15 +946,15 @@ a = A.A.A .A.aa
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qvarid (modid (conid)) (modid (conid)) (varid)))
+    (exp_name (qvarid (modid (constructor)) (modid (constructor)) (varid)))
     (qvarop (varsym))
-    (exp_name (qvarid (modid (conid)) (varid))))))
+    (exp_name (qvarid (modid (constructor)) (varid))))))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (varsym))
     (exp_name (varid)))))
  (decl_fun
@@ -967,15 +962,15 @@ a = A.A.A .A.aa
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (varsym))
-    (exp_name (qvarid (modid (conid)) (varid))))))
+    (exp_name (qvarid (modid (constructor)) (varid))))))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (varsym))
     (exp_name (varid)))))
  (decl_fun
@@ -983,15 +978,15 @@ a = A.A.A .A.aa
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (varsym))
-    (exp_name (qvarid (modid (conid)) (varid))))))
+    (exp_name (qvarid (modid (constructor)) (varid))))))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (varsym))
     (exp_name (varid)))))
  (decl_fun
@@ -999,9 +994,9 @@ a = A.A.A .A.aa
   (funrhs
    (equals)
    (exp_infix
-    (exp_name (qconid (modid (conid)) (modid (conid)) (conid)))
+    (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (varsym))
-    (exp_name (qvarid (modid (conid)) (varid)))))))
+    (exp_name (qvarid (modid (constructor)) (varid)))))))
 
 =================================================
 exp: repeated type application
@@ -1018,10 +1013,10 @@ a = a @A @A @A @A
    (equals)
    (exp_apply
     (exp_name (varid))
-    (exp_tyapp (tyapp) (type_name (tyconid (conid))))
-    (exp_tyapp (tyapp) (type_name (tyconid (conid))))
-    (exp_tyapp (tyapp) (type_name (tyconid (conid))))
-    (exp_tyapp (tyapp) (type_name (tyconid (conid))))))))
+    (exp_tyapp (tyapp) (type_name (type)))
+    (exp_tyapp (tyapp) (type_name (type)))
+    (exp_tyapp (tyapp) (type_name (type)))
+    (exp_tyapp (tyapp) (type_name (type)))))))
 
 =================================================
 exp: block argument: lambda basic
@@ -1038,7 +1033,7 @@ a = a \ a -> a
    (equals)
    (exp_apply
     (exp_name (varid))
-    (exp_lambda (lambda) (pat_name (varid)) (arrow) (exp_name (varid)))))))
+    (exp_lambda (lambda) (pat_name (varid)) (exp_name (varid)))))))
 
 =================================================
 exp: block argument: lambda case
@@ -1055,7 +1050,7 @@ a = a \case a -> a
    (equals)
    (exp_apply
     (exp_name (varid))
-    (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (arrow) (exp_name (varid)))))))))
+    (exp_lambda_case (lambda) (alts (alt (pat_name (varid)) (exp_name (varid)))))))))
 
 =================================================
 exp: block argument: do
@@ -1100,14 +1095,14 @@ a = if | a -> a
  (decl_sig
   (varid)
   (annotation)
-  (type_name (tyconid (conid))))
+  (type_name (type)))
  (decl_fun
   (funvar (varid))
   (funrhs
    (equals)
    (exp_cond_guard
-    (gdpat (guards (guard (exp_name (varid)))) (arrow) (exp_name (varid)))
-    (gdpat (guards (guard (exp_name (varid)))) (arrow) (exp_name (varid)))))))
+    (gdpat (guards (guard (exp_name (varid)))) (exp_name (varid)))
+    (gdpat (guards (guard (exp_name (varid)))) (exp_name (varid)))))))
 
 =================================================
 exp: let with sig on rhs
@@ -1124,7 +1119,7 @@ a = let a = a in a :: A
    (equals)
    (exp_let
     (let (decls (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))))
-    (exp_in (exp_name (varid)) (annotation) (type_name (tyconid (conid))))))))
+    (exp_in (exp_name (varid)) (annotation) (type_name (type)))))))
 
 =================================================
 exp: list con
@@ -1162,11 +1157,11 @@ a = (A..!?)
    (equals)
    (exp_infix
     (exp_name (varid))
-    (qvarop (qvarsym (modid (conid)) (varsym)))
+    (qvarop (qvarsym (modid (constructor)) (varsym)))
     (exp_name (varid)))))
  (decl_fun
   (funvar (varid))
-  (funrhs (equals) (exp_name (qvarsym (modid (conid)) (varsym))))))
+  (funrhs (equals) (exp_name (qvarsym (modid (constructor)) (varsym))))))
 
 =================================================
 exp: th-promoted qualified symop
@@ -1179,7 +1174,7 @@ a = '(A..&)
 (module
  (decl_fun
   (funvar (varid))
-  (funrhs (equals) (exp_th_quoted_name (qvarsym (modid (conid)) (varsym))))))
+  (funrhs (equals) (exp_th_quoted_name (qvarsym (modid (constructor)) (varsym))))))
 
 =================================================
 exp: implicit parameter in do-let

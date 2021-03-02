@@ -5,7 +5,7 @@ module.exports = {
   // module
   // ------------------------------------------------------------------------
 
-  modid: $ => $.conid,
+  modid: $ => $.constructor,
 
   _qualifying_module: $ => repeat1(seq($.modid, $._dot)),
 
@@ -17,7 +17,7 @@ module.exports = {
     $._qatyconsym,
   ),
 
-  export_names: $ => parens(optional(choice($.dotdot, sep($.comma, $._name)))),
+  export_names: $ => parens(optional(choice(alias($._dotdot, $.all_names), sep($.comma, $._name)))),
 
   export: $ => choice(
     $._qvar,

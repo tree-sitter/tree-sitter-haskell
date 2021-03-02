@@ -1,5 +1,130 @@
 [
   {
+    "type": "adt",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "qualified_type",
+            "named": true
+          },
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "context",
+            "named": true
+          },
+          {
+            "type": "forall",
+            "named": true
+          },
+          {
+            "type": "fun",
+            "named": true
+          },
+          {
+            "type": "list_type",
+            "named": true
+          },
+          {
+            "type": "promoted",
+            "named": true
+          },
+          {
+            "type": "star",
+            "named": true
+          },
+          {
+            "type": "tuple_type",
+            "named": true
+          },
+          {
+            "type": "type_apply",
+            "named": true
+          },
+          {
+            "type": "type_infix",
+            "named": true
+          },
+          {
+            "type": "type_literal",
+            "named": true
+          },
+          {
+            "type": "type_name",
+            "named": true
+          },
+          {
+            "type": "type_parens",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "annotated_tyvar",
+          "named": true
+        },
+        {
+          "type": "annotation",
+          "named": true
+        },
+        {
+          "type": "constrs",
+          "named": true
+        },
+        {
+          "type": "context",
+          "named": true
+        },
+        {
+          "type": "deriving",
+          "named": true
+        },
+        {
+          "type": "equals",
+          "named": true
+        },
+        {
+          "type": "gadt_constr",
+          "named": true
+        },
+        {
+          "type": "type_infix",
+          "named": true
+        },
+        {
+          "type": "tyvar",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "all_names",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "alt",
     "named": true,
     "fields": {
@@ -64,10 +189,6 @@
       "types": [
         {
           "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "arrow",
           "named": true
         },
         {
@@ -555,6 +676,33 @@
     "fields": {}
   },
   {
+    "type": "class",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "class_body",
+          "named": true
+        },
+        {
+          "type": "class_head",
+          "named": true
+        },
+        {
+          "type": "context",
+          "named": true
+        },
+        {
+          "type": "fundeps",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "class_body",
     "named": true,
     "fields": {},
@@ -602,11 +750,11 @@
         "required": false,
         "types": [
           {
-            "type": "qtycon",
+            "type": "qualified_type",
             "named": true
           },
           {
-            "type": "tyconid",
+            "type": "type",
             "named": true
           }
         ]
@@ -760,11 +908,11 @@
           "named": true
         },
         {
-          "type": "qtycon",
+          "type": "qualified_type",
           "named": true
         },
         {
-          "type": "qtyconsym",
+          "type": "qualified_type_operator",
           "named": true
         },
         {
@@ -772,11 +920,11 @@
           "named": true
         },
         {
-          "type": "tyconid",
+          "type": "type",
           "named": true
         },
         {
-          "type": "tyconsym",
+          "type": "type_operator",
           "named": true
         },
         {
@@ -808,11 +956,6 @@
   },
   {
     "type": "con_unit",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "conid",
     "named": true,
     "fields": {}
   },
@@ -872,7 +1015,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -891,7 +1034,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -1097,6 +1240,11 @@
     }
   },
   {
+    "type": "constructor",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "consym",
     "named": true,
     "fields": {}
@@ -1177,7 +1325,7 @@
     }
   },
   {
-    "type": "decl_adt",
+    "type": "data_family",
     "named": true,
     "fields": {
       "name": {
@@ -1185,158 +1333,11 @@
         "required": false,
         "types": [
           {
-            "type": "qtycon",
+            "type": "qualified_type",
             "named": true
           },
           {
-            "type": "tyconid",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "context",
-            "named": true
-          },
-          {
-            "type": "forall",
-            "named": true
-          },
-          {
-            "type": "fun",
-            "named": true
-          },
-          {
-            "type": "list_type",
-            "named": true
-          },
-          {
-            "type": "promoted",
-            "named": true
-          },
-          {
-            "type": "star",
-            "named": true
-          },
-          {
-            "type": "tuple_type",
-            "named": true
-          },
-          {
-            "type": "type_apply",
-            "named": true
-          },
-          {
-            "type": "type_infix",
-            "named": true
-          },
-          {
-            "type": "type_literal",
-            "named": true
-          },
-          {
-            "type": "type_name",
-            "named": true
-          },
-          {
-            "type": "type_parens",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "annotated_tyvar",
-          "named": true
-        },
-        {
-          "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "constrs",
-          "named": true
-        },
-        {
-          "type": "context",
-          "named": true
-        },
-        {
-          "type": "deriving",
-          "named": true
-        },
-        {
-          "type": "equals",
-          "named": true
-        },
-        {
-          "type": "gadt_constr",
-          "named": true
-        },
-        {
-          "type": "type_infix",
-          "named": true
-        },
-        {
-          "type": "tyvar",
-          "named": true
-        },
-        {
-          "type": "where",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_class",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "class_body",
-          "named": true
-        },
-        {
-          "type": "class_head",
-          "named": true
-        },
-        {
-          "type": "context",
-          "named": true
-        },
-        {
-          "type": "fundeps",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_datafam",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "qtycon",
-            "named": true
-          },
-          {
-            "type": "tyconid",
+            "type": "type",
             "named": true
           }
         ]
@@ -1420,7 +1421,7 @@
     }
   },
   {
-    "type": "decl_datainst",
+    "type": "data_instance",
     "named": true,
     "fields": {
       "type": {
@@ -1558,76 +1559,6 @@
     }
   },
   {
-    "type": "decl_default",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "comma",
-          "named": true
-        },
-        {
-          "type": "list_type",
-          "named": true
-        },
-        {
-          "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
-          "named": true
-        },
-        {
-          "type": "tuple_type",
-          "named": true
-        },
-        {
-          "type": "type_apply",
-          "named": true
-        },
-        {
-          "type": "type_infix",
-          "named": true
-        },
-        {
-          "type": "type_literal",
-          "named": true
-        },
-        {
-          "type": "type_name",
-          "named": true
-        },
-        {
-          "type": "type_parens",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_deriving",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "context",
-          "named": true
-        },
-        {
-          "type": "instance_head",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "decl_fixity",
     "named": true,
     "fields": {},
@@ -1640,7 +1571,7 @@
           "named": true
         },
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -1653,60 +1584,6 @@
         },
         {
           "type": "varop",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_foreign_export",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "calling_convention",
-          "named": true
-        },
-        {
-          "type": "decl_sig",
-          "named": true
-        },
-        {
-          "type": "expent",
-          "named": true
-        },
-        {
-          "type": "safety",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_foreign_import",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "calling_convention",
-          "named": true
-        },
-        {
-          "type": "decl_sig",
-          "named": true
-        },
-        {
-          "type": "impent",
-          "named": true
-        },
-        {
-          "type": "safety",
           "named": true
         }
       ]
@@ -1730,268 +1607,6 @@
         },
         {
           "type": "funvar",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_import",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "import_list",
-          "named": true
-        },
-        {
-          "type": "import_package",
-          "named": true
-        },
-        {
-          "type": "modid",
-          "named": true
-        },
-        {
-          "type": "qmodid",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_instance",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "context",
-          "named": true
-        },
-        {
-          "type": "decl_fun",
-          "named": true
-        },
-        {
-          "type": "decl_sig",
-          "named": true
-        },
-        {
-          "type": "forall",
-          "named": true
-        },
-        {
-          "type": "inst_datainst",
-          "named": true
-        },
-        {
-          "type": "inst_tyinst",
-          "named": true
-        },
-        {
-          "type": "instance_head",
-          "named": true
-        },
-        {
-          "type": "where",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_newtype",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "qtycon",
-            "named": true
-          },
-          {
-            "type": "tyconid",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "annotated_tyvar",
-          "named": true
-        },
-        {
-          "type": "constr_newtype",
-          "named": true
-        },
-        {
-          "type": "context",
-          "named": true
-        },
-        {
-          "type": "deriving",
-          "named": true
-        },
-        {
-          "type": "equals",
-          "named": true
-        },
-        {
-          "type": "type_infix",
-          "named": true
-        },
-        {
-          "type": "tyvar",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_pattern",
-    "named": true,
-    "fields": {
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "context",
-            "named": true
-          },
-          {
-            "type": "forall",
-            "named": true
-          },
-          {
-            "type": "fun",
-            "named": true
-          },
-          {
-            "type": "list_type",
-            "named": true
-          },
-          {
-            "type": "promoted",
-            "named": true
-          },
-          {
-            "type": "star",
-            "named": true
-          },
-          {
-            "type": "tuple_type",
-            "named": true
-          },
-          {
-            "type": "type_apply",
-            "named": true
-          },
-          {
-            "type": "type_infix",
-            "named": true
-          },
-          {
-            "type": "type_literal",
-            "named": true
-          },
-          {
-            "type": "type_name",
-            "named": true
-          },
-          {
-            "type": "type_parens",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "conid",
-          "named": true
-        },
-        {
-          "type": "funrhs",
-          "named": true
-        },
-        {
-          "type": "larrow",
-          "named": true
-        },
-        {
-          "type": "pat_apply",
-          "named": true
-        },
-        {
-          "type": "pat_as",
-          "named": true
-        },
-        {
-          "type": "pat_infix",
-          "named": true
-        },
-        {
-          "type": "pat_irrefutable",
-          "named": true
-        },
-        {
-          "type": "pat_list",
-          "named": true
-        },
-        {
-          "type": "pat_literal",
-          "named": true
-        },
-        {
-          "type": "pat_name",
-          "named": true
-        },
-        {
-          "type": "pat_neg",
-          "named": true
-        },
-        {
-          "type": "pat_parens",
-          "named": true
-        },
-        {
-          "type": "pat_record",
-          "named": true
-        },
-        {
-          "type": "pat_strict",
-          "named": true
-        },
-        {
-          "type": "pat_tuple",
-          "named": true
-        },
-        {
-          "type": "pat_wildcard",
-          "named": true
-        },
-        {
-          "type": "where",
           "named": true
         }
       ]
@@ -2094,182 +1709,6 @@
     }
   },
   {
-    "type": "decl_tyfam",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "tyfam_eq",
-          "named": true
-        },
-        {
-          "type": "tyfam_head",
-          "named": true
-        },
-        {
-          "type": "tyfam_sig",
-          "named": true
-        },
-        {
-          "type": "where",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_tyinst",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "context",
-          "named": true
-        },
-        {
-          "type": "equals",
-          "named": true
-        },
-        {
-          "type": "forall",
-          "named": true
-        },
-        {
-          "type": "fun",
-          "named": true
-        },
-        {
-          "type": "list_type",
-          "named": true
-        },
-        {
-          "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
-          "named": true
-        },
-        {
-          "type": "tuple_type",
-          "named": true
-        },
-        {
-          "type": "type_apply",
-          "named": true
-        },
-        {
-          "type": "type_infix",
-          "named": true
-        },
-        {
-          "type": "type_literal",
-          "named": true
-        },
-        {
-          "type": "type_name",
-          "named": true
-        },
-        {
-          "type": "type_parens",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_type",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "qtycon",
-            "named": true
-          },
-          {
-            "type": "tyconid",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "annotated_tyvar",
-          "named": true
-        },
-        {
-          "type": "context",
-          "named": true
-        },
-        {
-          "type": "equals",
-          "named": true
-        },
-        {
-          "type": "forall",
-          "named": true
-        },
-        {
-          "type": "fun",
-          "named": true
-        },
-        {
-          "type": "list_type",
-          "named": true
-        },
-        {
-          "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
-          "named": true
-        },
-        {
-          "type": "tuple_type",
-          "named": true
-        },
-        {
-          "type": "type_apply",
-          "named": true
-        },
-        {
-          "type": "type_infix",
-          "named": true
-        },
-        {
-          "type": "type_literal",
-          "named": true
-        },
-        {
-          "type": "type_name",
-          "named": true
-        },
-        {
-          "type": "type_parens",
-          "named": true
-        },
-        {
-          "type": "tyvar",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "decl_type_sig",
     "named": true,
     "fields": {
@@ -2278,11 +1717,11 @@
         "required": false,
         "types": [
           {
-            "type": "qtycon",
+            "type": "qualified_type",
             "named": true
           },
           {
-            "type": "tyconid",
+            "type": "type",
             "named": true
           }
         ]
@@ -2389,6 +1828,57 @@
     }
   },
   {
+    "type": "default_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comma",
+          "named": true
+        },
+        {
+          "type": "list_type",
+          "named": true
+        },
+        {
+          "type": "promoted",
+          "named": true
+        },
+        {
+          "type": "star",
+          "named": true
+        },
+        {
+          "type": "tuple_type",
+          "named": true
+        },
+        {
+          "type": "type_apply",
+          "named": true
+        },
+        {
+          "type": "type_infix",
+          "named": true
+        },
+        {
+          "type": "type_literal",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        },
+        {
+          "type": "type_parens",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "default_signature",
     "named": true,
     "fields": {},
@@ -2412,11 +1902,11 @@
         "required": false,
         "types": [
           {
-            "type": "qtycon",
+            "type": "qualified_type",
             "named": true
           },
           {
-            "type": "tyconid",
+            "type": "type",
             "named": true
           }
         ]
@@ -2438,9 +1928,23 @@
     }
   },
   {
-    "type": "dotdot",
+    "type": "deriving_declaration",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "context",
+          "named": true
+        },
+        {
+          "type": "instance_head",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "equals",
@@ -3955,7 +3459,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -4055,11 +3559,11 @@
           "named": true
         },
         {
-          "type": "qconid",
+          "type": "qconsym",
           "named": true
         },
         {
-          "type": "qconsym",
+          "type": "qualified_constructor",
           "named": true
         },
         {
@@ -4138,10 +3642,6 @@
       "types": [
         {
           "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "arrow",
           "named": true
         },
         {
@@ -4721,7 +4221,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -4733,11 +4233,11 @@
           "named": true
         },
         {
-          "type": "qconid",
+          "type": "qconsym",
           "named": true
         },
         {
-          "type": "qconsym",
+          "type": "qualified_constructor",
           "named": true
         },
         {
@@ -5115,7 +4615,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -5215,11 +4715,11 @@
           "named": true
         },
         {
-          "type": "qconid",
+          "type": "qconsym",
           "named": true
         },
         {
-          "type": "qconsym",
+          "type": "qualified_constructor",
           "named": true
         },
         {
@@ -5242,7 +4742,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -5342,11 +4842,11 @@
           "named": true
         },
         {
-          "type": "qconid",
+          "type": "qconsym",
           "named": true
         },
         {
-          "type": "qconsym",
+          "type": "qualified_constructor",
           "named": true
         },
         {
@@ -5369,7 +4869,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -5385,11 +4885,11 @@
           "named": true
         },
         {
-          "type": "qconid",
+          "type": "qconsym",
           "named": true
         },
         {
-          "type": "qconsym",
+          "type": "qualified_constructor",
           "named": true
         },
         {
@@ -5691,11 +5191,11 @@
           "named": true
         },
         {
-          "type": "qtycon",
+          "type": "qualified_type",
           "named": true
         },
         {
-          "type": "qtyconsym",
+          "type": "qualified_type_operator",
           "named": true
         },
         {
@@ -5707,11 +5207,11 @@
           "named": true
         },
         {
-          "type": "tyconid",
+          "type": "type",
           "named": true
         },
         {
-          "type": "tyconsym",
+          "type": "type_operator",
           "named": true
         },
         {
@@ -5734,19 +5234,19 @@
       "required": false,
       "types": [
         {
+          "type": "all_names",
+          "named": true
+        },
+        {
           "type": "comma",
           "named": true
         },
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
           "type": "consym",
-          "named": true
-        },
-        {
-          "type": "dotdot",
           "named": true
         },
         {
@@ -5825,10 +5325,6 @@
       "types": [
         {
           "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "dotdot",
           "named": true
         },
         {
@@ -5945,6 +5441,10 @@
         },
         {
           "type": "varsym",
+          "named": true
+        },
+        {
+          "type": "wildcard",
           "named": true
         }
       ]
@@ -6118,13 +5618,57 @@
   {
     "type": "forall_dot",
     "named": true,
+    "fields": {}
+  },
+  {
+    "type": "foreign_export",
+    "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
-      "required": false,
+      "multiple": true,
+      "required": true,
       "types": [
         {
-          "type": "arrow",
+          "type": "calling_convention",
+          "named": true
+        },
+        {
+          "type": "decl_sig",
+          "named": true
+        },
+        {
+          "type": "expent",
+          "named": true
+        },
+        {
+          "type": "safety",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "foreign_import",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "calling_convention",
+          "named": true
+        },
+        {
+          "type": "decl_sig",
+          "named": true
+        },
+        {
+          "type": "impent",
+          "named": true
+        },
+        {
+          "type": "safety",
           "named": true
         }
       ]
@@ -6138,10 +5682,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "dotdot",
-          "named": true
-        },
         {
           "type": "equals",
           "named": true
@@ -6213,6 +5753,10 @@
         {
           "type": "varsym",
           "named": true
+        },
+        {
+          "type": "wildcard",
+          "named": true
         }
       ]
     }
@@ -6225,10 +5769,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "arrow",
-          "named": true
-        },
         {
           "type": "context",
           "named": true
@@ -6292,10 +5832,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "arrow",
-          "named": true
-        },
         {
           "type": "tyvar",
           "named": true
@@ -6662,11 +6198,7 @@
           "named": true
         },
         {
-          "type": "arrow",
-          "named": true
-        },
-        {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -6797,10 +6329,6 @@
       "types": [
         {
           "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "arrow",
           "named": true
         },
         {
@@ -7304,6 +6832,33 @@
     }
   },
   {
+    "type": "import",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "import_list",
+          "named": true
+        },
+        {
+          "type": "import_package",
+          "named": true
+        },
+        {
+          "type": "modid",
+          "named": true
+        },
+        {
+          "type": "qmodid",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "import_con_names",
     "named": true,
     "fields": {},
@@ -7312,19 +6867,19 @@
       "required": false,
       "types": [
         {
+          "type": "all_names",
+          "named": true
+        },
+        {
           "type": "comma",
           "named": true
         },
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
           "type": "consym",
-          "named": true
-        },
-        {
-          "type": "dotdot",
           "named": true
         },
         {
@@ -7347,7 +6902,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -7726,6 +7281,49 @@
     }
   },
   {
+    "type": "instance",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "context",
+          "named": true
+        },
+        {
+          "type": "decl_fun",
+          "named": true
+        },
+        {
+          "type": "decl_sig",
+          "named": true
+        },
+        {
+          "type": "forall",
+          "named": true
+        },
+        {
+          "type": "inst_datainst",
+          "named": true
+        },
+        {
+          "type": "inst_tyinst",
+          "named": true
+        },
+        {
+          "type": "instance_head",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "instance_head",
     "named": true,
     "fields": {
@@ -7871,7 +7469,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         }
       ]
@@ -7901,27 +7499,19 @@
       "required": true,
       "types": [
         {
-          "type": "decl_adt",
+          "type": "adt",
           "named": true
         },
         {
-          "type": "decl_class",
+          "type": "class",
           "named": true
         },
         {
-          "type": "decl_datafam",
+          "type": "data_family",
           "named": true
         },
         {
-          "type": "decl_datainst",
-          "named": true
-        },
-        {
-          "type": "decl_default",
-          "named": true
-        },
-        {
-          "type": "decl_deriving",
+          "type": "data_instance",
           "named": true
         },
         {
@@ -7929,31 +7519,7 @@
           "named": true
         },
         {
-          "type": "decl_foreign_export",
-          "named": true
-        },
-        {
-          "type": "decl_foreign_import",
-          "named": true
-        },
-        {
           "type": "decl_fun",
-          "named": true
-        },
-        {
-          "type": "decl_import",
-          "named": true
-        },
-        {
-          "type": "decl_instance",
-          "named": true
-        },
-        {
-          "type": "decl_newtype",
-          "named": true
-        },
-        {
-          "type": "decl_pattern",
           "named": true
         },
         {
@@ -7961,15 +7527,11 @@
           "named": true
         },
         {
-          "type": "decl_tyfam",
+          "type": "default_declaration",
           "named": true
         },
         {
-          "type": "decl_tyinst",
-          "named": true
-        },
-        {
-          "type": "decl_type",
+          "type": "deriving_declaration",
           "named": true
         },
         {
@@ -7977,11 +7539,47 @@
           "named": true
         },
         {
+          "type": "foreign_export",
+          "named": true
+        },
+        {
+          "type": "foreign_import",
+          "named": true
+        },
+        {
+          "type": "import",
+          "named": true
+        },
+        {
+          "type": "instance",
+          "named": true
+        },
+        {
           "type": "module_exports",
           "named": true
         },
         {
+          "type": "newtype",
+          "named": true
+        },
+        {
+          "type": "pattern_synonym",
+          "named": true
+        },
+        {
           "type": "top_splice",
+          "named": true
+        },
+        {
+          "type": "type_alias",
+          "named": true
+        },
+        {
+          "type": "type_family",
+          "named": true
+        },
+        {
+          "type": "type_instance",
           "named": true
         },
         {
@@ -8014,6 +7612,60 @@
     "type": "namespace",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "newtype",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "qualified_type",
+            "named": true
+          },
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "annotated_tyvar",
+          "named": true
+        },
+        {
+          "type": "constr_newtype",
+          "named": true
+        },
+        {
+          "type": "context",
+          "named": true
+        },
+        {
+          "type": "deriving",
+          "named": true
+        },
+        {
+          "type": "equals",
+          "named": true
+        },
+        {
+          "type": "type_infix",
+          "named": true
+        },
+        {
+          "type": "tyvar",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "pat_apply",
@@ -8147,7 +7799,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -8207,11 +7859,11 @@
           "named": true
         },
         {
-          "type": "qconid",
+          "type": "qconsym",
           "named": true
         },
         {
-          "type": "qconsym",
+          "type": "qualified_constructor",
           "named": true
         }
       ]
@@ -8387,7 +8039,7 @@
       "required": true,
       "types": [
         {
-          "type": "conid",
+          "type": "constructor",
           "named": true
         },
         {
@@ -8395,11 +8047,11 @@
           "named": true
         },
         {
-          "type": "qconid",
+          "type": "qconsym",
           "named": true
         },
         {
-          "type": "qconsym",
+          "type": "qualified_constructor",
           "named": true
         },
         {
@@ -8763,10 +8415,6 @@
           "named": true
         },
         {
-          "type": "arrow",
-          "named": true
-        },
-        {
           "type": "exp_apply",
           "named": true
         },
@@ -9085,6 +8733,144 @@
     }
   },
   {
+    "type": "pattern_synonym",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "context",
+            "named": true
+          },
+          {
+            "type": "forall",
+            "named": true
+          },
+          {
+            "type": "fun",
+            "named": true
+          },
+          {
+            "type": "list_type",
+            "named": true
+          },
+          {
+            "type": "promoted",
+            "named": true
+          },
+          {
+            "type": "star",
+            "named": true
+          },
+          {
+            "type": "tuple_type",
+            "named": true
+          },
+          {
+            "type": "type_apply",
+            "named": true
+          },
+          {
+            "type": "type_infix",
+            "named": true
+          },
+          {
+            "type": "type_literal",
+            "named": true
+          },
+          {
+            "type": "type_name",
+            "named": true
+          },
+          {
+            "type": "type_parens",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "annotation",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "funrhs",
+          "named": true
+        },
+        {
+          "type": "larrow",
+          "named": true
+        },
+        {
+          "type": "pat_apply",
+          "named": true
+        },
+        {
+          "type": "pat_as",
+          "named": true
+        },
+        {
+          "type": "pat_infix",
+          "named": true
+        },
+        {
+          "type": "pat_irrefutable",
+          "named": true
+        },
+        {
+          "type": "pat_list",
+          "named": true
+        },
+        {
+          "type": "pat_literal",
+          "named": true
+        },
+        {
+          "type": "pat_name",
+          "named": true
+        },
+        {
+          "type": "pat_neg",
+          "named": true
+        },
+        {
+          "type": "pat_parens",
+          "named": true
+        },
+        {
+          "type": "pat_record",
+          "named": true
+        },
+        {
+          "type": "pat_strict",
+          "named": true
+        },
+        {
+          "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_wildcard",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "promoted",
     "named": true,
     "fields": {},
@@ -9097,11 +8883,11 @@
           "named": true
         },
         {
-          "type": "qtycon",
+          "type": "qualified_type",
           "named": true
         },
         {
-          "type": "qtyconsym",
+          "type": "qualified_type_operator",
           "named": true
         },
         {
@@ -9113,34 +8899,15 @@
           "named": true
         },
         {
-          "type": "tyconid",
-          "named": true
-        },
-        {
-          "type": "tyconsym",
+          "type": "type",
           "named": true
         },
         {
           "type": "type_literal",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "qconid",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "conid",
-          "named": true
         },
         {
-          "type": "modid",
+          "type": "type_operator",
           "named": true
         }
       ]
@@ -9175,44 +8942,6 @@
       "types": [
         {
           "type": "modid",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "qtycon",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "modid",
-          "named": true
-        },
-        {
-          "type": "tyconid",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "qtyconsym",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "modid",
-          "named": true
-        },
-        {
-          "type": "tyconsym",
           "named": true
         }
       ]
@@ -9387,6 +9116,63 @@
         },
         {
           "type": "splice",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "qualified_constructor",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "modid",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "qualified_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "modid",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "qualified_type_operator",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "modid",
+          "named": true
+        },
+        {
+          "type": "type_operator",
           "named": true
         }
       ]
@@ -9816,11 +9602,11 @@
       "required": true,
       "types": [
         {
-          "type": "qtycon",
+          "type": "qualified_type",
           "named": true
         },
         {
-          "type": "tyconid",
+          "type": "type",
           "named": true
         }
       ]
@@ -9999,32 +9785,7 @@
   {
     "type": "tycon_arrow",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "arrow",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "tyconid",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "conid",
-          "named": true
-        }
-      ]
-    }
+    "fields": {}
   },
   {
     "type": "tyconop",
@@ -10039,7 +9800,7 @@
           "named": true
         },
         {
-          "type": "qtyconsym",
+          "type": "qualified_type_operator",
           "named": true
         },
         {
@@ -10047,16 +9808,11 @@
           "named": true
         },
         {
-          "type": "tyconsym",
+          "type": "type_operator",
           "named": true
         }
       ]
     }
-  },
-  {
-    "type": "tyconsym",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "tyfam_eq",
@@ -10134,11 +9890,11 @@
         "required": false,
         "types": [
           {
-            "type": "qtycon",
+            "type": "qualified_type",
             "named": true
           },
           {
-            "type": "tyconid",
+            "type": "type",
             "named": true
           }
         ]
@@ -10172,11 +9928,11 @@
         "required": true,
         "types": [
           {
-            "type": "qtycon",
+            "type": "qualified_type",
             "named": true
           },
           {
-            "type": "tyconid",
+            "type": "type",
             "named": true
           }
         ]
@@ -10281,6 +10037,97 @@
     }
   },
   {
+    "type": "type",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "type_alias",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "qualified_type",
+            "named": true
+          },
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "annotated_tyvar",
+          "named": true
+        },
+        {
+          "type": "context",
+          "named": true
+        },
+        {
+          "type": "equals",
+          "named": true
+        },
+        {
+          "type": "forall",
+          "named": true
+        },
+        {
+          "type": "fun",
+          "named": true
+        },
+        {
+          "type": "list_type",
+          "named": true
+        },
+        {
+          "type": "promoted",
+          "named": true
+        },
+        {
+          "type": "star",
+          "named": true
+        },
+        {
+          "type": "tuple_type",
+          "named": true
+        },
+        {
+          "type": "type_apply",
+          "named": true
+        },
+        {
+          "type": "type_infix",
+          "named": true
+        },
+        {
+          "type": "type_literal",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        },
+        {
+          "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "tyvar",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "type_apply",
     "named": true,
     "fields": {},
@@ -10314,6 +10161,33 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "type_family",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "tyfam_eq",
+          "named": true
+        },
+        {
+          "type": "tyfam_head",
+          "named": true
+        },
+        {
+          "type": "tyfam_sig",
+          "named": true
+        },
+        {
+          "type": "where",
           "named": true
         }
       ]
@@ -10366,7 +10240,7 @@
         "required": false,
         "types": [
           {
-            "type": "tyconsym",
+            "type": "type_operator",
             "named": true
           }
         ]
@@ -10440,6 +10314,69 @@
     }
   },
   {
+    "type": "type_instance",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "context",
+          "named": true
+        },
+        {
+          "type": "equals",
+          "named": true
+        },
+        {
+          "type": "forall",
+          "named": true
+        },
+        {
+          "type": "fun",
+          "named": true
+        },
+        {
+          "type": "list_type",
+          "named": true
+        },
+        {
+          "type": "promoted",
+          "named": true
+        },
+        {
+          "type": "star",
+          "named": true
+        },
+        {
+          "type": "tuple_type",
+          "named": true
+        },
+        {
+          "type": "type_apply",
+          "named": true
+        },
+        {
+          "type": "type_infix",
+          "named": true
+        },
+        {
+          "type": "type_literal",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        },
+        {
+          "type": "type_parens",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "type_literal",
     "named": true,
     "fields": {},
@@ -10495,11 +10432,11 @@
           "named": true
         },
         {
-          "type": "qtycon",
+          "type": "qualified_type",
           "named": true
         },
         {
-          "type": "qtyconsym",
+          "type": "qualified_type_operator",
           "named": true
         },
         {
@@ -10507,11 +10444,11 @@
           "named": true
         },
         {
-          "type": "tyconid",
+          "type": "type",
           "named": true
         },
         {
-          "type": "tyconsym",
+          "type": "type_operator",
           "named": true
         },
         {
@@ -10520,6 +10457,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "type_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "type_parens",
@@ -10654,6 +10596,11 @@
     }
   },
   {
+    "type": "wildcard",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "'",
     "named": false
   },
@@ -10704,10 +10651,6 @@
   {
     "type": "anyclass",
     "named": false
-  },
-  {
-    "type": "arrow",
-    "named": true
   },
   {
     "type": "as",

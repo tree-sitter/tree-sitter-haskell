@@ -82,7 +82,7 @@ module.exports = {
   ),
 
   fbind: $ => choice(
-    $.dotdot,
+    alias($._dotdot, $.wildcard),
     seq($._qvar, seq($.equals, $._exp))
   ),
 
@@ -91,7 +91,7 @@ module.exports = {
   exp_lambda: $ => seq(
     $.lambda,
     repeat1($._apat),
-    $.arrow,
+    $._arrow,
     $._exp,
   ),
 
@@ -128,10 +128,10 @@ module.exports = {
 
   guards: $ => seq('|', sep1($.comma, $.guard)),
 
-  gdpat: $ => seq($.guards, $.arrow, $._exp),
+  gdpat: $ => seq($.guards, $._arrow, $._exp),
 
   _alt_variants: $ => choice(
-    seq($.arrow, $._exp),
+    seq($._arrow, $._exp),
     repeat1($.gdpat),
   ),
 

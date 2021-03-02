@@ -22,7 +22,7 @@ aZ' = a
  (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid)))))
 
 =========================================
-id: conid
+id: constructor
 =========================================
 
 data B = A
@@ -35,18 +35,18 @@ data B = A
 ---
 
 (module
- (decl_adt
-  (tyconid (conid))
+ (adt
+  (type)
   (equals)
   (constrs
-   (constr (constr_id (conid)))
+   (constr (constr_id (constructor)))
    (bar)
-   (constr (constr_id (conid)))
+   (constr (constr_id (constructor)))
    (bar)
-   (constr (constr_id (conid)))
+   (constr (constr_id (constructor)))
    (bar)
-   (constr (constr_id (conid)))
+   (constr (constr_id (constructor)))
    (bar)
-   (constr (constr_id (conid)))
+   (constr (constr_id (constructor)))
    (bar)
-   (constr (constr_id (conid))))))
+   (constr (constr_id (constructor))))))

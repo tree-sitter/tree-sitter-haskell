@@ -2,7 +2,7 @@ const {parens} = require('./util.js')
 
 module.exports = {
   fpat: $ => choice(
-    $.dotdot,
+    alias($._dotdot, $.wildcard),
     seq($._qvar, optional(seq($.equals, $._pat))),
   ),
 
@@ -15,7 +15,7 @@ module.exports = {
 
   pat_parens: $ => parens($._nested_pat, optional($._type_annotation)),
 
-  pat_view: $ => seq($._exp, $.arrow, $._nested_pat),
+  pat_view: $ => seq($._exp, $._arrow, $._nested_pat),
 
   pat_tuple: $ => parens(sep2($.comma, $._nested_pat)),
 
@@ -36,7 +36,7 @@ module.exports = {
     $.pat_as,
     seq(alias($.pat_con, $.pat_name), optional($.pat_record)),
     alias($.literal, $.pat_literal),
-    alias($.wildcard, $.pat_wildcard),
+    alias($._wildcard, $.pat_wildcard),
     $.pat_parens,
     $.pat_tuple,
     $.pat_list,

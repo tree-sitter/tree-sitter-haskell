@@ -12,7 +12,7 @@ module.exports = {
 
   namespace: _ => choice('pattern', 'type'),
 
-  import_con_names: $ => parens(optional(choice($.dotdot, sep1($.comma, $._import_name)))),
+  import_con_names: $ => parens(optional(choice(alias($._dotdot, $.all_names), sep1($.comma, $._import_name)))),
 
   import_item: $ => seq(
     optional($.namespace),

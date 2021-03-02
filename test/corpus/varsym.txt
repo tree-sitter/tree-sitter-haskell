@@ -42,7 +42,7 @@ f = a . a
 )
 
 =================================================
-varsym: error: arrow
+varsym: error: _arrow
 =================================================
 
 f = a -> a
@@ -55,7 +55,7 @@ f = a |> a
   (funvar (varid))
   (funrhs
    (equals)
-   (exp_apply (exp_name (varid)) (ERROR (arrow)) (exp_name (varid)))))
+   (exp_apply (exp_name (varid)) (ERROR) (exp_name (varid)))))
  (decl_fun
   (funvar (varid))
   (funrhs
@@ -241,5 +241,5 @@ varsym: bang as operator decl
 ---
 
 (module
- (decl_sig (varsym) (annotation) (type_name (tyconid (conid))))
+ (decl_sig (varsym) (annotation) (type_name (type)))
  (decl_fun (funvar (varsym)) (funrhs (equals) (exp_name (varid)))))

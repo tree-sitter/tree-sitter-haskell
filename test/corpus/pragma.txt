@@ -43,7 +43,7 @@ module A where
 (module
   (pragma)
   (pragma)
-  (modid (conid))
+  (modid (constructor))
   (where))
 
 =========================================
@@ -54,7 +54,7 @@ instance {-# overlappable #-} A where
 
 ---
 
-(module (decl_instance (pragma) (instance_head (class_name (tyconid (conid)))) (where)))
+(module (instance (pragma) (instance_head (class_name (type))) (where)))
 
 =========================================
 pragma: multiline
@@ -67,4 +67,4 @@ module A where
 
 ---
 
-(module (modid (conid)) (where) (pragma))
+(module (modid (constructor)) (where) (pragma))

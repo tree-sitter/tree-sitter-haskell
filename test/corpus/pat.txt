@@ -34,10 +34,10 @@ a (A a) = a
 ---
 
 (module
- (decl_fun (funvar (varid) (pat_name (conid))) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (varid) (pat_name (constructor))) (funrhs (equals) (exp_name (varid))))
  (decl_fun
   (funvar (varid)
-   (pat_parens (pat_apply (pat_name (conid)) (pat_name (varid)))))
+   (pat_parens (pat_apply (pat_name (constructor)) (pat_name (varid)))))
   (funrhs (equals) (exp_name (varid)))))
 
 =================================================
@@ -67,8 +67,8 @@ a a@(A a) a@(A a) = a
  (decl_fun
   (funvar
    (varid)
-   (pat_as (varid) (as_pat) (pat_parens (pat_apply (pat_name (conid)) (pat_name (varid)))))
-   (pat_as (varid) (as_pat) (pat_parens (pat_apply (pat_name (conid)) (pat_name (varid))))))
+   (pat_as (varid) (as_pat) (pat_parens (pat_apply (pat_name (constructor)) (pat_name (varid)))))
+   (pat_as (varid) (as_pat) (pat_parens (pat_apply (pat_name (constructor)) (pat_name (varid))))))
   (funrhs (equals) (exp_name (varid)))))
 
 =================================================
@@ -83,7 +83,7 @@ a (A _) _ = a
  (decl_fun
   (funvar
    (varid)
-   (pat_parens (pat_apply (pat_name (conid)) (pat_wildcard)))
+   (pat_parens (pat_apply (pat_name (constructor)) (pat_wildcard)))
    (pat_wildcard))
   (funrhs (equals) (exp_name (varid)))))
 
@@ -115,21 +115,25 @@ f a@A { a = a, b = a, a, .. } = a
 ---
 
 (module
- (decl_fun (funvar (varid) (pat_name (conid)) (pat_record)) (funrhs (equals) (exp_name (varid))))
- (decl_fun (funvar (varid) (pat_name (conid)) (pat_record (fpat (dotdot)))) (funrhs (equals) (exp_name (varid))))
+ (decl_fun (funvar (varid) (pat_name (constructor)) (pat_record)) (funrhs (equals) (exp_name (varid))))
+ (decl_fun
+  (funvar
+   (varid)
+   (pat_name (constructor))
+   (pat_record (fpat (wildcard)))) (funrhs (equals) (exp_name (varid))))
  (decl_fun
   (funvar
    (varid)
    (pat_as
     (varid)
     (as_pat)
-    (pat_name (conid))
+    (pat_name (constructor))
     (pat_record
      (fpat (varid) (equals) (pat_name (varid)))
      (comma)
      (fpat (varid) (equals) (pat_name (varid)))
      (comma)
-     (fpat (varid)) (comma) (fpat (dotdot)))))
+     (fpat (varid)) (comma) (fpat (wildcard)))))
   (funrhs (equals) (exp_name (varid)))))
 
 =================================================
@@ -173,15 +177,14 @@ a (a -> a, a -> a) = a
    (pat_parens
     (pat_view
      (exp_apply (exp_name (varid)) (exp_name (varid)))
-     (arrow)
-     (pat_apply (pat_name (conid)) (pat_name (varid)) (pat_name (varid))))))
+     (pat_apply (pat_name (constructor)) (pat_name (varid)) (pat_name (varid))))))
   (funrhs (equals) (exp_name (varid))))
   (decl_fun
    (funvar (varid)
     (pat_tuple
-     (pat_view (exp_name (varid)) (arrow) (pat_name (varid)))
+     (pat_view (exp_name (varid)) (pat_name (varid)))
      (comma)
-     (pat_view (exp_name (varid)) (arrow) (pat_name (varid)))))
+     (pat_view (exp_name (varid)) (pat_name (varid)))))
    (funrhs (equals) (exp_name (varid)))))
 
 =================================================
@@ -199,8 +202,7 @@ a = \ (a -> a) -> a
    (equals)
    (exp_lambda
     (lambda)
-    (pat_parens (pat_view (exp_name (varid)) (arrow) (pat_name (varid))))
-    (arrow)
+    (pat_parens (pat_view (exp_name (varid)) (pat_name (varid))))
     (exp_name (varid))))))
 
 =================================================
@@ -215,7 +217,7 @@ a (a :: A a) = a
  (decl_fun
   (funvar
    (varid)
-   (pat_parens (pat_name (varid)) (annotation) (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))
+   (pat_parens (pat_name (varid)) (annotation) (type_apply (type_name (type)) (type_name (tyvar)))))
   (funrhs (equals) (exp_name (varid)))))
 
 =================================================
@@ -230,9 +232,9 @@ A a == A a = a == a
  (decl_fun
   (funpat
    (infix
-    lhs: (pat_apply (pat_name (conid)) (pat_name (varid)))
+    lhs: (pat_apply (pat_name (constructor)) (pat_name (varid)))
     op: (varop (varsym))
-    rhs: (pat_apply (pat_name (conid)) (pat_name (varid)))))
+    rhs: (pat_apply (pat_name (constructor)) (pat_name (varid)))))
   (funrhs
    (equals)
    (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_name (varid))))))
@@ -268,7 +270,7 @@ A a = a
 
 ---
 
-(module (decl_fun (funpat (pat_apply (pat_name (conid)) (pat_name (varid)))) (funrhs (equals) (exp_name (varid)))))
+(module (decl_fun (funpat (pat_apply (pat_name (constructor)) (pat_name (varid)))) (funrhs (equals) (exp_name (varid)))))
 
 =================================================
 pat: parens con application funpat
@@ -280,7 +282,7 @@ pat: parens con application funpat
 
 (module
  (decl_fun
-  (funpat (pat_parens (pat_apply (pat_name (conid)) (pat_name (varid)))))
+  (funpat (pat_parens (pat_apply (pat_name (constructor)) (pat_name (varid)))))
   (funrhs (equals) (exp_name (varid)))))
 
 =========================================
@@ -294,7 +296,7 @@ a (A{}) = a
 
 (module
  (decl_fun
-  (funvar (varid) (pat_parens (pat_name (conid)) (pat_record)))
+  (funvar (varid) (pat_parens (pat_name (constructor)) (pat_record)))
   (funrhs (equals) (exp_name (varid)))))
 
 =================================================
@@ -317,22 +319,23 @@ a a | a < 1, a > 1 = A
      (comma)
      (guard (exp_infix (exp_name (varid)) (qvarop (varsym)) (exp_literal (integer)))))
     (equals)
-    (exp_name (conid)))
+    (exp_name (constructor)))
    (gdrhs
     (guards
      (guard
       (pattern_guard
        (pat_infix
         (pat_apply
-         (pat_name (conid))
-         (pat_parens (pat_apply (pat_name (conid)) (pat_name (conid)) (pat_record (fpat (dotdot))) (pat_wildcard))))
+         (pat_name (constructor))
+         (pat_parens
+          (pat_apply (pat_name (constructor)) (pat_name (constructor)) (pat_record (fpat (wildcard))) (pat_wildcard))))
         (consym)
         (pat_name (varid)))
        (larrow)
        (exp_name (varid)))))
     (equals)
-    (exp_name (conid)))
+    (exp_name (constructor)))
     (gdrhs
     (guards (guard (exp_name (varid))))
     (equals)
-    (exp_name (conid))))))
+    (exp_name (constructor))))))

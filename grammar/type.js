@@ -16,7 +16,7 @@ module.exports = {
 
   _forall_kw: _ => choice('forall', '∀'),
 
-  forall_dot: $ => choice('.', $.arrow),
+  forall_dot: $ => choice('.', $._arrow),
 
   _forall: $ => seq(
     $._forall_kw,
@@ -116,7 +116,7 @@ module.exports = {
     $._type,
   ),
 
-  _type_fun: $ => prec('function-type', seq($._type_infix, $.arrow, $._type)),
+  _type_fun: $ => prec('function-type', seq($._type_infix, $._arrow, $._type)),
 
   _type: $ => prec('type', choice(
     alias($._type_quantifiers, $.forall),
@@ -132,7 +132,7 @@ module.exports = {
 
   _simpletype_infix: $ => seq(
     $._tyvar,
-    field('name', alias($._tyconsym, $.tyconsym)),
+    field('name', alias($._tyconsym, $.type_operator)),
     $._tyvar,
   ),
 

@@ -8,13 +8,13 @@ type family A where
 ---
 
 (module
- (decl_tyfam
-  (tyfam_head (tyconid (conid)))
+ (type_family
+  (tyfam_head (type))
   (where)
   (tyfam_eq
-   (tyfam_pat (tyconid (conid)))
+   (tyfam_pat (type))
    (equals)
-   (type_name (tyconid (conid))))))
+   (type_name (type)))))
 
 =================================================
 family: closed, tyvars
@@ -26,11 +26,11 @@ type family A a b c where
 ---
 
 (module
- (decl_tyfam
-  (tyfam_head name: (tyconid (conid)) (tyvar) (tyvar) (tyvar))
+ (type_family
+  (tyfam_head name: (type) (tyvar) (tyvar) (tyvar))
   (where)
   (tyfam_eq
-   (tyfam_pat name: (tyconid (conid)) (type_name (tyvar)) (type_name (tyvar)) (type_name (tyvar)))
+   (tyfam_pat name: (type) (type_name (tyvar)) (type_name (tyvar)) (type_name (tyvar)))
    (equals)
    (type_apply (type_name (tyvar)) (type_name (tyvar))))))
 
@@ -44,16 +44,16 @@ type family A a b c where
 ---
 
 (module
- (decl_tyfam
-  (tyfam_head (tyconid (conid)) (tyvar) (tyvar) (tyvar))
+ (type_family
+  (tyfam_head (type) (tyvar) (tyvar) (tyvar))
   (where)
   (tyfam_eq
    (tyfam_pat
-    (tyconid (conid))
-    (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))
+    (type)
+    (type_parens (type_apply (type_name (type)) (type_name (tyvar))))
     (list_type (type_name (tyvar))))
    (equals)
-   (type_apply (type_name (tyvar)) (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))))))
+   (type_apply (type_name (tyvar)) (type_parens (type_apply (type_name (type)) (type_name (tyvar))))))))
 
 =================================================
 family: closed, signature
@@ -65,17 +65,16 @@ type family A a :: (k -> *) -> 'Just k where
 ---
 
 (module
- (decl_tyfam
-  (tyfam_head (tyconid (conid)) (tyvar))
+ (type_family
+  (tyfam_head (type) (tyvar))
   (tyfam_sig
    (annotation)
    (fun
-    (type_parens (fun (type_name (tyvar)) (arrow) (star)))
-    (arrow)
-    (type_apply (type_name (promoted (tyconid (conid)))) (type_name (tyvar)))))
+    (type_parens (fun (type_name (tyvar)) (star)))
+    (type_apply (type_name (promoted (type))) (type_name (tyvar)))))
 (where)
   (tyfam_eq
-   (tyfam_pat (tyconid (conid)) (type_name (tyvar)))
+   (tyfam_pat (type) (type_name (tyvar)))
    (equals)
    (type_name (tyvar)))))
 
@@ -89,19 +88,17 @@ type family A (a :: ([k] -> *) -> k) where
 ---
 
 (module
- (decl_tyfam
+ (type_family
   (tyfam_head
-   (tyconid
-    (conid))
+   (type)
    (annotated_tyvar
     (tyvar)
     (annotation)
     (fun
-     (type_parens (fun (list_type (type_name (tyvar))) (arrow) (star)))
-     (arrow)
+     (type_parens (fun (list_type (type_name (tyvar))) (star)))
      (type_name (tyvar)))))
   (where)
-  (tyfam_eq (tyfam_pat (tyconid (conid)) (type_name (tyvar))) (equals) (type_name (tyvar)))))
+  (tyfam_eq (tyfam_pat (type) (type_name (tyvar))) (equals) (type_name (tyvar)))))
 
 =================================================
 family: open
@@ -114,26 +111,26 @@ type instance A (A A) = A
 ---
 
 (module
- (decl_tyfam
+ (type_family
   (tyfam_head
-   (tyconid (conid))
+   (type)
    (annotated_tyvar (tyvar) (annotation) (type_name (tyvar))))
   (tyfam_sig
    (annotation)
    (star)))
- (decl_tyinst
-  (type_name (tyconid (conid)))
-  (list_type (type_name (tyconid (conid))))
+ (type_instance
+  (type_name (type))
+  (list_type (type_name (type)))
   (equals)
-  (type_name (tyconid (conid))))
- (decl_tyinst
-  (type_name (tyconid (conid)))
+  (type_name (type)))
+ (type_instance
+  (type_name (type))
   (type_parens
    (type_apply
-    (type_name (tyconid (conid)))
-    (type_name (tyconid (conid)))))
+    (type_name (type))
+    (type_name (type))))
   (equals)
-  (type_name (tyconid (conid)))))
+  (type_name (type))))
 
 =================================================
 family: data family
@@ -144,12 +141,12 @@ data family A a (a :: [a]) :: Type -> *
 ---
 
 (module
- (decl_datafam
-  (tyconid (conid))
+ (data_family
+  (type)
   (tyvar)
   (annotated_tyvar (tyvar) (annotation) (list_type (type_name (tyvar))))
   (annotation)
-  (fun (type_name (tyconid (conid))) (arrow) (star))))
+  (fun (type_name (type)) (star))))
 
 =================================================
 family: data instance adt
@@ -163,19 +160,19 @@ data instance ∀ a . A a A =
 ---
 
 (module
- (decl_datainst
+ (data_instance
   (forall (tyvar) (forall_dot))
   (type_apply
-   (type_name (tyconid (conid)))
+   (type_name (type))
    (type_name (tyvar))
-   (type_name (tyconid (conid))))
+   (type_name (type)))
   (equals)
   (constrs
-   (constr (constr_id (conid)) (type_name (tyvar)) (type_name (tyconid (conid))) (type_name (tyvar)))
+   (constr (constr_id (constructor)) (type_name (tyvar)) (type_name (type)) (type_name (tyvar)))
    (bar)
    (constr_record
-    (constr_id (conid))
-    (record_fields (field (field_id (varid)) (annotation) (type_name (tyconid (conid)))))))))
+    (constr_id (constructor))
+    (record_fields (field (field_id (varid)) (annotation) (type_name (type))))))))
 
 =================================================
 family: data instance gadt
@@ -188,16 +185,16 @@ data instance A a where
 ---
 
 (module
- (decl_datainst
+ (data_instance
   (type_apply
-   (type_name (tyconid (conid)))
+   (type_name (type))
    (type_name (tyvar)))
   (where)
   (gadt_constr
-   (conid)
+   (constructor)
    (annotation)
-   (fun (type_name (tyconid (conid))) (arrow) (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))
-  (deriving (tyconid (conid)) (comma) (tyconid (conid)))))
+   (fun (type_name (type)) (type_apply (type_name (type)) (type_name (tyvar)))))
+  (deriving (type) (comma) (type))))
 
 =================================================
 family: data instance newtype
@@ -208,11 +205,11 @@ newtype instance A a a = A a deriving A
 ---
 
 (module
- (decl_datainst
+ (data_instance
   (type_apply
-   (type_name (tyconid (conid)))
+   (type_name (type))
    (type_name (tyvar))
    (type_name (tyvar)))
   (equals)
-  (constr_newtype (constr_id (conid)) (type_name (tyvar)))
-  (deriving (tyconid (conid)))))
+  (constr_newtype (constr_id (constructor)) (type_name (tyvar)))
+  (deriving (type))))

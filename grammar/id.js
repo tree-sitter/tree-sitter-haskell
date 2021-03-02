@@ -29,17 +29,17 @@ module.exports = {
   // ------------------------------------------------------------------------
 
   _conid: _ => /[A-Z](\w|')*#?/,
-  conid: $ => $._conid,
-  qconid: $ => qualified($, $.conid),
-  _qconid: $ => choice($.qconid, $.conid),
+  constructor: $ => $._conid,
+  qualified_constructor: $ => qualified($, $.constructor),
+  _qconid: $ => choice($.qualified_constructor, $.constructor),
 
   consym: $ => $._consym,
   qconsym: $ => qualified($, $.consym),
   _qconsym: $ => choice($.qconsym, $.consym),
 
-  _con: $ => choice($.conid, parens($.consym)),
+  _con: $ => choice($.constructor, parens($.consym)),
   _qcon: $ => choice($._qconid, parens($._qconsym)),
-  _conop: $ => choice($.consym, ticked($.conid)),
+  _conop: $ => choice($.consym, ticked($.constructor)),
   _qconop: $ => choice($._qconsym, ticked($._qconid)),
   _op: $ => choice($.varop, $._conop),
   _qop: $ => choice($.qvarop, $._qconop),
@@ -61,16 +61,16 @@ module.exports = {
   ),
 
   // ------------------------------------------------------------------------
-  // tyconid
+  // tycon
   // ------------------------------------------------------------------------
 
-  tyconid: $ => $.conid,
-  qtycon: $ => qualified($, $.tyconid),
-  _qtycon: $ => choice($.qtycon, $.tyconid),
+  _tycon: $ => alias($.constructor, $.type),
+  qualified_type: $ => qualified($, $._tycon),
+  _qtycon: $ => choice($.qualified_type, $._tycon),
 
-  tyconsym: $ => $._tyconsym,
-  qtyconsym: $ => qualified($, $.tyconsym),
-  _qtyconsym: $ => choice($.qtyconsym, $.tyconsym),
+  type_operator: $ => $._tyconsym,
+  qualified_type_operator: $ => qualified($, $.type_operator),
+  _qtyconsym: $ => choice($.qualified_type_operator, $.type_operator),
   _qatyconsym: $ => parens($._qtyconsym),
 
   _ticked_qtycon: $ => ticked($._qtycon),
@@ -83,7 +83,7 @@ module.exports = {
 
   con_unit: _ => prec('con_unit', parens()),
   con_list: _ => brackets(),
-  tycon_arrow: $ => parens($.arrow),
+  tycon_arrow: $ => parens($._arrow),
   con_tuple: $ => parens(repeat1($.comma)),
 
   type_literal: $ => choice(

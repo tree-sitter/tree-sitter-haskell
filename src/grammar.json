@@ -83,64 +83,129 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "decl_type"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_type"
+          },
+          "named": true,
+          "value": "type_alias"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_tyfam"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_tyfam"
+          },
+          "named": true,
+          "value": "type_family"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_tyinst"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_tyinst"
+          },
+          "named": true,
+          "value": "type_instance"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_adt"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_adt"
+          },
+          "named": true,
+          "value": "adt"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_newtype"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_newtype"
+          },
+          "named": true,
+          "value": "newtype"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_datafam"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_datafam"
+          },
+          "named": true,
+          "value": "data_family"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_datainst"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_datainst"
+          },
+          "named": true,
+          "value": "data_instance"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_import"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_import"
+          },
+          "named": true,
+          "value": "import"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_class"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_class"
+          },
+          "named": true,
+          "value": "class"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_instance"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_instance"
+          },
+          "named": true,
+          "value": "instance"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_default"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_default"
+          },
+          "named": true,
+          "value": "default_declaration"
         },
         {
           "type": "SYMBOL",
           "name": "_decl_foreign"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_deriving"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_deriving"
+          },
+          "named": true,
+          "value": "deriving_declaration"
         },
         {
           "type": "SYMBOL",
           "name": "_decl"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_pattern"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_pattern"
+          },
+          "named": true,
+          "value": "pattern_synonym"
         },
         {
           "type": "SYMBOL",
@@ -340,15 +405,15 @@
       "type": "STRING",
       "value": ";"
     },
-    "wildcard": {
+    "_wildcard": {
       "type": "STRING",
       "value": "_"
     },
-    "dotdot": {
+    "_dotdot": {
       "type": "STRING",
       "value": ".."
     },
-    "arrow": {
+    "_arrow": {
       "type": "STRING",
       "value": "->"
     },
@@ -567,11 +632,11 @@
       "type": "PATTERN",
       "value": "[A-Z](\\w|')*#?"
     },
-    "conid": {
+    "constructor": {
       "type": "SYMBOL",
       "name": "_conid"
     },
-    "qconid": {
+    "qualified_constructor": {
       "type": "SEQ",
       "members": [
         {
@@ -580,7 +645,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "conid"
+          "name": "constructor"
         }
       ]
     },
@@ -589,11 +654,11 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "qconid"
+          "name": "qualified_constructor"
         },
         {
           "type": "SYMBOL",
-          "name": "conid"
+          "name": "constructor"
         }
       ]
     },
@@ -632,7 +697,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "conid"
+          "name": "constructor"
         },
         {
           "type": "SEQ",
@@ -695,7 +760,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "conid"
+              "name": "constructor"
             },
             {
               "type": "STRING",
@@ -800,11 +865,16 @@
         }
       ]
     },
-    "tyconid": {
-      "type": "SYMBOL",
-      "name": "conid"
+    "_tycon": {
+      "type": "ALIAS",
+      "content": {
+        "type": "SYMBOL",
+        "name": "constructor"
+      },
+      "named": true,
+      "value": "type"
     },
-    "qtycon": {
+    "qualified_type": {
       "type": "SEQ",
       "members": [
         {
@@ -813,7 +883,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "tyconid"
+          "name": "_tycon"
         }
       ]
     },
@@ -822,19 +892,19 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "qtycon"
+          "name": "qualified_type"
         },
         {
           "type": "SYMBOL",
-          "name": "tyconid"
+          "name": "_tycon"
         }
       ]
     },
-    "tyconsym": {
+    "type_operator": {
       "type": "SYMBOL",
       "name": "_tyconsym"
     },
-    "qtyconsym": {
+    "qualified_type_operator": {
       "type": "SEQ",
       "members": [
         {
@@ -843,7 +913,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "tyconsym"
+          "name": "type_operator"
         }
       ]
     },
@@ -852,11 +922,11 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "qtyconsym"
+          "name": "qualified_type_operator"
         },
         {
           "type": "SYMBOL",
-          "name": "tyconsym"
+          "name": "type_operator"
         }
       ]
     },
@@ -982,7 +1052,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "arrow"
+          "name": "_arrow"
         },
         {
           "type": "STRING",
@@ -1165,7 +1235,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "arrow"
+          "name": "_arrow"
         }
       ]
     },
@@ -1658,7 +1728,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "arrow"
+            "name": "_arrow"
           },
           {
             "type": "SYMBOL",
@@ -1741,7 +1811,7 @@
               "name": "_tyconsym"
             },
             "named": true,
-            "value": "tyconsym"
+            "value": "type_operator"
           }
         },
         {
@@ -2578,8 +2648,13 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "dotdot"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_dotdot"
+          },
+          "named": true,
+          "value": "wildcard"
         },
         {
           "type": "SEQ",
@@ -2634,7 +2709,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "arrow"
+          "name": "_arrow"
         },
         {
           "type": "SYMBOL",
@@ -2851,7 +2926,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "arrow"
+          "name": "_arrow"
         },
         {
           "type": "SYMBOL",
@@ -2867,7 +2942,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "arrow"
+              "name": "_arrow"
             },
             {
               "type": "SYMBOL",
@@ -3784,8 +3859,13 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "dotdot"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_dotdot"
+          },
+          "named": true,
+          "value": "wildcard"
         },
         {
           "type": "SEQ",
@@ -3928,7 +4008,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "arrow"
+          "name": "_arrow"
         },
         {
           "type": "SYMBOL",
@@ -4118,7 +4198,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "wildcard"
+            "name": "_wildcard"
           },
           "named": true,
           "value": "pat_wildcard"
@@ -4274,8 +4354,13 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "dotdot"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_dotdot"
+                  },
+                  "named": true,
+                  "value": "all_names"
                 },
                 {
                   "type": "SEQ",
@@ -4514,7 +4599,7 @@
     },
     "modid": {
       "type": "SYMBOL",
-      "name": "conid"
+      "name": "constructor"
     },
     "_qualifying_module": {
       "type": "REPEAT1",
@@ -4585,8 +4670,13 @@
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "dotdot"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_dotdot"
+                  },
+                  "named": true,
+                  "value": "all_names"
                 },
                 {
                   "type": "CHOICE",
@@ -5405,7 +5495,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "arrow"
+          "name": "_arrow"
         },
         {
           "type": "SYMBOL",
@@ -5487,7 +5577,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "arrow"
+                  "name": "_arrow"
                 },
                 {
                   "type": "SYMBOL",
@@ -6073,7 +6163,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "arrow"
+          "name": "_arrow"
         },
         {
           "type": "REPEAT1",
@@ -7357,12 +7447,22 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "decl_foreign_import"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_foreign_import"
+          },
+          "named": true,
+          "value": "foreign_import"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_foreign_export"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "decl_foreign_export"
+          },
+          "named": true,
+          "value": "foreign_export"
         }
       ]
     },
@@ -7371,7 +7471,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "conid"
+          "name": "constructor"
         },
         {
           "type": "SYMBOL",
@@ -7763,7 +7863,7 @@
       "_literal"
     ],
     [
-      "tyconid",
+      "type_name",
       "constr_id"
     ],
     [
@@ -7882,6 +7982,7 @@
     "_op",
     "_gcon_literal",
     "_gcon",
+    "_tycon",
     "_qtycon",
     "_qtyconsym",
     "_tyconops",

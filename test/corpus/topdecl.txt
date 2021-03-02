@@ -8,8 +8,8 @@ default (A, A)
 ---
 
 (module
- (decl_default)
- (decl_default (type_name (tyconid (conid))) (comma) (type_name (tyconid (conid)))))
+ (default_declaration)
+ (default_declaration (type_name (type)) (comma) (type_name (type))))
 
 =========================================
 topdecl: standalone deriving
@@ -23,26 +23,26 @@ deriving instance (A a, A a a) => A (A a)
 ---
 
 (module
- (decl_deriving (instance_head
-   (class_name (tyconid (conid)))
-   (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))))
- (decl_deriving
+ (deriving_declaration (instance_head
+   (class_name (type))
+   (type_parens (type_apply (type_name (type)) (type_name (tyvar))))))
+ (deriving_declaration
   (instance_head
    (type_infix
-    (type_name (tyconid (conid)))
-    (tyconop (tyconsym))
-    (type_name (tyconid (conid))))))
- (decl_deriving
-  (context (constraint (class_name (tyconid (conid))) (type_name (tyvar))) (carrow))
+    (type_name (type))
+    (tyconop (type_operator))
+    (type_name (type)))))
+ (deriving_declaration
+  (context (constraint (class_name (type)) (type_name (tyvar))) (carrow))
   (instance_head
-   (class_name (tyconid (conid)))
-   (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar))))))
- (decl_deriving
+   (class_name (type))
+   (type_parens (type_apply (type_name (type)) (type_name (tyvar))))))
+ (deriving_declaration
   (context
-   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (tyvar)))
    (comma)
-   (constraint (class_name (tyconid (conid))) (type_name (tyvar)) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (tyvar)) (type_name (tyvar)))
    (carrow))
   (instance_head
-   (class_name (tyconid (conid)))
-   (type_parens (type_apply (type_name (tyconid (conid))) (type_name (tyvar)))))))
+   (class_name (type))
+   (type_parens (type_apply (type_name (type)) (type_name (tyvar)))))))

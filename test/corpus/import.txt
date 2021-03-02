@@ -8,7 +8,7 @@ import A
 
 ---
 
-(module (modid (conid)) (where) (decl_import (modid (conid))))
+(module (modid (constructor)) (where) (import (modid (constructor))))
 
 =========================================
 import: empty single-segment module
@@ -18,7 +18,7 @@ import A ()
 
 ---
 
-(module (decl_import (modid (conid)) (import_list)))
+(module (import (modid (constructor)) (import_list)))
 
 =========================================
 import: single-segment module with alias
@@ -28,7 +28,7 @@ import A as A
 
 ---
 
-(module (decl_import (modid (conid)) (modid (conid))))
+(module (import (modid (constructor)) (modid (constructor))))
 
 =========================================
 import: multi-segment module
@@ -38,7 +38,7 @@ import A.A
 
 ---
 
-(module (decl_import (qmodid (modid (conid)) (modid (conid)))))
+(module (import (qmodid (modid (constructor)) (modid (constructor)))))
 
 =========================================
 import: var only
@@ -48,7 +48,7 @@ import Aaa.A (aa)
 
 ---
 
-(module (decl_import (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (varid)))))
+(module (import (qmodid (modid (constructor)) (modid (constructor))) (import_list (import_item (varid)))))
 
 =========================================
 import: con only
@@ -58,7 +58,7 @@ import Aaa.A (A)
 
 ---
 
-(module (decl_import (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (conid)))))
+(module (import (qmodid (modid (constructor)) (modid (constructor))) (import_list (import_item (constructor)))))
 
 =========================================
 import: con with constructor
@@ -69,9 +69,9 @@ import Aaa.A (A(A))
 ---
 
 (module
- (decl_import
-  (qmodid (modid (conid)) (modid (conid)))
-  (import_list (import_item (conid) (import_con_names (conid))))))
+ (import
+  (qmodid (modid (constructor)) (modid (constructor)))
+  (import_list (import_item (constructor) (import_con_names (constructor))))))
 
 =========================================
 import: con with var
@@ -82,9 +82,9 @@ import Aaa.A (A(aa))
 ---
 
 (module
- (decl_import
-  (qmodid (modid (conid)) (modid (conid)))
-  (import_list (import_item (conid) (import_con_names (varid))))))
+ (import
+  (qmodid (modid (constructor)) (modid (constructor)))
+  (import_list (import_item (constructor) (import_con_names (varid))))))
 
 =========================================
 import: con with symbolic var
@@ -95,9 +95,9 @@ import Aaa.A (A((<>)))
 ---
 
 (module
- (decl_import
-  (qmodid (modid (conid)) (modid (conid)))
-  (import_list (import_item (conid) (import_con_names (varsym))))))
+ (import
+  (qmodid (modid (constructor)) (modid (constructor)))
+  (import_list (import_item (constructor) (import_con_names (varsym))))))
 
 =========================================
 import: con dotdot
@@ -108,9 +108,9 @@ import Aaa.A (A(..))
 ---
 
 (module
- (decl_import
-  (qmodid (modid (conid)) (modid (conid)))
-  (import_list (import_item (conid) (import_con_names (dotdot))))))
+ (import
+  (qmodid (modid (constructor)) (modid (constructor)))
+  (import_list (import_item (constructor) (import_con_names (all_names))))))
 
 =========================================
 import: qualified basic
@@ -125,13 +125,13 @@ import qualified Aaa.A hiding (A, a)
 ---
 
 (module
- (decl_import (qmodid (modid (conid)) (modid (conid))))
- (decl_import (modid (conid)) (import_list))
- (decl_import (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (varid))))
- (decl_import (qmodid (modid (conid)) (modid (conid))) (import_list (import_item (varid))))
- (decl_import
-  (qmodid (modid (conid)) (modid (conid)))
-  (import_list (import_item (conid)) (comma) (import_item (varid)))))
+ (import (qmodid (modid (constructor)) (modid (constructor))))
+ (import (modid (constructor)) (import_list))
+ (import (qmodid (modid (constructor)) (modid (constructor))) (import_list (import_item (varid))))
+ (import (qmodid (modid (constructor)) (modid (constructor))) (import_list (import_item (varid))))
+ (import
+  (qmodid (modid (constructor)) (modid (constructor)))
+  (import_list (import_item (constructor)) (comma) (import_item (varid)))))
 
 =========================================
 import: qualified as
@@ -149,17 +149,17 @@ import qualified Aaa.A as A hiding (a)
 ---
 
 (module
- (modid (conid))
+ (modid (constructor))
  (where)
- (decl_import (qmodid (modid (conid)) (modid (conid))) (modid (conid)))
- (decl_import
-  (qmodid (modid (conid)) (modid (conid)))
-  (modid (conid))
-  (import_list (import_item (conid) (import_con_names (conid) (comma) (varid))) (comma) (import_item (varid))))
- (decl_import (modid (conid)) (modid (conid)) (import_list))
- (decl_import (qmodid (modid (conid)) (modid (conid))) (modid (conid)))
- (decl_import (qmodid (modid (conid)) (modid (conid))) (qmodid (modid (conid)) (modid (conid))))
- (decl_import (qmodid (modid (conid)) (modid (conid))) (modid (conid)) (import_list (import_item (varid)))))
+ (import (qmodid (modid (constructor)) (modid (constructor))) (modid (constructor)))
+ (import
+  (qmodid (modid (constructor)) (modid (constructor)))
+  (modid (constructor))
+  (import_list (import_item (constructor) (import_con_names (constructor) (comma) (varid))) (comma) (import_item (varid))))
+ (import (modid (constructor)) (modid (constructor)) (import_list))
+ (import (qmodid (modid (constructor)) (modid (constructor))) (modid (constructor)))
+ (import (qmodid (modid (constructor)) (modid (constructor))) (qmodid (modid (constructor)) (modid (constructor))))
+ (import (qmodid (modid (constructor)) (modid (constructor))) (modid (constructor)) (import_list (import_item (varid)))))
 
 =========================================
 import: prim
@@ -170,9 +170,9 @@ import Aaa.Aa (Aa#, aa#)
 ---
 
 (module
- (decl_import
-  (qmodid (modid (conid)) (modid (conid)))
-  (import_list (import_item (conid)) (comma) (import_item (varid)))))
+ (import
+  (qmodid (modid (constructor)) (modid (constructor)))
+  (import_list (import_item (constructor)) (comma) (import_item (varid)))))
 
 =========================================
 import: package
@@ -184,12 +184,12 @@ import qualified "a" Aaa.Aa as Aa (Aa(a))
 ---
 
 (module
- (decl_import (import_package) (qmodid (modid (conid)) (modid (conid))))
- (decl_import
+ (import (import_package) (qmodid (modid (constructor)) (modid (constructor))))
+ (import
   (import_package)
-  (qmodid (modid (conid)) (modid (conid)))
-  (modid (conid))
-  (import_list (import_item (conid) (import_con_names (varid))))))
+  (qmodid (modid (constructor)) (modid (constructor)))
+  (modid (constructor))
+  (import_list (import_item (constructor) (import_con_names (varid))))))
 
 =================================================
 import: consym
@@ -199,7 +199,7 @@ import A ((:<|>)((:<|>)))
 
 ---
 
-(module (decl_import (modid (conid)) (import_list (import_item (consym) (import_con_names (consym))))))
+(module (import (modid (constructor)) (import_list (import_item (consym) (import_con_names (consym))))))
 
 =================================================
 import: varsym
@@ -209,7 +209,7 @@ import A ((<=<))
 
 ---
 
-(module (decl_import (modid (conid)) (import_list (import_item (varsym)))))
+(module (import (modid (constructor)) (import_list (import_item (varsym)))))
 
 =================================================
 import: pattern/type
@@ -220,9 +220,9 @@ import A (pattern A, type A)
 ---
 
 (module
- (decl_import
-  (modid (conid))
+ (import
+  (modid (constructor))
   (import_list
-   (import_item (namespace) (conid))
+   (import_item (namespace) (constructor))
    (comma)
-   (import_item (namespace) (conid)))))
+   (import_item (namespace) (constructor)))))

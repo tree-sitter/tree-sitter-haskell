@@ -6,7 +6,7 @@ class A a
 
 ---
 
-(module (decl_class (class_head class: (class_name (tyconid (conid))) (type_name (tyvar)))))
+(module (class (class_head class: (class_name (type)) (type_name (tyvar)))))
 
 =========================================
 class: context variants
@@ -18,18 +18,18 @@ class (A a, A a) => A a
 ---
 
 (module
- (decl_class
+ (class
   (context
-   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (tyvar)))
    (carrow))
-  (class_head (class_name (tyconid (conid))) (type_name (tyvar))))
- (decl_class
+  (class_head (class_name (type)) (type_name (tyvar))))
+ (class
   (context
-   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (tyvar)))
    (comma)
-   (constraint (class_name (tyconid (conid))) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (tyvar)))
    (carrow))
-  (class_head (class_name (tyconid (conid))) (type_name (tyvar)))))
+  (class_head (class_name (type)) (type_name (tyvar)))))
 
 =========================================
 class: method with context
@@ -40,17 +40,17 @@ class A a where a :: A a => a -> a
 ---
 
 (module
- (decl_class
-  (class_head class: (class_name (tyconid (conid))) (type_name (tyvar)))
+ (class
+  (class_head class: (class_name (type)) (type_name (tyvar)))
   (class_body
    (where)
    (decl_sig
     name: (varid)
     (annotation)
     type: (context
-     (constraint class: (class_name (tyconid (conid))) (type_name (tyvar)))
+     (constraint class: (class_name (type)) (type_name (tyvar)))
      (carrow)
-     (fun (type_name (tyvar)) (arrow) (type_name (tyvar))))))))
+     (fun (type_name (tyvar)) (type_name (tyvar))))))))
 
 =========================================
 class: braces
@@ -64,8 +64,8 @@ class Foo a where {
 ---
 
 (module
- (decl_class
-  (class_head (class_name (tyconid (conid))) (type_name (tyvar)))
+ (class
+  (class_head (class_name (type)) (type_name (tyvar)))
   (class_body
    (where)
    (decl_sig (varid) (annotation) (type_name (tyvar)))
@@ -90,12 +90,12 @@ class A where
 ---
 
 (module
- (decl_class
-  (class_head (class_name (tyconid (conid))))
+ (class
+  (class_head (class_name (type)))
   (class_body
    (where)
    (decl_fixity (varop (varid)))
-   (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
+   (decl_sig (varid) (annotation) (type_name (type)))
    (decl_fixity (integer) (varop (varid)))
    (decl_fun (funvar (varid)) (funrhs (equals) (exp_name (varid))))
    (decl_fixity (integer) (varop (varid)) (comma) (varop (varid)) (comma) (varop (varid)))
@@ -115,8 +115,8 @@ class A where
 ---
 
 (module
- (decl_class
-  (class_head (class_name (tyconid (conid))))
+ (class
+  (class_head (class_name (type)))
   (class_body
    (where)
    (decl_sig
@@ -138,7 +138,7 @@ class A a a a
 
 ---
 
-(module (decl_class (class_head (class_name (tyconid (conid))) (type_name (tyvar)) (type_name (tyvar)) (type_name (tyvar)))))
+(module (class (class_head (class_name (type)) (type_name (tyvar)) (type_name (tyvar)) (type_name (tyvar)))))
 
 =========================================
 class: default signature
@@ -151,12 +151,12 @@ class A where
 ---
 
 (module
- (decl_class
-  (class_head (class_name (tyconid (conid))))
+ (class
+  (class_head (class_name (type)))
   (class_body
    (where)
-   (decl_sig (varid) (annotation) (type_name (tyconid (conid))))
-   (default_signature (decl_sig (varid) (annotation) (type_name (tyconid (conid))))))))
+   (decl_sig (varid) (annotation) (type_name (type)))
+   (default_signature (decl_sig (varid) (annotation) (type_name (type)))))))
 
 =========================================
 class: tyvar kind
@@ -167,14 +167,14 @@ class A (a :: [*] -> k)
 ---
 
 (module
- (decl_class
+ (class
   (class_head
-   (class_name (tyconid (conid)))
+   (class_name (type))
    (type_name
     (annotated_tyvar
      (tyvar)
      (annotation)
-     (fun (list_type (star)) (arrow) (type_name (tyvar))))))))
+     (fun (list_type (star)) (type_name (tyvar))))))))
 
 =========================================
 class: associated family
@@ -187,12 +187,12 @@ class A a where
 ---
 
 (module
- (decl_class
-  (class_head (class_name (tyconid (conid))) (type_name (tyvar)))
+ (class
+  (class_head (class_name (type)) (type_name (tyvar)))
   (class_body
    (where)
-   (decl_type_sig (tyconid (conid)) (tyvar) (annotation) (type_name (tyvar)))
-   (decl_type_sig (tyconid (conid)) (tyvar) (annotation) (type_name (tyvar))))))
+   (decl_type_sig (type) (tyvar) (annotation) (type_name (tyvar)))
+   (decl_type_sig (type) (tyvar) (annotation) (type_name (tyvar))))))
 
 =========================================
 class: associated data
@@ -205,16 +205,16 @@ class A a where
 ---
 
 (module
- (decl_class
-  (class_head (class_name (tyconid (conid))) (type_name (tyvar)))
+ (class
+  (class_head (class_name (type)) (type_name (tyvar)))
   (class_body
    (where)
-   (class_datafam (tyconid (conid)) (tyvar))
+   (class_datafam (type) (tyvar))
    (class_datafam
-    (tyconid (conid))
+    (type)
     (tyvar)
     (annotation)
-    (fun (star) (arrow) (type_name (tyconid (conid))))))))
+    (fun (star) (type_name (type)))))))
 
 =========================================
 class: fundeps
@@ -225,12 +225,12 @@ class A | a -> a a, a a -> a
 ---
 
 (module
- (decl_class
-  (class_head class: (class_name (tyconid (conid))))
+ (class
+  (class_head class: (class_name (type)))
   (fundeps
-   (fundep (tyvar) (arrow) (tyvar) (tyvar))
+   (fundep (tyvar) (tyvar) (tyvar))
    (comma)
-   (fundep (tyvar) (tyvar) (arrow) (tyvar)))))
+   (fundep (tyvar) (tyvar) (tyvar)))))
 
 =========================================
 class: infix operator name
@@ -241,9 +241,9 @@ class a ++ b
 ---
 
 (module
- (decl_class
+ (class
   (class_head
    (type_infix
     left: (type_name (tyvar))
-    op: (tyconop (tyconsym))
+    op: (tyconop (type_operator))
     right: (type_name (tyvar))))))
