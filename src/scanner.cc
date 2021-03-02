@@ -211,9 +211,9 @@ using syms::Sym;
 struct State {
   TSLexer *lexer;
   const bool *symbols;
-  vector<vector<uint16_t>> & indents;
+  vector<uint16_t> & indents;
 
-  State(TSLexer *l, const bool *vs, vector<vector<uint16_t>> & is):
+  State(TSLexer *l, const bool *vs, vector<uint16_t> & is):
     lexer(l),
     symbols(vs),
     indents(is)
@@ -221,9 +221,9 @@ struct State {
 };
 
 const string format_indents(const State & state) {
-  if (state.indents.empty() || state.indents.back().empty()) return "empty";
+  if (state.indents.empty()) return "empty";
   string s;
-  for (auto i : state.indents.back()) {
+  for (auto i : state.indents) {
     if (!s.empty()) s += "-";
     s += std::to_string(i);
   }
@@ -264,13 +264,6 @@ void advance(State & state) { state.lexer->advance(state.lexer, false); }
 void skip(State & state) { state.lexer->advance(state.lexer, true); }
 
 void mark(State & state) { state.lexer->mark_end(state.lexer); }
-
-void cpp_push(State & state) {
-  if (state.indents.empty()) state.indents.push_back(vector<uint16_t>());
-  else (state.indents.push_back(state.indents.back()));
-}
-
-void cpp_pop(State & state) { if (!state.indents.empty()) state.indents.pop_back(); }
 
 }
 
@@ -419,16 +412,13 @@ Condition token(const string & s) { return seq(s) & token_end; }
  * Require that the stack of layout indentations is not empty.
  * This is mostly used for safety.
  */
-const bool indent_exists(const State & state) {
-  if (state.indents.empty()) state.indents.push_back(vector<uint16_t>());
-  return !state.indents.back().empty();
-};
+const bool indent_exists(const State & state) { return !state.indents.empty(); };
 
 /**
  * Helper function for executing a condition callback with the current indentation.
  */
 Condition check_indent(function<bool(uint16_t)> f) {
-  return [=](auto state) { return indent_exists(state) && f(state.indents.back().back()); };
+  return [=](auto state) { return indent_exists(state) && f(state.indents.back()); };
 }
 
 /**
@@ -852,7 +842,7 @@ Modifier peekws = iff(cond::peekws);
  */
 Parser push(uint16_t ind) { return effect([=](auto state) {
   logger << "push: " << ind << nl;
-  if (!state.indents.empty()) state.indents.back().push_back(ind);
+  state.indents.push_back(ind);
 }); }
 
 /**
@@ -861,7 +851,7 @@ Parser push(uint16_t ind) { return effect([=](auto state) {
 Parser pop =
   iff(cond::indent_exists)(effect([](auto state) {
     logger("pop");
-    if(cond::indent_exists(state)) state.indents.back().pop_back();
+    if(cond::indent_exists(state)) state.indents.pop_back();
   }));
 
 /**
@@ -965,26 +955,6 @@ Parser cpp_consume =
       consume('\\')(parser::advance + cpp_consume);
     return p(state);
   };
-
-/**
- * Parse a cpp directive.
- *
- * `#else` directives can reset the parse tree to a previous node. There is no functionality in the API that allows for
- * this to be compensated for, so it will result in corruption.
- *
- * However, the indent stack will be saved and restored here.
- */
-Parser cpp =
-  consume('#')(
-    seq("if")(effect(state::cpp_push)) +
-    consume('e')(
-      peek('l')(effect(state::cpp_pop) + effect(state::cpp_push)) +
-      seq("ndif")(effect(state::cpp_pop))
-    ) +
-    cpp_consume +
-    mark +
-    finish(Sym::cpp, "cpp")
-  );
 
 /**
  * Parse a cpp directive.
@@ -1438,14 +1408,14 @@ extern "C" {
 /**
  * This function allocates the persistent state of the parser that is passed into the other API functions.
  */
-void *tree_sitter_haskell_external_scanner_create() { return new vector<vector<uint16_t>>(); }
+void *tree_sitter_haskell_external_scanner_create() { return new vector<uint16_t>(); }
 
 /**
  * Main logic entry point.
  * Since the state is a singular vector, it can just be cast and used directly.
  */
 bool tree_sitter_haskell_external_scanner_scan(void *payload, TSLexer *lexer, const bool *syms) {
-  auto *indents = static_cast<vector<vector<uint16_t>> *>(payload);
+  auto *indents = static_cast<vector<uint16_t> *>(payload);
   auto state = State(lexer, syms, *indents);
   logger(state);
   return eval::eval(logic::all, state);
@@ -1457,15 +1427,9 @@ bool tree_sitter_haskell_external_scanner_scan(void *payload, TSLexer *lexer, co
  * copied.
  */
 unsigned tree_sitter_haskell_external_scanner_serialize(void *payload, char *buffer) {
-  auto *state = static_cast<vector<vector<uint16_t>> *>(payload);
-  size_t i = 0;
-  buffer[i++] = state->size();
-  for (auto indents : *state) {
-    buffer[i++] = indents.size();
-    copy(indents.begin(), indents.end(), buffer + i);
-    i += indents.size();
-  }
-  return i;
+  auto *state = static_cast<vector<uint16_t> *>(payload);
+    copy(state->begin(), state->end(), buffer);
+  return state->size();
 }
 
 /**
@@ -1474,26 +1438,16 @@ unsigned tree_sitter_haskell_external_scanner_serialize(void *payload, char *buf
  * (e.g. when doing incremental parsing).
  */
 void tree_sitter_haskell_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
-  auto *state = static_cast<vector<vector<uint16_t>> *>(payload);
+  auto *state = static_cast<vector<uint16_t> *>(payload);
   state->clear();
-  size_t i = 0;
-  if (length > 0) {
-    auto count = static_cast<size_t>(buffer[i++]);
-    for (auto j = 0; j < count; j++) {
-      size_t k = buffer[i++];
-      vector<uint16_t> indents;
-      copy(buffer + i, buffer + i + k, back_inserter(indents));
-      state->push_back(indents);
-      i += k;
-    }
-  }
+  copy(buffer, buffer + length, back_inserter(*state));
 }
 
 /**
  * Destroy the state.
  */
 void tree_sitter_haskell_external_scanner_destroy(void *payload) {
-  delete static_cast<vector<vector<uint16_t>> *>(payload);
+  delete static_cast<vector<uint16_t> *>(payload);
 }
 
 }
