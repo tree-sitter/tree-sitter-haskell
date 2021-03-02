@@ -630,7 +630,7 @@ a :: a
   (funrhs
    (equals)
    (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_do (stmt (exp_name (variable)))))))))
- (decl_sig (variable) (annotation) (type_name (tyvar))))
+ (decl_sig (variable) (annotation) (type_name (type_variable))))
 
 =================================================
 layout: case in a list terminated by bracket

@@ -6,7 +6,7 @@ class A a
 
 ---
 
-(module (class (class_head class: (class_name (type)) (type_name (tyvar)))))
+(module (class (class_head class: (class_name (type)) (type_name (type_variable)))))
 
 =========================================
 class: context variants
@@ -20,16 +20,16 @@ class (A a, A a) => A a
 (module
  (class
   (context
-   (constraint (class_name (type)) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (type_variable)))
    (carrow))
-  (class_head (class_name (type)) (type_name (tyvar))))
+  (class_head (class_name (type)) (type_name (type_variable))))
  (class
   (context
-   (constraint (class_name (type)) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (type_variable)))
    (comma)
-   (constraint (class_name (type)) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (type_variable)))
    (carrow))
-  (class_head (class_name (type)) (type_name (tyvar)))))
+  (class_head (class_name (type)) (type_name (type_variable)))))
 
 =========================================
 class: method with context
@@ -41,16 +41,16 @@ class A a where a :: A a => a -> a
 
 (module
  (class
-  (class_head class: (class_name (type)) (type_name (tyvar)))
+  (class_head class: (class_name (type)) (type_name (type_variable)))
   (class_body
    (where)
    (decl_sig
     name: (variable)
     (annotation)
     type: (context
-     (constraint class: (class_name (type)) (type_name (tyvar)))
+     (constraint class: (class_name (type)) (type_name (type_variable)))
      (carrow)
-     (fun (type_name (tyvar)) (type_name (tyvar))))))))
+     (fun (type_name (type_variable)) (type_name (type_variable))))))))
 
 =========================================
 class: braces
@@ -65,11 +65,11 @@ class Foo a where {
 
 (module
  (class
-  (class_head (class_name (type)) (type_name (tyvar)))
+  (class_head (class_name (type)) (type_name (type_variable)))
   (class_body
    (where)
-   (decl_sig (variable) (annotation) (type_name (tyvar)))
-   (decl_sig (variable) (annotation) (type_name (tyvar))))))
+   (decl_sig (variable) (annotation) (type_name (type_variable)))
+   (decl_sig (variable) (annotation) (type_name (type_variable))))))
 
 =========================================
 class: fixity
@@ -128,7 +128,7 @@ class A where
     (comma)
     (operator)
     (annotation)
-    (type_name (tyvar))))))
+    (type_name (type_variable))))))
 
 =========================================
 class: multi param
@@ -138,7 +138,7 @@ class A a a a
 
 ---
 
-(module (class (class_head (class_name (type)) (type_name (tyvar)) (type_name (tyvar)) (type_name (tyvar)))))
+(module (class (class_head (class_name (type)) (type_name (type_variable)) (type_name (type_variable)) (type_name (type_variable)))))
 
 =========================================
 class: default signature
@@ -159,7 +159,7 @@ class A where
    (default_signature (decl_sig (variable) (annotation) (type_name (type)))))))
 
 =========================================
-class: tyvar kind
+class: type_variable kind
 =========================================
 
 class A (a :: [*] -> k)
@@ -172,9 +172,9 @@ class A (a :: [*] -> k)
    (class_name (type))
    (type_name
     (annotated_tyvar
-     (tyvar)
+     (type_variable)
      (annotation)
-     (fun (list_type (star)) (type_name (tyvar))))))))
+     (fun (list_type (star)) (type_name (type_variable))))))))
 
 =========================================
 class: associated family
@@ -188,11 +188,11 @@ class A a where
 
 (module
  (class
-  (class_head (class_name (type)) (type_name (tyvar)))
+  (class_head (class_name (type)) (type_name (type_variable)))
   (class_body
    (where)
-   (decl_type_sig (type) (tyvar) (annotation) (type_name (tyvar)))
-   (decl_type_sig (type) (tyvar) (annotation) (type_name (tyvar))))))
+   (decl_type_sig (type) (type_variable) (annotation) (type_name (type_variable)))
+   (decl_type_sig (type) (type_variable) (annotation) (type_name (type_variable))))))
 
 =========================================
 class: associated data
@@ -206,13 +206,13 @@ class A a where
 
 (module
  (class
-  (class_head (class_name (type)) (type_name (tyvar)))
+  (class_head (class_name (type)) (type_name (type_variable)))
   (class_body
    (where)
-   (class_datafam (type) (tyvar))
+   (class_datafam (type) (type_variable))
    (class_datafam
     (type)
-    (tyvar)
+    (type_variable)
     (annotation)
     (fun (star) (type_name (type)))))))
 
@@ -228,9 +228,9 @@ class A | a -> a a, a a -> a
  (class
   (class_head class: (class_name (type)))
   (fundeps
-   (fundep (tyvar) (tyvar) (tyvar))
+   (fundep (type_variable) (type_variable) (type_variable))
    (comma)
-   (fundep (tyvar) (tyvar) (tyvar)))))
+   (fundep (type_variable) (type_variable) (type_variable)))))
 
 =========================================
 class: infix operator name
@@ -244,6 +244,6 @@ class a ++ b
  (class
   (class_head
    (type_infix
-    left: (type_name (tyvar))
+    left: (type_name (type_variable))
     op: (tyconop (type_operator))
-    right: (type_name (tyvar))))))
+    right: (type_name (type_variable))))))

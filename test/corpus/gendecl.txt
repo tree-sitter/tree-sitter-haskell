@@ -11,10 +11,10 @@ a :: a -> A -> A a
   name: (variable)
   (annotation)
   type: (fun
-   (type_name (tyvar))
+   (type_name (type_variable))
    (fun
     (type_name (type))
-    (type_apply (type_name (type)) (type_name (tyvar)))))))
+    (type_apply (type_name (type)) (type_name (type_variable)))))))
 
 =========================================
 gendecl: forall
@@ -30,16 +30,16 @@ a :: forall a (a :: * -> Type) . (∀ a . a -> a) -> A a
   (annotation)
   (forall
    (quantifiers
-    (tyvar)
-    (annotated_tyvar (tyvar) (annotation) (fun (star) (type_name (type)))))
+    (type_variable)
+    (annotated_tyvar (type_variable) (annotation) (fun (star) (type_name (type)))))
    (forall_dot)
    (fun
     (type_parens
      (forall
-      (quantifiers (tyvar))
+      (quantifiers (type_variable))
       (forall_dot)
-      (fun (type_name (tyvar)) (type_name (tyvar)))))
-    (type_apply (type_name (type)) (type_name (tyvar)))))))
+      (fun (type_name (type_variable)) (type_name (type_variable)))))
+    (type_apply (type_name (type)) (type_name (type_variable)))))))
 
 =========================================
 gendecl: multi context, multi line
@@ -58,19 +58,19 @@ a ::
   (variable)
   (annotation)
   (context
-   (constraint (class_name (type)) (type_name (tyvar)) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (type_variable)) (type_name (type_variable)))
    (carrow)
    (context
-    (constraint (class_name (type)) (type_name (tyvar)))
+    (constraint (class_name (type)) (type_name (type_variable)))
     (comma)
-    (constraint (class_name (type)) (type_name (tyvar)))
+    (constraint (class_name (type)) (type_name (type_variable)))
     (carrow)
     (fun
      (type_parens
       (context (constraint (class_name (type)))
       (carrow)
-      (type_apply (type_name (tyvar)) (type_name (tyvar)))))
-     (fun (type_apply (type_name (type)) (type_name (tyvar))) (type_name (tyvar))))))))
+      (type_apply (type_name (type_variable)) (type_name (type_variable)))))
+     (fun (type_apply (type_name (type)) (type_name (type_variable))) (type_name (type_variable))))))))
 
 =========================================
 gendecl: multi context, single line
@@ -85,14 +85,14 @@ a :: A a a => (A a, A a) => a
   (variable)
   (annotation)
   (context
-   (constraint (class_name (type)) (type_name (tyvar)) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (type_variable)) (type_name (type_variable)))
    (carrow)
    (context
-    (constraint (class_name (type)) (type_name (tyvar)))
+    (constraint (class_name (type)) (type_name (type_variable)))
     (comma)
-    (constraint (class_name (type)) (type_name (tyvar)))
+    (constraint (class_name (type)) (type_name (type_variable)))
     (carrow)
-    (type_name (tyvar))))))
+    (type_name (type_variable))))))
 
 =========================================
 gendecl: operator context
@@ -107,9 +107,9 @@ a :: a ++ a => a
   name: (variable)
   (annotation)
   type: (context
-   (constraint (type_infix left: (type_name (tyvar)) op: (tyconop (type_operator)) right: (type_name (tyvar))))
+   (constraint (type_infix left: (type_name (type_variable)) op: (tyconop (type_operator)) right: (type_name (type_variable))))
    (carrow)
-   (type_name (tyvar)))))
+   (type_name (type_variable)))))
 
 =================================================
 gendecl: implicit
@@ -127,11 +127,11 @@ sort :: (?aaa :: a -> a -> a) => [a] -> [a]
    (implicit_param
     (implicit_parid)
     (annotation)
-    (fun (type_name (tyvar)) (fun (type_name (tyvar)) (type_name (tyvar)))))
+    (fun (type_name (type_variable)) (fun (type_name (type_variable)) (type_name (type_variable)))))
    (carrow)
    (fun
-    (list_type (type_name (tyvar)))
-    (list_type (type_name (tyvar)))))))
+    (list_type (type_name (type_variable)))
+    (list_type (type_name (type_variable)))))))
 
 
 =========================================
@@ -152,7 +152,7 @@ gendecl: multi method operator
   (comma)
   (operator)
   (annotation)
-  (type_name (tyvar))))
+  (type_name (type_variable))))
 
 
 =========================================
@@ -168,28 +168,28 @@ a :: A a => ∀ a . a ++ a => a -> ∀ a . a -> A => A => A a
   name: (variable)
   (annotation)
   type: (context
-   (constraint class: (class_name (type)) (type_name (tyvar)))
+   (constraint class: (class_name (type)) (type_name (type_variable)))
    (carrow)
    (forall
-    (quantifiers (tyvar))
+    (quantifiers (type_variable))
     (forall_dot)
     (context
-     (constraint (type_infix left: (type_name (tyvar)) op: (tyconop (type_operator)) right: (type_name (tyvar))))
+     (constraint (type_infix left: (type_name (type_variable)) op: (tyconop (type_operator)) right: (type_name (type_variable))))
      (carrow)
      (fun
-      (type_name (tyvar))
+      (type_name (type_variable))
       (forall
-       (quantifiers (tyvar))
+       (quantifiers (type_variable))
        (forall_dot)
        (fun
-        (type_name (tyvar))
+        (type_name (type_variable))
         (context
          (constraint class: (class_name (type)))
          (carrow)
          (context
           (constraint class: (class_name (type)))
           (carrow)
-          (type_apply (type_name (type)) (type_name (tyvar)))))))))))))
+          (type_apply (type_name (type)) (type_name (type_variable)))))))))))))
 
 =================================================
 gendecl: parenthesized operator fun
@@ -216,9 +216,9 @@ a :: (a :: (* -> *) -> *) -> a
   (fun
    (type_name
     (annotated_tyvar
-     (tyvar)
+     (type_variable)
      (annotation)
      (fun
       (type_parens (fun (star) (star)))
       (star))))
-   (type_name (tyvar)))))
+   (type_name (type_variable)))))

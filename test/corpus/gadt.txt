@@ -22,7 +22,7 @@ data A a where
 (module
  (adt
   (type)
-  (tyvar)
+  (type_variable)
   (where)
   (gadt_constr
    (constructor)
@@ -30,15 +30,15 @@ data A a where
    (fun
     (type_name (type))
     (fun
-     (strict_type (type_parens (type_apply (type_name (type)) (type_name (tyvar)))))
-     (type_apply (type_name (type)) (type_name (tyvar))))))
+     (strict_type (type_parens (type_apply (type_name (type)) (type_name (type_variable)))))
+     (type_apply (type_name (type)) (type_name (type_variable))))))
   (gadt_constr
    (constructor)
    (annotation)
    (pragma)
    (fun
     (type_name (type))
-    (type_apply (type_name (type)) (type_name (tyvar)))))))
+    (type_apply (type_name (type)) (type_name (type_variable)))))))
 
 =========================================
 gadt: record
@@ -89,7 +89,7 @@ data A a => A where
 
 (module
  (adt
-  (context (constraint (class_name (type)) (type_name (tyvar))) (carrow))
+  (context (constraint (class_name (type)) (type_name (type_variable))) (carrow))
   (type)
   (where)))
 
@@ -110,7 +110,7 @@ data A where
    (constructor)
    (annotation)
    (context
-    (constraint (class_name (type)) (type_name (tyvar)))
+    (constraint (class_name (type)) (type_name (type_variable)))
     (carrow))
    (type_name (type)))))
 
@@ -130,7 +130,7 @@ data A where
   (gadt_constr
    (constructor)
    (annotation)
-   (forall (tyvar) (forall_dot))
+   (forall (type_variable) (forall_dot))
    (type_name (type)))))
 
 =========================================
@@ -161,16 +161,16 @@ data a +++ b where
 
 (module
  (adt
-  (type_infix (tyvar) (type_operator) (tyvar))
+  (type_infix (type_variable) (type_operator) (type_variable))
   (where)
   (gadt_constr
    (consym)
    (annotation)
    (fun
-    (type_name (tyvar))
+    (type_name (type_variable))
     (fun
-     (type_name (tyvar))
+     (type_name (type_variable))
      (type_infix
-      (type_name (tyvar))
+      (type_name (type_variable))
       (tyconop (type_operator))
-      (type_name (tyvar))))))))
+      (type_name (type_variable))))))))

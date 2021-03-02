@@ -102,7 +102,7 @@ f = a @@ a
 ---
 
 (module
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (exp_tyapp (tyapp) (type_name (tyvar))))))
+  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (exp_tyapp (tyapp) (type_name (type_variable))))))
   (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 

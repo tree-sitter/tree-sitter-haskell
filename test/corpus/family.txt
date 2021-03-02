@@ -27,12 +27,12 @@ type family A a b c where
 
 (module
  (type_family
-  (tyfam_head name: (type) (tyvar) (tyvar) (tyvar))
+  (tyfam_head name: (type) (type_variable) (type_variable) (type_variable))
   (where)
   (tyfam_eq
-   (tyfam_pat name: (type) (type_name (tyvar)) (type_name (tyvar)) (type_name (tyvar)))
+   (tyfam_pat name: (type) (type_name (type_variable)) (type_name (type_variable)) (type_name (type_variable)))
    (equals)
-   (type_apply (type_name (tyvar)) (type_name (tyvar))))))
+   (type_apply (type_name (type_variable)) (type_name (type_variable))))))
 
 =================================================
 family: closed, pattern matching
@@ -45,15 +45,15 @@ type family A a b c where
 
 (module
  (type_family
-  (tyfam_head (type) (tyvar) (tyvar) (tyvar))
+  (tyfam_head (type) (type_variable) (type_variable) (type_variable))
   (where)
   (tyfam_eq
    (tyfam_pat
     (type)
-    (type_parens (type_apply (type_name (type)) (type_name (tyvar))))
-    (list_type (type_name (tyvar))))
+    (type_parens (type_apply (type_name (type)) (type_name (type_variable))))
+    (list_type (type_name (type_variable))))
    (equals)
-   (type_apply (type_name (tyvar)) (type_parens (type_apply (type_name (type)) (type_name (tyvar))))))))
+   (type_apply (type_name (type_variable)) (type_parens (type_apply (type_name (type)) (type_name (type_variable))))))))
 
 =================================================
 family: closed, signature
@@ -66,20 +66,20 @@ type family A a :: (k -> *) -> 'Just k where
 
 (module
  (type_family
-  (tyfam_head (type) (tyvar))
+  (tyfam_head (type) (type_variable))
   (tyfam_sig
    (annotation)
    (fun
-    (type_parens (fun (type_name (tyvar)) (star)))
-    (type_apply (type_name (promoted (type))) (type_name (tyvar)))))
+    (type_parens (fun (type_name (type_variable)) (star)))
+    (type_apply (type_name (promoted (type))) (type_name (type_variable)))))
 (where)
   (tyfam_eq
-   (tyfam_pat (type) (type_name (tyvar)))
+   (tyfam_pat (type) (type_name (type_variable)))
    (equals)
-   (type_name (tyvar)))))
+   (type_name (type_variable)))))
 
 =================================================
-family: closed, tyvar kind
+family: closed, type_variable kind
 =================================================
 
 type family A (a :: ([k] -> *) -> k) where
@@ -92,13 +92,13 @@ type family A (a :: ([k] -> *) -> k) where
   (tyfam_head
    (type)
    (annotated_tyvar
-    (tyvar)
+    (type_variable)
     (annotation)
     (fun
-     (type_parens (fun (list_type (type_name (tyvar))) (star)))
-     (type_name (tyvar)))))
+     (type_parens (fun (list_type (type_name (type_variable))) (star)))
+     (type_name (type_variable)))))
   (where)
-  (tyfam_eq (tyfam_pat (type) (type_name (tyvar))) (equals) (type_name (tyvar)))))
+  (tyfam_eq (tyfam_pat (type) (type_name (type_variable))) (equals) (type_name (type_variable)))))
 
 =================================================
 family: open
@@ -114,7 +114,7 @@ type instance A (A A) = A
  (type_family
   (tyfam_head
    (type)
-   (annotated_tyvar (tyvar) (annotation) (type_name (tyvar))))
+   (annotated_tyvar (type_variable) (annotation) (type_name (type_variable))))
   (tyfam_sig
    (annotation)
    (star)))
@@ -143,8 +143,8 @@ data family A a (a :: [a]) :: Type -> *
 (module
  (data_family
   (type)
-  (tyvar)
-  (annotated_tyvar (tyvar) (annotation) (list_type (type_name (tyvar))))
+  (type_variable)
+  (annotated_tyvar (type_variable) (annotation) (list_type (type_name (type_variable))))
   (annotation)
   (fun (type_name (type)) (star))))
 
@@ -161,17 +161,17 @@ data instance ∀ a . A a A =
 
 (module
  (data_instance
-  (forall (tyvar) (forall_dot))
+  (forall (type_variable) (forall_dot))
   (type_apply
    (type_name (type))
-   (type_name (tyvar))
+   (type_name (type_variable))
    (type_name (type)))
   (equals)
   (constrs
-   (constr (constr_id (constructor)) (type_name (tyvar)) (type_name (type)) (type_name (tyvar)))
+   (data_constructor (constructor) (type_name (type_variable)) (type_name (type)) (type_name (type_variable)))
    (bar)
    (constr_record
-    (constr_id (constructor))
+    (constructor)
     (record_fields (field (field_id (variable)) (annotation) (type_name (type))))))))
 
 =================================================
@@ -188,12 +188,12 @@ data instance A a where
  (data_instance
   (type_apply
    (type_name (type))
-   (type_name (tyvar)))
+   (type_name (type_variable)))
   (where)
   (gadt_constr
    (constructor)
    (annotation)
-   (fun (type_name (type)) (type_apply (type_name (type)) (type_name (tyvar)))))
+   (fun (type_name (type)) (type_apply (type_name (type)) (type_name (type_variable)))))
   (deriving (type) (comma) (type))))
 
 =================================================
@@ -208,8 +208,8 @@ newtype instance A a a = A a deriving A
  (data_instance
   (type_apply
    (type_name (type))
-   (type_name (tyvar))
-   (type_name (tyvar)))
+   (type_name (type_variable))
+   (type_name (type_variable)))
   (equals)
-  (constr_newtype (constr_id (constructor)) (type_name (tyvar)))
+  (newtype_constructor (constructor) (type_name (type_variable)))
   (deriving (type))))

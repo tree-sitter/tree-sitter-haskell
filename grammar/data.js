@@ -13,10 +13,8 @@ module.exports = {
     choice($.strict_type, $._type),
   ),
 
-  constr_id: $ => $._con,
-
-  constr: $ => seq(
-    $.constr_id,
+  data_constructor: $ => seq(
+    $.constructor,
     repeat(choice($.strict_type, $._atype))
   ),
 
@@ -31,7 +29,7 @@ module.exports = {
   record_fields: $ => braces(sep1($.comma, $.field)),
 
   constr_record: $ => seq(
-    $.constr_id,
+    $.constructor,
     $.record_fields,
   ),
 
@@ -41,7 +39,7 @@ module.exports = {
       optional($.forall),
       optional($.context),
       choice(
-        $.constr,
+        $.data_constructor,
         $.constr_infix,
         $.constr_record,
       ),
@@ -101,8 +99,8 @@ module.exports = {
     optional($._adt),
   ),
 
-  constr_newtype: $ => seq(
-    $.constr_id,
+  newtype_constructor: $ => seq(
+    $.constructor,
     choice(
       $._atype,
       $._record_field,
@@ -111,7 +109,7 @@ module.exports = {
 
   _newtype: $ => seq(
     $.equals,
-    $.constr_newtype,
+    $.newtype_constructor,
     repeat($.deriving),
   ),
 

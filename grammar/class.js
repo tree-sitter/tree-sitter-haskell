@@ -20,7 +20,7 @@ module.exports = {
     $.class_datafam,
   ),
 
-  fundep: $ => seq(repeat1($.tyvar), $._arrow, repeat1($.tyvar)),
+  fundep: $ => seq(repeat1($.type_variable), $._arrow, repeat1($.type_variable)),
 
   fundeps: $ => seq('|', sep1($.comma, $.fundep)),
 

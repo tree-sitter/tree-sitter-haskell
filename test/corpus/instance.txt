@@ -6,7 +6,7 @@ instance A a
 
 ---
 
-(module (instance (instance_head (class_name (type)) (type_name (tyvar)))))
+(module (instance (instance_head (class_name (type)) (type_name (type_variable)))))
 
 =========================================
 instance: type
@@ -21,7 +21,7 @@ instance A A a A
   (instance_head
    (class_name (type))
    (type_name (type))
-   (type_name (tyvar))
+   (type_name (type_variable))
    (type_name (type)))))
 
 =========================================
@@ -35,8 +35,8 @@ instance forall a (a :: *) . A
 (module
  (instance
   (forall
-   (tyvar)
-   (annotated_tyvar (tyvar) (annotation) (star))
+   (type_variable)
+   (annotated_tyvar (type_variable) (annotation) (star))
    (forall_dot))
   (instance_head (class_name (type)))))
 
@@ -51,13 +51,13 @@ instance (A a, A a) => A
 
 (module
  (instance
-  (context (constraint (class_name (type)) (type_name (tyvar))) (carrow))
+  (context (constraint (class_name (type)) (type_name (type_variable))) (carrow))
   (instance_head (class_name (type))))
  (instance
   (context
-   (constraint (class_name (type)) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (type_variable)))
    (comma)
-   (constraint (class_name (type)) (type_name (tyvar)))
+   (constraint (class_name (type)) (type_name (type_variable)))
    (carrow))
   (instance_head (class_name (type)))))
 
@@ -71,7 +71,7 @@ instance A a where a a = Just a
 
 (module
  (instance
-  (instance_head (class_name (type)) (type_name (tyvar)))
+  (instance_head (class_name (type)) (type_name (type_variable)))
   (where)
   (decl_fun
     (funvar (variable) (pat_name (variable)))
@@ -89,15 +89,15 @@ instance A a where
 
 (module
  (instance
-  (instance_head (class_name (type)) (type_name (tyvar)))
+  (instance_head (class_name (type)) (type_name (type_variable)))
   (where)
   (decl_sig
    (variable)
    (annotation)
    (context
-    (constraint (class_name (type)) (type_name (tyvar)))
+    (constraint (class_name (type)) (type_name (type_variable)))
     (carrow)
-    (fun (type_name (tyvar)) (type_name (tyvar)))))
+    (fun (type_name (type_variable)) (type_name (type_variable)))))
   (decl_fun
    (funvar (variable) (pat_name (variable)))
    (funrhs (equals) (exp_name (variable))))))
@@ -116,11 +116,11 @@ instance A ~~ A => A a
   (context
    (constraint
     (type_infix
-     left: (type_apply (type_name (type)) (type_name (tyvar)))
+     left: (type_apply (type_name (type)) (type_name (type_variable)))
      op: (tyconop (type_operator))
-     right: (type_apply (type_name (type)) (type_name (tyvar)))))
+     right: (type_apply (type_name (type)) (type_name (type_variable)))))
    (carrow))
-  (instance_head class: (class_name (type)) (type_name (tyvar))))
+  (instance_head class: (class_name (type)) (type_name (type_variable))))
  (instance
   (context
    (constraint
@@ -129,7 +129,7 @@ instance A ~~ A => A a
      op: (tyconop (type_operator))
      right: (type_name (type))))
    (carrow))
-  (instance_head class: (class_name (type)) (type_name (tyvar)))))
+  (instance_head class: (class_name (type)) (type_name (type_variable)))))
 
 =========================================
 instance: associated type instance
@@ -149,12 +149,12 @@ instance A where
   (inst_tyinst
    (type_name (type))
    (type_name (type))
-   (type_name (tyvar))
+   (type_name (type_variable))
    (equals)
-   (type_apply (type_name (type)) (type_name (tyvar))))
+   (type_apply (type_name (type)) (type_name (type_variable))))
   (inst_tyinst
    (type_name (type))
-   (type_name (tyvar))
+   (type_name (type_variable))
    (equals)
    (type_name (type)))))
 
@@ -175,17 +175,17 @@ instance A where
   (inst_datainst
    (type_apply
     (type_name (type))
-    (type_name (tyvar)))
+    (type_name (type_variable)))
    (equals)
    (constrs
-    (constr (constr_id (constructor)) (type_name (tyvar)))
+    (data_constructor (constructor) (type_name (type_variable)))
     (bar)
     (constr_record
-     (constr_id (constructor)) 
+     (constructor) 
      (record_fields (field (field_id (variable)) (annotation) (type_name (type)))))))
   (inst_datainst
    (type_apply
     (type_name (type))
-    (type_name (tyvar)))
+    (type_name (type_variable)))
    (equals)
-   (constrs (constr (constr_id (constructor)))))))
+   (constrs (data_constructor (constructor))))))

@@ -1175,7 +1175,7 @@
         }
       ]
     },
-    "tyvar": {
+    "type_variable": {
       "type": "SYMBOL",
       "name": "_varid"
     },
@@ -1188,7 +1188,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "tyvar"
+          "name": "type_variable"
         },
         {
           "type": "SYMBOL",
@@ -1209,7 +1209,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "tyvar"
+          "name": "type_variable"
         }
       ]
     },
@@ -5086,16 +5086,12 @@
         }
       ]
     },
-    "constr_id": {
-      "type": "SYMBOL",
-      "name": "_con"
-    },
-    "constr": {
+    "data_constructor": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "constr_id"
+          "name": "constructor"
         },
         {
           "type": "REPEAT",
@@ -5210,7 +5206,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "constr_id"
+          "name": "constructor"
         },
         {
           "type": "SYMBOL",
@@ -5253,7 +5249,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "constr"
+                  "name": "data_constructor"
                 },
                 {
                   "type": "SYMBOL",
@@ -5308,7 +5304,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "constr"
+                        "name": "data_constructor"
                       },
                       {
                         "type": "SYMBOL",
@@ -5870,12 +5866,12 @@
         }
       ]
     },
-    "constr_newtype": {
+    "newtype_constructor": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "constr_id"
+          "name": "constructor"
         },
         {
           "type": "CHOICE",
@@ -5901,7 +5897,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "constr_newtype"
+          "name": "newtype_constructor"
         },
         {
           "type": "REPEAT",
@@ -6158,7 +6154,7 @@
           "type": "REPEAT1",
           "content": {
             "type": "SYMBOL",
-            "name": "tyvar"
+            "name": "type_variable"
           }
         },
         {
@@ -6169,7 +6165,7 @@
           "type": "REPEAT1",
           "content": {
             "type": "SYMBOL",
-            "name": "tyvar"
+            "name": "type_variable"
           }
         }
       ]
@@ -7864,7 +7860,7 @@
     ],
     [
       "type_name",
-      "constr_id"
+      "data_constructor"
     ],
     [
       "_exp_apply",

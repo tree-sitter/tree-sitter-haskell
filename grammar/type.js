@@ -5,13 +5,13 @@ module.exports = {
   // type
   // ------------------------------------------------------------------------
 
-  tyvar: $ => $._varid,
+  type_variable: $ => $._varid,
 
-  annotated_tyvar: $ => parens($.tyvar, $._type_annotation),
+  annotated_tyvar: $ => parens($.type_variable, $._type_annotation),
 
   _tyvar: $ => choice(
     $.annotated_tyvar,
-    $.tyvar,
+    $.type_variable,
   ),
 
   _forall_kw: _ => choice('forall', '∀'),

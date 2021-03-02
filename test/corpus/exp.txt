@@ -850,7 +850,7 @@ a = a @A.A a
   (funvar (variable))
   (funrhs
    (equals)
-   (exp_apply (exp_name (variable)) (exp_tyapp (tyapp) (type_name (tyvar))) (exp_name (variable)))))
+   (exp_apply (exp_name (variable)) (exp_tyapp (tyapp) (type_name (type_variable))) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs

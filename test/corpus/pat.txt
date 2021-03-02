@@ -217,7 +217,7 @@ a (a :: A a) = a
  (decl_fun
   (funvar
    (variable)
-   (pat_parens (pat_name (variable)) (annotation) (type_apply (type_name (type)) (type_name (tyvar)))))
+   (pat_parens (pat_name (variable)) (annotation) (type_apply (type_name (type)) (type_name (type_variable)))))
   (funrhs (equals) (exp_name (variable)))))
 
 =================================================

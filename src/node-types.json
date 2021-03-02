@@ -109,7 +109,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         },
         {
@@ -437,7 +437,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -831,7 +831,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -928,7 +928,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -958,72 +958,6 @@
     "type": "con_unit",
     "named": true,
     "fields": {}
-  },
-  {
-    "type": "constr",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "constr_id",
-          "named": true
-        },
-        {
-          "type": "list_type",
-          "named": true
-        },
-        {
-          "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
-          "named": true
-        },
-        {
-          "type": "strict_type",
-          "named": true
-        },
-        {
-          "type": "tuple_type",
-          "named": true
-        },
-        {
-          "type": "type_literal",
-          "named": true
-        },
-        {
-          "type": "type_name",
-          "named": true
-        },
-        {
-          "type": "type_parens",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "constr_id",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "constructor",
-          "named": true
-        },
-        {
-          "type": "consym",
-          "named": true
-        }
-      ]
-    }
   },
   {
     "type": "constr_infix",
@@ -1085,53 +1019,6 @@
     }
   },
   {
-    "type": "constr_newtype",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "constr_id",
-          "named": true
-        },
-        {
-          "type": "field",
-          "named": true
-        },
-        {
-          "type": "list_type",
-          "named": true
-        },
-        {
-          "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
-          "named": true
-        },
-        {
-          "type": "tuple_type",
-          "named": true
-        },
-        {
-          "type": "type_literal",
-          "named": true
-        },
-        {
-          "type": "type_name",
-          "named": true
-        },
-        {
-          "type": "type_parens",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "constr_record",
     "named": true,
     "fields": {},
@@ -1140,7 +1027,7 @@
       "required": true,
       "types": [
         {
-          "type": "constr_id",
+          "type": "constructor",
           "named": true
         },
         {
@@ -1217,10 +1104,6 @@
           "named": true
         },
         {
-          "type": "constr",
-          "named": true
-        },
-        {
           "type": "constr_infix",
           "named": true
         },
@@ -1230,6 +1113,10 @@
         },
         {
           "type": "context",
+          "named": true
+        },
+        {
+          "type": "data_constructor",
           "named": true
         },
         {
@@ -1307,6 +1194,53 @@
         },
         {
           "type": "type_infix",
+          "named": true
+        },
+        {
+          "type": "type_literal",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        },
+        {
+          "type": "type_parens",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "data_constructor",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "list_type",
+          "named": true
+        },
+        {
+          "type": "promoted",
+          "named": true
+        },
+        {
+          "type": "star",
+          "named": true
+        },
+        {
+          "type": "strict_type",
+          "named": true
+        },
+        {
+          "type": "tuple_type",
           "named": true
         },
         {
@@ -1414,7 +1348,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -1488,10 +1422,6 @@
           "named": true
         },
         {
-          "type": "constr_newtype",
-          "named": true
-        },
-        {
           "type": "constrs",
           "named": true
         },
@@ -1517,6 +1447,10 @@
         },
         {
           "type": "list_type",
+          "named": true
+        },
+        {
+          "type": "newtype_constructor",
           "named": true
         },
         {
@@ -1798,7 +1732,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -5609,7 +5543,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -5833,7 +5767,7 @@
       "required": true,
       "types": [
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -7147,10 +7081,6 @@
           "named": true
         },
         {
-          "type": "constr_newtype",
-          "named": true
-        },
-        {
           "type": "constrs",
           "named": true
         },
@@ -7176,6 +7106,10 @@
         },
         {
           "type": "list_type",
+          "named": true
+        },
+        {
+          "type": "newtype_constructor",
           "named": true
         },
         {
@@ -7641,10 +7575,6 @@
           "named": true
         },
         {
-          "type": "constr_newtype",
-          "named": true
-        },
-        {
           "type": "context",
           "named": true
         },
@@ -7657,11 +7587,62 @@
           "named": true
         },
         {
+          "type": "newtype_constructor",
+          "named": true
+        },
+        {
           "type": "type_infix",
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "newtype_constructor",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "field",
+          "named": true
+        },
+        {
+          "type": "list_type",
+          "named": true
+        },
+        {
+          "type": "promoted",
+          "named": true
+        },
+        {
+          "type": "star",
+          "named": true
+        },
+        {
+          "type": "tuple_type",
+          "named": true
+        },
+        {
+          "type": "type_literal",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        },
+        {
+          "type": "type_parens",
           "named": true
         }
       ]
@@ -9234,7 +9215,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -9918,7 +9899,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -10126,7 +10107,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -10312,7 +10293,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -10457,7 +10438,7 @@
           "named": true
         },
         {
-          "type": "tyvar",
+          "type": "type_variable",
           "named": true
         }
       ]
@@ -10528,7 +10509,7 @@
     }
   },
   {
-    "type": "tyvar",
+    "type": "type_variable",
     "named": true,
     "fields": {}
   },

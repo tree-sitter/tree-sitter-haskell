@@ -155,7 +155,7 @@ module.exports = grammar({
      *
      * both start with two tycons.
      */
-    [$.type_name, $.constr_id],
+    [$.type_name, $.data_constructor],
 
     /**
      * For getting a node for function application, and no extra node if the expression only consists of one term.

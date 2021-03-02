@@ -10,7 +10,7 @@ newtype A = A A
  (newtype
   (type)
   (equals)
-  (constr_newtype (constr_id (constructor)) (type_name (type)))))
+  (newtype_constructor (constructor) (type_name (type)))))
 
 =========================================
 newtype: context
@@ -22,11 +22,11 @@ newtype A a => A a = A a
 
 (module
  (newtype
-  (context (constraint (class_name (type)) (type_name (tyvar))) (carrow))
+  (context (constraint (class_name (type)) (type_name (type_variable))) (carrow))
   (type)
-  (tyvar)
+  (type_variable)
   (equals)
-  (constr_newtype (constr_id (constructor)) (type_name (tyvar)))))
+  (newtype_constructor (constructor) (type_name (type_variable)))))
 
 =========================================
 newtype: record
@@ -40,12 +40,12 @@ newtype A = A { a :: A a }
  (newtype
   (type)
   (equals)
-  (constr_newtype
-   (constr_id (constructor))
-   (field (field_id (variable)) (annotation) (type_apply (type_name (type)) (type_name (tyvar)))))))
+  (newtype_constructor
+   (constructor)
+   (field (field_id (variable)) (annotation) (type_apply (type_name (type)) (type_name (type_variable)))))))
 
 =========================================
-newtype: tyvar kind
+newtype: type_variable kind
 =========================================
 
 newtype A a (a :: [* -> *]) a =
@@ -56,14 +56,14 @@ newtype A a (a :: [* -> *]) a =
 (module
  (newtype
   (type)
-  (tyvar)
+  (type_variable)
   (annotated_tyvar
-   (tyvar)
+   (type_variable)
    (annotation)
    (list_type (fun (star) (star))))
-  (tyvar)
+  (type_variable)
   (equals)
-  (constr_newtype (constr_id (constructor)) (type_name (tyvar)))))
+  (newtype_constructor (constructor) (type_name (type_variable)))))
 
 =========================================
 newtype: deriving
@@ -82,13 +82,13 @@ newtype A a =
  (newtype
   (type)
   (equals)
-  (constr_newtype (constr_id (constructor)) (type_name (tyvar)))
+  (newtype_constructor (constructor) (type_name (type_variable)))
   (deriving (type)))
  (newtype
   (type)
-  (tyvar)
+  (type_variable)
   (equals)
-  (constr_newtype (constr_id (constructor)) (field (field_id (variable)) (annotation) (type_name (type))))
+  (newtype_constructor (constructor) (field (field_id (variable)) (annotation) (type_name (type))))
   (deriving (type) (comma) (type))
   (deriving (type))
-  (deriving (type) (via (type_parens (type_apply (type_name (type)) (type_name (tyvar))))))))
+  (deriving (type) (via (type_parens (type_apply (type_name (type)) (type_name (type_variable))))))))

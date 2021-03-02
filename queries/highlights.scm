@@ -5,7 +5,7 @@
 (modid (constructor) @module_name)
 (type) @type
 (type) @class
-(constr_id) @constructor
+(constructor) @constructor
 (pragma) @pragma
 (comment) @comment
 (decl_sig name: (variable) @fun_type_name)

@@ -25,4 +25,4 @@ data A = Int :: Int
 
 ---
 
-(module (adt (type) (ERROR (equals) (modid (constructor))) (annotation) (type_name (type))))
+(module (adt (type) (equals) (constrs (data_constructor (constructor) (ERROR (annotation)) (type_name (type))))))

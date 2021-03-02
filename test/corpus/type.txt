@@ -15,9 +15,9 @@ type A = A A
   (type_name (type)))
  (type_alias
   (type)
-  (tyvar)
+  (type_variable)
   (equals)
-  (type_apply (type_name (type)) (type_name (tyvar))))
+  (type_apply (type_name (type)) (type_name (type_variable))))
  (type_alias
   (type)
   (equals)
@@ -69,7 +69,7 @@ type A = [A a]
  (type_alias
   (type)
   (equals)
-  (list_type (type_apply (type_name (type)) (type_name (tyvar))))))
+  (list_type (type_apply (type_name (type)) (type_name (type_variable))))))
 
 =========================================
 type decl: parens
@@ -246,7 +246,7 @@ type A = '(A a, A)
   (equals)
   (promoted
    (tuple_type
-    (type_apply (type_name (type)) (type_name (tyvar)))
+    (type_apply (type_name (type)) (type_name (type_variable)))
     (comma)
     (type_name (type))))))
 
@@ -273,14 +273,14 @@ type A = ∀ a . (A a ~ A a) => A
   (type)
   (equals)
   (forall
-   (quantifiers (tyvar))
+   (quantifiers (type_variable))
    (forall_dot)
    (context
     (constraint
      (type_infix
-      (type_apply (type_name (type)) (type_name (tyvar)))
+      (type_apply (type_name (type)) (type_name (type_variable)))
       (tyconop (type_operator))
-      (type_apply (type_name (type)) (type_name (tyvar))))
+      (type_apply (type_name (type)) (type_name (type_variable))))
     )
      (carrow)
     (type_name (type))))))
@@ -308,7 +308,7 @@ type A = A :++ A A ': A (A A a) : '[] ':++ A `A.A` '[]
     (type_infix
      (type_apply
       (type_name (type))
-      (type_parens (type_apply (type_name (type)) (type_name (type)) (type_name (tyvar)))))
+      (type_parens (type_apply (type_name (type)) (type_name (type)) (type_name (type_variable)))))
      (tyconop (type_operator))
      (type_infix
       (promoted (type_literal (con_list)))
@@ -350,8 +350,8 @@ type A = (++) a a
   (equals)
   (type_apply
    (type_name (type_operator))
-   (type_name (tyvar))
-   (type_name (tyvar)))))
+   (type_name (type_variable))
+   (type_name (type_variable)))))
 
 =========================================
 type decl: nullary context
@@ -381,17 +381,17 @@ type A = forall a a . A a => [A]
   (type)
   (equals)
   (forall
-   (quantifiers (tyvar) (tyvar))
+   (quantifiers (type_variable) (type_variable))
    (forall_dot)
    (context (constraint (class_name (type))) (carrow) (type_name (type)))))
   (type_alias
    (type)
    (equals)
    (forall
-    (quantifiers (tyvar) (tyvar))
+    (quantifiers (type_variable) (type_variable))
     (forall_dot)
     (context
-     (constraint (class_name (type)) (type_name (tyvar)))
+     (constraint (class_name (type)) (type_name (type_variable)))
      (carrow)
      (list_type (type_name (type)))))))
 
@@ -403,4 +403,4 @@ type (A a a) = A
 
 ---
 
-(module (type_alias (type) (tyvar) (tyvar) (equals) (type_name (type))))
+(module (type_alias (type) (type_variable) (type_variable) (equals) (type_name (type))))
