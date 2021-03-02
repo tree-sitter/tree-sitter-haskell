@@ -36,7 +36,7 @@ instance forall a (a :: *) . A
  (instance
   (forall
    (type_variable)
-   (annotated_tyvar (type_variable) (annotation) (star))
+   (annotated_tyvar (type_variable) (type_star))
    (forall_dot))
   (instance_head (class_name (type)))))
 
@@ -51,14 +51,14 @@ instance (A a, A a) => A
 
 (module
  (instance
-  (context (constraint (class_name (type)) (type_name (type_variable))) (carrow))
+  (context (constraint (class_name (type)) (type_name (type_variable))))
   (instance_head (class_name (type))))
  (instance
   (context
    (constraint (class_name (type)) (type_name (type_variable)))
    (comma)
    (constraint (class_name (type)) (type_name (type_variable)))
-   (carrow))
+  )
   (instance_head (class_name (type)))))
 
 =========================================
@@ -75,7 +75,7 @@ instance A a where a a = Just a
   (where)
   (decl_fun
     (funvar (variable) (pat_name (variable)))
-    (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (variable)))))))
+    (funrhs (exp_apply (exp_name (constructor)) (exp_name (variable)))))))
 
 =========================================
 instance: signature
@@ -91,16 +91,14 @@ instance A a where
  (instance
   (instance_head (class_name (type)) (type_name (type_variable)))
   (where)
-  (decl_sig
+  (signature
    (variable)
-   (annotation)
    (context
     (constraint (class_name (type)) (type_name (type_variable)))
-    (carrow)
     (fun (type_name (type_variable)) (type_name (type_variable)))))
   (decl_fun
    (funvar (variable) (pat_name (variable)))
-   (funrhs (equals) (exp_name (variable))))))
+   (funrhs (exp_name (variable))))))
 
 =========================================
 instance: equality constraint
@@ -119,7 +117,7 @@ instance A ~~ A => A a
      left: (type_apply (type_name (type)) (type_name (type_variable)))
      op: (tyconop (type_operator))
      right: (type_apply (type_name (type)) (type_name (type_variable)))))
-   (carrow))
+  )
   (instance_head class: (class_name (type)) (type_name (type_variable))))
  (instance
   (context
@@ -128,7 +126,7 @@ instance A ~~ A => A a
      left: (type_name (type))
      op: (tyconop (type_operator))
      right: (type_name (type))))
-   (carrow))
+  )
   (instance_head class: (class_name (type)) (type_name (type_variable)))))
 
 =========================================
@@ -150,12 +148,10 @@ instance A where
    (type_name (type))
    (type_name (type))
    (type_name (type_variable))
-   (equals)
    (type_apply (type_name (type)) (type_name (type_variable))))
   (inst_tyinst
    (type_name (type))
    (type_name (type_variable))
-   (equals)
    (type_name (type)))))
 
 =========================================
@@ -176,16 +172,13 @@ instance A where
    (type_apply
     (type_name (type))
     (type_name (type_variable)))
-   (equals)
    (constrs
     (data_constructor (constructor) (type_name (type_variable)))
-    (bar)
     (constr_record
      (constructor) 
-     (record_fields (field (field_id (variable)) (annotation) (type_name (type)))))))
+     (record_fields (field (field_id (variable)) (type_name (type)))))))
   (inst_datainst
    (type_apply
     (type_name (type))
     (type_name (type_variable)))
-   (equals)
    (constrs (data_constructor (constructor))))))

@@ -54,9 +54,11 @@ module.exports = {
     $._gtycon,
   ),
 
+  type_star: _ => '*',
+
   _atype: $ => choice(
     $.type_name,
-    $.star,
+    $.type_star,
     $._type_literal,
     $.type_parens,
   ),
@@ -102,7 +104,7 @@ module.exports = {
     ),
   ),
 
-  context: $ => seq($._context, $.carrow),
+  context: $ => seq($._context, $._carrow),
 
   _type_quantifiers: $ => seq(
     alias($._forall, $.quantifiers),
@@ -112,7 +114,7 @@ module.exports = {
 
   _type_context: $ => seq(
     $._context,
-    $.carrow,
+    $._carrow,
     $._type,
   ),
 
@@ -126,7 +128,7 @@ module.exports = {
   )),
 
   _type_annotation: $ => seq(
-    $.annotation,
+    $._annotation,
     field('type', $._type),
   ),
 
@@ -152,7 +154,7 @@ module.exports = {
   decl_type: $ => seq(
     'type',
     $._simpletype,
-    $.equals,
+    $._equals,
     $._type,
   ),
 
@@ -169,7 +171,7 @@ module.exports = {
 
   tyfam_sig: $ => seq(
     // optional(sep1($.comma, choice($._variable, $.implicit_parid))),
-    $.annotation,
+    $._annotation,
     $._type
   ),
 
@@ -182,7 +184,7 @@ module.exports = {
 
   tyfam_eq: $ => seq(
     $.tyfam_pat,
-    $.equals,
+    $._equals,
     $._type,
   ),
 
@@ -198,7 +200,7 @@ module.exports = {
     'type',
     'instance',
     repeat($._atype),
-    $.equals,
+    $._equals,
     $._type,
   ),
 }

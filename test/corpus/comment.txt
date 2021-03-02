@@ -24,7 +24,7 @@ f = a
 
 ---
 
-(module (comment) (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))) (comment))
+(module (comment) (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))) (comment))
 
 =========================================
 comment: hash inside

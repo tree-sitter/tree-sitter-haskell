@@ -9,7 +9,6 @@ pattern A a <- a:as
 (module
  (pattern_synonym
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
-  (larrow)
   (pat_infix (pat_name (variable)) (consym) (pat_name (variable)))))
 
 =========================================
@@ -37,11 +36,10 @@ pattern HeadC a <- a:as where
 (module
  (pattern_synonym
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
-  (larrow)
   (pat_infix (pat_name (variable)) (consym) (pat_name (variable)))
   (where)
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
-  (funrhs (equals) (exp_list (exp_name (variable))))))
+  (funrhs (exp_list (exp_name (variable))))))
 
 =========================================
 pattern synonym: explicit bidirectional strict
@@ -55,11 +53,10 @@ pattern A a <- A !a where
 (module
  (pattern_synonym
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
-  (larrow)
   (pat_apply (pat_name (constructor)) (pat_strict (pat_name (variable))))
   (where)
   (pat_apply (pat_name (constructor)) (pat_strict (pat_name (variable))))
-  (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (variable))))))
+  (funrhs (exp_apply (exp_name (constructor)) (exp_name (variable))))))
 
 =========================================
 pattern synonym: explicit bidirectional record
@@ -74,12 +71,10 @@ pattern A { a } <- A a where
  (pattern_synonym
   (pat_name (constructor))
   (pat_record (fpat (variable)))
-  (larrow)
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (where)
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (funrhs
-   (equals)
    (exp_cond
     if: (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_literal (integer)))
     then: (exp_name (variable))
@@ -99,18 +94,15 @@ pattern A a <- A a where
 (module
  (pattern_synonym
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
-  (larrow)
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (where)
   (pat_apply (pat_name (constructor)) (pat_name (variable)))
   (funrhs
    (gdrhs
     (guards (guard (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_literal (integer)))))
-    (equals)
     (exp_parens (exp_apply (exp_name (constructor)) (exp_name (variable)))))
    (gdrhs
     (guards (guard (exp_name (variable))))
-    (equals)
     (exp_parens (exp_apply (exp_name (constructor)) (exp_name (variable))))))))
 
 =========================================
@@ -124,7 +116,6 @@ pattern A :: A -> A -> (A, A)
 (module
  (pattern_synonym
   (constructor)
-  (annotation)
   (fun
    (type_name (type))
    (fun

@@ -7,9 +7,8 @@ a :: a -> A -> A a
 ---
 
 (module
- (decl_sig
+ (signature
   name: (variable)
-  (annotation)
   type: (fun
    (type_name (type_variable))
    (fun
@@ -25,13 +24,12 @@ a :: forall a (a :: * -> Type) . (∀ a . a -> a) -> A a
 ---
 
 (module
- (decl_sig
+ (signature
   (variable)
-  (annotation)
   (forall
    (quantifiers
     (type_variable)
-    (annotated_tyvar (type_variable) (annotation) (fun (star) (type_name (type)))))
+    (annotated_tyvar (type_variable) (fun (type_star) (type_name (type)))))
    (forall_dot)
    (fun
     (type_parens
@@ -54,21 +52,17 @@ a ::
 ---
 
 (module
- (decl_sig
+ (signature
   (variable)
-  (annotation)
   (context
    (constraint (class_name (type)) (type_name (type_variable)) (type_name (type_variable)))
-   (carrow)
    (context
     (constraint (class_name (type)) (type_name (type_variable)))
     (comma)
     (constraint (class_name (type)) (type_name (type_variable)))
-    (carrow)
     (fun
      (type_parens
       (context (constraint (class_name (type)))
-      (carrow)
       (type_apply (type_name (type_variable)) (type_name (type_variable)))))
      (fun (type_apply (type_name (type)) (type_name (type_variable))) (type_name (type_variable))))))))
 
@@ -81,17 +75,14 @@ a :: A a a => (A a, A a) => a
 ---
 
 (module
- (decl_sig
+ (signature
   (variable)
-  (annotation)
   (context
    (constraint (class_name (type)) (type_name (type_variable)) (type_name (type_variable)))
-   (carrow)
    (context
     (constraint (class_name (type)) (type_name (type_variable)))
     (comma)
     (constraint (class_name (type)) (type_name (type_variable)))
-    (carrow)
     (type_name (type_variable))))))
 
 =========================================
@@ -103,12 +94,10 @@ a :: a ++ a => a
 ---
 
 (module
- (decl_sig
+ (signature
   name: (variable)
-  (annotation)
   type: (context
    (constraint (type_infix left: (type_name (type_variable)) op: (tyconop (type_operator)) right: (type_name (type_variable))))
-   (carrow)
    (type_name (type_variable)))))
 
 =================================================
@@ -120,15 +109,12 @@ sort :: (?aaa :: a -> a -> a) => [a] -> [a]
 ---
 
 (module
- (decl_sig
+ (signature
   (variable)
-  (annotation)
   (context
    (implicit_param
     (implicit_parid)
-    (annotation)
     (fun (type_name (type_variable)) (fun (type_name (type_variable)) (type_name (type_variable)))))
-   (carrow)
    (fun
     (list_type (type_name (type_variable)))
     (list_type (type_name (type_variable)))))))
@@ -143,7 +129,7 @@ gendecl: multi method operator
 ---
 
 (module
- (decl_sig
+ (signature
   (operator)
   (comma)
   (operator)
@@ -151,7 +137,6 @@ gendecl: multi method operator
   (operator)
   (comma)
   (operator)
-  (annotation)
   (type_name (type_variable))))
 
 
@@ -164,18 +149,15 @@ a :: A a => ∀ a . a ++ a => a -> ∀ a . a -> A => A => A a
 ---
 
 (module
- (decl_sig
+ (signature
   name: (variable)
-  (annotation)
   type: (context
    (constraint class: (class_name (type)) (type_name (type_variable)))
-   (carrow)
    (forall
     (quantifiers (type_variable))
     (forall_dot)
     (context
      (constraint (type_infix left: (type_name (type_variable)) op: (tyconop (type_operator)) right: (type_name (type_variable))))
-     (carrow)
      (fun
       (type_name (type_variable))
       (forall
@@ -185,10 +167,8 @@ a :: A a => ∀ a . a ++ a => a -> ∀ a . a -> A => A => A a
         (type_name (type_variable))
         (context
          (constraint class: (class_name (type)))
-         (carrow)
          (context
           (constraint class: (class_name (type)))
-          (carrow)
           (type_apply (type_name (type)) (type_name (type_variable)))))))))))))
 
 =================================================
@@ -199,7 +179,7 @@ gendecl: parenthesized operator fun
 
 ---
 
-(module (decl_fun (funvar (operator)) (funrhs (equals) (exp_name (variable)))))
+(module (decl_fun (funvar (operator)) (funrhs (exp_name (variable)))))
 
 =================================================
 gendecl: HKT annotation
@@ -210,15 +190,13 @@ a :: (a :: (* -> *) -> *) -> a
 ---
 
 (module
- (decl_sig
+ (signature
   (variable)
-  (annotation)
   (fun
    (type_name
     (annotated_tyvar
      (type_variable)
-     (annotation)
      (fun
-      (type_parens (fun (star) (star)))
-      (star))))
+      (type_parens (fun (type_star) (type_star)))
+      (type_star))))
    (type_name (type_variable)))))

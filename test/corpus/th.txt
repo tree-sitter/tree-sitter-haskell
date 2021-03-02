@@ -15,7 +15,6 @@ and newline|]
   (funvar
    (variable))
   (funrhs
-   (equals)
    (exp_apply
     (exp_qq
      (qq_body)
@@ -55,7 +54,7 @@ f = $a
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (splice (exp_name (variable))))))
+(module (decl_fun (funvar (variable)) (funrhs (splice (exp_name (variable))))))
 
 ===============================
 template haskell: inline splice parens
@@ -69,7 +68,6 @@ f = $(a . a $ a)
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (splice
     (exp_parens
      (exp_infix
@@ -88,7 +86,7 @@ a = a $(a)
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_apply (exp_name (variable)) (splice (exp_parens (exp_name (variable))))))))
+  (funrhs (exp_apply (exp_name (variable)) (splice (exp_parens (exp_name (variable))))))))
 
 ===============================
 template haskell: top level splice without parens

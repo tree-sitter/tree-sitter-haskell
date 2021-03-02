@@ -21,14 +21,14 @@ class (A a, A a) => A a
  (class
   (context
    (constraint (class_name (type)) (type_name (type_variable)))
-   (carrow))
+  )
   (class_head (class_name (type)) (type_name (type_variable))))
  (class
   (context
    (constraint (class_name (type)) (type_name (type_variable)))
    (comma)
    (constraint (class_name (type)) (type_name (type_variable)))
-   (carrow))
+  )
   (class_head (class_name (type)) (type_name (type_variable)))))
 
 =========================================
@@ -44,12 +44,10 @@ class A a where a :: A a => a -> a
   (class_head class: (class_name (type)) (type_name (type_variable)))
   (class_body
    (where)
-   (decl_sig
+   (signature
     name: (variable)
-    (annotation)
     type: (context
      (constraint class: (class_name (type)) (type_name (type_variable)))
-     (carrow)
      (fun (type_name (type_variable)) (type_name (type_variable))))))))
 
 =========================================
@@ -68,8 +66,8 @@ class Foo a where {
   (class_head (class_name (type)) (type_name (type_variable)))
   (class_body
    (where)
-   (decl_sig (variable) (annotation) (type_name (type_variable)))
-   (decl_sig (variable) (annotation) (type_name (type_variable))))))
+   (signature (variable) (type_name (type_variable)))
+   (signature (variable) (type_name (type_variable))))))
 
 =========================================
 class: fixity
@@ -94,16 +92,16 @@ class A where
   (class_head (class_name (type)))
   (class_body
    (where)
-   (decl_fixity (varop (variable)))
-   (decl_sig (variable) (annotation) (type_name (type)))
-   (decl_fixity (integer) (varop (variable)))
-   (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
-   (decl_fixity (integer) (varop (variable)) (comma) (varop (variable)) (comma) (varop (variable)))
-   (decl_fixity (varop (operator)))
-   (decl_fixity (integer) (varop (operator)))
-   (decl_fixity (integer) (consym))
-   (decl_fixity (integer) (consym))
-   (decl_fixity (integer) (consym)))))
+   (fixity (varop (variable)))
+   (signature (variable) (type_name (type)))
+   (fixity (integer) (varop (variable)))
+   (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+   (fixity (integer) (varop (variable)) (comma) (varop (variable)) (comma) (varop (variable)))
+   (fixity (varop (operator)))
+   (fixity (integer) (varop (operator)))
+   (fixity (integer) (consym))
+   (fixity (integer) (consym))
+   (fixity (integer) (consym)))))
 
 =========================================
 class: multi method operator
@@ -119,7 +117,7 @@ class A where
   (class_head (class_name (type)))
   (class_body
    (where)
-   (decl_sig
+   (signature
     (operator)
     (comma)
     (operator)
@@ -127,7 +125,6 @@ class A where
     (operator)
     (comma)
     (operator)
-    (annotation)
     (type_name (type_variable))))))
 
 =========================================
@@ -155,8 +152,8 @@ class A where
   (class_head (class_name (type)))
   (class_body
    (where)
-   (decl_sig (variable) (annotation) (type_name (type)))
-   (default_signature (decl_sig (variable) (annotation) (type_name (type)))))))
+   (signature (variable) (type_name (type)))
+   (default_signature (signature (variable) (type_name (type)))))))
 
 =========================================
 class: type_variable kind
@@ -173,8 +170,7 @@ class A (a :: [*] -> k)
    (type_name
     (annotated_tyvar
      (type_variable)
-     (annotation)
-     (fun (list_type (star)) (type_name (type_variable))))))))
+     (fun (list_type (type_star)) (type_name (type_variable))))))))
 
 =========================================
 class: associated family
@@ -191,8 +187,8 @@ class A a where
   (class_head (class_name (type)) (type_name (type_variable)))
   (class_body
    (where)
-   (decl_type_sig (type) (type_variable) (annotation) (type_name (type_variable)))
-   (decl_type_sig (type) (type_variable) (annotation) (type_name (type_variable))))))
+   (decl_type_sig (type) (type_variable) (type_name (type_variable)))
+   (decl_type_sig (type) (type_variable) (type_name (type_variable))))))
 
 =========================================
 class: associated data
@@ -213,8 +209,7 @@ class A a where
    (class_datafam
     (type)
     (type_variable)
-    (annotation)
-    (fun (star) (type_name (type)))))))
+    (fun (type_star) (type_name (type)))))))
 
 =========================================
 class: fundeps

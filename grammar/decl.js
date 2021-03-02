@@ -3,7 +3,7 @@ const foreign = ($, kw, pent) => seq(
     kw,
     $._foreign_pre,
     optional(pent),
-    $.decl_sig,
+    $.signature,
   )
 
 module.exports = {
@@ -26,30 +26,30 @@ module.exports = {
 
   funvar: $ => seq($._fun_name, repeat($._apat)),
 
-  gdrhs: $ => seq($.guards, $.equals, $._exp),
+  gdrhs: $ => seq($.guards, $._equals, $._exp),
 
   funrhs: $ => seq(
     choice(
-      seq($.equals, $._exp),
+      seq($._equals, $._exp),
       repeat1($.gdrhs),
     ),
     optional(seq($.where, optional($.decls))),
   ),
 
-  decl_fixity: $ => seq(
+  fixity: $ => seq(
     choice('infixl', 'infixr', 'infix'),
     optional($.integer),
     sep1($.comma, $._op),
   ),
 
-  decl_sig: $ => seq(
-    sep1($.comma, field('name', $._var)),
-    $._type_annotation,
+  signature: $ => seq(
+    field('lhs', sep1($.comma, field('name', $._var))),
+    field('type', $._type_annotation),
   ),
 
   _gendecl: $ => choice(
-    $.decl_sig,
-    $.decl_fixity,
+    $.signature,
+    $.fixity,
   ),
 
   /**

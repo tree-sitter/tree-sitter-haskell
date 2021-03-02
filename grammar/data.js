@@ -9,7 +9,7 @@ module.exports = {
 
   field: $ => seq(
     sep1($.comma, $.field_id),
-    $.annotation,
+    $._annotation,
     choice($.strict_type, $._type),
   ),
 
@@ -34,7 +34,7 @@ module.exports = {
   ),
 
   constrs: $ => sep1(
-    $.bar,
+    $._bar,
     seq(
       optional($.forall),
       optional($.context),
@@ -61,7 +61,7 @@ module.exports = {
   ),
 
   _adt_rhs: $ => seq(
-    $.equals,
+    $._equals,
     $.constrs,
     repeat($.deriving),
   ),
@@ -74,7 +74,7 @@ module.exports = {
   ),
 
   _gadt_constr_type: $ => seq(
-    $.annotation,
+    $._annotation,
     optional($.forall),
     optional($.context),
     choice($._gadt_sig, seq($.record_fields, $._arrow, $._gadt_sig)),
@@ -108,7 +108,7 @@ module.exports = {
   ),
 
   _newtype: $ => seq(
-    $.equals,
+    $._equals,
     $.newtype_constructor,
     repeat($.deriving),
   ),

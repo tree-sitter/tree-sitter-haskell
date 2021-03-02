@@ -13,7 +13,6 @@ type family A where
   (where)
   (tyfam_eq
    (tyfam_pat (type))
-   (equals)
    (type_name (type)))))
 
 =================================================
@@ -31,7 +30,6 @@ type family A a b c where
   (where)
   (tyfam_eq
    (tyfam_pat name: (type) (type_name (type_variable)) (type_name (type_variable)) (type_name (type_variable)))
-   (equals)
    (type_apply (type_name (type_variable)) (type_name (type_variable))))))
 
 =================================================
@@ -52,7 +50,6 @@ type family A a b c where
     (type)
     (type_parens (type_apply (type_name (type)) (type_name (type_variable))))
     (list_type (type_name (type_variable))))
-   (equals)
    (type_apply (type_name (type_variable)) (type_parens (type_apply (type_name (type)) (type_name (type_variable))))))))
 
 =================================================
@@ -68,14 +65,12 @@ type family A a :: (k -> *) -> 'Just k where
  (type_family
   (tyfam_head (type) (type_variable))
   (tyfam_sig
-   (annotation)
    (fun
-    (type_parens (fun (type_name (type_variable)) (star)))
+    (type_parens (fun (type_name (type_variable)) (type_star)))
     (type_apply (type_name (promoted (type))) (type_name (type_variable)))))
 (where)
   (tyfam_eq
    (tyfam_pat (type) (type_name (type_variable)))
-   (equals)
    (type_name (type_variable)))))
 
 =================================================
@@ -93,12 +88,11 @@ type family A (a :: ([k] -> *) -> k) where
    (type)
    (annotated_tyvar
     (type_variable)
-    (annotation)
     (fun
-     (type_parens (fun (list_type (type_name (type_variable))) (star)))
+     (type_parens (fun (list_type (type_name (type_variable))) (type_star)))
      (type_name (type_variable)))))
   (where)
-  (tyfam_eq (tyfam_pat (type) (type_name (type_variable))) (equals) (type_name (type_variable)))))
+  (tyfam_eq (tyfam_pat (type) (type_name (type_variable))) (type_name (type_variable)))))
 
 =================================================
 family: open
@@ -114,14 +108,12 @@ type instance A (A A) = A
  (type_family
   (tyfam_head
    (type)
-   (annotated_tyvar (type_variable) (annotation) (type_name (type_variable))))
+   (annotated_tyvar (type_variable) (type_name (type_variable))))
   (tyfam_sig
-   (annotation)
-   (star)))
+   (type_star)))
  (type_instance
   (type_name (type))
   (list_type (type_name (type)))
-  (equals)
   (type_name (type)))
  (type_instance
   (type_name (type))
@@ -129,7 +121,6 @@ type instance A (A A) = A
    (type_apply
     (type_name (type))
     (type_name (type))))
-  (equals)
   (type_name (type))))
 
 =================================================
@@ -144,9 +135,8 @@ data family A a (a :: [a]) :: Type -> *
  (data_family
   (type)
   (type_variable)
-  (annotated_tyvar (type_variable) (annotation) (list_type (type_name (type_variable))))
-  (annotation)
-  (fun (type_name (type)) (star))))
+  (annotated_tyvar (type_variable) (list_type (type_name (type_variable))))
+  (fun (type_name (type)) (type_star))))
 
 =================================================
 family: data instance adt
@@ -166,13 +156,11 @@ data instance ∀ a . A a A =
    (type_name (type))
    (type_name (type_variable))
    (type_name (type)))
-  (equals)
   (constrs
    (data_constructor (constructor) (type_name (type_variable)) (type_name (type)) (type_name (type_variable)))
-   (bar)
    (constr_record
     (constructor)
-    (record_fields (field (field_id (variable)) (annotation) (type_name (type))))))))
+    (record_fields (field (field_id (variable)) (type_name (type))))))))
 
 =================================================
 family: data instance gadt
@@ -192,7 +180,6 @@ data instance A a where
   (where)
   (gadt_constr
    (constructor)
-   (annotation)
    (fun (type_name (type)) (type_apply (type_name (type)) (type_name (type_variable)))))
   (deriving (type) (comma) (type))))
 
@@ -210,6 +197,5 @@ newtype instance A a a = A a deriving A
    (type_name (type))
    (type_name (type_variable))
    (type_name (type_variable)))
-  (equals)
   (newtype_constructor (constructor) (type_name (type_variable)))
   (deriving (type))))

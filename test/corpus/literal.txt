@@ -11,12 +11,10 @@ a = 100_00_532
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_literal (integer))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_literal (integer)))))
 
 =========================================
@@ -29,8 +27,8 @@ a = 0O77
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (integer)))))
 
 =========================================
 literal: hex
@@ -43,9 +41,9 @@ a = 0xa_e_123_4
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (integer)))))
 
 =========================================
 literal: float
@@ -62,13 +60,13 @@ a = 99E-01
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (float))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (float))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (float))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (float))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (float))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (float))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (float)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (float))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (float))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (float))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (float))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (float))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (float))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (float)))))
 
 =========================================
 literal: binary
@@ -80,5 +78,5 @@ a = 0B10010
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (integer)))))

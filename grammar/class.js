@@ -3,7 +3,7 @@ module.exports = {
   // class
   // ------------------------------------------------------------------------
 
-  default_signature: $ => seq('default', $.decl_sig),
+  default_signature: $ => seq('default', $.signature),
 
   class_datafam: $ => seq(
     'data',
@@ -71,13 +71,13 @@ module.exports = {
     'type',
     optional('instance'),
     repeat($._atype),
-    $.equals,
+    $._equals,
     $._type,
   ),
 
   _idecl: $ => choice(
     $.decl_fun,
-    $.decl_sig,
+    $.signature,
     $.inst_datainst,
     $.inst_tyinst,
   ),

@@ -42,10 +42,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -68,6 +64,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -81,10 +81,6 @@
           "named": true
         },
         {
-          "type": "annotation",
-          "named": true
-        },
-        {
           "type": "constrs",
           "named": true
         },
@@ -94,10 +90,6 @@
         },
         {
           "type": "deriving",
-          "named": true
-        },
-        {
-          "type": "equals",
           "named": true
         },
         {
@@ -153,10 +145,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -179,6 +167,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -187,10 +179,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "decls",
           "named": true
@@ -398,10 +386,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -424,29 +408,24 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "type_variable",
           "named": true
         }
       ]
     }
-  },
-  {
-    "type": "bar",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "bind_pattern",
@@ -477,10 +456,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -503,6 +478,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -511,10 +490,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "exp_apply",
           "named": true
@@ -605,10 +580,6 @@
         },
         {
           "type": "exp_tyapp",
-          "named": true
-        },
-        {
-          "type": "larrow",
           "named": true
         },
         {
@@ -715,15 +686,7 @@
           "named": true
         },
         {
-          "type": "decl_fixity",
-          "named": true
-        },
-        {
           "type": "decl_fun",
-          "named": true
-        },
-        {
-          "type": "decl_sig",
           "named": true
         },
         {
@@ -732,6 +695,14 @@
         },
         {
           "type": "default_signature",
+          "named": true
+        },
+        {
+          "type": "fixity",
+          "named": true
+        },
+        {
+          "type": "signature",
           "named": true
         },
         {
@@ -784,10 +755,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -810,6 +777,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -820,10 +791,6 @@
       "types": [
         {
           "type": "annotated_tyvar",
-          "named": true
-        },
-        {
-          "type": "annotation",
           "named": true
         },
         {
@@ -865,10 +832,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -886,6 +849,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -984,10 +951,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "strict_type",
           "named": true
         },
@@ -1013,6 +976,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -1065,10 +1032,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -1087,6 +1050,10 @@
         {
           "type": "type_parens",
           "named": true
+        },
+        {
+          "type": "type_star",
+          "named": true
         }
       ]
     }
@@ -1099,10 +1066,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "bar",
-          "named": true
-        },
         {
           "type": "constr_infix",
           "named": true
@@ -1142,12 +1105,8 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
-        {
-          "type": "carrow",
-          "named": true
-        },
         {
           "type": "comma",
           "named": true
@@ -1181,10 +1140,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -1206,6 +1161,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -1232,10 +1191,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "strict_type",
           "named": true
         },
@@ -1253,6 +1208,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -1301,10 +1260,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -1327,6 +1282,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -1337,10 +1296,6 @@
       "types": [
         {
           "type": "annotated_tyvar",
-          "named": true
-        },
-        {
-          "type": "annotation",
           "named": true
         },
         {
@@ -1383,10 +1338,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -1409,6 +1360,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -1417,10 +1372,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "constrs",
           "named": true
@@ -1431,10 +1382,6 @@
         },
         {
           "type": "deriving",
-          "named": true
-        },
-        {
-          "type": "equals",
           "named": true
         },
         {
@@ -1455,10 +1402,6 @@
         },
         {
           "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
           "named": true
         },
         {
@@ -1486,38 +1429,11 @@
           "named": true
         },
         {
+          "type": "type_star",
+          "named": true
+        },
+        {
           "type": "where",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_fixity",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "comma",
-          "named": true
-        },
-        {
-          "type": "constructor",
-          "named": true
-        },
-        {
-          "type": "consym",
-          "named": true
-        },
-        {
-          "type": "integer",
-          "named": true
-        },
-        {
-          "type": "varop",
           "named": true
         }
       ]
@@ -1541,102 +1457,6 @@
         },
         {
           "type": "funvar",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "decl_sig",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": "operator",
-            "named": true
-          },
-          {
-            "type": "variable",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "context",
-            "named": true
-          },
-          {
-            "type": "forall",
-            "named": true
-          },
-          {
-            "type": "fun",
-            "named": true
-          },
-          {
-            "type": "list_type",
-            "named": true
-          },
-          {
-            "type": "promoted",
-            "named": true
-          },
-          {
-            "type": "star",
-            "named": true
-          },
-          {
-            "type": "tuple_type",
-            "named": true
-          },
-          {
-            "type": "type_apply",
-            "named": true
-          },
-          {
-            "type": "type_infix",
-            "named": true
-          },
-          {
-            "type": "type_literal",
-            "named": true
-          },
-          {
-            "type": "type_name",
-            "named": true
-          },
-          {
-            "type": "type_parens",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "comma",
           "named": true
         }
       ]
@@ -1685,10 +1505,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -1711,20 +1527,20 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
     },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "annotated_tyvar",
-          "named": true
-        },
-        {
-          "type": "annotation",
           "named": true
         },
         {
@@ -1747,15 +1563,15 @@
       "required": false,
       "types": [
         {
-          "type": "decl_fixity",
-          "named": true
-        },
-        {
           "type": "decl_fun",
           "named": true
         },
         {
-          "type": "decl_sig",
+          "type": "fixity",
+          "named": true
+        },
+        {
+          "type": "signature",
           "named": true
         }
       ]
@@ -1782,10 +1598,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -1808,6 +1620,10 @@
         {
           "type": "type_parens",
           "named": true
+        },
+        {
+          "type": "type_star",
+          "named": true
         }
       ]
     }
@@ -1821,7 +1637,7 @@
       "required": true,
       "types": [
         {
-          "type": "decl_sig",
+          "type": "signature",
           "named": true
         }
       ]
@@ -1879,11 +1695,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "equals",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "exp_apply",
@@ -1973,10 +1784,6 @@
         "required": true,
         "types": [
           {
-            "type": "annotation",
-            "named": true
-          },
-          {
             "type": "context",
             "named": true
           },
@@ -2093,10 +1900,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -2118,6 +1921,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -2127,10 +1934,6 @@
         "required": false,
         "types": [
           {
-            "type": "annotation",
-            "named": true
-          },
-          {
             "type": "context",
             "named": true
           },
@@ -2247,10 +2050,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -2272,6 +2071,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -2281,10 +2084,6 @@
         "required": false,
         "types": [
           {
-            "type": "annotation",
-            "named": true
-          },
-          {
             "type": "context",
             "named": true
           },
@@ -2401,10 +2200,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -2426,6 +2221,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -2455,10 +2254,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -2480,6 +2275,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -2525,10 +2324,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -2551,6 +2346,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -2561,10 +2360,6 @@
       "types": [
         {
           "type": "alts",
-          "named": true
-        },
-        {
-          "type": "annotation",
           "named": true
         },
         {
@@ -2675,10 +2470,6 @@
         "required": true,
         "types": [
           {
-            "type": "annotation",
-            "named": true
-          },
-          {
             "type": "context",
             "named": true
           },
@@ -2795,10 +2586,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -2820,6 +2607,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -2829,10 +2620,6 @@
         "required": true,
         "types": [
           {
-            "type": "annotation",
-            "named": true
-          },
-          {
             "type": "context",
             "named": true
           },
@@ -2949,10 +2736,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -2974,6 +2757,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -2983,10 +2770,6 @@
         "required": true,
         "types": [
           {
-            "type": "annotation",
-            "named": true
-          },
-          {
             "type": "context",
             "named": true
           },
@@ -3103,10 +2886,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -3128,6 +2907,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -3157,10 +2940,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -3182,6 +2961,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -3247,10 +3030,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -3273,18 +3052,18 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "exp_apply",
           "named": true
@@ -3540,10 +3319,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -3566,6 +3341,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -3574,10 +3353,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "exp_apply",
           "named": true
@@ -3671,10 +3446,6 @@
           "named": true
         },
         {
-          "type": "lambda",
-          "named": true
-        },
-        {
           "type": "pat_as",
           "named": true
         },
@@ -3726,15 +3497,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
         {
           "type": "alts",
-          "named": true
-        },
-        {
-          "type": "lambda",
           "named": true
         }
       ]
@@ -3788,10 +3555,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -3814,6 +3577,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -3822,10 +3589,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "comma",
           "named": true
@@ -3958,10 +3721,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -3984,6 +3743,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -3992,14 +3755,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "bar",
-          "named": true
-        },
         {
           "type": "comma",
           "named": true
@@ -4297,10 +4052,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -4323,18 +4074,18 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "exp_apply",
           "named": true
@@ -4839,10 +4590,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -4856,6 +4603,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         },
         {
@@ -4894,10 +4645,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -4920,6 +4667,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -4928,10 +4679,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "comma",
           "named": true
@@ -5040,7 +4787,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
@@ -5052,15 +4799,7 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
-          "named": true
-        },
-        {
-          "type": "tyapp",
           "named": true
         },
         {
@@ -5073,6 +4812,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -5223,10 +4966,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -5249,6 +4988,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -5257,14 +5000,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "equals",
-          "named": true
-        },
         {
           "type": "exp_apply",
           "named": true
@@ -5393,10 +5128,6 @@
       "required": true,
       "types": [
         {
-          "type": "annotation",
-          "named": true
-        },
-        {
           "type": "comma",
           "named": true
         },
@@ -5422,10 +5153,6 @@
         },
         {
           "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
           "named": true
         },
         {
@@ -5455,6 +5182,10 @@
         {
           "type": "type_parens",
           "named": true
+        },
+        {
+          "type": "type_star",
+          "named": true
         }
       ]
     }
@@ -5469,6 +5200,37 @@
       "types": [
         {
           "type": "variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "fixity",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comma",
+          "named": true
+        },
+        {
+          "type": "constructor",
+          "named": true
+        },
+        {
+          "type": "consym",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "varop",
           "named": true
         }
       ]
@@ -5515,10 +5277,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -5540,6 +5298,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         },
         {
@@ -5567,15 +5329,15 @@
           "named": true
         },
         {
-          "type": "decl_sig",
-          "named": true
-        },
-        {
           "type": "expent",
           "named": true
         },
         {
           "type": "safety",
+          "named": true
+        },
+        {
+          "type": "signature",
           "named": true
         }
       ]
@@ -5594,15 +5356,15 @@
           "named": true
         },
         {
-          "type": "decl_sig",
-          "named": true
-        },
-        {
           "type": "impent",
           "named": true
         },
         {
           "type": "safety",
+          "named": true
+        },
+        {
+          "type": "signature",
           "named": true
         }
       ]
@@ -5616,10 +5378,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "equals",
-          "named": true
-        },
         {
           "type": "operator",
           "named": true
@@ -5724,10 +5482,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "strict_type",
           "named": true
         },
@@ -5753,6 +5507,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -5888,10 +5646,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -5914,6 +5668,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -5923,15 +5681,7 @@
       "required": true,
       "types": [
         {
-          "type": "annotation",
-          "named": true
-        },
-        {
           "type": "decls",
-          "named": true
-        },
-        {
-          "type": "equals",
           "named": true
         },
         {
@@ -6128,10 +5878,6 @@
       "required": true,
       "types": [
         {
-          "type": "annotation",
-          "named": true
-        },
-        {
           "type": "constructor",
           "named": true
         },
@@ -6164,10 +5910,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "strict_type",
           "named": true
         },
@@ -6193,6 +5935,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -6227,10 +5973,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -6253,6 +5995,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -6261,10 +6007,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "exp_apply",
           "named": true
@@ -6397,10 +6139,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -6423,6 +6161,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -6431,14 +6173,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
-        {
-          "type": "equals",
-          "named": true
-        },
         {
           "type": "exp_apply",
           "named": true
@@ -6720,10 +6454,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -6746,18 +6476,18 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "implicit_parid",
           "named": true
@@ -7042,10 +6772,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -7068,6 +6794,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -7076,10 +6806,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "constrs",
           "named": true
@@ -7090,10 +6816,6 @@
         },
         {
           "type": "deriving",
-          "named": true
-        },
-        {
-          "type": "equals",
           "named": true
         },
         {
@@ -7117,10 +6839,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -7142,6 +6860,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         },
         {
@@ -7164,10 +6886,6 @@
           "named": true
         },
         {
-          "type": "equals",
-          "named": true
-        },
-        {
           "type": "forall",
           "named": true
         },
@@ -7181,10 +6899,6 @@
         },
         {
           "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
           "named": true
         },
         {
@@ -7210,6 +6924,10 @@
         {
           "type": "type_parens",
           "named": true
+        },
+        {
+          "type": "type_star",
+          "named": true
         }
       ]
     }
@@ -7231,10 +6949,6 @@
           "named": true
         },
         {
-          "type": "decl_sig",
-          "named": true
-        },
-        {
           "type": "forall",
           "named": true
         },
@@ -7248,6 +6962,10 @@
         },
         {
           "type": "instance_head",
+          "named": true
+        },
+        {
+          "type": "signature",
           "named": true
         },
         {
@@ -7285,10 +7003,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -7306,6 +7020,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -7364,10 +7082,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -7389,6 +7103,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -7449,15 +7167,7 @@
           "named": true
         },
         {
-          "type": "decl_fixity",
-          "named": true
-        },
-        {
           "type": "decl_fun",
-          "named": true
-        },
-        {
-          "type": "decl_sig",
           "named": true
         },
         {
@@ -7470,6 +7180,10 @@
         },
         {
           "type": "empty_file",
+          "named": true
+        },
+        {
+          "type": "fixity",
           "named": true
         },
         {
@@ -7498,6 +7212,10 @@
         },
         {
           "type": "pattern_synonym",
+          "named": true
+        },
+        {
+          "type": "signature",
           "named": true
         },
         {
@@ -7583,10 +7301,6 @@
           "named": true
         },
         {
-          "type": "equals",
-          "named": true
-        },
-        {
           "type": "newtype_constructor",
           "named": true
         },
@@ -7626,10 +7340,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -7643,6 +7353,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -7764,16 +7478,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "as_pat",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -8095,10 +7799,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -8121,6 +7821,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -8129,10 +7833,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "pat_apply",
           "named": true
@@ -8362,10 +8062,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -8388,6 +8084,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -8396,10 +8096,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "exp_apply",
           "named": true
@@ -8656,10 +8352,6 @@
           "named": true
         },
         {
-          "type": "larrow",
-          "named": true
-        },
-        {
           "type": "pat_apply",
           "named": true
         },
@@ -8747,10 +8439,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -8773,6 +8461,10 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
@@ -8782,19 +8474,11 @@
       "required": true,
       "types": [
         {
-          "type": "annotation",
-          "named": true
-        },
-        {
           "type": "constructor",
           "named": true
         },
         {
           "type": "funrhs",
-          "named": true
-        },
-        {
-          "type": "larrow",
           "named": true
         },
         {
@@ -8962,10 +8646,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -8988,18 +8668,18 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "bind_pattern",
           "named": true
@@ -9288,6 +8968,114 @@
     "fields": {}
   },
   {
+    "type": "signature",
+    "named": true,
+    "fields": {
+      "lhs": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": "comma",
+            "named": true
+          },
+          {
+            "type": "operator",
+            "named": true
+          },
+          {
+            "type": "variable",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": "operator",
+            "named": true
+          },
+          {
+            "type": "variable",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "context",
+            "named": true
+          },
+          {
+            "type": "forall",
+            "named": true
+          },
+          {
+            "type": "fun",
+            "named": true
+          },
+          {
+            "type": "list_type",
+            "named": true
+          },
+          {
+            "type": "promoted",
+            "named": true
+          },
+          {
+            "type": "tuple_type",
+            "named": true
+          },
+          {
+            "type": "type_apply",
+            "named": true
+          },
+          {
+            "type": "type_infix",
+            "named": true
+          },
+          {
+            "type": "type_literal",
+            "named": true
+          },
+          {
+            "type": "type_name",
+            "named": true
+          },
+          {
+            "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "splice",
     "named": true,
     "fields": {},
@@ -9391,10 +9179,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -9417,18 +9201,18 @@
           {
             "type": "type_parens",
             "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
           }
         ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "bind_pattern",
           "named": true
@@ -9557,10 +9341,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -9574,6 +9354,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -9738,10 +9522,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -9763,6 +9543,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -9813,10 +9597,6 @@
           "named": true
         },
         {
-          "type": "equals",
-          "named": true
-        },
-        {
           "type": "forall",
           "named": true
         },
@@ -9830,10 +9610,6 @@
         },
         {
           "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
           "named": true
         },
         {
@@ -9862,6 +9638,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -9937,10 +9717,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -9955,6 +9731,10 @@
         {
           "type": "type_parens",
           "named": true
+        },
+        {
+          "type": "type_star",
+          "named": true
         }
       ]
     }
@@ -9964,13 +9744,9 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "annotation",
-          "named": true
-        },
         {
           "type": "context",
           "named": true
@@ -9989,10 +9765,6 @@
         },
         {
           "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
           "named": true
         },
         {
@@ -10017,6 +9789,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -10059,10 +9835,6 @@
           "named": true
         },
         {
-          "type": "equals",
-          "named": true
-        },
-        {
           "type": "forall",
           "named": true
         },
@@ -10076,10 +9848,6 @@
         },
         {
           "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
           "named": true
         },
         {
@@ -10107,6 +9875,10 @@
           "named": true
         },
         {
+          "type": "type_star",
+          "named": true
+        },
+        {
           "type": "type_variable",
           "named": true
         }
@@ -10130,10 +9902,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -10147,6 +9915,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -10196,10 +9968,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -10217,6 +9985,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -10254,10 +10026,6 @@
             "named": true
           },
           {
-            "type": "star",
-            "named": true
-          },
-          {
             "type": "tuple_type",
             "named": true
           },
@@ -10279,6 +10047,10 @@
           },
           {
             "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
             "named": true
           }
         ]
@@ -10312,10 +10084,6 @@
           "named": true
         },
         {
-          "type": "equals",
-          "named": true
-        },
-        {
           "type": "forall",
           "named": true
         },
@@ -10329,10 +10097,6 @@
         },
         {
           "type": "promoted",
-          "named": true
-        },
-        {
-          "type": "star",
           "named": true
         },
         {
@@ -10357,6 +10121,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -10478,10 +10246,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -10503,6 +10267,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -10554,10 +10322,6 @@
           "named": true
         },
         {
-          "type": "star",
-          "named": true
-        },
-        {
           "type": "tuple_type",
           "named": true
         },
@@ -10571,6 +10335,10 @@
         },
         {
           "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
           "named": true
         }
       ]
@@ -10626,24 +10394,12 @@
     "named": false
   },
   {
-    "type": "annotation",
-    "named": true
-  },
-  {
     "type": "anyclass",
     "named": false
   },
   {
     "type": "as",
     "named": false
-  },
-  {
-    "type": "as_pat",
-    "named": true
-  },
-  {
-    "type": "carrow",
-    "named": true
   },
   {
     "type": "case",
@@ -10770,14 +10526,6 @@
     "named": false
   },
   {
-    "type": "lambda",
-    "named": true
-  },
-  {
-    "type": "larrow",
-    "named": true
-  },
-  {
     "type": "let",
     "named": false
   },
@@ -10834,10 +10582,6 @@
     "named": false
   },
   {
-    "type": "star",
-    "named": true
-  },
-  {
     "type": "stdcall",
     "named": false
   },
@@ -10854,12 +10598,12 @@
     "named": false
   },
   {
-    "type": "tyapp",
-    "named": true
-  },
-  {
     "type": "type",
     "named": false
+  },
+  {
+    "type": "type_star",
+    "named": true
   },
   {
     "type": "unsafe",

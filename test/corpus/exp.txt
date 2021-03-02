@@ -11,14 +11,13 @@ a = a A.a a a
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_apply (exp_name (variable)) (exp_name (variable)))))
+  (funrhs (exp_apply (exp_name (variable)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_apply (exp_name (variable)) (exp_name (variable)) (exp_name (variable)))))
+  (funrhs (exp_apply (exp_name (variable)) (exp_name (variable)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_apply
     (exp_name (variable))
     (exp_name (qualified_variable (modid (constructor)) (variable)))
@@ -37,10 +36,10 @@ a = A a A
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (variable)))))
+  (funrhs (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (constructor))))))
+  (funrhs (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (constructor))))))
 
 ===============================
 exp: unit
@@ -50,7 +49,7 @@ a = ()
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (con_unit)))))
+(module (decl_fun (funvar (variable)) (funrhs (exp_literal (con_unit)))))
 
 ===============================
 exp: arithmetic sequence
@@ -67,22 +66,18 @@ a = [a,a..a]
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_arithmetic_sequence (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_arithmetic_sequence (exp_name (variable)) (comma) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_arithmetic_sequence (exp_name (variable)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_arithmetic_sequence (exp_name (variable)) (comma) (exp_name (variable)) (exp_name (variable))))))
 
 ===============================
@@ -102,28 +97,23 @@ a = [ [ (a,a) | a <- [1,2] ] | a <- [1..] ]
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
-   (exp_list_comprehension (exp_name (variable)) (bar)
-    (qual (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable)))))))
+   (exp_list_comprehension (exp_name (variable))
+    (qual (bind_pattern (pat_name (variable)) (exp_name (variable)))))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_list_comprehension
     (exp_tuple (exp_name (variable)) (comma) (exp_name (variable)))
-    (bar)
-    (qual (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
+    (qual (bind_pattern (pat_name (variable)) (exp_name (variable))))
     (comma)
-    (qual (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable)))))))
+    (qual (bind_pattern (pat_name (variable)) (exp_name (variable)))))))
   (decl_fun
    (funvar (variable))
    (funrhs
-    (equals)
-    (exp_list_comprehension (exp_name (variable)) (bar)
+    (exp_list_comprehension (exp_name (variable))
      (qual
       (bind_pattern
        (pat_name (variable))
-       (larrow)
        (exp_list
         (exp_list
          (exp_tuple (exp_literal (integer)) (comma) (exp_literal (integer)))
@@ -138,44 +128,34 @@ a = [ [ (a,a) | a <- [1,2] ] | a <- [1..] ]
      (qual
       (bind_pattern
        (pat_tuple (pat_literal (integer)) (comma) (pat_name (variable)))
-       (larrow)
        (exp_name (variable)))))))
   (decl_fun
    (funvar (variable))
    (funrhs
-    (equals)
     (exp_list_comprehension
      (exp_tuple (exp_name (variable)) (comma) (exp_name (variable)))
-     (bar)
      (qual
       (bind_pattern
        (pat_name (variable))
-       (larrow)
        (exp_list (exp_literal (integer)) (comma) (exp_literal (integer)))))
      (comma)
      (qual
       (bind_pattern
        (pat_name (variable))
-       (larrow)
        (exp_arithmetic_sequence (exp_literal (integer)) (exp_literal (integer))))))))
   (decl_fun
    (funvar (variable))
    (funrhs
-    (equals)
     (exp_list_comprehension
      (exp_list_comprehension
       (exp_tuple (exp_name (variable)) (comma) (exp_name (variable)))
-      (bar)
       (qual
        (bind_pattern
         (pat_name (variable))
-        (larrow)
         (exp_list (exp_literal (integer)) (comma) (exp_literal (integer))))))
-     (bar)
      (qual
       (bind_pattern
        (pat_name (variable))
-       (larrow)
        (exp_arithmetic_sequence (exp_literal (integer)))))))))
 
 ===============================
@@ -191,12 +171,10 @@ a = (:< a)
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_section_right (consym) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_section_right (consym) (exp_name (variable))))))
 
 ===============================
@@ -212,13 +190,13 @@ a = (a $)
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_section_left (exp_name (variable)) (consym))))
+  (funrhs (exp_section_left (exp_name (variable)) (consym))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_section_left (exp_name (variable)) (consym))))
+  (funrhs (exp_section_left (exp_name (variable)) (consym))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_section_left (exp_name (variable)) (qvarop (operator))))))
+  (funrhs (exp_section_left (exp_name (variable)) (qvarop (operator))))))
 
 ===============================
 exp: infix operator
@@ -237,7 +215,6 @@ a = do
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_infix
      (exp_infix (exp_name (constructor)) (qvarop (operator)) (exp_name (variable)))
@@ -247,17 +224,14 @@ a = do
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_do
     (stmt
      (bind_pattern
       (pat_name (variable))
-      (larrow)
       (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
     (stmt
      (bind_pattern
       (pat_name (variable))
-      (larrow)
       (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))))))
 
 ===============================
@@ -274,17 +248,14 @@ a = a `A` a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix (exp_name (variable)) (qvarop (variable)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix (exp_name (variable)) (qvarop (qualified_variable (modid (constructor)) (variable))) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix (exp_name (variable)) (constructor) (exp_name (variable))))))
 
 ===============================
@@ -298,7 +269,7 @@ a = a ':++ a
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_apply (exp_name (variable)) (exp_th_quoted_name (ERROR (UNEXPECTED '+')) (variable))))))
+  (funrhs (exp_apply (exp_name (variable)) (exp_th_quoted_name (ERROR (UNEXPECTED '+')) (variable))))))
 
 ===============================
 exp: lambda simple
@@ -310,12 +281,11 @@ a = \ (A a) -> a
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_lambda (lambda) (pat_name (variable)) (exp_name (variable)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_lambda (pat_name (variable)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
-   (exp_lambda (lambda) (pat_parens (pat_apply (pat_name (constructor)) (pat_name (variable)))) (exp_name (variable))))))
+   (exp_lambda (pat_parens (pat_apply (pat_name (constructor)) (pat_name (variable)))) (exp_name (variable))))))
 
 =================================================
 exp: double lambda
@@ -329,14 +299,12 @@ a = \ a -> a >>= \ a -> a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_lambda
-    (lambda)
     (pat_name (variable))
     (exp_infix
      (exp_name (variable))
      (qvarop (operator))
-     (exp_lambda (lambda) (pat_name (variable)) (exp_name (variable))))))))
+     (exp_lambda (pat_name (variable)) (exp_name (variable))))))))
 
 ===============================
 exp: lambda and infix
@@ -351,9 +319,7 @@ a = \ a a a -> a <$> a <*> a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_lambda
-    (lambda)
     (pat_name (variable))
     (exp_infix
      (exp_infix (exp_name (variable)) (consym) (exp_name (variable)))
@@ -363,9 +329,7 @@ a = \ a a a -> a <$> a <*> a
   (funvar
    (variable))
   (funrhs
-   (equals)
    (exp_lambda
-    (lambda)
     (pat_name (variable))
     (pat_name (variable))
     (pat_name (variable))
@@ -386,7 +350,6 @@ a = (a <$> a)
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_parens (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))))
 
 ===============================
@@ -404,19 +367,19 @@ a = -(a)
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_name (operator))))
+  (funrhs (exp_name (operator))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_section_right (qvarop (operator)) (exp_name (variable)))))
+  (funrhs (exp_section_right (qvarop (operator)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_neg (exp_name (variable)))))
+  (funrhs (exp_neg (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_neg (exp_parens (exp_name (variable)))))))
+  (funrhs (exp_neg (exp_parens (exp_name (variable)))))))
 
 ===============================
 exp: tuple section
@@ -433,23 +396,19 @@ a = (,,a)
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_tuple (exp_name (variable)) (comma))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_tuple (exp_name (variable)) (comma) (comma))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_tuple (comma) (exp_name (variable)) (comma))))
  (decl_fun
   (funvar
    (variable))
   (funrhs
-   (equals)
    (exp_tuple (comma) (comma) (exp_name (variable))))))
 
 =================================================
@@ -467,17 +426,14 @@ a = if if a then a else a then a else a
  (decl_fun
   (funvar name: (variable))
   (funrhs
-   (equals)
    (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable)))))
  (decl_fun
   (funvar name: (variable))
   (funrhs
-   (equals)
    (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable)))))
  (decl_fun
   (funvar name: (variable))
   (funrhs
-   (equals)
    (exp_cond
     if: (exp_parens (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable))))
     then: (exp_name (variable))
@@ -485,7 +441,6 @@ a = if if a then a else a then a else a
  (decl_fun
   (funvar name: (variable))
   (funrhs
-   (equals)
    (exp_cond
     if: (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable)))
     then: (exp_name (variable))
@@ -503,7 +458,6 @@ a = aa (a ?cmp)
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_apply (exp_name (variable)) (exp_parens (exp_apply (exp_name (variable)) (exp_name (implicit_parid))))))))
 
 =================================================
@@ -523,19 +477,17 @@ a =
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_name (variable))
    (where)
-   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_name (variable))
    (where)
    (decls
-    (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
-    (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))
+    (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+    (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))))
 
 =================================================
 exp: let
@@ -562,45 +514,41 @@ a = let { a :: A;
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_let
     (let
      (decls
-      (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
-      (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))
+      (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+      (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
     (exp_in (exp_name (variable))))))
   (decl_fun
    (funvar (variable))
    (funrhs
-    (equals)
     (exp_let
      (let
       (decls
-       (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
-       (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))
+       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
      (exp_in (exp_name (variable))))))
   (decl_fun
    (funvar (variable))
    (funrhs
-    (equals)
     (exp_let
      (let
       (decls
-       (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
-       (decl_sig (variable) (annotation) (type_name (type)))
-       (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))
+       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+       (signature (variable) (type_name (type)))
+       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
      (exp_in (exp_name (variable))))))
   (decl_fun
    (funvar (variable))
    (funrhs
-    (equals)
     (exp_let
      (let
       (decls
-       (decl_sig (variable) (annotation) (type_name (type)))
-       (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
-       (decl_sig (variable) (annotation) (type_name (type)))
-       (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))
+       (signature (variable) (type_name (type)))
+       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+       (signature (variable) (type_name (type)))
+       (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
      (exp_in (exp_name (variable)))))))
 
 =================================================
@@ -619,7 +567,6 @@ a = case a of
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_case
     (exp_name (variable))
     (alts
@@ -627,8 +574,8 @@ a = case a of
      (alt (pat_name (constructor)) (exp_name (variable)))))
 (where)
   (decls
-   (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer))))
-   (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer))))))))
+   (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))
+   (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))))))
 
 
 =================================================
@@ -650,24 +597,20 @@ a = a >>= \case
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_lambda_case
-    (lambda)
     (alts (alt (pat_apply (pat_name (constructor)) (pat_name (variable))) (exp_name (variable)))))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (variable))
     (qvarop (operator))
     (exp_lambda_case
-     (lambda)
      (alts
       (alt
        (pat_apply (pat_name (constructor)) (pat_parens (pat_apply (pat_name (constructor)) (pat_wildcard) (pat_name (variable)))))
        (exp_do
-        (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
+        (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
         (stmt (exp_name (variable)))))
       (alt (pat_wildcard) (exp_name (variable)))))))))
 
@@ -683,9 +626,7 @@ a = \case a -> a : a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_lambda_case
-    (lambda)
     (alts
      (alt
       (pat_name (variable))
@@ -706,10 +647,9 @@ a = do
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_do (stmt (exp_name (variable))))
    (where)
-   (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))))
+   (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))))
 
 =================================================
 exp: do and let
@@ -728,12 +668,11 @@ a a = do
  (decl_fun
   (funvar (variable) (pat_name (variable)))
   (funrhs
-   (equals)
    (exp_do
-    (stmt (let (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
-    (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
-    (stmt (let (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
-    (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
+    (stmt (let (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))))
+    (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+    (stmt (let (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))))
+    (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
     (stmt (exp_apply (exp_name (variable)) (exp_name (variable))))))))
 
 =================================================
@@ -753,15 +692,14 @@ a a = do
  (decl_fun
   (funvar (variable) (pat_name (variable)))
   (funrhs
-   (equals)
    (exp_do
-    (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
-    (stmt (let (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))))
+    (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+    (stmt (let (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))))
     (stmt (exp_name (variable))))
    (where)
    (decls
-   (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (exp_name (variable)))))
-   (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (integer))))))))
+   (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (exp_name (variable)))))
+   (decl_fun (funvar (variable)) (funrhs (exp_literal (integer))))))))
 
 =================================================
 exp: do statement with pattern lhs
@@ -777,9 +715,8 @@ a = do
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_do
-    (stmt (bind_pattern (pat_tuple (pat_literal (con_unit)) (comma) (pat_name (variable))) (larrow) (exp_name (variable))))
+    (stmt (bind_pattern (pat_tuple (pat_literal (con_unit)) (comma) (pat_name (variable))) (exp_name (variable))))
     (stmt (exp_name (variable)))))))
 
 =================================================
@@ -790,7 +727,7 @@ a = a i
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (exp_name (variable))))))
+(module (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (exp_name (variable))))))
 
 
 =================================================
@@ -801,7 +738,7 @@ a = A { .. }
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_record (exp_name (constructor)) (fbind (wildcard))))))
+(module (decl_fun (funvar (variable)) (funrhs (exp_record (exp_name (constructor)) (fbind (wildcard))))))
 
 =================================================
 exp: record update
@@ -816,19 +753,17 @@ a = A { a = a } {a = a}
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_record
     (exp_name (variable))
-    (fbind (variable) (equals) (exp_name (variable)))
+    (fbind (variable) (exp_name (variable)))
     (comma)
-    (fbind (variable) (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))))
+    (fbind (variable) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))))
   (decl_fun
    (funvar (variable))
    (funrhs
-    (equals)
     (exp_record
-     (exp_record (exp_name (constructor)) (fbind (variable) (equals) (exp_name (variable))))
-     (fbind (variable) (equals) (exp_name (variable)))))))
+     (exp_record (exp_name (constructor)) (fbind (variable) (exp_name (variable))))
+     (fbind (variable) (exp_name (variable)))))))
 
 =================================================
 exp: type application
@@ -844,21 +779,17 @@ a = a @A.A a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
-   (exp_apply (exp_name (variable)) (exp_tyapp (tyapp) (type_name (type))))))
+   (exp_apply (exp_name (variable)) (exp_tyapp (type_name (type))))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
-   (exp_apply (exp_name (variable)) (exp_tyapp (tyapp) (type_name (type_variable))) (exp_name (variable)))))
+   (exp_apply (exp_name (variable)) (exp_tyapp (type_name (type_variable))) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_apply
     (exp_name (variable))
     (exp_tyapp
-     (tyapp)
      (type_name (qualified_type (modid (constructor)) (type))))
     (exp_name (variable))))))
 
@@ -888,7 +819,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
     (qvarop (operator))
@@ -896,7 +826,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
     (qvarop (operator))
@@ -904,7 +833,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
     (qvarop (operator))
@@ -912,7 +840,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
     (qvarop (operator))
@@ -920,7 +847,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
     (qvarop (operator))
@@ -928,7 +854,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
     (qvarop (operator))
@@ -936,7 +861,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
     (qvarop (operator))
@@ -944,7 +868,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_variable (modid (constructor)) (modid (constructor)) (variable)))
     (qvarop (operator))
@@ -952,7 +875,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (operator))
@@ -960,7 +882,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (operator))
@@ -968,7 +889,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (operator))
@@ -976,7 +896,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (operator))
@@ -984,7 +903,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (operator))
@@ -992,7 +910,6 @@ a = A.A.A .A.aa
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (qualified_constructor (modid (constructor)) (modid (constructor)) (constructor)))
     (qvarop (operator))
@@ -1010,13 +927,12 @@ a = a @A @A @A @A
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_apply
     (exp_name (variable))
-    (exp_tyapp (tyapp) (type_name (type)))
-    (exp_tyapp (tyapp) (type_name (type)))
-    (exp_tyapp (tyapp) (type_name (type)))
-    (exp_tyapp (tyapp) (type_name (type)))))))
+    (exp_tyapp (type_name (type)))
+    (exp_tyapp (type_name (type)))
+    (exp_tyapp (type_name (type)))
+    (exp_tyapp (type_name (type)))))))
 
 =================================================
 exp: block argument: lambda basic
@@ -1030,10 +946,9 @@ a = a \ a -> a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_apply
     (exp_name (variable))
-    (exp_lambda (lambda) (pat_name (variable)) (exp_name (variable)))))))
+    (exp_lambda (pat_name (variable)) (exp_name (variable)))))))
 
 =================================================
 exp: block argument: lambda case
@@ -1047,10 +962,9 @@ a = a \case a -> a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_apply
     (exp_name (variable))
-    (exp_lambda_case (lambda) (alts (alt (pat_name (variable)) (exp_name (variable)))))))))
+    (exp_lambda_case (alts (alt (pat_name (variable)) (exp_name (variable)))))))))
 
 =================================================
 exp: block argument: do
@@ -1063,7 +977,7 @@ a = a do a
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_apply (exp_name (variable)) (exp_do (stmt (exp_name (variable))))))))
+  (funrhs (exp_apply (exp_name (variable)) (exp_do (stmt (exp_name (variable))))))))
 
 =================================================
 exp: empty lambda case
@@ -1078,8 +992,8 @@ a = a
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_lambda_case (lambda))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))
+  (funrhs (exp_lambda_case)))
+ (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))
 
 =================================================
 exp: if guards
@@ -1092,14 +1006,12 @@ a = if | a -> a
 ---
 
 (module
- (decl_sig
+ (signature
   (variable)
-  (annotation)
   (type_name (type)))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_cond_guard
     (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))
     (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))))))
@@ -1116,10 +1028,9 @@ a = let a = a in a :: A
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_let
-    (let (decls (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))))
-    (exp_in (exp_name (variable)) (annotation) (type_name (type)))))))
+    (let (decls (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))))
+    (exp_in (exp_name (variable)) (type_name (type)))))))
 
 =================================================
 exp: list con
@@ -1129,7 +1040,7 @@ a = []
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (con_list)))))
+(module (decl_fun (funvar (variable)) (funrhs (exp_literal (con_list)))))
 
 =================================================
 exp: tuple con
@@ -1139,7 +1050,7 @@ a = (,,,)
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (con_tuple (comma) (comma) (comma))))))
+(module (decl_fun (funvar (variable)) (funrhs (exp_literal (con_tuple (comma) (comma) (comma))))))
 
 =================================================
 exp: qualified symop
@@ -1154,14 +1065,13 @@ a = (A..!?)
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix
     (exp_name (variable))
     (qvarop (qualified_operator (modid (constructor)) (operator)))
     (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_name (qualified_operator (modid (constructor)) (operator))))))
+  (funrhs (exp_name (qualified_operator (modid (constructor)) (operator))))))
 
 =================================================
 exp: th-promoted qualified symop
@@ -1174,7 +1084,7 @@ a = '(A..&)
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_th_quoted_name (qualified_operator (modid (constructor)) (operator))))))
+  (funrhs (exp_th_quoted_name (qualified_operator (modid (constructor)) (operator))))))
 
 =================================================
 exp: implicit parameter in do-let
@@ -1190,8 +1100,7 @@ a = do
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
-   (exp_do (stmt (let (decls (decl_fun (funvar (implicit_parid)) (funrhs (equals) (exp_name (variable)))))))
+   (exp_do (stmt (let (decls (decl_fun (funvar (implicit_parid)) (funrhs (exp_name (variable)))))))
     (stmt (exp_name (variable)))))))
 
 =================================================

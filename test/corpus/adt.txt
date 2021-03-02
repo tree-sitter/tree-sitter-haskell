@@ -16,7 +16,7 @@ data A = A
 
 ---
 
-(module (adt (type) (equals) (constrs (data_constructor (constructor)))))
+(module (adt (type) (constrs (data_constructor (constructor)))))
 
 =========================================
 plain adt: one unary con
@@ -26,7 +26,7 @@ data A = A A
 
 ---
 
-(module (adt (type) (equals) (constrs (data_constructor (constructor) (type_name (type))))))
+(module (adt (type) (constrs (data_constructor (constructor) (type_name (type))))))
 
 =========================================
 plain adt: strict
@@ -39,7 +39,6 @@ data A = A !A !(A A)
 (module
  (adt
   (type)
-  (equals)
   (constrs
    (data_constructor
     (constructor)
@@ -60,7 +59,6 @@ data A a a a = A a !a [a]
   (type_variable)
   (type_variable)
   (type_variable)
-  (equals)
   (constrs
    (data_constructor (constructor) (type_name (type_variable)) (strict_type (type_name (type_variable))) (list_type (type_name (type_variable)))))))
 
@@ -75,7 +73,6 @@ data A = A {-# unpack #-} !A
 (module
  (adt
   (type)
-  (equals)
   (constrs
    (data_constructor (constructor) (pragma) (strict_type (type_name (type)))))))
 
@@ -91,18 +88,17 @@ data A a = A { a :: A, a, a :: A, a :: {-# unpack #-} !a, a :: !A }
  (adt
   (type)
   (type_variable)
-  (equals)
   (constrs
    (constr_record
     (constructor)
     (record_fields
-     (field (field_id (variable)) (annotation) (type_name (type)))
+     (field (field_id (variable)) (type_name (type)))
      (comma)
-     (field (field_id (variable)) (comma) (field_id (variable)) (annotation) (type_name (type)))
+     (field (field_id (variable)) (comma) (field_id (variable)) (type_name (type)))
      (comma)
-     (field (field_id (variable)) (annotation) (pragma) (strict_type (type_name (type_variable))))
+     (field (field_id (variable)) (pragma) (strict_type (type_name (type_variable))))
      (comma)
-     (field (field_id (variable)) (annotation) (strict_type (type_name (type)))))))))
+     (field (field_id (variable)) (strict_type (type_name (type)))))))))
 
 =========================================
 plain adt: multiple cons
@@ -115,12 +111,9 @@ data A = A | A A | A !A A
 (module
  (adt
   (type)
-  (equals)
   (constrs
    (data_constructor (constructor))
-   (bar)
    (data_constructor (constructor) (type_name (type)))
-   (bar)
    (data_constructor (constructor) (strict_type (type_name (type))) (type_name (type))))))
 
 =========================================
@@ -137,19 +130,17 @@ data A =
 (module
  (adt
   (type)
-  (equals)
   (constrs
    (constr_record
     (constructor)
     (record_fields
-     (field (field_id (variable)) (annotation) (type_name (type)))
+     (field (field_id (variable)) (type_name (type)))
      (comma)
-     (field (field_id (variable)) (annotation) (strict_type (type_name (type))))))
-   (bar)
+     (field (field_id (variable)) (strict_type (type_name (type))))))
    (constr_record
     (constructor)
     (record_fields
-     (field (field_id (variable)) (annotation) (type_name (type))))))))
+     (field (field_id (variable)) (type_name (type))))))))
 
 =========================================
 plain adt: deriving basic
@@ -162,7 +153,6 @@ data A = A deriving A
 (module
  (adt
   (type)
-  (equals)
   (constrs (data_constructor (constructor)))
   (deriving (type))))
 
@@ -177,7 +167,6 @@ data A = A deriving (A, A) deriving stock (A)
 (module
  (adt
   (type)
-  (equals)
   (constrs (data_constructor (constructor)))
   (deriving (type) (comma) (type))
   (deriving (type))))
@@ -193,7 +182,6 @@ data A = A deriving (A) via (A A)
 (module
  (adt
   (type)
-  (equals)
   (constrs (data_constructor (constructor)))
   (deriving
    (type)
@@ -217,13 +205,11 @@ data A =
 (module
  (adt
   (type)
-  (equals)
   (constrs (data_constructor (constructor)))
   (deriving (type))
   (deriving (type)))
  (adt
   (type)
-  (equals)
   (constrs (data_constructor (constructor)))
   (deriving (type))
   (deriving (type))))
@@ -244,18 +230,16 @@ data (A a, A a) => A = A
     (class_name (type))
     (type_name (type_variable))
     (type_parens (type_apply (type_name (type)) (type_name (type_variable)))))
-    (carrow))
+   )
   (type)
-  (equals)
   (constrs (data_constructor (constructor))))
  (adt
   (context
    (constraint (class_name (type)) (type_name (type_variable)))
    (comma)
    (constraint (class_name (type)) (type_name (type_variable)))
-   (carrow))
+  )
   (type)
-  (equals)
   (constrs (data_constructor (constructor)))))
 
 =========================================
@@ -269,7 +253,6 @@ data A = A !A#
 (module
  (adt
   (type)
-  (equals)
   (constrs (data_constructor (constructor) (strict_type (type_name (type)))))))
 
 =========================================
@@ -283,11 +266,9 @@ data A = forall a . A | ∀ a . A
 (module
  (adt
   (type)
-  (equals)
   (constrs
    (forall (type_variable) (forall_dot))
    (data_constructor (constructor))
-   (bar)
    (forall (type_variable) (forall_dot))
    (data_constructor (constructor)))))
 
@@ -302,10 +283,9 @@ data A = ∀ a . A a => A
 (module
  (adt
   (type)
-  (equals)
   (constrs
    (forall (type_variable) (forall_dot))
-   (context (constraint (class_name (type)) (type_name (type_variable))) (carrow))
+   (context (constraint (class_name (type)) (type_name (type_variable))))
    (data_constructor (constructor)))))
 
 =========================================
@@ -321,8 +301,7 @@ data A (a :: * -> 'A)
   (type)
   (annotated_tyvar
    (type_variable)
-   (annotation)
-   (fun (star) (type_name (promoted (type)))))))
+   (fun (type_star) (type_name (promoted (type)))))))
 
 =========================================
 plain adt: signature
@@ -335,13 +314,12 @@ data A :: (k -> '[ 'A]) -> *
 (module
  (adt
   (type)
-  (annotation)
   (fun
    (type_parens
     (fun
      (type_name (type_variable))
      (promoted (list_type (type_name (promoted (type)))))))
-   (star))))
+   (type_star))))
 
 =========================================
 plain adt: symbolic
@@ -354,5 +332,4 @@ data a +++ b = a :+++ b
 (module
  (adt
   (type_infix (type_variable) (type_operator) (type_variable))
-  (equals)
   (constrs (constr_infix (type_name (type_variable)) (consym) (type_name (type_variable))))))

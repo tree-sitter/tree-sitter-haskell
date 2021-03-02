@@ -28,7 +28,7 @@ module.exports = {
 
   bind_pattern: $ => seq(
     $._pat,
-    $.larrow,
+    $._larrow,
     $._exp,
   ),
 
@@ -47,7 +47,7 @@ module.exports = {
 
   exp_list_comprehension: $ => brackets(
     $._exp,
-    $.bar,
+    $._bar,
     sep1($.comma, $.qual),
   ),
 
@@ -83,13 +83,13 @@ module.exports = {
 
   fbind: $ => choice(
     alias($._dotdot, $.wildcard),
-    seq($._qvar, seq($.equals, $._exp))
+    seq($._qvar, seq($._equals, $._exp))
   ),
 
-  exp_tyapp: $ => seq($.tyapp, $._atype),
+  exp_tyapp: $ => seq($._tyapp, $._atype),
 
   exp_lambda: $ => seq(
-    $.lambda,
+    $._lambda,
     repeat1($._apat),
     $._arrow,
     $._exp,
@@ -116,7 +116,7 @@ module.exports = {
 
   pattern_guard: $ => seq(
     $._pat,
-    $.larrow,
+    $._larrow,
     $._exp_infix,
   ),
 
@@ -142,7 +142,7 @@ module.exports = {
   exp_case: $ => seq('case', $._exp, 'of', $.alts),
 
   exp_lambda_case: $ => prec.left(seq(
-    $.lambda,
+    $._lambda,
     'case',
     optional($.alts),
   )),

@@ -26,7 +26,6 @@ data A a where
   (where)
   (gadt_constr
    (constructor)
-   (annotation)
    (fun
     (type_name (type))
     (fun
@@ -34,7 +33,6 @@ data A a where
      (type_apply (type_name (type)) (type_name (type_variable))))))
   (gadt_constr
    (constructor)
-   (annotation)
    (pragma)
    (fun
     (type_name (type))
@@ -55,11 +53,10 @@ data A where
   (where)
   (gadt_constr
    (constructor)
-   (annotation)
    (record_fields
-    (field (field_id (variable)) (annotation) (type_name (type)))
+    (field (field_id (variable)) (type_name (type)))
     (comma)
-    (field (field_id (variable)) (annotation) (strict_type (type_name (type)))))
+    (field (field_id (variable)) (strict_type (type_name (type)))))
    (type_name (type)))))
 
 =========================================
@@ -73,10 +70,9 @@ data A :: [*] -> * where
 (module
  (adt
   (type)
-  (annotation)
   (fun
-   (list_type (star))
-   (star))
+   (list_type (type_star))
+   (type_star))
   (where)))
 
 =========================================
@@ -89,7 +85,7 @@ data A a => A where
 
 (module
  (adt
-  (context (constraint (class_name (type)) (type_name (type_variable))) (carrow))
+  (context (constraint (class_name (type)) (type_name (type_variable))))
   (type)
   (where)))
 
@@ -108,10 +104,9 @@ data A where
   (where)
   (gadt_constr
    (constructor)
-   (annotation)
    (context
     (constraint (class_name (type)) (type_name (type_variable)))
-    (carrow))
+   )
    (type_name (type)))))
 
 =========================================
@@ -129,7 +124,6 @@ data A where
   (where)
   (gadt_constr
    (constructor)
-   (annotation)
    (forall (type_variable) (forall_dot))
    (type_name (type)))))
 
@@ -147,7 +141,7 @@ data A where
  (adt
   (type)
   (where)
-  (gadt_constr (constructor) (annotation) (type_name (type)))
+  (gadt_constr (constructor) (type_name (type)))
   (deriving (type))))
 
 =========================================
@@ -165,7 +159,6 @@ data a +++ b where
   (where)
   (gadt_constr
    (consym)
-   (annotation)
    (fun
     (type_name (type_variable))
     (fun

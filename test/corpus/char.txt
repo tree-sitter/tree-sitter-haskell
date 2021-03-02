@@ -14,14 +14,14 @@ a = ','
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
 
 =========================================
 char: symbols
@@ -50,25 +50,25 @@ a = '"'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
 
 =========================================
 char: special symbols
@@ -86,14 +86,14 @@ a = '}'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
 
 =========================================
 char: character escape
@@ -114,17 +114,17 @@ a = '\&'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
 
 =========================================
 char: space
@@ -134,7 +134,7 @@ a = ' '
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char)))))
+(module (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
 
 =========================================
 char: escape ascii
@@ -178,40 +178,40 @@ a = '\DEL'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))
 
 =========================================
 char: Escape Control Characters
@@ -229,11 +229,11 @@ a = '\^_'
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_literal (char)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char))))
+ (decl_fun (funvar (variable)) (funrhs (exp_literal (char)))))

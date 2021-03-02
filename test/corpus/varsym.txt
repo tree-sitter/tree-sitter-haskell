@@ -6,7 +6,7 @@ f = a | a
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable))))))
+(module (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable))))))
 
 =================================================
 operator: error: lambda
@@ -20,10 +20,10 @@ f = a \ a
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_name (variable)))) (ERROR (lambda) (variable)))
+  (funrhs (exp_name (variable)))) (ERROR (variable)))
 
 =================================================
 operator: error: ..
@@ -36,9 +36,9 @@ f = a . a
 ---
 
 (module
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
@@ -54,12 +54,10 @@ f = a |> a
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
 
 =================================================
@@ -72,8 +70,8 @@ f = a =>> a
 ---
 
 (module
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR (carrow)) (exp_name (variable)))))
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
@@ -87,9 +85,9 @@ f = a <-- a
 ---
 
 (module
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR (larrow)) (exp_name (variable)))))
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
@@ -102,8 +100,8 @@ f = a @@ a
 ---
 
 (module
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (exp_tyapp (tyapp) (type_name (type_variable))))))
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (exp_tyapp (type_name (type_variable))))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
@@ -116,8 +114,8 @@ f = a ~~ a
 ---
 
 (module
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
@@ -130,8 +128,8 @@ f = a == a
 ---
 
 (module
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
@@ -144,8 +142,8 @@ f = a +: a
 ---
 
 (module
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (consym) (exp_name (variable)))))
-  (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (consym) (exp_name (variable)))))
+  (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
 )
 
 =================================================
@@ -156,7 +154,7 @@ f = a $ a
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
+(module (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
 
 =================================================
 operator: two-symbol dollar operator
@@ -166,7 +164,7 @@ a = a $! a
 
 ---
 
-(module (decl_fun (funvar (variable)) (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
+(module (decl_fun (funvar (variable)) (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
 
 =================================================
 operator: comment with more than two dashes
@@ -190,7 +188,7 @@ a = a ------> a ----- %
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
+  (funrhs (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable)))))
  (comment))
 
 =================================================
@@ -206,14 +204,13 @@ a = a ? a
 (module
  (decl_fun
   (funvar (variable))
-  (funrhs (equals) (exp_name (implicit_parid))))
+  (funrhs (exp_name (implicit_parid))))
  (decl_fun
   (funvar (operator))
-  (funrhs (equals) (exp_name (variable))))
+  (funrhs (exp_name (variable))))
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_name (variable))))))
 
 =================================================
@@ -228,7 +225,6 @@ a = a $[a]
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_infix (exp_name (variable)) (qvarop (operator)) (exp_list (exp_name (variable)))))))
 
 =================================================
@@ -241,5 +237,5 @@ operator: bang as operator decl
 ---
 
 (module
- (decl_sig (operator) (annotation) (type_name (type)))
- (decl_fun (funvar (operator)) (funrhs (equals) (exp_name (variable)))))
+ (signature (operator) (type_name (type)))
+ (decl_fun (funvar (operator)) (funrhs (exp_name (variable)))))

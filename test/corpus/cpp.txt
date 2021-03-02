@@ -27,18 +27,17 @@ a = do
  (decl_fun
   (funvar (variable))
   (funrhs
-   (equals)
    (exp_do
     (stmt
      (exp_do
       (stmt
        (exp_do
-        (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
+        (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
         (cpp)))
-      (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
+      (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
       (cpp)
       (cpp)
-      (stmt (bind_pattern (pat_name (variable)) (larrow) (exp_name (variable))))
+      (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
       (stmt (exp_name (variable)))))
   (stmt (exp_name (variable)))))))
 
@@ -56,4 +55,4 @@ a = a
 
 ---
 
-(module (cpp) (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))) (cpp))
+(module (cpp) (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))) (cpp))

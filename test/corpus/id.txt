@@ -13,13 +13,13 @@ aZ' = a
 ---
 
 (module
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable))))
- (decl_fun (funvar (variable)) (funrhs (equals) (exp_name (variable)))))
+ (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+ (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+ (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+ (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+ (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+ (decl_fun (funvar (variable)) (funrhs (exp_name (variable))))
+ (decl_fun (funvar (variable)) (funrhs (exp_name (variable)))))
 
 =========================================
 id: constructor
@@ -37,16 +37,10 @@ data B = A
 (module
  (adt
   (type)
-  (equals)
   (constrs
    (data_constructor (constructor))
-   (bar)
    (data_constructor (constructor))
-   (bar)
    (data_constructor (constructor))
-   (bar)
    (data_constructor (constructor))
-   (bar)
    (data_constructor (constructor))
-   (bar)
    (data_constructor (constructor)))))

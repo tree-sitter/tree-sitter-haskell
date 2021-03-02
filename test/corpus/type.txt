@@ -11,16 +11,13 @@ type A = A A
 (module
  (type_alias
   (type)
-  (equals)
   (type_name (type)))
  (type_alias
   (type)
   (type_variable)
-  (equals)
   (type_apply (type_name (type)) (type_name (type_variable))))
  (type_alias
   (type)
-  (equals)
   (type_apply (type_name (type)) (type_name (type)))))
 
 =========================================
@@ -31,7 +28,7 @@ type A = A A
 
 ---
 
-(module (type_alias (type) (equals) (type_apply (type_name (type)) (type_name (type)))))
+(module (type_alias (type) (type_apply (type_name (type)) (type_name (type)))))
 
 =========================================
 type decl: promoted constructor
@@ -45,11 +42,9 @@ type A = 'A
 (module
  (type_alias
   (type)
-  (equals)
   (type_name (promoted (type))))
  (type_alias
   (type)
-  (equals)
   (type_name (promoted (type)))))
 
 =========================================
@@ -64,11 +59,9 @@ type A = [A a]
 (module
  (type_alias
   (type)
-  (equals)
   (type_literal (con_list)))
  (type_alias
   (type)
-  (equals)
   (list_type (type_apply (type_name (type)) (type_name (type_variable))))))
 
 =========================================
@@ -85,19 +78,15 @@ type A = (->)
 (module
  (type_alias
   (type)
-  (equals)
   (type_literal (con_unit)))
  (type_alias
   (type)
-  (equals)
   (type_literal (con_tuple (comma))))
  (type_alias
   (type)
-  (equals)
   (type_literal (con_tuple (comma) (comma))))
  (type_alias
   (type)
-  (equals)
   (type_name (tycon_arrow))))
 
 =========================================
@@ -111,7 +100,6 @@ type A = A :++ A ':++ A
 (module
  (type_alias
   (type)
-  (equals)
   (type_infix
    (type_name (type))
    (tyconop (type_operator))
@@ -131,7 +119,6 @@ type A = A : A
 (module
  (type_alias
   (type)
-  (equals)
   (type_infix
    (type_name (type))
    (tyconop (type_operator))
@@ -148,7 +135,6 @@ type A = A ': A
 (module
  (type_alias
   (type)
-  (equals)
   (type_infix
    (type_name (type))
    (tyconop (promoted (type_operator)))
@@ -162,7 +148,7 @@ type A = '[]
 
 ---
 
-(module (type_alias (type) (equals) (promoted (type_literal (con_list)))))
+(module (type_alias (type) (promoted (type_literal (con_list)))))
 
 =========================================
 type decl: qualified consym
@@ -175,7 +161,6 @@ type A = A A.A.:++ A
 (module
  (type_alias
   (type)
-  (equals)
   (type_infix
    (type_name (type))
    (tyconop (qualified_type_operator (modid (constructor)) (modid (constructor)) (type_operator)))
@@ -192,7 +177,6 @@ type A = A ':++ A
 (module
  (type_alias
   (type)
-  (equals)
   (type_infix
    (type_name (type))
    (tyconop (promoted (type_operator)))
@@ -209,7 +193,6 @@ type A = A 'A.:++ A
 (module
  (type_alias
   (type)
-  (equals)
   (type_infix
    (type_name (type))
    (tyconop (promoted (qualified_type_operator (modid (constructor)) (type_operator))))
@@ -226,7 +209,6 @@ type A = A `A.A` A
 (module
  (type_alias
   (type)
-  (equals)
   (type_infix
    (type_name (type))
    (tyconop (ticked (qualified_type (modid (constructor)) (type))))
@@ -243,7 +225,6 @@ type A = '(A a, A)
 (module
  (type_alias
   (type)
-  (equals)
   (promoted
    (tuple_type
     (type_apply (type_name (type)) (type_name (type_variable)))
@@ -263,15 +244,12 @@ type A = ∀ a . (A a ~ A a) => A
 (module
  (type_alias
   (type)
-  (equals)
   (type_infix (type_name (type)) (tyconop (type_operator)) (type_name (type))))
  (type_alias
   (type)
-  (equals)
   (type_infix (type_name (type)) (tyconop (type_operator)) (type_name (type))))
  (type_alias
   (type)
-  (equals)
   (forall
    (quantifiers (type_variable))
    (forall_dot)
@@ -282,7 +260,6 @@ type A = ∀ a . (A a ~ A a) => A
       (tyconop (type_operator))
       (type_apply (type_name (type)) (type_name (type_variable))))
     )
-     (carrow)
     (type_name (type))))))
 
 =========================================
@@ -296,7 +273,6 @@ type A = A :++ A A ': A (A A a) : '[] ':++ A `A.A` '[]
 (module
  (type_alias
   (type)
-  (equals)
   (type_infix
    (type_name (type))
    (tyconop (type_operator))
@@ -328,10 +304,9 @@ type A = A (A "a")
 ---
 
 (module
- (type_alias (type) (equals) (type_literal (string)))
+ (type_alias (type) (type_literal (string)))
  (type_alias
   (type)
-  (equals)
   (type_apply
    (type_name (type))
    (type_parens (type_apply (type_name (type)) (type_literal (string)))))))
@@ -347,7 +322,6 @@ type A = (++) a a
 (module
  (type_alias
   (type)
-  (equals)
   (type_apply
    (type_name (type_operator))
    (type_name (type_variable))
@@ -364,8 +338,7 @@ type A = A => A
 (module
  (type_alias
   (type)
-  (equals)
-  (context (constraint (class_name (type))) (carrow) (type_name (type)))))
+  (context (constraint (class_name (type))) (type_name (type)))))
 
 =========================================
 type decl: forall
@@ -379,20 +352,17 @@ type A = forall a a . A a => [A]
 (module
  (type_alias
   (type)
-  (equals)
   (forall
    (quantifiers (type_variable) (type_variable))
    (forall_dot)
-   (context (constraint (class_name (type))) (carrow) (type_name (type)))))
+   (context (constraint (class_name (type))) (type_name (type)))))
   (type_alias
    (type)
-   (equals)
    (forall
     (quantifiers (type_variable) (type_variable))
     (forall_dot)
     (context
      (constraint (class_name (type)) (type_name (type_variable)))
-     (carrow)
      (list_type (type_name (type)))))))
 
 =========================================
@@ -403,4 +373,4 @@ type (A a a) = A
 
 ---
 
-(module (type_alias (type) (type_variable) (type_variable) (equals) (type_name (type))))
+(module (type_alias (type) (type_variable) (type_variable) (type_name (type))))

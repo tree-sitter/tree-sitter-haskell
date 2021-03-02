@@ -33,7 +33,7 @@ deriving instance (A a, A a a) => A (A a)
     (tyconop (type_operator))
     (type_name (type)))))
  (deriving_declaration
-  (context (constraint (class_name (type)) (type_name (type_variable))) (carrow))
+  (context (constraint (class_name (type)) (type_name (type_variable))))
   (instance_head
    (class_name (type))
    (type_parens (type_apply (type_name (type)) (type_name (type_variable))))))
@@ -42,7 +42,7 @@ deriving instance (A a, A a a) => A (A a)
    (constraint (class_name (type)) (type_name (type_variable)))
    (comma)
    (constraint (class_name (type)) (type_name (type_variable)) (type_name (type_variable)))
-   (carrow))
+  )
   (instance_head
    (class_name (type))
    (type_parens (type_apply (type_name (type)) (type_name (type_variable)))))))
