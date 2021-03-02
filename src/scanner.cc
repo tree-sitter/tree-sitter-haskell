@@ -116,7 +116,7 @@ namespace syms {
  *   - splice: A TH splice starting with a `$`, to disambiguate from the operator
  *   - varsym: A symbolic operator
  *   - consym: A symbolic constructor
- *   - type_operator: A symbolic type operator
+ *   - tyconsym: A symbolic type operator
  *   - comment: A line or block comment, because they interfere with operators, especially in QQs
  *   - cpp: A preprocessor directive. Needs to push and pop indent stacks
  *   - comma: Needed to terminate inline layouts like `of`, `do`
@@ -134,7 +134,7 @@ enum Sym: uint16_t {
   splice,
   varsym,
   consym,
-  type_operator,
+  tyconsym,
   comment,
   cpp,
   comma,
@@ -154,7 +154,7 @@ vector<string> names = {
   "splice",
   "varsym",
   "consym",
-  "type_operator",
+  "tyconsym",
   "comment",
   "cpp",
   "comma",
@@ -288,7 +288,7 @@ typedef function<bool(const char)> Peek;
 
 Peek operator&(const Peek & l, const Peek & r) { return [=](char c) { return l(c) && r(c); }; }
 Peek operator|(const Peek & l, const Peek & r) { return [=](char c) { return l(c) || r(c); }; }
-Peek operator!(Peek con) { return [=](char c) { return !con(c); }; }
+Peek not_(Peek con) { return [=](char c) { return !con(c); }; }
 
 /**
  * This type abstracts over a boolean predicate of the current state.
@@ -301,7 +301,7 @@ typedef function<bool(const State&)> Condition;
 
 Condition operator&(const Condition & l, const Condition & r) { return [=](auto s) { return l(s) && r(s); }; }
 Condition operator|(const Condition & l, const Condition & r) { return [=](auto s) { return l(s) || r(s); }; }
-Condition operator!(const Condition & c) { return [=](auto state) { return !c(state); }; }
+Condition not_(const Condition & c) { return [=](auto state) { return !c(state); }; }
 
 /**
  * Peeking the next character uses the `State` to access the lexer and returns the predicate success as well as the
@@ -457,7 +457,7 @@ Condition smaller_indent(uint32_t indent) { return check_indent([=](auto i) { re
  * This does only check whether the line begins with a `w`, the entire `where` is consumed by the calling parser below.
  */
 Condition is_newline_where(uint32_t indent) {
-  return keep_layout(indent) & (sym(Sym::semicolon) | sym(Sym::end)) & (!sym(Sym::where)) & peek('w');
+  return keep_layout(indent) & (sym(Sym::semicolon) | sym(Sym::end)) & (not_(sym(Sym::where))) & peek('w');
 }
 
 Peek is_char(const char target) { return [=](const char c) { return c == target; }; }
@@ -530,7 +530,7 @@ bool valid_varsym_one_char(const char c) {
   }
 }
 
-Peek valid_first_varsym = !eq(':') & symbolic;
+Peek valid_first_varsym = not_(eq(':')) & symbolic;
 
 bool valid_tyconsym_one_char(const char c) {
   switch (c) {
@@ -945,11 +945,11 @@ Parser initialize_without_module =
  * If a dot is neither preceded nor succeded by whitespace, it may be parsed as a qualified module dot.
  *
  * The preceding space is ensured by sequencing this parser before `skipspace` in `init`.
- * Since this parser cannot look back to see whether the preceding name is a constructor, this has to be ensured by the
+ * Since this parser cannot look back to see whether the preceding name is a conid, this has to be ensured by the
  * grammar, represented here by the requirement of a valid symbol `Sym::dot`.
  *
  * Since the dot is consumed here, the alternative interpretation, a `Sym::varsym`, has to be emitted here.
- * A `Sym::type_operator` is invalid here, because the dot is only expected in expressions.
+ * A `Sym::tyconsym` is invalid here, because the dot is only expected in expressions.
  */
 Parser dot = sym(Sym::dot)(consume('.')(peekws(success_sym(Sym::varsym, "dot")) + mark + finish(Sym::dot, "dot")));
 
@@ -961,7 +961,7 @@ Parser dot = sym(Sym::dot)(consume('.')(peekws(success_sym(Sym::varsym, "dot")) 
 Parser cpp_consume =
   [](auto state) {
     auto p =
-      consume_while(!cond::newline & !cond::is_char('\\')) +
+      consume_while(not_(cond::newline) & not_(cond::is_char('\\'))) +
       consume('\\')(parser::advance + cpp_consume);
     return p(state);
   };
@@ -1059,7 +1059,7 @@ Parser splice =
 /**
  * Consume all characters up to the end of line and succeed with `Sym::commment`.
  */
-Parser inline_comment = consume_while(!cond::newline) + mark + finish(Sym::comment, "inline_comment");
+Parser inline_comment = consume_while(not_(cond::newline)) + mark + finish(Sym::comment, "inline_comment");
 
 /**
  * Starting with the third character, any sequence of symbolic characters is an operator, except for a sequence of
@@ -1139,12 +1139,12 @@ Parser single_tyconsym(const char c) {
     when(cond::valid_tyconsym_one_char(c))(
     mark +
     when(c == '!')(success_sym(Sym::strict, "single_tyconsym")) +
-    when(cond::symop_needs_token_end(c))(iff(cond::token_end)(finish(Sym::type_operator, "single_tyconsym")) + fail) +
-    finish(Sym::type_operator, "single_tyconsym")
+    when(cond::symop_needs_token_end(c))(iff(cond::token_end)(finish(Sym::tyconsym, "single_tyconsym")) + fail) +
+    finish(Sym::tyconsym, "single_tyconsym")
   ) + fail;
 }
 
-Parser type_operator = symop(cond::symbolic, Sym::type_operator, single_tyconsym);
+Parser tyconsym = symop(cond::symbolic, Sym::tyconsym, single_tyconsym);
 
 /**
  * Succeed if the symbolic character doesn't match a reserved operator, otherwise fail.
@@ -1156,7 +1156,7 @@ Parser type_operator = symop(cond::symbolic, Sym::type_operator, single_tyconsym
 Parser single_varsym(const char c) {
   return when(cond::valid_varsym_one_char(c))(
     mark +
-    when(c == '!')(iff(!cond::peek(')'))(success_sym(Sym::strict, "single_varsym"))) +
+    when(c == '!')(iff(not_(cond::peek(')')))(success_sym(Sym::strict, "single_varsym"))) +
     when(cond::symop_needs_token_end(c))(
       when(c == '$')(splice) +
       iff(cond::token_end)(finish(Sym::varsym, "single_varsym")) +
@@ -1215,14 +1215,14 @@ Parser nested_comment(uint16_t level) {
  * This part consumes all characters until the next potential comment marker to call `nested_comment`, or eof.
  */
 Parser multiline_comment(uint16_t level) {
-  return consume_while(!cond::eq('{') & !cond::eq('-') & !cond::eq(0)) + nested_comment(level) + fail;
+  return consume_while(not_(cond::eq('{')) & not_(cond::eq('-')) & not_(cond::eq(0))) + nested_comment(level) + fail;
 }
 
 /**
  * When a brace is encountered, it can be an explicitly started layout, a pragma, or a comment. In the latter case, the
  * comment is parsed, otherwise parsing fails to delegate to the corresponding grammar rule.
  */
-Parser brace = seq("{-")(peeks(!cond::eq('#'))(multiline_comment(1))) + fail;
+Parser brace = seq("{-")(peeks(not_(cond::eq('#')))(multiline_comment(1))) + fail;
 
 /**
  * Parse either inline or block comments.
@@ -1262,7 +1262,7 @@ Parser inline_tokens =
   peek(')')(layout_end(")") + fail) +
   sym(Sym::qq_start)(peek('[')(qq_start + fail)) +
   sym(Sym::consym)(consym) +
-  sym(Sym::type_operator)(type_operator) +
+  sym(Sym::tyconsym)(tyconsym) +
   sym(Sym::varsym)(varsym) +
   comment +
   sym(Sym::strict)(consume('!')(mark + finish(Sym::strict, "inline_tokens"))) +
