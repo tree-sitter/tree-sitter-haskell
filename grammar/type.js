@@ -61,6 +61,7 @@ module.exports = {
     $.type_star,
     $._type_literal,
     $.type_parens,
+    $.splice,
   ),
 
   /**

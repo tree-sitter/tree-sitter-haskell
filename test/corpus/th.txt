@@ -94,3 +94,13 @@ derive [''Aa]
 (module
  (top_splice (exp_apply (exp_name (variable)) (exp_th_quoted_name (type_name (type)))))
  (top_splice (exp_apply (exp_name (variable)) (exp_list (exp_th_quoted_name (type_name (type)))))))
+
+================================================================================
+template haskell: inline splice in type
+================================================================================
+
+type A = $(a)
+
+---
+
+(module (type_alias (type) (splice (exp_parens (exp_name (variable))))))
