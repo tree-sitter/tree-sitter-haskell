@@ -870,12 +870,16 @@ Parser effect(Effect eff) {
 /**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
+Result finish_v2(const Sym s, string desc) {
+  logger << "finish: " << desc << nl;
+  return result::finish(s);
+}
 Parser finish(const Sym s, string desc) {
   return [=](auto _) {
-    logger << "finish: " << desc << nl;
-    return result::finish(s);
+    return finish_v2(s, desc);
   };
 }
+
 
 /**
  * Parser that terminates the execution unsuccessfully.
@@ -1029,6 +1033,13 @@ Parser push(uint16_t ind) { return effect([=](State & state) {
 /**
  * Remove one level of indentation from the stack, caused by the end of a layout.
  */
+void pop_v2(State &state) {
+  if (cond::indent_exists(state)) {
+    logger("pop");
+    state.indents.pop_back();
+  }
+}
+
 Parser pop =
   iff(cond::indent_exists)(effect([](State & state) {
     logger("pop");
@@ -1412,13 +1423,29 @@ Parser comment = peek('-')(minus + fail) + peek('{')(brace);
  * Because commas can also occur in class layouts at the top level, e.g. in fixity decls, the comma rule has to be
  * parsed here as well.
  */
-Parser close_layout_in_list =
-  peek(']')(layout_end("bracket")) +
-  consume(',')(
-    sym(Sym::comma)(mark("comma") + finish(Sym::comma, "comma")) +
-    layout_end("comma") +
-    fail
-  );
+Result close_layout_in_list(State &state) {
+  switch (state::next_char(state)) {
+    case ']': {
+      if (state.symbols[Sym::end]) {
+        pop_v2(state);
+        return finish_v2(Sym::end, "bracket");
+      }
+      break;
+    }
+    case ',': {
+      state::advance(state);
+      if (state.symbols[Sym::comma]) {
+        util::mark("comma", state);
+        return finish_v2(Sym::comma, "comma");
+      }
+      Result res = layout_end("comma")(state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
+  }
+  return result::cont;
+}
+
 
 /**
  * Parse special tokens before the first newline that can't be reliably detected by tree-sitter:
@@ -1462,7 +1489,7 @@ Result inline_tokens(State &state) {
       if (state.symbols[Sym::qq_bar]) {
         state::advance(state);
         util::mark("qq_bar", state);
-        return Result(Sym::qq_bar, true);
+        return result::finish(Sym::qq_bar);
       }
       return with(read_symop)(symop)(state);
     }
