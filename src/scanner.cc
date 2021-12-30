@@ -765,6 +765,7 @@ namespace parser {
  * The main function shape for all parser combinators.
  */
 typedef function<Result(State&)> Parser;
+typedef Result (*NewParser)(State&);
 
 /**
  * Parsers that depend on the next character.
@@ -1543,7 +1544,10 @@ Parser main =
 /**
  * The entry point to the parser.
  */
-Parser all = init + main;
+Result all(State &state) {
+  auto res = init(state);
+  return res.finished ? res : main(state);
+}
 
 }
 
@@ -1583,7 +1587,7 @@ void debug_lookahead(State & state) {
   *
   * If the `debug_next_token` flag is set, the next token will be printed.
   */
-bool eval(logic::Parser chk, State & state) {
+bool eval(parser::NewParser chk, State & state) {
   auto result = chk(state);
   if (debug_next_token) debug_lookahead(state);
   if (result.finished && result.sym != Sym::fail) {
