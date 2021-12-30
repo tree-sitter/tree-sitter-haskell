@@ -755,6 +755,19 @@ Result fail = finish(Sym::fail);
 
 }
 
+
+namespace util {
+
+void mark(string marked_by, State &state) {
+  if (debug) {
+    state.marked = state::column(state);
+    state.marked_by = marked_by;
+  }
+  state.lexer->mark_end(state.lexer);
+}
+
+}
+
 // --------------------------------------------------------------------------------------------------------
 // Parser
 // --------------------------------------------------------------------------------------------------------
@@ -1480,16 +1493,17 @@ Parser newline_token(uint32_t indent) {
 /**
  * To be called after parsing a newline, with the indent of the next line as argument.
  */
-Parser newline(uint32_t indent) {
+Result newline(uint32_t indent, State &state) {
+  // TODO(414owen): fix
   return
-    eof +
+    (eof +
     initialize(indent) +
     cpp_workaround +
     comment +
     mark("newline") +
     newline_token(indent) +
     newline_indent(indent)
-    ;
+    )(state);
 }
 
 /**
@@ -1501,13 +1515,14 @@ Parser newline(uint32_t indent) {
  *   - Tokens `where`, `in`, `$`, `)`, `]`, `,`
  *   - comments
  */
-Parser immediate(uint32_t column) {
-  return
-    layout_start(column) +
-    post_end_semicolon(column) +
-    repeat_end(column) +
-    inline_tokens
-    ;
+Result immediate(uint32_t column, State &state) {
+  auto res = layout_start(column)(state);
+  if (res.finished) return res;
+  res = post_end_semicolon(column)(state);
+  if (res.finished) return res;
+  res = repeat_end(column)(state);
+  if (res.finished) return res;
+  return inline_tokens(state);
 }
 
 /**
@@ -1519,27 +1534,36 @@ Parser immediate(uint32_t column) {
  *   - cpp
  *   - quasiquote body, which overrides everything
  */
-Parser init =
-  eof +
-  iff(cond::after_error)(fail) +
-  initialize_init +
-  dot +
-  cpp_init +
-  sym(Sym::qq_body)(qq_body)
-;
+Result init(State &state) {
+  auto res =  eof(state);
+  if (res.finished) return res;
+  res = iff(cond::after_error)(fail)(state);
+  if (res.finished) return res;
+  res = initialize_init(state);
+  if (res.finished) return res;
+  res = dot(state);
+  if (res.finished) return res;
+  res = cpp_init(state);
+  if (res.finished) return res;
+  return sym(Sym::qq_body)(qq_body)(state);
+}
 
 /**
  * The main parser checks whether the first non-space character is a newline and delegates accordingly.
  */
-Parser main =
-  skipspace +
-  eof +
-  mark("main") +
-  either(
-    cond::skips(cond::newline),
-    with(count_indent)(newline),
-    with(state::column)(immediate)
-  );
+Result main(State &state) {
+  auto res = skipspace(state);
+  if (res.finished) return res;
+  res = eof(state);
+  if (res.finished) return res;
+  util::mark("main", state);
+  if (cond::skips(cond::newline)(state)) {
+    auto indent = count_indent(state);
+    return newline(indent, state);
+  }
+  auto col = state::column(state);
+  return immediate(col, state);
+}
 
 /**
  * The entry point to the parser.
