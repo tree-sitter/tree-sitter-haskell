@@ -7,6 +7,9 @@
 #include <string>
 #include <iterator>
 
+// short circuit
+#define SHORT_SCANNER if (res.finished) return res;
+
 using namespace std;
 
 /**
@@ -556,28 +559,34 @@ Condition column(uint32_t col) {
  */
 bool after_error(State & state) { return syms::all(state.symbols); }
 
+#define SYMBOLICS_WITHOUT_BAR \
+    case '!': \
+    case '#': \
+    case '$': \
+    case '%': \
+    case '&': \
+    case '*': \
+    case '+': \
+    case '.': \
+    case '/': \
+    case '<': \
+    case '>': \
+    case '?': \
+    case '^': \
+    case ':': \
+    case '=': \
+    case '-': \
+    case '~': \
+    case '@': \
+    case '\\'
+
+#define SYMBOLIC_CASES \
+    SYMBOLICS_WITHOUT_BAR: \
+    case '|'
+
 bool symbolic(uint32_t c) {
   switch (c) {
-    case '!':
-    case '#':
-    case '$':
-    case '%':
-    case '&':
-    case '*':
-    case '+':
-    case '.':
-    case '/':
-    case '<':
-    case '>':
-    case '?':
-    case '^':
-    case ':':
-    case '=':
-    case '|':
-    case '-':
-    case '~':
-    case '@':
-    case '\\':
+    SYMBOLIC_CASES:
       return true;
     default:
       return false;
@@ -1097,7 +1106,7 @@ Result initialize(uint32_t column, State &state) {
   if (cond::uninitialized(state)) {
     util::mark("initialize", state);
     Result res = token("module")(fail)(state);
-    if (res.finished) return res;
+    SHORT_SCANNER;
     return (push(column) + finish(Sym::indent, "init"))(state);
   }
   return result::cont;
@@ -1422,17 +1431,55 @@ Parser close_layout_in_list =
  *   - '[' can be a list or a quasiquote
  *   - '|' in a quasiquote, since it can be followed by symbolic operator characters, which would be consumed
  */
-Parser inline_tokens =
-  peek('w')(where + fail) +
-  peek('i')(in + fail) +
-  peek('e')(else_ + fail) +
-  peek(')')(layout_end(")") + fail) +
-  sym(Sym::qq_start)(peek('[')(qq_start + fail)) +
-  sym(Sym::qq_bar)(consume('|')(mark("qq_bar") + finish(Sym::qq_bar, "qq_bar"))) +
-  peeks(cond::symbolic)(with(read_symop)(symop)) +
-  comment +
-  close_layout_in_list
-  ;
+Result inline_tokens(State &state) {
+  switch (state::next_char(state)) {
+    case 'w': {
+      Result res = where(state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
+    case 'i': {
+      Result res = in(state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
+    case 'e': {
+      Result res = else_(state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
+    case ')': {
+      Result res = layout_end(")")(state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
+    // TODO(414owen) does this clash with inline comments '--'?
+    // I'm not sure why there's a `Symbolic::comment` and a `Sym::comment`...
+    SYMBOLICS_WITHOUT_BAR: {
+      return with(read_symop)(symop)(state);
+    }
+    case '|': {
+      if (state.symbols[Sym::qq_bar]) {
+        state::advance(state);
+        util::mark("qq_bar", state);
+        return Result(Sym::qq_bar, true);
+      }
+      return with(read_symop)(symop)(state);
+    }
+    case '[': {
+      if (state.symbols[Sym::qq_start]) {
+        Result res = qq_start(state);
+        SHORT_SCANNER;
+      }
+      return result::fail;
+    }
+    // '-' case covered by symop
+    case '{':
+      Result res = comment(state);
+      SHORT_SCANNER;
+  }
+  return close_layout_in_list(state);
+}
 
 /**
  * If the symbol `Sym::start` is valid, starting a new layout is almost always indicated.
@@ -1516,16 +1563,16 @@ Result newline_token(uint32_t indent, State &state) {
  */
 Result newline(uint32_t indent, State &state) {
   Result res = eof(state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = initialize(indent, state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = cpp_workaround(state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = comment(state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   util::mark("newline", state);
   res = newline_token(indent, state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   return newline_indent(indent, state);
 }
 
@@ -1540,11 +1587,11 @@ Result newline(uint32_t indent, State &state) {
  */
 Result immediate(uint32_t column, State &state) {
   auto res = layout_start(column, state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = post_end_semicolon(column, state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = repeat_end(column, state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   return inline_tokens(state);
 }
 
@@ -1559,16 +1606,19 @@ Result immediate(uint32_t column, State &state) {
  */
 Result init(State &state) {
   auto res =  eof(state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = iff(cond::after_error)(fail)(state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = initialize_init(state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = dot(state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = cpp_init(state);
-  if (res.finished) return res;
-  return sym(Sym::qq_body)(qq_body)(state);
+  SHORT_SCANNER;
+  if (state.symbols[Sym::qq_body]) {
+    return qq_body(state);
+  }
+  return result::cont;
 }
 
 /**
@@ -1576,9 +1626,9 @@ Result init(State &state) {
  */
 Result main(State &state) {
   auto res = skipspace(state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   res = eof(state);
-  if (res.finished) return res;
+  SHORT_SCANNER;
   util::mark("main", state);
   if (cond::skips(cond::newline)(state)) {
     auto indent = count_indent(state);
