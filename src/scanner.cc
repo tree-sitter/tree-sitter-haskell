@@ -1410,7 +1410,22 @@ Parser brace = seq("{-")(peeks(not_(cond::eq('#')))(multiline_comment(1))) + fai
 /**
  * Parse either inline or block comments.
  */
-Parser comment = peek('-')(minus + fail) + peek('{')(brace);
+Result comment(State &state) {
+  switch (state::next_char(state)) {
+    case '-': {
+      Result res = minus(state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
+    case '{': {
+      Result res = brace(state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
+  }
+  return result::cont;
+}
+// Parser minus = seq("--")(consume_while(cond::eq('-')) + peeks(cond::symbolic)(fail) + inline_comment);
 
 /**
  * `case` can open a layout in a list:
