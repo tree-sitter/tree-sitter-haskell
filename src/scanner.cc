@@ -1143,13 +1143,14 @@ Parser cpp_consume =
  * This is a workaround for the problem described in `cpp`. It will simply consume all code between `#else` or `#elif`
  * and `#endif`.
  */
-Parser cpp_workaround =
-  consume('#')(
+Result cpp_workaround(State &state) {
+  return consume('#')(
     seq("el")(consume_until("#endif") + eof + finish(Sym::cpp, "cpp-else")) +
     cpp_consume +
     mark("cpp_workaround") +
     finish(Sym::cpp, "cpp")
-  );
+  )(state);
+}
 
 /**
  * If the current column i 0, a cpp directive may begin.
@@ -1445,13 +1446,16 @@ Parser inline_tokens =
  *
  * This pushes the indentation of the first non-whitespace character onto the stack.
  */
-Parser layout_start(uint32_t column) {
-  return sym(Sym::start)(
-    peek('{')(brace) +
-    peek('-')(minus) +
-    push(column) +
-    finish(Sym::start, "layout_start")
-  );
+Result layout_start(uint32_t column, State &state) {
+  if (state.symbols[Sym::start]) {
+    return (
+      peek('{')(brace) +
+      peek('-')(minus) +
+      push(column) +
+      finish(Sym::start, "layout_start")
+    )(state);
+  }
+  return result::cont;
 }
 
 /**
@@ -1469,8 +1473,8 @@ Parser layout_start(uint32_t column) {
  * Here, when the inner `do`'s  layout is ended, the next step is started at `f`, but the outer `do`'s layout expects a
  * semicolon. Since `f` is on the same indent as the outer `do`'s layout, this parser matches.
  */
-Parser post_end_semicolon(uint32_t column) {
-  return sym(Sym::semicolon)(iff(cond::indent_lesseq(column))(finish(Sym::semicolon, "post_end_semicolon")));
+Result post_end_semicolon(uint32_t column, State &state) {
+  return sym(Sym::semicolon)(iff(cond::indent_lesseq(column))(finish(Sym::semicolon, "post_end_semicolon")))(state);
 }
 
 /**
@@ -1515,8 +1519,9 @@ Result newline(uint32_t indent, State &state) {
   if (res.finished) return res;
   res = initialize(indent, state);
   if (res.finished) return res;
-  res = (cpp_workaround +
-    comment)(state);
+  res = cpp_workaround(state);
+  if (res.finished) return res;
+  res = comment(state);
   if (res.finished) return res;
   util::mark("newline", state);
   res = newline_token(indent, state);
@@ -1534,9 +1539,9 @@ Result newline(uint32_t indent, State &state) {
  *   - comments
  */
 Result immediate(uint32_t column, State &state) {
-  auto res = layout_start(column)(state);
+  auto res = layout_start(column, state);
   if (res.finished) return res;
-  res = post_end_semicolon(column)(state);
+  res = post_end_semicolon(column, state);
   if (res.finished) return res;
   res = repeat_end(column, state);
   if (res.finished) return res;
