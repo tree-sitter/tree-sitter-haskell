@@ -569,6 +569,17 @@ Condition is_newline_where(uint32_t indent) {
   return keep_layout(indent) & (sym(Sym::semicolon) | sym(Sym::end)) & (not_(sym(Sym::where))) & peek('w');
 }
 
+bool is_newline(uint32_t c) {
+  switch (c) {
+    case '\n':
+    case '\r':
+    case '\f':
+      return true;
+    default:
+      return false;
+  }
+}
+
 Peek newline = eq('\n') | eq('\r') | eq('\f');
 
 Peek ticked = eq('`');
@@ -1300,8 +1311,13 @@ Parser unboxed_tuple_close =
 /**
  * Consume all characters up to the end of line and succeed with `Sym::commment`.
  */
-Parser inline_comment =
-  consume_while(not_(cond::newline)) + mark("inline_comment") + finish(Sym::comment, "inline_comment");
+Result inline_comment(State &state) {
+  while (!cond::is_newline(state::next_char(state))) {
+    state::advance(state);
+  }
+  util::mark("inline_comment", state);
+  return finish_v2(Sym::comment, "inline_comment");
+}
 
 /**
  * Parse a sequence of symbolic characters and convert it into the enum `Symbolic`.
