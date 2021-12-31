@@ -1709,9 +1709,8 @@ Result post_end_semicolon(uint32_t column, State &state) {
 Result repeat_end(uint32_t column, State &state) {
   if (state.symbols[Sym::end] && cond::smaller_indent_v2(column, state)) {
     return layout_end("repeat_end")(state);
-  } else {
-    return result::cont;
   }
+  return result::cont;
 }
 
 /**
