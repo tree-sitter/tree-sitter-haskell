@@ -1303,10 +1303,16 @@ Parser splice =
     mark("splice") + finish_if_valid(Sym::splice, "splice") + fail
   );
 
-Parser unboxed_tuple_close =
-  sym(Sym::unboxed_tuple_close)(consume(')')(
-    mark("unboxed_tuple_close") + finish(Sym::unboxed_tuple_close, "unboxed_tuple_close")
-  ));
+Result unboxed_tuple_close(State &state) {
+  if (state.symbols[Sym::unboxed_tuple_close]) {
+    if (state::next_char(state) == ')') {
+      state::advance(state);
+      util::mark("unboxed_tuple_close", state);
+      return finish_v2(Sym::unboxed_tuple_close, "unboxed_tuple_close");
+    }
+  }
+  return result::cont;
+}
 
 /**
  * Consume all characters up to the end of line and succeed with `Sym::commment`.
