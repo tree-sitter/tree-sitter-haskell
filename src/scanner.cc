@@ -1309,30 +1309,30 @@ Parser inline_comment =
  */
 Symbolic read_symop(State & state) { return symbolic::symop(cond::read_string(cond::symbolic)(state))(state); }
 
-Parser symop_marked(Symbolic type) {
+Result symop_marked(Symbolic type, State &state) {
   switch (type) {
     case Symbolic::invalid:
-      return fail;
+      return result::fail;
     case Symbolic::star:
     case Symbolic::modifier:
-      return sym(Sym::tyconsym)(fail);
+      return sym(Sym::tyconsym)(fail)(state);
     case Symbolic::tilde:
     case Symbolic::minus:
-      return finish_if_valid(Sym::tyconsym, "symop") + fail;
+      return (finish_if_valid(Sym::tyconsym, "symop") + fail)(state);
     case Symbolic::implicit:
-      return fail;
+      return result::fail;
     case Symbolic::splice:
-      return splice;
+      return splice(state);
     case Symbolic::strict:
-      return finish_if_valid(Sym::strict, "strict");
+      return finish_if_valid(Sym::strict, "strict")(state);
     case Symbolic::comment:
-      return inline_comment;
+      return inline_comment(state);
     case Symbolic::con:
-      return finish_if_valid(Sym::consym, "symop") + fail;
+      return (finish_if_valid(Sym::consym, "symop") + fail)(state);
     case Symbolic::unboxed_tuple_close:
-      return unboxed_tuple_close;
+      return unboxed_tuple_close(state);
     default:
-      return cont;
+      return result::cont;
   }
 }
 
@@ -1351,18 +1351,22 @@ Parser symop_marked(Symbolic type) {
  * Otherwise succeed with `Sym::tyconsym` or `Sym::varsym` if they are valid.
  */
 Result symop(Symbolic type, State &state) {
-  return
-    (when(type == Symbolic::bar)(
+  Result res = (
+    when(type == Symbolic::bar)(
       sym(Sym::bar)(mark("bar") + finish(Sym::bar, "bar")) +
       layout_end("bar") +
       fail
     ) +
-    mark("symop") +
-    symop_marked(type) +
+    mark("symop")
+  )(state);
+  SHORT_SCANNER;
+  res = symop_marked(type, state);
+  SHORT_SCANNER;
+  return (
     finish_if_valid(Sym::tyconsym, "symop") +
     finish_if_valid(Sym::varsym, "symop") +
     fail
-    )(state);
+  )(state);
 }
 
 /**
