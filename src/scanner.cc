@@ -1222,7 +1222,10 @@ Parser cpp_init = iff(cond::column(0))(cpp_workaround);
  * End a layout by removing an indentation from the stack, but only if the current column (which should be in the next
  * line after skipping whitespace) is smaller than the layout indent.
  */
-Parser dedent(uint32_t indent) { return iff(cond::smaller_indent(indent))(layout_end("dedent")); }
+Result dedent(uint32_t indent, State &state) {
+  if (cond::smaller_indent_v2(indent, state)) return layout_end_v2("dedent", state);
+  return result::cont;
+}
 
 /**
  * Succeed if a `where` on a newline can end a statement or layout (see `is_newline_where`).
@@ -1721,8 +1724,9 @@ Result repeat_end(uint32_t column, State &state) {
  * Rules that decide based on the indent of the next line.
  */
 Result newline_indent(uint32_t indent, State &state) {
-  // TODO(414owen): fix
-  Result res = (dedent(indent) + close_layout_in_list)(state);
+  Result res = dedent(indent, state);
+  SHORT_SCANNER;
+  res = close_layout_in_list(state);
   SHORT_SCANNER;
   return newline_semicolon(indent, state);
 }
