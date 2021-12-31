@@ -441,9 +441,9 @@ Condition seq(const string & s) {
 
 bool seq_v2(const string &s, State &state) {
   for (auto &c : s) {
-    if (state::next_char(state) != c) {
-      return false;
-    }
+    uint32_t c2 = state::next_char(state);
+    if (c != c2) return false;
+    state::advance(state);
   }
   return true;
 }
@@ -1350,9 +1350,9 @@ Parser symop_marked(Symbolic type) {
  *
  * Otherwise succeed with `Sym::tyconsym` or `Sym::varsym` if they are valid.
  */
-Parser symop(Symbolic type) {
+Result symop(Symbolic type, State &state) {
   return
-    when(type == Symbolic::bar)(
+    (when(type == Symbolic::bar)(
       sym(Sym::bar)(mark("bar") + finish(Sym::bar, "bar")) +
       layout_end("bar") +
       fail
@@ -1362,7 +1362,7 @@ Parser symop(Symbolic type) {
     finish_if_valid(Sym::tyconsym, "symop") +
     finish_if_valid(Sym::varsym, "symop") +
     fail
-    ;
+    )(state);
 }
 
 /**
@@ -1374,7 +1374,14 @@ Parser symop(Symbolic type) {
  *   - `Sym::start` is valid
  *   - Operator matching was done already
  */
-Parser minus = seq("--")(consume_while(cond::eq('-')) + peeks(cond::symbolic)(fail) + inline_comment);
+Result minus(State &state) {
+  if (!cond::seq_v2("--", state)) return result::cont;
+  while (state::next_char(state) == '-') {
+    state::advance(state);
+  }
+  if (cond::symbolic(state::next_char(state))) return result::fail;
+  return inline_comment(state);
+}
 
 /**
  * Succeed for a comment.
@@ -1470,7 +1477,6 @@ Result comment(State &state) {
   }
   return result::cont;
 }
-// Parser minus = seq("--")(consume_while(cond::eq('-')) + peeks(cond::symbolic)(fail) + inline_comment);
 
 /**
  * `case` can open a layout in a list:
@@ -1543,7 +1549,8 @@ Result inline_tokens(State &state) {
     // TODO(414owen) does this clash with inline comments '--'?
     // I'm not sure why there's a `Symbolic::comment` and a `Sym::comment`...
     SYMBOLICS_WITHOUT_BAR: {
-      return with(read_symop)(symop)(state);
+      Symbolic s = read_symop(state);
+      return symop(s, state);
     }
     case '|': {
       if (state.symbols[Sym::qq_bar]) {
@@ -1551,7 +1558,8 @@ Result inline_tokens(State &state) {
         util::mark("qq_bar", state);
         return result::finish(Sym::qq_bar);
       }
-      return with(read_symop)(symop)(state);
+      Symbolic s = read_symop(state);
+      return symop(s, state);
     }
     case '[': {
       if (state.symbols[Sym::qq_start]) {
