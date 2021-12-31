@@ -599,6 +599,9 @@ bool uninitialized(State & state) { return !indent_exists(state); }
 Condition column(uint32_t col) {
   return [=](State & state) { return state::column(state) == col; };
 }
+static bool column_v2(uint32_t col, State &state) {
+  return state::column(state) == col;
+}
 
 /**
  * Require that the parser determined an error in the previous step (see `syms::all`).
@@ -1216,7 +1219,12 @@ Result cpp_workaround(State &state) {
 /**
  * If the current column i 0, a cpp directive may begin.
  */
-Parser cpp_init = iff(cond::column(0))(cpp_workaround);
+Result cpp_init(State &state) {
+  if (cond::column_v2(0, state)) {
+    return cpp_workaround(state);
+  }
+  return result::cont;
+}
 
 /**
  * End a layout by removing an indentation from the stack, but only if the current column (which should be in the next
