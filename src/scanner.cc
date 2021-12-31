@@ -1270,10 +1270,15 @@ Result dedent(uint32_t indent, State &state) {
  *
  * This is the case after `do` or `of`, where the `where` can be on the same indent.
  */
-Parser newline_where(uint32_t indent) {
-  return iff(cond::is_newline_where(indent))(
-    mark("newline_where") + token("where")(end_or_semicolon("newline_where")) + fail
-  );
+Result newline_where(uint32_t indent, State &state) {
+  if (cond::is_newline_where(indent)(state)) {
+    util::mark("newline_where", state);
+    if (cond::seq_v2("where", state) && cond::token_end(state)) {
+      return end_or_semicolon("newline_where")(state);
+    }
+    return result::fail;
+  }
+  return result::cont;
 }
 
 /**
@@ -1780,7 +1785,10 @@ Result newline_token(uint32_t indent, State &state) {
     SHORT_SCANNER;
     return result::fail;
   }
-  return (newline_where(indent) + peek('i')(in))(state);
+  Result res = newline_where(indent, state);
+  SHORT_SCANNER;
+  if (PEEK == 'i') return in(state);
+  return result::cont;
 }
 
 /**
