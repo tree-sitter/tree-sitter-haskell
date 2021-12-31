@@ -1,4 +1,5 @@
 #include "tree_sitter/parser.h"
+#include <cassert>
 #include <vector>
 #include <cstdio>
 #include <iostream>
@@ -303,6 +304,18 @@ function<void(State&)> mark(string marked_by) {
 
 }
 
+namespace util {
+
+void mark(string marked_by, State &state) {
+  if (debug) {
+    state.marked = state::column(state);
+    state.marked_by = marked_by;
+  }
+  state.lexer->mark_end(state.lexer);
+}
+
+}
+
 // --------------------------------------------------------------------------------------------------------
 // Condition
 // --------------------------------------------------------------------------------------------------------
@@ -426,6 +439,15 @@ Condition seq(const string & s) {
   return [=](State & state) { return all_of(s.begin(), s.end(), [&](auto a) { return consume(a)(state); }); };
 }
 
+bool seq_v2(const string &s, State &state) {
+  for (auto &c : s) {
+    if (state::next_char(state) != c) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function<void(State &)> consume_while(Peek pred) {
   return [=](State & state) {
     while (true) {
@@ -451,6 +473,14 @@ function<void(State &)> consume_until(string target) {
     };
     return consume_while(check)(state);
   };
+}
+
+void consume_until_v2(string target, State &state) {
+  assert(!target.empty());
+  uint32_t first = target[0];
+  while (state::next_char(state) != first || !seq_v2(target, state)) state::advance(state);
+  string mark_target = "consume_until " + target;
+  util::mark(mark_target, state);
 }
 
 function<u32string(State &)> read_string(Peek pred) {
@@ -767,18 +797,6 @@ Result fail = finish(Sym::fail);
 
 }
 
-
-namespace util {
-
-void mark(string marked_by, State &state) {
-  if (debug) {
-    state.marked = state::column(state);
-    state.marked_by = marked_by;
-  }
-  state.lexer->mark_end(state.lexer);
-}
-
-}
 
 // --------------------------------------------------------------------------------------------------------
 // Parser
@@ -1363,7 +1381,7 @@ Parser minus = seq("--")(consume_while(cond::eq('-')) + peeks(cond::symbolic)(fa
  */
 Parser multiline_comment_success = mark("multiline_comment") + finish(Sym::comment, "multiline_comment");
 
-Parser multiline_comment(uint16_t);
+Result multiline_comment(uint16_t, State &);
 
 /**
  * Mutually recursive with `multiline_comment`.
@@ -1373,23 +1391,37 @@ Parser multiline_comment(uint16_t);
  *
  * This part looks for the comment markers at the current position and recurses with an adjusted nesting level.
  */
-Parser nested_comment(uint16_t level) {
-  return [=](State & state) {
-    auto p =
-      eof +
-      either(
-        cond::consume('{'),
-        iff(cond::consume('-'))(multiline_comment(level + 1) + fail),
-        either(
-          cond::consume('-'),
-          iff(cond::consume('}'))(when(level <= 1)(multiline_comment_success) + multiline_comment(level - 1) + fail),
-          parser::advance
-        )
-      ) +
-      multiline_comment(level)
-      ;
-    return p(state);
-  };
+Result nested_comment(uint16_t level, State &state) {
+  switch (state::next_char(state)) {
+    case 0:
+      if (state.symbols[Sym::empty]) return finish_v2(Sym::empty, "eof");
+      return (end_or_semicolon("eof") + fail)(state);
+    case '{':
+      state::advance(state);
+      if (state::next_char(state) == '-') {
+        state::advance(state);
+        Result res = multiline_comment(level + 1, state);
+        SHORT_SCANNER;
+        return result::fail;
+      }
+      break;
+    case '-':
+      state::advance(state);
+      if (state::next_char(state) == '}') {
+        state::advance(state);
+        if (level <= 1) {
+          util::mark("multiline_comment", state);
+          return finish_v2(Sym::comment, "multiline_comment");
+        }
+        Result res = multiline_comment(level - 1, state);
+        SHORT_SCANNER;
+        return result::fail;
+      }
+      break;
+    default:
+      break;
+  }
+  return multiline_comment(level, state);
 }
 
 /**
@@ -1397,15 +1429,32 @@ Parser nested_comment(uint16_t level) {
  *
  * This part consumes all characters until the next potential comment marker to call `nested_comment`, or eof.
  */
-Parser multiline_comment(uint16_t level) {
-  return consume_while(not_(cond::eq('{')) & not_(cond::eq('-')) & not_(cond::eq(0))) + nested_comment(level) + fail;
+
+// TODO(414owen): this probably shouldn't be recursive, some people like putting
+// lots of dashes in comments...
+Result multiline_comment(uint16_t level, State &state) {
+  uint32_t next = state::next_char(state);
+  while (next != '-' && next != '{' && next != 0) {
+    state::advance(state);
+    next = state::next_char(state);
+  }
+  Result res = nested_comment(level, state);
+  SHORT_SCANNER;
+  return result::fail;
 }
 
 /**
  * When a brace is encountered, it can be an explicitly started layout, a pragma, or a comment. In the latter case, the
  * comment is parsed, otherwise parsing fails to delegate to the corresponding grammar rule.
  */
-Parser brace = seq("{-")(peeks(not_(cond::eq('#')))(multiline_comment(1))) + fail;
+Result brace(State &state) {
+  if (state::next_char(state) != '{') return result::fail;
+  state::advance(state);
+  if (state::next_char(state) != '-') return result::fail;
+  state::advance(state);
+  if (state::next_char(state) == '#') return result::fail;
+  return multiline_comment(1, state);
+}
 
 /**
  * Parse either inline or block comments.

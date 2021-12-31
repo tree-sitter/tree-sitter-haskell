@@ -5,3 +5,4 @@ package-lock.json
 repos
 examples/*
 !examples/.gitkeep
+.gdb_history
