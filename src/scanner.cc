@@ -1379,7 +1379,10 @@ Parser minus = seq("--")(consume_while(cond::eq('-')) + peeks(cond::symbolic)(fa
 /**
  * Succeed for a comment.
  */
-Parser multiline_comment_success = mark("multiline_comment") + finish(Sym::comment, "multiline_comment");
+static Result multiline_comment_success(State &state) {
+  util::mark("multiline_comment", state);
+  return finish_v2(Sym::comment, "multiline_comment");
+}
 
 Result multiline_comment(uint16_t, State &);
 
@@ -1400,22 +1403,15 @@ Result nested_comment(uint16_t level, State &state) {
       state::advance(state);
       if (state::next_char(state) == '-') {
         state::advance(state);
-        Result res = multiline_comment(level + 1, state);
-        SHORT_SCANNER;
-        return result::fail;
+        return multiline_comment(level + 1, state);
       }
       break;
     case '-':
       state::advance(state);
       if (state::next_char(state) == '}') {
         state::advance(state);
-        if (level <= 1) {
-          util::mark("multiline_comment", state);
-          return finish_v2(Sym::comment, "multiline_comment");
-        }
-        Result res = multiline_comment(level - 1, state);
-        SHORT_SCANNER;
-        return result::fail;
+        if (level <= 1) return multiline_comment_success(state);
+        return multiline_comment(level - 1, state);
       }
       break;
     default:
