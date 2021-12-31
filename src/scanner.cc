@@ -12,6 +12,7 @@
 #define SHORT_SCANNER if (res.finished) return res;
 #define PEEK state::next_char(state)
 #define S_ADVANCE state::advance(state)
+#define SYM(s) (state.symbols[s])
 
 using namespace std;
 
@@ -1087,6 +1088,13 @@ Parser skipspace =
  * If a layout end is valid at this position, remove one indentation layer and succeed with layout end.
  */
 Parser layout_end(string desc) { return sym(Sym::end)(effect(pop) + finish(Sym::end, desc)); }
+Result layout_end_v2(string desc, State &state) {
+  if (SYM(Sym::end)) {
+    pop_v2(state);
+    return finish_v2(Sym::end, desc);
+  }
+  return result::cont;
+}
 
 /**
  * Convenience parser, since those two are often used together.
@@ -1260,17 +1268,39 @@ function<Parser(Symbolic)> newline_infix(uint32_t indent) {
  *
  * Necessary because `is_newline_where` needs to know that no `where` may follow.
  */
-Parser where = token("where")(sym(Sym::where)(mark("where") + finish(Sym::where, "where")) + layout_end("where"));
+Result where(State &state) {
+  // token("where")(sym(Sym::where)(mark("where") + finish(Sym::where, "where")) + layout_end("where"));
+  if (cond::seq_v2("where", state) && cond::token_end(state)) {
+    if (SYM(Sym::where)) {
+      util::mark("where", state);
+      return finish_v2(Sym::where, "where");
+    }
+    return layout_end_v2("where", state);
+  }
+  return result::cont;
+}
 
 /**
  * An `in` token ends the layout openend by a `let` and its nested layouts.
  */
-Parser in = sym(Sym::in)(token("in")(mark("in") + effect(pop) + finish(Sym::in, "in")));
+Result in(State &state) {
+  if (SYM(Sym::in) && cond::seq_v2("in", state) && cond::token_end(state)) {
+    util::mark("in", state);
+    pop_v2(state);
+    return finish_v2(Sym::in, "in");
+  }
+  return result::cont;
+}
 
 /**
  * An `else` token may end a layout opened in the body of a `then`.
  */
-Parser else_ = token("else")(end_or_semicolon("else"));
+Result else_(State &state) {
+  if (cond::seq_v2("else", state) && cond::token_end(state)) {
+    return end_or_semicolon("else")(state);
+  }
+  return result::cont;
+}
 
 /**
  * Detect the start of a quasiquote: An opening bracket followed by an optional varid and a vertical bar, all without
