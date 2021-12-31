@@ -1191,8 +1191,17 @@ Result initialize_init(State &state) {
  * Since the dot is consumed here, the alternative interpretation, a `Sym::varsym`, has to be emitted here.
  * A `Sym::tyconsym` is invalid here, because the dot is only expected in expressions.
  */
-Parser dot =
-  sym(Sym::dot)(consume('.')(peekws(finish_if_valid(Sym::varsym, "dot")) + mark("dot") + finish(Sym::dot, "dot")));
+Result dot(State &state) {
+  if (SYM(Sym::dot)) {
+    if (PEEK == '.') {
+      S_ADVANCE;
+      if (SYM(Sym::varsym) && iswspace(PEEK)) return finish_v2(Sym::varsym, "dot");
+      util::mark("dot", state);
+      return finish_v2(Sym::dot, "dot");
+    }
+  }
+  return result::cont;
+}
 
 /**
  * Consume the body of a cpp directive.
