@@ -1298,10 +1298,16 @@ Parser qq_body =
 /**
  * When a dollar is followed by a varid or opening paren, parse a splice.
  */
-Parser splice =
-  iff(cond::peek_with(cond::varid_start_char) | cond::peek('('))(
-    mark("splice") + finish_if_valid(Sym::splice, "splice") + fail
-  );
+Result splice(State &state) {
+  uint32_t c = state::next_char(state);
+  if (cond::varid_start_char(c) || c == '(') {
+    if (state.symbols[Sym::splice]) {
+      util::mark("splice", state);
+      return finish_v2(Sym::splice, "splice");
+    }
+  }
+  return result::cont;
+}
 
 Result unboxed_tuple_close(State &state) {
   if (state.symbols[Sym::unboxed_tuple_close]) {
