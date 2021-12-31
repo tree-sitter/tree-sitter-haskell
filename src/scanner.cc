@@ -557,6 +557,7 @@ bool smaller_indent_v2(uint32_t indent, State &state) {
   return indent_exists(state) && indent < state.indents.back();
 }
 
+bool indent_lesseq_v2(uint32_t indent, State &state) { return indent_exists(state) && indent <= state.indents.back(); }
 Condition indent_lesseq(uint32_t indent) { return check_indent([=](auto i) { return indent <= i; }); }
 
 /**
@@ -1251,16 +1252,20 @@ Parser newline_semicolon(uint32_t indent) {
  * In this situation, the entire `do` block is the left operand of the `>>=`.
  * The same applies for `infix` functions.
  */
-Condition end_on_infix(uint32_t indent, Symbolic type) {
-  return cond::indent_lesseq(indent) & (
-    cond::pure(symbolic::expression_op(type)) | cond::peek_with(cond::ticked));
+bool end_on_infix(uint32_t indent, Symbolic type, State &state) {
+  return cond::indent_lesseq_v2(indent, state)
+    && (symbolic::expression_op(type)
+        || PEEK == '`');
 }
 
 /**
  * End a layout if the next token is an infix operator and the indent is equal to or less than the current layout.
  */
-function<Parser(Symbolic)> newline_infix(uint32_t indent) {
-  return [=](auto type) { return iff(end_on_infix(indent, type))(layout_end("newline_infix")); };
+Result newline_infix(uint32_t indent, Symbolic type, State &state) {
+  if (end_on_infix(indent, type, state)) {
+    return layout_end_v2("newline_infix", state);
+  }
+  return result::cont;
 }
 
 /**
@@ -1725,11 +1730,14 @@ Result newline_indent(uint32_t indent, State &state) {
  */
 Result newline_token(uint32_t indent, State &state) {
   // TODO(414owen): fix
-  return
-    (peeks(cond::symbolic | cond::ticked)(with(read_symop)(newline_infix(indent)) + fail) +
-    newline_where(indent) +
-    peek('i')(in)
-    )(state);
+  // TODO Convert to switch
+  if (cond::symbolic(PEEK) || PEEK == '`') {
+    Symbolic s = read_symop(state);
+    Result res = newline_infix(indent, s, state);
+    SHORT_SCANNER;
+    return result::fail;
+  }
+  return (newline_where(indent) + peek('i')(in))(state);
 }
 
 /**
