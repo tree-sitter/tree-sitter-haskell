@@ -1276,12 +1276,17 @@ Parser else_ = token("else")(end_or_semicolon("else"));
  * Detect the start of a quasiquote: An opening bracket followed by an optional varid and a vertical bar, all without
  * whitespace in between.
  */
-Parser qq_start =
-  parser::advance +
-  mark("qq_start") +
-  consume_while(cond::quoter_char) +
-  peek('|')(finish(Sym::qq_start, "qq_start"))
-  ;
+Result qq_start(State &state) {
+  S_ADVANCE;
+  util::mark("qq_start", state);
+  while (cond::quoter_char(PEEK)) {
+    S_ADVANCE;
+  }
+  if (PEEK == '|') {
+    return finish_v2(Sym::qq_start, "qq_start");
+  }
+  return result::cont;
+}
 
 Result qq_body(State &state) {
   // Parser eof = peek(0)(sym(Sym::empty)(finish(Sym::empty, "eof")) + end_or_semicolon("eof") + fail);
