@@ -270,12 +270,12 @@ ostream & operator<<(ostream & out, State & state) {
  */
 namespace state {
 
-bool eof(State & state) { return state.lexer->eof(state.lexer); }
+static inline bool eof(State & state) { return state.lexer->eof(state.lexer); }
 
 /**
  * The parser's position in the current line.
  */
-uint32_t column(State & state) {
+static inline uint32_t column(State & state) {
   return eof(state) ? 0 : state.lexer->get_column(state.lexer);
 }
 
@@ -283,17 +283,17 @@ uint32_t column(State & state) {
  * The next character that would be parsed.
  * Does not advance the parser position (consume the character).
  */
-uint32_t next_char(State & state) { return state.lexer->lookahead; }
+static inline uint32_t next_char(State & state) { return state.lexer->lookahead; }
 
 /**
  * Move the parser position one character to the right, treating the consumed character as part of the parsed token.
  */
-void advance(State & state) { state.lexer->advance(state.lexer, false); }
+static inline void advance(State & state) { state.lexer->advance(state.lexer, false); }
 
 /**
  * Move the parser position one character to the right, treating the consumed character as whitespace.
  */
-void skip(State & state) { state.lexer->advance(state.lexer, true); }
+static inline void skip(State & state) { state.lexer->advance(state.lexer, true); }
 
 function<void(State&)> mark(string marked_by) {
   return [=](State & state) {
@@ -309,7 +309,7 @@ function<void(State&)> mark(string marked_by) {
 
 namespace util {
 
-void mark(string marked_by, State &state) {
+static inline void mark(string marked_by, State &state) {
   if (debug) {
     state.marked = state::column(state);
     state.marked_by = marked_by;
