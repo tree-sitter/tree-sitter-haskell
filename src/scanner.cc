@@ -481,9 +481,15 @@ function<void(State &)> consume_until(string target) {
 void consume_until_v2(string target, State &state) {
   assert(!target.empty());
   uint32_t first = target[0];
-  while (state::next_char(state) != first || !seq_v2(target, state)) state::advance(state);
-  string mark_target = "consume_until " + target;
-  util::mark(mark_target, state);
+  while (PEEK != 0 && !seq_v2(target, state)) {
+    while (PEEK != 0 && PEEK != first) S_ADVANCE;
+    // TODO(414owen): This mimics the combinator's behaviour, but it seems a bit silly.
+    // Why mark where the first char matched? Let's just not do this check.
+    if (first == PEEK) {
+      string mark_target = "consume_until " + target;
+      util::mark(mark_target, state);
+    }
+  }
 }
 
 function<u32string(State &)> read_string(Peek pred) {
@@ -1208,12 +1214,25 @@ Parser cpp_consume =
  * and `#endif`.
  */
 Result cpp_workaround(State &state) {
-  return consume('#')(
-    seq("el")(consume_until("#endif") + eof + finish(Sym::cpp, "cpp-else")) +
-    cpp_consume +
-    mark("cpp_workaround") +
-    finish(Sym::cpp, "cpp")
-  )(state);
+  if (PEEK == '#') {
+    S_ADVANCE;
+    if (cond::seq_v2("el", state)) {
+      // return (consume_until("#endif") + eof + finish(Sym::cpp, "cpp-else"))(state);
+      cond::consume_until_v2("#endif", state);
+      if (PEEK == 0) {
+        if (SYM(Sym::empty)) return finish_v2(Sym::empty, "eof");
+        Result res = end_or_semicolon("eof")(state);
+        SHORT_SCANNER;
+        return result::fail;
+      }
+      return finish_v2(Sym::cpp, "cpp-else");
+    }
+    Result res = cpp_consume(state);
+    SHORT_SCANNER; // TODO(414owen): this might not be needed?
+    util::mark("cpp_workaround", state);
+    return finish_v2(Sym::cpp, "cpp");
+  }
+  return result::cont;
 }
 
 /**
@@ -1339,7 +1358,6 @@ Result qq_start(State &state) {
 }
 
 Result qq_body(State &state) {
-  // Parser eof = peek(0)(sym(Sym::empty)(finish(Sym::empty, "eof")) + end_or_semicolon("eof") + fail);
   if (state::next_char(state) == 0) {
     if (state.symbols[Sym::empty]) {
       return finish_v2(Sym::empty, "eof");
