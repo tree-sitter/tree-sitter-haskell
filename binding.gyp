@@ -12,8 +12,11 @@
         "src/scanner.cc",
       ],
       "cflags_c": [
-        "-std=c99",
-      ]
+        "-std=c++14",
+      ],
+      'xcode_settings': {
+        'CLANG_CXX_LANGUAGE_STANDARD': 'c++14',
+      },
     }
   ]
 }

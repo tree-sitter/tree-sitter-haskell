@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
+# Parse examples in 'native' or 'wasm' mode.
+mode=${1:-native}
+
+# Exit immediately if a command exits with a non-zero status.
 set -e
 
+# Change directory to project root.
 cd "$(dirname "$0")/.."
 
-# clone_repo OWNER NAME SHA
-function clone_repo {
+# Clone a GitHub repository to examples
+# Usage: github_clone OWNER NAME SHA
+function github_clone {
   owner=$1
   name=$2
   sha=$3
@@ -20,13 +26,55 @@ function clone_repo {
   popd
 }
 
-clone_repo joshvera effects 08f5f36f2600362685af593f4b327e933b60bf97
-clone_repo PostgRest postgrest f80cfbf165f951a062b3cbedac4556019905ca49
-clone_repo GaloisInc ivory 3d00324ad1c113c7e70957ff6a6d636d271d0fc4
-clone_repo polysemy-research polysemy c37d485b614e98622f5e7473a478b781a6ad5c45
-clone_repo github semantic b162132339622fe1e80e243f630fe092d5c0cbe1
-clone_repo haskell haskell-language-server d397ef491ef1689d43028f4d3d01a42118292235
+# Parse all files in an example repository
+# Usage: parse_repo <native|wasm> <repository_name>
+function parse_repo {
+  mode=$1
+  name=$2
+  repo=examples/$name
+  known_failures=$(cat "script/known-failures-$name.txt")
+  examples_to_parse=$(
+    for example in $(find "$repo" -name '*.hs'); do
+      if [[ ! $known_failures == *$example* ]]; then
+        echo $example
+      fi
+    done
+  )
+
+  # Ensure the scanner was recompiled
+  if [ "$mode" == "native" ]; then
+    tree-sitter test -f 'just compile it' >/dev/null
+  fi
+
+  # Ensure tree-sitter-haskell.wasm was recompiled
+  if [ "$mode" == "wasm" ]; then
+    make all
+  fi
+
+  start=$(date '+%s.%N')
+  if [ "$mode" == "native" ]; then
+    tree-sitter parse -q $examples_to_parse
+  elif [ "$mode" == "wasm" ]; then
+    ./script/parse-example.js $examples_to_parse
+  fi
+  end=$(date '+%s.%N')
+
+  skipped=$( echo $known_failures | wc -w )
+  parsed=$( echo $examples_to_parse | wc -w )
+  total=$((parsed+skipped))
+  percent=$(bc -l <<< "100*$parsed/$total")
+  duration=$(bc -l <<< "$end - $start")
+
+  printf "Successfully parsed %.2f%% of '$name' in %.2fs (%d of %d files)\n" $percent $duration $parsed $total
+}
+
+github_clone joshvera effects 08f5f36f2600362685af593f4b327e933b60bf97
+github_clone PostgRest postgrest f80cfbf165f951a062b3cbedac4556019905ca49
+github_clone GaloisInc ivory 3d00324ad1c113c7e70957ff6a6d636d271d0fc4
+github_clone polysemy-research polysemy c37d485b614e98622f5e7473a478b781a6ad5c45
+github_clone github semantic b162132339622fe1e80e243f630fe092d5c0cbe1
+github_clone haskell haskell-language-server d397ef491ef1689d43028f4d3d01a42118292235
 
 for name in effects postgrest ivory polysemy semantic haskell-language-server; do
-  script/parse-example $name
+  parse_repo $mode $name
 done
