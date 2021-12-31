@@ -10,6 +10,8 @@
 
 // short circuit
 #define SHORT_SCANNER if (res.finished) return res;
+#define PEEK state::next_char(state)
+#define S_ADVANCE state::advance(state)
 
 using namespace std;
 
@@ -1281,30 +1283,40 @@ Parser qq_start =
   peek('|')(finish(Sym::qq_start, "qq_start"))
   ;
 
-Parser qq_body =
-  [](State & state) {
-    auto p =
-      eof +
-      mark("qq_body") +
-      either(
-          cond::consume('\\'),
-          parser::advance,
-          iff(cond::seq("|]"))(finish(Sym::qq_body, "qq_body")) + parser::advance
-      ) +
-      qq_body;
-    return p(state);
-  };
+Result qq_body(State &state) {
+  // Parser eof = peek(0)(sym(Sym::empty)(finish(Sym::empty, "eof")) + end_or_semicolon("eof") + fail);
+  if (state::next_char(state) == 0) {
+    if (state.symbols[Sym::empty]) {
+      return finish_v2(Sym::empty, "eof");
+    }
+    return (end_or_semicolon("eof") + fail)(state);
+  }
+  util::mark("qq_body", state);
+  if (PEEK == '\\') {
+    S_ADVANCE;
+    S_ADVANCE;
+  } else {
+    if (PEEK == '|') {
+      S_ADVANCE;
+      if (PEEK == ']') {
+        S_ADVANCE;
+        return finish_v2(Sym::qq_body, "qq_body");
+      }
+    }
+    S_ADVANCE;
+  }
+  // TODO(414owen): make non-recursive
+  return qq_body(state);
+}
 
 /**
  * When a dollar is followed by a varid or opening paren, parse a splice.
  */
 Result splice(State &state) {
   uint32_t c = state::next_char(state);
-  if (cond::varid_start_char(c) || c == '(') {
-    if (state.symbols[Sym::splice]) {
-      util::mark("splice", state);
-      return finish_v2(Sym::splice, "splice");
-    }
+  if ((cond::varid_start_char(c) || c == '(') && state.symbols[Sym::splice]) {
+    util::mark("splice", state);
+    return finish_v2(Sym::splice, "splice");
   }
   return result::cont;
 }
