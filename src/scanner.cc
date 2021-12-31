@@ -1199,13 +1199,15 @@ Parser dot =
  *
  * Since they can contain escaped newlines, they have to be consumed, after which the parser recurses.
  */
-Parser cpp_consume =
-  [](State & state) {
-    auto p =
-      consume_while(not_(cond::newline) & not_(cond::eq('\\'))) +
-      consume('\\')(parser::advance + cpp_consume);
-    return p(state);
-  };
+Result cpp_consume(State &state) {
+  while (PEEK != 0 && !cond::is_newline(PEEK) && PEEK != '\\') S_ADVANCE;
+  if (PEEK == '\\') {
+    S_ADVANCE;
+    S_ADVANCE;
+    return cpp_consume(state);
+  }
+  return result::cont;
+}
 
 /**
  * Parse a cpp directive.
