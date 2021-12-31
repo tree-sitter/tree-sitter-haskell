@@ -547,6 +547,7 @@ Condition keep_layout(uint16_t indent) { return check_indent([=](auto i) { retur
 /**
  * Require that the current line's indent is equal to the containing layout's, so the line may start a new `decl`.
  */
+bool same_indent_v2(uint32_t indent, State &state) { return indent_exists(state) && indent == state.indents.back(); }
 Condition same_indent(uint32_t indent) { return check_indent([=](auto i) { return indent == i; }); }
 
 /**
@@ -1237,8 +1238,11 @@ Parser newline_where(uint32_t indent) {
 /**
  * Succeed for `Sym::semicolon` if the indent of the next line is equal to the current layout's.
  */
-Parser newline_semicolon(uint32_t indent) {
-  return sym(Sym::semicolon)(iff(cond::same_indent(indent))(finish(Sym::semicolon, "newline_semicolon")));
+Result newline_semicolon(uint32_t indent, State &state) {
+  if (SYM(Sym::semicolon) && cond::same_indent_v2(indent, state)) {
+    return finish_v2(Sym::semicolon, "newline_semicolon");
+  }
+  return result::cont;
 }
 
 /**
@@ -1718,10 +1722,9 @@ Result repeat_end(uint32_t column, State &state) {
  */
 Result newline_indent(uint32_t indent, State &state) {
   // TODO(414owen): fix
-  return
-    (dedent(indent) +
-    close_layout_in_list +
-    newline_semicolon(indent))(state);
+  Result res = (dedent(indent) + close_layout_in_list)(state);
+  SHORT_SCANNER;
+  return newline_semicolon(indent, state);
 }
 
 /**
