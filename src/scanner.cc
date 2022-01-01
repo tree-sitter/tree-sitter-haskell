@@ -589,8 +589,6 @@ static bool is_newline(uint32_t c) {
 
 static Peek newline = eq('\n') | eq('\r') | eq('\f');
 
-static Peek ticked = eq('`');
-
 /**
  * Require that the state has not been initialized after parsing has started.
  *
