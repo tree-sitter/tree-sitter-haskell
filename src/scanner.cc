@@ -377,8 +377,6 @@ static function<std::pair<bool, uint32_t>(State &)> peeks(Peek pred) {
 
 static Condition peek_with(Peek pred) { return fst<bool, uint32_t> * peeks(pred); }
 
-static Condition varid = cond::peek_with(cond::varid_start_char);
-
 static bool seq(const string &s, State &state) {
   for (auto &c : s) {
     uint32_t c2 = state::next_char(state);
@@ -686,7 +684,7 @@ static Symbolic symop(u32string s, State &state) {
     if (c == '#' && PEEK == ')') return Symbolic::unboxed_tuple_close;
     if (c == '#' && cond::peek_with(cond::varid_start_char)(state)) return Symbolic::invalid;
     if (c == '$' && cond::valid_splice(state)) return Symbolic::splice;
-    if (c == '?' && cond::varid(state)) return Symbolic::implicit;
+    if (c == '?' && cond::varid_start_char(PEEK)) return Symbolic::implicit;
     if (c == '%' && !(cond::isws(PEEK) || PEEK == ')')) return Symbolic::modifier;
     if (c == '|') return Symbolic::bar;
     switch (c) {
