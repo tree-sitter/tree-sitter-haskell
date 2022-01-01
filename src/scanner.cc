@@ -1056,11 +1056,6 @@ Modifier token(string s) { return iff(cond::token(s)); }
 Parser mark(string target) { return effect(state::mark(target)); }
 
 /**
- * If the parser returns `cont`, fail.
- */
-Parser or_fail(Parser chk) { return chk + fail; }
-
-/**
  * Add one level of indentation to the stack, caused by starting a layout.
  */
 static void push(uint16_t ind, State & state) {
