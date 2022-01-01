@@ -456,23 +456,7 @@ static function<void(State &)> consume_while(Peek pred) {
   };
 }
 
-// TODO this breaks if the target sequence has a repetition of its prefix
-static function<void(State &)> consume_until(string target) {
-  if (target.empty()) return [=](auto) {};
-  uint32_t first = target[0];
-  return [=](State & state) {
-    Peek check = [&](uint32_t c) {
-      if (eq(first)(c)) {
-        state::mark("consume_until " + target, state);
-        return !seq(target)(state);
-      }
-      else return true;
-    };
-    return consume_while(check)(state);
-  };
-}
-
-static void consume_until_v2(string target, State &state) {
+static void consume_until(string target, State &state) {
   assert(!target.empty());
   uint32_t first = target[0];
   while (PEEK != 0 && !seq_v2(target, state)) {
@@ -1021,7 +1005,7 @@ static Result cpp_workaround(State &state) {
   if (PEEK == '#') {
     S_ADVANCE;
     if (cond::seq_v2("el", state)) {
-      cond::consume_until_v2("#endif", state);
+      cond::consume_until("#endif", state);
       if (PEEK == 0) {
         Result res = eof(state);
         SHORT_SCANNER;
