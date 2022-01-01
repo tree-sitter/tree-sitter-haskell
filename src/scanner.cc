@@ -958,33 +958,8 @@ static Modifier sym(const Sym s) { return iff(cond::sym(s)); }
 /**
  * Parser that terminates the execution with the successful detection of the given symbol, but only if it is expected.
  */
-static Parser finish_if_valid(const Sym s, string desc) { return sym(s)(finish(s, desc)); }
-
-/**
- * :: (State -> (bool, uint32_t)) -> (uint32_t -> Parser) -> (uint32_t -> Parser) -> Parser
- *
- * If the predicate is true, pass the character to the `match` parser, otherwise the `nomatch`
- * parser.
- *
- * The template allows passing in `Parser` or `Result` for the `(uint32_t -> Parser)` parameters.
- */
-template<class A, class B> Parser either(function<pair<bool, uint32_t>(State &)> con, A match, B nomatch) {
-  return [=](State & state) {
-    auto res = con(state);
-    return res.first ? as_char_parser(match)(res.second)(state) : as_char_parser(nomatch)(res.second)(state);
-  };
-}
-
-/**
- * :: (uint32_t -> bool) -> (uint32_t -> Parser) -> (uint32_t -> Parser) -> Parser
- *
- * If the predicate for the next character is true, pass the character to the `match` parser, otherwise the `nomatch`
- * parser.
- *
- * The template allows passing in `Parser` or `Result` for the `(uint32_t -> Parser)` parameters.
- */
-template<class A, class B> Parser peeks(Peek pred, A match, B nomatch) {
-  return either(cond::peeks(pred), match, nomatch);
+static inline Result finish_if_valid(const Sym s, string desc, State &state) {
+  return SYM(s) ? finish_v2(s, desc) : result::cont;
 }
 
 /**
@@ -1039,7 +1014,7 @@ static Result layout_end(string desc, State &state) {
 static Result end_or_semicolon(string desc, State &state) {
   Result res = layout_end(desc, state);
   SHORT_SCANNER;
-  return finish_if_valid(Sym::semicolon, desc)(state);
+  return finish_if_valid(Sym::semicolon, desc, state);
 }
 
 }
@@ -1386,18 +1361,24 @@ static Result symop_marked(Symbolic type, State &state) {
     case Symbolic::modifier:
       return sym(Sym::tyconsym)(fail)(state);
     case Symbolic::tilde:
-    case Symbolic::minus:
-      return (finish_if_valid(Sym::tyconsym, "symop") + fail)(state);
+    case Symbolic::minus: {
+      Result res = finish_if_valid(Sym::tyconsym, "symop", state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
     case Symbolic::implicit:
       return result::fail;
     case Symbolic::splice:
       return splice(state);
     case Symbolic::strict:
-      return finish_if_valid(Sym::strict, "strict")(state);
+      return finish_if_valid(Sym::strict, "strict", state);
     case Symbolic::comment:
       return inline_comment(state);
-    case Symbolic::con:
-      return (finish_if_valid(Sym::consym, "symop") + fail)(state);
+    case Symbolic::con: {
+      Result res = finish_if_valid(Sym::consym, "symop", state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
     case Symbolic::unboxed_tuple_close:
       return unboxed_tuple_close(state);
     default:
@@ -1432,11 +1413,11 @@ static Result symop(Symbolic type, State &state) {
   state::mark("symop", state);
   Result res = symop_marked(type, state);
   SHORT_SCANNER;
-  return (
-    finish_if_valid(Sym::tyconsym, "symop") +
-    finish_if_valid(Sym::varsym, "symop") +
-    fail
-  )(state);
+  res = finish_if_valid(Sym::tyconsym, "symop", state);
+  SHORT_SCANNER;
+  res = finish_if_valid(Sym::varsym, "symop", state);
+  SHORT_SCANNER;
+  return result::fail;
 }
 
 /**
