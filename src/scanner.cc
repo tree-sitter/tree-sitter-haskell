@@ -1092,8 +1092,19 @@ Parser pop =
 /**
  * Advance the lexer until the following character is neither space nor tab.
  */
-Parser skipspace =
-  effect([](State & state) { while (cond::peek(' ')(state) || cond::peek('\t')(state)) state::skip(state); });
+void skipspace(State &state) {
+  while (true) {
+    switch (PEEK) {
+      case ' ':
+      case '\t':
+        S_ADVANCE;
+        break;
+      default:
+        return;
+    }
+  }
+
+}
 
 /**
  * If a layout end is valid at this position, remove one indentation layer and succeed with layout end.
@@ -1134,7 +1145,7 @@ using namespace parser;
  *
  * This advances to the first nonwhite character in the next nonempty line and determines its indentation.
  */
-uint32_t count_indent(State & state) {
+static uint32_t count_indent(State & state) {
   uint32_t indent = 0;
   for (;;) {
     if (cond::skips(cond::newline)(state)) {
@@ -1161,7 +1172,7 @@ uint32_t count_indent(State & state) {
 
 // TODO(414owen) this was a lot faster when it was inlined
 // We should figure out why. Maybe insert it in hot code paths?
-static inline Result eof(State &state) {
+static Result eof(State &state) {
   if (PEEK == 0) {
     if (SYM(Sym::empty)) {
       return finish_v2(Sym::empty, "eof");
@@ -1873,9 +1884,8 @@ Result init(State &state) {
  * The main parser checks whether the first non-space character is a newline and delegates accordingly.
  */
 Result main(State &state) {
-  auto res = skipspace(state);
-  SHORT_SCANNER;
-  res = eof(state);
+  skipspace(state);
+  Result res = eof(state);
   SHORT_SCANNER;
   util::mark("main", state);
   if (cond::skips(cond::newline)(state)) {
