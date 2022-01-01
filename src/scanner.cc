@@ -666,7 +666,9 @@ static bool valid_symop_two_chars(uint32_t first_char, uint32_t second_char) {
   }
 }
 
-static Condition valid_splice = peek_with(cond::varid_start_char) | peek('(');
+static bool valid_splice(State &state) {
+  return cond::varid_start_char(PEEK) || PEEK == '(';
+}
 
 }
 
