@@ -449,12 +449,12 @@ static bool keep_layout(uint16_t indent, State &state) {
 /**
  * Require that the current line's indent is equal to the containing layout's, so the line may start a new `decl`.
  */
-static bool same_indent_v2(uint32_t indent, State &state) { return indent_exists(state) && indent == state.indents.back(); }
+static bool same_indent(uint32_t indent, State &state) { return indent_exists(state) && indent == state.indents.back(); }
 
 /**
  * Require that the current line's indent is smaller than the containing layout's, so the layout may be ended.
  */
-static bool smaller_indent_v2(uint32_t indent, State &state) {
+static bool smaller_indent(uint32_t indent, State &state) {
   return indent_exists(state) && indent < state.indents.back();
 }
 
@@ -958,7 +958,7 @@ static Result cpp_init(State &state) {
  * line after skipping whitespace) is smaller than the layout indent.
  */
 static Result dedent(uint32_t indent, State &state) {
-  if (cond::smaller_indent_v2(indent, state)) return layout_end("dedent", state);
+  if (cond::smaller_indent(indent, state)) return layout_end("dedent", state);
   return result::cont;
 }
 
@@ -982,7 +982,7 @@ static Result newline_where(uint32_t indent, State &state) {
  * Succeed for `Sym::semicolon` if the indent of the next line is equal to the current layout's.
  */
 static Result newline_semicolon(uint32_t indent, State &state) {
-  if (SYM(Sym::semicolon) && cond::same_indent_v2(indent, state)) {
+  if (SYM(Sym::semicolon) && cond::same_indent(indent, state)) {
     return finish(Sym::semicolon, "newline_semicolon");
   }
   return result::cont;
@@ -1472,7 +1472,7 @@ static Result post_end_semicolon(uint32_t column, State &state) {
  * Like `post_end_semicolon`, but for layout end.
  */
 static Result repeat_end(uint32_t column, State &state) {
-  if (state.symbols[Sym::end] && cond::smaller_indent_v2(column, state)) {
+  if (state.symbols[Sym::end] && cond::smaller_indent(column, state)) {
     return layout_end("repeat_end", state);
   }
   return result::cont;
