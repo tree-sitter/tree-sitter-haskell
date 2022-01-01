@@ -428,14 +428,6 @@ static Condition consumes(Peek pred) { return fst<bool, uint32_t> * consume_if(p
  */
 static Condition consume(uint32_t c) { return consumes(eq(c)); }
 
-/**
- * Require that the argument string follows the current position, consuming all characters.
- * Note: This leaves characters from a partial match consumed, there is no way to backtrack the parser.
- */
-static Condition seq(const string & s) {
-  return [=](State & state) { return all_of(s.begin(), s.end(), [&](auto a) { return consume(a)(state); }); };
-}
-
 static bool seq_v2(const string &s, State &state) {
   for (auto &c : s) {
     uint32_t c2 = state::next_char(state);
