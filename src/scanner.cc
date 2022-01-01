@@ -401,12 +401,6 @@ static PeekResult skip_if(Peek pred) {
  */
 static Condition skips(Peek pred) { return fst<bool, uint32_t> * skip_if(pred); }
 
-/**
- * Require that the next character equals a concrete `c`, advancing the parser on success, treating the character as
- * whitespace.
- */
-static Condition skip(uint32_t c) { return skips(eq(c)); }
-
 static bool seq(const string &s, State &state) {
   for (auto &c : s) {
     uint32_t c2 = state::next_char(state);
@@ -869,9 +863,11 @@ static uint32_t count_indent(State & state) {
   for (;;) {
     if (cond::skips(cond::newline)(state)) {
       indent = 0;
-    } else if (cond::skip(' ')(state)) {
+    } else if (PEEK == ' ') {
+      S_ADVANCE;
       indent++;
-    } else if (cond::skip('\t')(state)) {
+    } else if (PEEK == '\t') {
+      S_ADVANCE;
       indent += 8;
     } else break;
   }
