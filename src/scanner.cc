@@ -930,10 +930,6 @@ static Parser fail = ::const_<State>(result::fail);
  */
 static Parser cont = ::const_<State>(result::cont);
 
-static CharParser as_char_parser(CharParser p) { return p; }
-static CharParser as_char_parser(Parser p) { return ::const_<uint32_t>(p); }
-static CharParser as_char_parser(Result r) { return ::const_<uint32_t>(::const_<State>(r)); }
-
 /**
  * Parser that terminates the execution with the successful detection of the given symbol, but only if it is expected.
  */
