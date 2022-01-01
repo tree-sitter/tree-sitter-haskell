@@ -8,41 +8,11 @@
 
 // short circuit
 #define SHORT_SCANNER if (res.finished) return res;
-#define PEEK state::next_char(state)
-#define S_ADVANCE state::advance(state)
+#define PEEK state.lexer->lookahead
+#define S_ADVANCE state.lexer->advance(state.lexer, false)
 #define SYM(s) (state.symbols[s])
 
 using namespace std;
-
-/**
- * The scanner is abstracted for compositionality as functions of the type:
- *
- * typedef function<Result(State&)> Parser;
- *
- * A simple parser can look like this:
- *
- * Result layout_start_brace(State & state) {
- *   if (next_char(state) == '{') return result::finish(Sym::start);
- *   else return result::cont;
- * }
- *
- * With the provided combinators in `namespace `parser`, this can be rewritten as:
- *
- * Parser layout_start_brace = peek('{')(finish(Sym::start));
- *
- * In the API function `scan`, this parser can be executed:
- *
- * parser::eval(layout_start_brace, state);
- *
- * This will set the `lexer-result_symbol` accordingly and return a bool indicating success.
- *
- * Multiple parsers can be executed in succession with the plus operator:
- *
- * peek('w')(handle_w) + peek('i')(handle_i)
- *
- * If `handle_w` terminates with `result::finish` or `result::fail` instead of `result::cont`, `handle_i` is not
- * executed.
- */
 
 // --------------------------------------------------------------------------------------------------------
 // Utilities
@@ -51,13 +21,13 @@ using namespace std;
 /**
  * Print input and result information.
  */
-static bool debug = false;
+static const bool debug = false;
 
 /**
  * Print the upcoming token after parsing finished.
  * Note: May change parser behaviour.
  */
-static bool debug_next_token = false;
+static const bool debug_next_token = false;
 
 /**
  * Print to stderr if the `debug` flag is `true`.
@@ -266,17 +236,6 @@ static inline uint32_t column(State & state) {
 }
 
 /**
- * The next character that would be parsed.
- * Does not advance the parser position (consume the character).
- */
-static inline uint32_t next_char(State & state) { return state.lexer->lookahead; }
-
-/**
- * Move the parser position one character to the right, treating the consumed character as part of the parsed token.
- */
-static inline void advance(State & state) { state.lexer->advance(state.lexer, false); }
-
-/**
  * Move the parser position one character to the right, treating the consumed character as whitespace.
  */
 static inline void skip(State & state) { state.lexer->advance(state.lexer, true); }
@@ -325,9 +284,9 @@ static bool quoter_char(const uint32_t c) { return varid_char(c) || c == '.'; };
 
 static bool seq(const string &s, State &state) {
   for (auto &c : s) {
-    uint32_t c2 = state::next_char(state);
+    uint32_t c2 = PEEK;
     if (c != c2) return false;
-    state::advance(state);
+    S_ADVANCE;
   }
   return true;
 }
@@ -1065,7 +1024,7 @@ static Result qq_body(State &state) {
  * When a dollar is followed by a varid or opening paren, parse a splice.
  */
 static Result splice(State &state) {
-  uint32_t c = state::next_char(state);
+  uint32_t c = PEEK;
   if ((cond::varid_start_char(c) || c == '(') && state.symbols[Sym::splice]) {
     state::mark("splice", state);
     return finish(Sym::splice, "splice");
@@ -1075,8 +1034,8 @@ static Result splice(State &state) {
 
 static Result unboxed_tuple_close(State &state) {
   if (state.symbols[Sym::unboxed_tuple_close]) {
-    if (state::next_char(state) == ')') {
-      state::advance(state);
+    if (PEEK == ')') {
+      S_ADVANCE;
       state::mark("unboxed_tuple_close", state);
       return finish(Sym::unboxed_tuple_close, "unboxed_tuple_close");
     }
@@ -1088,8 +1047,8 @@ static Result unboxed_tuple_close(State &state) {
  * Consume all characters up to the end of line and succeed with `Sym::commment`.
  */
 static Result inline_comment(State &state) {
-  while (!cond::newline(state::next_char(state))) {
-    state::advance(state);
+  while (!cond::newline(PEEK)) {
+    S_ADVANCE;
   }
   state::mark("inline_comment", state);
   return finish(Sym::comment, "inline_comment");
@@ -1179,10 +1138,10 @@ static Result symop(Symbolic type, State &state) {
  */
 static Result minus(State &state) {
   if (!cond::seq("--", state)) return result::cont;
-  while (state::next_char(state) == '-') {
-    state::advance(state);
+  while (PEEK == '-') {
+    S_ADVANCE;
   }
-  if (cond::symbolic(state::next_char(state))) return result::fail;
+  if (cond::symbolic(PEEK)) return result::fail;
   return inline_comment(state);
 }
 
@@ -1205,23 +1164,23 @@ static Result multiline_comment(uint16_t, State &);
  * This part looks for the comment markers at the current position and recurses with an adjusted nesting level.
  */
 static Result nested_comment(uint16_t level, State &state) {
-  switch (state::next_char(state)) {
+  switch (PEEK) {
     case 0: {
       Result res = eof(state);
       SHORT_SCANNER;
       return result::fail;
     }
     case '{':
-      state::advance(state);
-      if (state::next_char(state) == '-') {
-        state::advance(state);
+      S_ADVANCE;
+      if (PEEK == '-') {
+        S_ADVANCE;
         return multiline_comment(level + 1, state);
       }
       break;
     case '-':
-      state::advance(state);
-      if (state::next_char(state) == '}') {
-        state::advance(state);
+      S_ADVANCE;
+      if (PEEK == '}') {
+        S_ADVANCE;
         if (level <= 1) return multiline_comment_success(state);
         return multiline_comment(level - 1, state);
       }
@@ -1241,10 +1200,10 @@ static Result nested_comment(uint16_t level, State &state) {
 // TODO(414owen): this probably shouldn't be recursive, some people like putting
 // lots of dashes in comments...
 static Result multiline_comment(uint16_t level, State &state) {
-  uint32_t next = state::next_char(state);
+  uint32_t next = PEEK;
   while (next != '-' && next != '{' && next != 0) {
-    state::advance(state);
-    next = state::next_char(state);
+    S_ADVANCE;
+    next = PEEK;
   }
   Result res = nested_comment(level, state);
   SHORT_SCANNER;
@@ -1256,11 +1215,11 @@ static Result multiline_comment(uint16_t level, State &state) {
  * comment is parsed, otherwise parsing fails to delegate to the corresponding grammar rule.
  */
 static Result brace(State &state) {
-  if (state::next_char(state) != '{') return result::fail;
-  state::advance(state);
-  if (state::next_char(state) != '-') return result::fail;
-  state::advance(state);
-  if (state::next_char(state) == '#') return result::fail;
+  if (PEEK != '{') return result::fail;
+  S_ADVANCE;
+  if (PEEK != '-') return result::fail;
+  S_ADVANCE;
+  if (PEEK == '#') return result::fail;
   return multiline_comment(1, state);
 }
 
@@ -1268,7 +1227,7 @@ static Result brace(State &state) {
  * Parse either inline or block comments.
  */
 static Result comment(State &state) {
-  switch (state::next_char(state)) {
+  switch (PEEK) {
     case '-': {
       Result res = minus(state);
       SHORT_SCANNER;
@@ -1295,7 +1254,7 @@ static Result comment(State &state) {
  * parsed here as well.
  */
 static Result close_layout_in_list(State &state) {
-  switch (state::next_char(state)) {
+  switch (PEEK) {
     case ']': {
       if (state.symbols[Sym::end]) {
         pop(state);
@@ -1304,7 +1263,7 @@ static Result close_layout_in_list(State &state) {
       break;
     }
     case ',': {
-      state::advance(state);
+      S_ADVANCE;
       if (state.symbols[Sym::comma]) {
         state::mark("comma", state);
         return finish(Sym::comma, "comma");
@@ -1330,7 +1289,7 @@ static Result close_layout_in_list(State &state) {
  *   - '|' in a quasiquote, since it can be followed by symbolic operator characters, which would be consumed
  */
 static Result inline_tokens(State &state) {
-  switch (state::next_char(state)) {
+  switch (PEEK) {
     case 'w': {
       Result res = where(state);
       SHORT_SCANNER;
@@ -1359,7 +1318,7 @@ static Result inline_tokens(State &state) {
     }
     case '|': {
       if (state.symbols[Sym::qq_bar]) {
-        state::advance(state);
+        S_ADVANCE;
         state::mark("qq_bar", state);
         return result::finish(Sym::qq_bar);
       }
@@ -1581,8 +1540,8 @@ static void debug_lookahead(State & state) {
   for (;;) {
     if (cond::isws(PEEK) || PEEK == 0) break;
     else {
-      s += state::next_char(state);
-      state::advance(state);
+      s += PEEK;
+      S_ADVANCE;
     }
   }
   if (!s.empty()) logger("next: " + s);
