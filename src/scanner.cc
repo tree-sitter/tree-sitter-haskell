@@ -318,18 +318,6 @@ static inline void mark(string marked_by, State &state) {
 // --------------------------------------------------------------------------------------------------------
 
 /**
- * A predicate for the next character.
- *
- * With the provided operator overloads, conditions can be logically combined without having to write lambdas for
- * passing along the character.
- */
-typedef function<bool(uint32_t)> Peek;
-
-static Peek operator&(const Peek & l, const Peek & r) { return [=](uint32_t c) { return l(c) && r(c); }; }
-static Peek operator|(const Peek & l, const Peek & r) { return [=](uint32_t c) { return l(c) || r(c); }; }
-static Peek not_(Peek con) { return [=](uint32_t c) { return !con(c); }; }
-
-/**
  * The set of conditions used in the parser implementation.
  */
 namespace cond {
