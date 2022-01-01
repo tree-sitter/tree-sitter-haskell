@@ -123,7 +123,7 @@ namespace syms {
  *   - empty: The empty file
  *   - fail: special indicator of failure
  */
-enum Sym: uint16_t {
+enum Sym {
   semicolon,
   start,
   end,
@@ -148,7 +148,7 @@ enum Sym: uint16_t {
   fail,
 };
 
-static vector<string> names = {
+static string names[] = {
   "semicolon",
   "start",
   "end",
@@ -172,7 +172,9 @@ static vector<string> names = {
   "empty",
 };
 
-static string name(Sym t) { return t < names.size() ? names[t] : "unknown"; }
+static const int names_size = sizeof(names) / sizeof(names[0]);
+
+static string name(Sym t) { return t < names_size ? names[t] : "unknown"; }
 
 /**
  * The parser appears to call `scan` with all symbols declared as valid directly after it encountered an error, so
