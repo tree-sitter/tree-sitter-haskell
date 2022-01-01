@@ -587,7 +587,16 @@ static bool is_newline(uint32_t c) {
   }
 }
 
-static Peek newline = eq('\n') | eq('\r') | eq('\f');
+static bool newline(uint32_t c) {
+  switch (c) {
+    case '\n':
+    case '\r':
+    case '\f':
+      return true;
+    default:
+      return false;
+  }
+}
 
 /**
  * Require that the state has not been initialized after parsing has started.
