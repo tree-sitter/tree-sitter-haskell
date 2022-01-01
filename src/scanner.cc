@@ -921,16 +921,6 @@ static Parser finish(const Sym s, string desc) {
 
 
 /**
- * Parser that terminates the execution unsuccessfully.
- */
-static Parser fail = ::const_<State>(result::fail);
-
-/**
- * Parser that does nothing, causing the next parser to be executed.
- */
-static Parser cont = ::const_<State>(result::cont);
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol, but only if it is expected.
  */
 static inline Result finish_if_valid(const Sym s, string desc, State &state) {
