@@ -729,7 +729,7 @@ static void pop(State &state) {
  * Advance the lexer until the following character is neither space nor tab.
  */
 static void skipspace(State &state) {
-  while (true) {
+  for (;;) {
     switch (PEEK) {
       case ' ':
       case '\t':
