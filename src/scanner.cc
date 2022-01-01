@@ -5,7 +5,6 @@
 #include <iostream>
 #include <algorithm>
 #include <string>
-#include <iterator>
 
 // short circuit
 #define SHORT_SCANNER if (res.finished) return res;
