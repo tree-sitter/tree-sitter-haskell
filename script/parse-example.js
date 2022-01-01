@@ -11,11 +11,11 @@ if (process.argv.length < 3) {
 
 Parser.init().then(() => {
   Parser.Language.load('tree-sitter-haskell.wasm').then((Haskell) => {
+    const parser = new Parser;
+    parser.setLanguage(Haskell);
     for (let i = 2; i < process.argv.length - 1; i++) {
       const fileName = process.argv[2]
       const sourceCode = fs.readFileSync(fileName, 'utf8')
-      const parser = new Parser;
-      parser.setLanguage(Haskell);
       const tree = parser.parse(sourceCode);
     }
   });
