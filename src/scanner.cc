@@ -523,7 +523,9 @@ Condition token_end =
  * Require that the argument string follows the current position and is followed by whitespace.
  * See `seq`
  */
-Condition token(const string & s) { return seq(s) & token_end; }
+bool token(const string & s, State &state) { 
+  return seq_v2(s, state) && token_end(state);
+}
 
 /**
  * Require that the stack of layout indentations is not empty.
@@ -1035,12 +1037,6 @@ Parser skip_ws = effect([](State & state) { while (cond::peekws(state)) state::s
 Modifier seq(string s) { return iff(cond::seq(s)); }
 
 /**
- * Require the next characters to be equal to `s` for the next parser to be executed, advancing the lexer as far as the
- * characters match, even if not all of them match.
- */
-Modifier token(string s) { return iff(cond::token(s)); }
-
-/**
  * Add one level of indentation to the stack, caused by starting a layout.
  */
 static void push(uint16_t ind, State & state) {
@@ -1162,8 +1158,8 @@ static Result eof(State &state) {
 Result initialize(uint32_t column, State &state) {
   if (cond::uninitialized(state)) {
     state::mark("initialize", state);
-    Result res = token("module")(fail)(state);
-    SHORT_SCANNER;
+    bool match = cond::token("module", state);
+    if (match) return result::fail;
     push(column, state);
     return finish_v2(Sym::indent, "init");
   }
@@ -1268,7 +1264,7 @@ Result dedent(uint32_t indent, State &state) {
 Result newline_where(uint32_t indent, State &state) {
   if (cond::is_newline_where(indent)(state)) {
     state::mark("newline_where", state);
-    if (cond::seq_v2("where", state) && cond::token_end(state)) {
+    if (cond::token("where", state)) {
       return end_or_semicolon("newline_where", state);
     }
     return result::fail;
@@ -1319,7 +1315,7 @@ Result newline_infix(uint32_t indent, Symbolic type, State &state) {
  * Necessary because `is_newline_where` needs to know that no `where` may follow.
  */
 Result where(State &state) {
-  if (cond::seq_v2("where", state) && cond::token_end(state)) {
+  if (cond::token("where", state)) {
     if (SYM(Sym::where)) {
       state::mark("where", state);
       return finish_v2(Sym::where, "where");
@@ -1333,7 +1329,7 @@ Result where(State &state) {
  * An `in` token ends the layout openend by a `let` and its nested layouts.
  */
 Result in(State &state) {
-  if (SYM(Sym::in) && cond::seq_v2("in", state) && cond::token_end(state)) {
+  if (SYM(Sym::in) && cond::token("in", state)) {
     state::mark("in", state);
     pop(state);
     return finish_v2(Sym::in, "in");
@@ -1345,7 +1341,7 @@ Result in(State &state) {
  * An `else` token may end a layout opened in the body of a `then`.
  */
 Result else_(State &state) {
-  if (cond::seq_v2("else", state) && cond::token_end(state)) {
+  if (cond::token("else", state)) {
     return end_or_semicolon("else", state);
   }
   return result::cont;
