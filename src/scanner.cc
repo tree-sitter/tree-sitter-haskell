@@ -384,18 +384,6 @@ static Condition varid = cond::peek_with(cond::varid_start_char);
  */
 static Condition peek(uint32_t c) { return fst<bool, uint32_t> * peeks(eq(c)); }
 
-/**
- * Require that the next character matches a predicate, advancing the parser on success, treating the character as
- * whitespace.
- */
-static PeekResult skip_if(Peek pred) {
-  return [=](State & state) {
-    auto res = peeks(pred)(state);
-    if (res.first) { state::skip(state); }
-    return res;
-  };
-}
-
 static bool seq(const string &s, State &state) {
   for (auto &c : s) {
     uint32_t c2 = state::next_char(state);
