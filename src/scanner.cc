@@ -363,18 +363,6 @@ static bool varid_char(const uint32_t c) { return eq('_')(c) || eq('\'')(c) || i
 
 static bool quoter_char(const uint32_t c) { return varid_char(c) || eq('.')(c); };
 
-/**
- * Require that the next character matches a predicate, without advancing the parser.
- * Returns the next char as well.
- */
-static function<std::pair<bool, uint32_t>(State &)> peeks(Peek pred) {
-  return [=](State & state) {
-    auto c = state::next_char(state);
-    auto res = pred(c);
-    return std::make_pair(res, c);
-  };
-}
-
 static bool seq(const string &s, State &state) {
   for (auto &c : s) {
     uint32_t c2 = state::next_char(state);
