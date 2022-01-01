@@ -890,13 +890,6 @@ static Parser either(Condition c, Parser match, Parser nomatch) {
 static Parser either(bool c, Parser match, Parser nomatch) { return either(const_<State &>(c), match, nomatch); }
 
 /**
- * Lazy evaluation for recursion.
- */
-static Parser lazy(function<Parser()> p) {
-  return [=](State & state) { return p()(state); };
-}
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
 static Result finish(const Sym s, string desc) {
