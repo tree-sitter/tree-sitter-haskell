@@ -935,17 +935,6 @@ static CharParser as_char_parser(Parser p) { return ::const_<uint32_t>(p); }
 static CharParser as_char_parser(Result r) { return ::const_<uint32_t>(::const_<State>(r)); }
 
 /**
- * Require a condition to be true for the next parser to be executed.
- *
- * If the condition is false, parsing continues after the skipped parser.
- *
- * This function returns a function, so it is applied with two parameter lists:
- *
- * iff(cond::after_error)(fail)
- */
-static Modifier iff(Condition c) { return [=](Parser next) { return either(c, next, cont); }; }
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol, but only if it is expected.
  */
 static inline Result finish_if_valid(const Sym s, string desc, State &state) {
@@ -1766,7 +1755,7 @@ static Result immediate(uint32_t column, State &state) {
 static Result init(State &state) {
   auto res =  eof(state);
   SHORT_SCANNER;
-  res = iff(cond::after_error)(fail)(state);
+  res = cond::after_error(state) ? result::fail : result::cont;
   SHORT_SCANNER;
   res = initialize_init(state);
   SHORT_SCANNER;
