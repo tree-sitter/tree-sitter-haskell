@@ -330,12 +330,6 @@ static Peek operator|(const Peek & l, const Peek & r) { return [=](uint32_t c) {
 static Peek not_(Peek con) { return [=](uint32_t c) { return !con(c); }; }
 
 /**
- * Peeking the next character uses the `State` to access the lexer and returns the predicate success as well as the
- * character itself.
- */
-typedef function<pair<bool, uint32_t>(State &)> PeekResult;
-
-/**
  * The set of conditions used in the parser implementation.
  */
 namespace cond {
