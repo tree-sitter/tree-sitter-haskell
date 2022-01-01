@@ -388,17 +388,6 @@ static bool seq(const string &s, State &state) {
   return true;
 }
 
-static function<void(State &)> consume_while(Peek pred) {
-  return [=](State & state) {
-    while (true) {
-      if (state::eof(state)) break;
-      uint32_t c = state::next_char(state);
-      if (!pred(c)) break;
-      state::advance(state);
-    }
-  };
-}
-
 static void consume_until(string target, State &state) {
   assert(!target.empty());
   uint32_t first = target[0];
