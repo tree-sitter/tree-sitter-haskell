@@ -355,13 +355,20 @@ namespace cond {
 
 static Condition pure(bool c) { return const_<State&>(c); }
 
-static Peek eq(uint32_t target) { return [=](uint32_t c) { return target == static_cast<uint32_t>(c); }; }
+static bool varid_start_char(const uint32_t c) { return c == '_' || iswlower(c); }
 
-static bool varid_start_char(const uint32_t c) { return eq('_')(c) || iswlower(c); }
+static bool varid_char(const uint32_t c) { 
+  switch (c) {
+    case '_':
+    case '\'':
+      return true;
+    default:
+      // TODO(414owen) is haskell C_LOCALE sensitive?
+      return iswalnum(c);
+  }
+}
 
-static bool varid_char(const uint32_t c) { return eq('_')(c) || eq('\'')(c) || iswalnum(c); };
-
-static bool quoter_char(const uint32_t c) { return varid_char(c) || eq('.')(c); };
+static bool quoter_char(const uint32_t c) { return varid_char(c) || c == '.'; };
 
 static bool seq(const string &s, State &state) {
   for (auto &c : s) {
@@ -687,7 +694,9 @@ static Symbolic symop(u32string s, State &state) {
       default: return con_or_var(c);
     }
   } else {
-    if (all_of(s.begin(), s.end(), cond::eq('-'))) return Symbolic::comment;
+    bool is_comment = true;
+    for (const uint32_t &c : s) { is_comment &= c == '-'; }
+    if (is_comment) return Symbolic::comment;
     if (s.size() == 2) {
       if (s[0] == '$' && s[1] == '$' && cond::valid_splice(state)) return Symbolic::splice;
       if (!cond::valid_symop_two_chars(s[0], s[1])) return Symbolic::invalid;
