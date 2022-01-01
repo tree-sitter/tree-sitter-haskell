@@ -825,10 +825,6 @@ static Result fail = finish(Sym::fail);
 
 namespace parser {
 
-/**
- * The main function shape for all parser combinators.
- */
-typedef function<Result(State&)> Parser;
 typedef Result (*NewParser)(State&);
 
 /**
