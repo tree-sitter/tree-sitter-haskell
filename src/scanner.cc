@@ -396,11 +396,6 @@ static PeekResult skip_if(Peek pred) {
   };
 }
 
-/**
- * Like `skip_if`, but only return the bool result.
- */
-static Condition skips(Peek pred) { return fst<bool, uint32_t> * skip_if(pred); }
-
 static bool seq(const string &s, State &state) {
   for (auto &c : s) {
     uint32_t c2 = state::next_char(state);
@@ -861,7 +856,8 @@ using namespace parser;
 static uint32_t count_indent(State & state) {
   uint32_t indent = 0;
   for (;;) {
-    if (cond::skips(cond::newline)(state)) {
+    if (cond::newline(PEEK)) {
+      S_ADVANCE;
       indent = 0;
     } else if (PEEK == ' ') {
       S_ADVANCE;
@@ -1622,7 +1618,8 @@ static Result main(State &state) {
   Result res = eof(state);
   SHORT_SCANNER;
   state::mark("main", state);
-  if (cond::skips(cond::newline)(state)) {
+  if (cond::newline(PEEK)) {
+    S_ADVANCE;
     auto indent = count_indent(state);
     return newline(indent, state);
   }
