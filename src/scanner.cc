@@ -1068,10 +1068,10 @@ Modifier peekws = iff(cond::peekws);
 /**
  * Add one level of indentation to the stack, caused by starting a layout.
  */
-Parser push(uint16_t ind) { return effect([=](State & state) {
+void push(uint16_t ind, State & state) {
   logger << "push: " << ind << nl;
   state.indents.push_back(ind);
-}); }
+}
 
 /**
  * Remove one level of indentation from the stack, caused by the end of a layout.
@@ -1189,7 +1189,8 @@ Result initialize(uint32_t column, State &state) {
     util::mark("initialize", state);
     Result res = token("module")(fail)(state);
     SHORT_SCANNER;
-    return (push(column) + finish(Sym::indent, "init"))(state);
+    push(column, state);
+    return finish_v2(Sym::indent, "init");
   }
   return result::cont;
 }
@@ -1743,12 +1744,22 @@ Result inline_tokens(State &state) {
  */
 Result layout_start(uint32_t column, State &state) {
   if (state.symbols[Sym::start]) {
-    return (
-      peek('{')(brace) +
-      peek('-')(minus) +
-      push(column) +
-      finish(Sym::start, "layout_start")
-    )(state);
+    switch (PEEK) {
+      case '{': {
+        Result res = brace(state);
+        SHORT_SCANNER;
+        break;
+      }
+      case '-': {
+        Result res = minus(state);
+        SHORT_SCANNER;
+        break;
+      }
+      default:
+        break;
+    }
+    push(column, state);
+    return finish_v2(Sym::start, "layout_start");
   }
   return result::cont;
 }
