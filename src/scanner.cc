@@ -379,11 +379,6 @@ static Condition peek_with(Peek pred) { return fst<bool, uint32_t> * peeks(pred)
 
 static Condition varid = cond::peek_with(cond::varid_start_char);
 
-/**
- * Require that the next character equals a concrete `c`, without advancing the parser.
- */
-static Condition peek(uint32_t c) { return fst<bool, uint32_t> * peeks(eq(c)); }
-
 static bool seq(const string &s, State &state) {
   for (auto &c : s) {
     uint32_t c2 = state::next_char(state);
@@ -434,28 +429,47 @@ static u32string read_string(bool (*cond)(uint32_t), State &state) {
  */
 static Condition sym(Sym t) { return [=](State & state) { return state.symbols[t]; }; }
 
+#define WS_CASES \
+  case ' ': \
+  case '\f': \
+  case '\n': \
+  case '\r': \
+  case '\t': \
+  case '\v'
+
 /**
  * Require that the next character is whitespace (space or newline) without advancing the parser.
  */
-static Condition peekws = [](State & state) { return iswspace(state::next_char(state)); };
-
-/**
- * Require that the next character is end-of-file.
- */
-static Condition peekeof = peek(0);
+static inline bool isws(uint32_t c) {
+  switch (c) {
+    WS_CASES: return true;
+    default: return false;
+  }
+}
 
 /**
  * A token like a varsym can be terminated by whitespace of brackets.
  */
-static Condition token_end =
-  peekeof | peekws | peek(')') | peek(']') | peek('[') | peek('(');
+static bool token_end(uint32_t c) {
+  switch (c) {
+    WS_CASES:
+    case 0:
+    case '(':
+    case ')':
+    case '[':
+    case ']':
+      return true;
+    default:
+      return false;
+  }
+}
 
 /**
  * Require that the argument string follows the current position and is followed by whitespace.
  * See `seq`
  */
 static bool token(const string & s, State &state) { 
-  return seq(s, state) && token_end(state);
+  return seq(s, state) && token_end(PEEK);
 }
 
 /**
@@ -502,8 +516,11 @@ static bool indent_lesseq(uint32_t indent, State &state) { return indent_exists(
  *
  * This does only check whether the line begins with a `w`, the entire `where` is consumed by the calling parser below.
  */
-static Condition is_newline_where(uint32_t indent) {
-  return keep_layout(indent) & (sym(Sym::semicolon) | sym(Sym::end)) & (not_(sym(Sym::where))) & peek('w');
+static bool is_newline_where(uint32_t indent, State &state) {
+  return keep_layout(indent)(state)
+    && (SYM(Sym::semicolon) || SYM(Sym::end))
+    && !SYM(Sym::where) 
+    && PEEK == 'w';
 }
 
 static bool newline(uint32_t c) {
@@ -676,12 +693,12 @@ static Symbolic symop(u32string s, State &state) {
   if (s.empty()) return Symbolic::invalid;
   uint32_t c = s[0];
   if (s.size() == 1) {
-    if (c == '!' && !(cond::peekws(state) || cond::peek(')')(state))) return Symbolic::strict;
-    if (c == '#' && cond::peek(')')(state)) return Symbolic::unboxed_tuple_close;
+    if (c == '!' && !(cond::isws(PEEK) || PEEK == ')')) return Symbolic::strict;
+    if (c == '#' && PEEK == ')') return Symbolic::unboxed_tuple_close;
     if (c == '#' && cond::peek_with(cond::varid_start_char)(state)) return Symbolic::invalid;
     if (c == '$' && cond::valid_splice(state)) return Symbolic::splice;
     if (c == '?' && cond::varid(state)) return Symbolic::implicit;
-    if (c == '%' && !(cond::peekws(state) || cond::peek(')')(state))) return Symbolic::modifier;
+    if (c == '%' && !(cond::isws(PEEK) || PEEK == ')')) return Symbolic::modifier;
     if (c == '|') return Symbolic::bar;
     switch (c) {
       case '*':
@@ -996,7 +1013,7 @@ static Result dedent(uint32_t indent, State &state) {
  * This is the case after `do` or `of`, where the `where` can be on the same indent.
  */
 static Result newline_where(uint32_t indent, State &state) {
-  if (cond::is_newline_where(indent)(state)) {
+  if (cond::is_newline_where(indent, state)) {
     state::mark("newline_where", state);
     if (cond::token("where", state)) {
       return end_or_semicolon("newline_where", state);
@@ -1639,7 +1656,7 @@ namespace eval {
 static void debug_lookahead(State & state) {
   string s = "";
   for (;;) {
-    if (cond::peekws(state) || cond::peekeof(state)) break;
+    if (cond::isws(PEEK) || PEEK == 0) break;
     else {
       s += state::next_char(state);
       state::advance(state);
