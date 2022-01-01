@@ -897,16 +897,6 @@ static Parser lazy(function<Parser()> p) {
 }
 
 /**
- * Execute an `Effect`, then continue.
- */
-static Parser effect(Effect eff) {
-  return [=](State & state) {
-    eff(state);
-    return result::cont;
-  };
-}
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
 static Result finish(const Sym s, string desc) {
