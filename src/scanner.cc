@@ -745,40 +745,38 @@ static bool expression_op(Symbolic type) {
  *
  * Hashes followed by a varid start character `#foo` are labels.
  */
-static function<Symbolic(State &)> symop(u32string s) {
-  return [=](State & state) {
-    if (s.empty()) return Symbolic::invalid;
-    uint32_t c = s[0];
-    if (s.size() == 1) {
-      if (c == '!' && !(cond::peekws(state) || cond::peek(')')(state))) return Symbolic::strict;
-      if (c == '#' && cond::peek(')')(state)) return Symbolic::unboxed_tuple_close;
-      if (c == '#' && cond::peek_with(cond::varid_start_char)(state)) return Symbolic::invalid;
-      if (c == '$' && cond::valid_splice(state)) return Symbolic::splice;
-      if (c == '?' && cond::varid(state)) return Symbolic::implicit;
-      if (c == '%' && !(cond::peekws(state) || cond::peek(')')(state))) return Symbolic::modifier;
-      if (c == '|') return Symbolic::bar;
-      switch (c) {
-        case '*':
-          return Symbolic::star;
-        case '~':
-          return Symbolic::tilde;
-        case '-':
-          return Symbolic::minus;
-        case '=':
-        case '@':
-        case '\\':
-          return Symbolic::invalid;
-        default: return con_or_var(c);
-      }
-    } else {
-      if (all_of(s.begin(), s.end(), cond::eq('-'))) return Symbolic::comment;
-      if (s.size() == 2) {
-        if (s[0] == '$' && s[1] == '$' && cond::valid_splice(state)) return Symbolic::splice;
-        if (!cond::valid_symop_two_chars(s[0], s[1])) return Symbolic::invalid;
-      }
+static Symbolic symop(u32string s, State &state) {
+  if (s.empty()) return Symbolic::invalid;
+  uint32_t c = s[0];
+  if (s.size() == 1) {
+    if (c == '!' && !(cond::peekws(state) || cond::peek(')')(state))) return Symbolic::strict;
+    if (c == '#' && cond::peek(')')(state)) return Symbolic::unboxed_tuple_close;
+    if (c == '#' && cond::peek_with(cond::varid_start_char)(state)) return Symbolic::invalid;
+    if (c == '$' && cond::valid_splice(state)) return Symbolic::splice;
+    if (c == '?' && cond::varid(state)) return Symbolic::implicit;
+    if (c == '%' && !(cond::peekws(state) || cond::peek(')')(state))) return Symbolic::modifier;
+    if (c == '|') return Symbolic::bar;
+    switch (c) {
+      case '*':
+        return Symbolic::star;
+      case '~':
+        return Symbolic::tilde;
+      case '-':
+        return Symbolic::minus;
+      case '=':
+      case '@':
+      case '\\':
+        return Symbolic::invalid;
+      default: return con_or_var(c);
     }
-    return con_or_var(c);
-  };
+  } else {
+    if (all_of(s.begin(), s.end(), cond::eq('-'))) return Symbolic::comment;
+    if (s.size() == 2) {
+      if (s[0] == '$' && s[1] == '$' && cond::valid_splice(state)) return Symbolic::splice;
+      if (!cond::valid_symop_two_chars(s[0], s[1])) return Symbolic::invalid;
+    }
+  }
+  return con_or_var(c);
 }
 
 }
@@ -1231,7 +1229,7 @@ static Result inline_comment(State &state) {
  * Parse a sequence of symbolic characters and convert it into the enum `Symbolic`.
  * This decides whether the sequence is an operator or a special case.
  */
-static Symbolic read_symop(State & state) { return symbolic::symop(cond::read_string(cond::symbolic)(state))(state); }
+static Symbolic read_symop(State & state) { return symbolic::symop(cond::read_string(cond::symbolic)(state), state); }
 
 static Result symop_marked(Symbolic type, State &state) {
   switch (type) {
