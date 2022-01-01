@@ -847,25 +847,6 @@ typedef function<Parser(Parser)> Modifier;
 typedef function<void(State&)> Effect;
 
 /**
- * Monadic bind for `Parser`. (>>=)
- */
-template<class A> function<Parser(function<Parser(A)>)> with(A (&fa)(State &)) {
-  return [&](function<Parser(A)> f) {
-    return [=](State & state) {
-      return f(fa(state))(state);
-    };
-  };
-}
-
-template<class A> function<Parser(function<Parser(A)>)> with(function<A(State &)> fa) {
-  return [&](function<Parser(A)> f) {
-    return [=](State & state) {
-      return f(fa(state))(state);
-    };
-  };
-}
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
 static Result finish(const Sym s, string desc) {
