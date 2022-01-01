@@ -909,7 +909,7 @@ static Parser effect(Effect eff) {
 /**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
-static Result finish_v2(const Sym s, string desc) {
+static Result finish(const Sym s, string desc) {
   logger << "finish: " << desc << nl;
   return result::finish(s);
 }
@@ -918,7 +918,7 @@ static Result finish_v2(const Sym s, string desc) {
  * Parser that terminates the execution with the successful detection of the given symbol, but only if it is expected.
  */
 static inline Result finish_if_valid(const Sym s, string desc, State &state) {
-  return SYM(s) ? finish_v2(s, desc) : result::cont;
+  return SYM(s) ? finish(s, desc) : result::cont;
 }
 
 /**
@@ -962,7 +962,7 @@ static void skipspace(State &state) {
 static Result layout_end(string desc, State &state) {
   if (SYM(Sym::end)) {
     pop(state);
-    return finish_v2(Sym::end, desc);
+    return finish(Sym::end, desc);
   }
   return result::cont;
 }
@@ -1025,7 +1025,7 @@ static uint32_t count_indent(State & state) {
 static Result eof(State &state) {
   if (PEEK == 0) {
     if (SYM(Sym::empty)) {
-      return finish_v2(Sym::empty, "eof");
+      return finish(Sym::empty, "eof");
     }
     Result res = end_or_semicolon("eof", state);
     SHORT_SCANNER;
@@ -1046,7 +1046,7 @@ static Result initialize(uint32_t column, State &state) {
     bool match = cond::token("module", state);
     if (match) return result::fail;
     push(column, state);
-    return finish_v2(Sym::indent, "init");
+    return finish(Sym::indent, "init");
   }
   return result::cont;
 }
@@ -1073,9 +1073,9 @@ static Result dot(State &state) {
   if (SYM(Sym::dot)) {
     if (PEEK == '.') {
       S_ADVANCE;
-      if (SYM(Sym::varsym) && iswspace(PEEK)) return finish_v2(Sym::varsym, "dot");
+      if (SYM(Sym::varsym) && iswspace(PEEK)) return finish(Sym::varsym, "dot");
       state::mark("dot", state);
-      return finish_v2(Sym::dot, "dot");
+      return finish(Sym::dot, "dot");
     }
   }
   return result::cont;
@@ -1112,12 +1112,12 @@ static Result cpp_workaround(State &state) {
         SHORT_SCANNER;
         return result::fail;
       }
-      return finish_v2(Sym::cpp, "cpp-else");
+      return finish(Sym::cpp, "cpp-else");
     }
     Result res = cpp_consume(state);
     SHORT_SCANNER; // TODO(414owen): this might not be needed?
     state::mark("cpp_workaround", state);
-    return finish_v2(Sym::cpp, "cpp");
+    return finish(Sym::cpp, "cpp");
   }
   return result::cont;
 }
@@ -1162,7 +1162,7 @@ static Result newline_where(uint32_t indent, State &state) {
  */
 static Result newline_semicolon(uint32_t indent, State &state) {
   if (SYM(Sym::semicolon) && cond::same_indent_v2(indent, state)) {
-    return finish_v2(Sym::semicolon, "newline_semicolon");
+    return finish(Sym::semicolon, "newline_semicolon");
   }
   return result::cont;
 }
@@ -1203,7 +1203,7 @@ static Result where(State &state) {
   if (cond::token("where", state)) {
     if (SYM(Sym::where)) {
       state::mark("where", state);
-      return finish_v2(Sym::where, "where");
+      return finish(Sym::where, "where");
     }
     return layout_end("where", state);
   }
@@ -1217,7 +1217,7 @@ static Result in(State &state) {
   if (SYM(Sym::in) && cond::token("in", state)) {
     state::mark("in", state);
     pop(state);
-    return finish_v2(Sym::in, "in");
+    return finish(Sym::in, "in");
   }
   return result::cont;
 }
@@ -1243,7 +1243,7 @@ static Result qq_start(State &state) {
     S_ADVANCE;
   }
   if (PEEK == '|') {
-    return finish_v2(Sym::qq_start, "qq_start");
+    return finish(Sym::qq_start, "qq_start");
   }
   return result::cont;
 }
@@ -1263,7 +1263,7 @@ static Result qq_body(State &state) {
       S_ADVANCE;
       if (PEEK == ']') {
         S_ADVANCE;
-        return finish_v2(Sym::qq_body, "qq_body");
+        return finish(Sym::qq_body, "qq_body");
       }
     }
     S_ADVANCE;
@@ -1279,7 +1279,7 @@ static Result splice(State &state) {
   uint32_t c = state::next_char(state);
   if ((cond::varid_start_char(c) || c == '(') && state.symbols[Sym::splice]) {
     state::mark("splice", state);
-    return finish_v2(Sym::splice, "splice");
+    return finish(Sym::splice, "splice");
   }
   return result::cont;
 }
@@ -1289,7 +1289,7 @@ static Result unboxed_tuple_close(State &state) {
     if (state::next_char(state) == ')') {
       state::advance(state);
       state::mark("unboxed_tuple_close", state);
-      return finish_v2(Sym::unboxed_tuple_close, "unboxed_tuple_close");
+      return finish(Sym::unboxed_tuple_close, "unboxed_tuple_close");
     }
   }
   return result::cont;
@@ -1303,7 +1303,7 @@ static Result inline_comment(State &state) {
     state::advance(state);
   }
   state::mark("inline_comment", state);
-  return finish_v2(Sym::comment, "inline_comment");
+  return finish(Sym::comment, "inline_comment");
 }
 
 /**
@@ -1363,7 +1363,7 @@ static Result symop(Symbolic type, State &state) {
   if (type == Symbolic::bar) {
     if (SYM(Sym::bar)) {
       state::mark("bar", state);
-      return finish_v2(Sym::bar, "bar");
+      return finish(Sym::bar, "bar");
     }
     Result res = layout_end("bar", state);
     SHORT_SCANNER;
@@ -1402,7 +1402,7 @@ static Result minus(State &state) {
  */
 static Result multiline_comment_success(State &state) {
   state::mark("multiline_comment", state);
-  return finish_v2(Sym::comment, "multiline_comment");
+  return finish(Sym::comment, "multiline_comment");
 }
 
 static Result multiline_comment(uint16_t, State &);
@@ -1510,7 +1510,7 @@ static Result close_layout_in_list(State &state) {
     case ']': {
       if (state.symbols[Sym::end]) {
         pop(state);
-        return finish_v2(Sym::end, "bracket");
+        return finish(Sym::end, "bracket");
       }
       break;
     }
@@ -1518,7 +1518,7 @@ static Result close_layout_in_list(State &state) {
       state::advance(state);
       if (state.symbols[Sym::comma]) {
         state::mark("comma", state);
-        return finish_v2(Sym::comma, "comma");
+        return finish(Sym::comma, "comma");
       }
       Result res = layout_end("comma", state);
       SHORT_SCANNER;
@@ -1621,7 +1621,7 @@ static Result layout_start(uint32_t column, State &state) {
         break;
     }
     push(column, state);
-    return finish_v2(Sym::start, "layout_start");
+    return finish(Sym::start, "layout_start");
   }
   return result::cont;
 }
@@ -1643,7 +1643,7 @@ static Result layout_start(uint32_t column, State &state) {
  */
 static Result post_end_semicolon(uint32_t column, State &state) {
   return SYM(Sym::semicolon) && cond::indent_lesseq_v2(column, state)
-    ? finish_v2(Sym::semicolon, "post_end_semicolon")
+    ? finish(Sym::semicolon, "post_end_semicolon")
     : result::cont;
 }
 
