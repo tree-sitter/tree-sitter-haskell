@@ -1061,14 +1061,9 @@ Parser mark(string target) { return effect(state::mark(target)); }
 Parser or_fail(Parser chk) { return chk + fail; }
 
 /**
- * Require the next character to be whitespace for the next parser to be executed, not advancing the lexer.
- */
-Modifier peekws = iff(cond::peekws);
-
-/**
  * Add one level of indentation to the stack, caused by starting a layout.
  */
-void push(uint16_t ind, State & state) {
+static void push(uint16_t ind, State & state) {
   logger << "push: " << ind << nl;
   state.indents.push_back(ind);
 }
@@ -1076,7 +1071,7 @@ void push(uint16_t ind, State & state) {
 /**
  * Remove one level of indentation from the stack, caused by the end of a layout.
  */
-void pop(State &state) {
+static void pop(State &state) {
   if (cond::indent_exists(state)) {
     logger("pop");
     state.indents.pop_back();
