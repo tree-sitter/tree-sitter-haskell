@@ -988,43 +988,6 @@ template<class A, class B> Parser peeks(Peek pred, A match, B nomatch) {
 }
 
 /**
- * :: (uint32_t -> bool) -> Parser -> Parser
- *
- * Specialization for a conditional parser that's executed in the success case.
- */
-Modifier peeks(Peek pred) { return [=](Parser next) { return peeks(pred, next, result::cont); }; }
-
-/**
- * Requires the next character to be `c` for the next parser to be executed.
- */
-Modifier peek(uint32_t c) { return peeks(cond::eq(c)); }
-
-/**
- * :: (uint32_t -> bool) -> (uint32_t -> Parser) -> Parser
- *
- * If the predicate for the next character is true, advance the lexer and pass the consumed character to the next
- * parser.
- */
-function<Parser(CharParser)> consume_if(Peek pred) {
-  return [=](const CharParser & next) { return either(cond::consume_if(pred), next, result::cont); };
-}
-
-/**
- * Require the next character to be `c` for the next parser to be executed, advancing the lexer in the success case.
- */
-Modifier consume(uint32_t c) { return [=](Parser next) { return consume_if(cond::eq(c))(as_char_parser(next)); }; }
-
-/**
- * Consume all characters while the predicate holds.
- */
-Parser consume_while(Peek pred) { return effect(cond::consume_while(pred)); }
-
-/**
- * Consume all characters until the given sequence is encountered.
- */
-Parser consume_until(string s) { return effect(cond::consume_until(s)); }
-
-/**
  * Add one level of indentation to the stack, caused by starting a layout.
  */
 static void push(uint16_t ind, State & state) {
