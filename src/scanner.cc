@@ -576,17 +576,6 @@ static Condition is_newline_where(uint32_t indent) {
   return keep_layout(indent) & (sym(Sym::semicolon) | sym(Sym::end)) & (not_(sym(Sym::where))) & peek('w');
 }
 
-static bool is_newline(uint32_t c) {
-  switch (c) {
-    case '\n':
-    case '\r':
-    case '\f':
-      return true;
-    default:
-      return false;
-  }
-}
-
 static bool newline(uint32_t c) {
   switch (c) {
     case '\n':
@@ -1014,7 +1003,7 @@ static Result dot(State &state) {
  * Since they can contain escaped newlines, they have to be consumed, after which the parser recurses.
  */
 static Result cpp_consume(State &state) {
-  while (PEEK != 0 && !cond::is_newline(PEEK) && PEEK != '\\') S_ADVANCE;
+  while (PEEK != 0 && !cond::newline(PEEK) && PEEK != '\\') S_ADVANCE;
   if (PEEK == '\\') {
     S_ADVANCE;
     S_ADVANCE;
@@ -1226,7 +1215,7 @@ static Result unboxed_tuple_close(State &state) {
  * Consume all characters up to the end of line and succeed with `Sym::commment`.
  */
 static Result inline_comment(State &state) {
-  while (!cond::is_newline(state::next_char(state))) {
+  while (!cond::newline(state::next_char(state))) {
     state::advance(state);
   }
   state::mark("inline_comment", state);
