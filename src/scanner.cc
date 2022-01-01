@@ -407,27 +407,6 @@ static Condition skips(Peek pred) { return fst<bool, uint32_t> * skip_if(pred); 
  */
 static Condition skip(uint32_t c) { return skips(eq(c)); }
 
-/**
- * Require that the next character matches a predicate, advancing the parser on success.
- */
-static PeekResult consume_if(Peek pred) {
-  return [=](State & state) {
-    auto res = peeks(pred)(state);
-    if (res.first) { state::advance(state); }
-    return res;
-  };
-}
-
-/**
- * Like `consume_if`, but only return the bool result.
- */
-static Condition consumes(Peek pred) { return fst<bool, uint32_t> * consume_if(pred); }
-
-/**
- * Require that the next character equals a concrete `c`, advancing the parser on success.
- */
-static Condition consume(uint32_t c) { return consumes(eq(c)); }
-
 static bool seq(const string &s, State &state) {
   for (auto &c : s) {
     uint32_t c2 = state::next_char(state);
