@@ -913,12 +913,6 @@ static Result finish_v2(const Sym s, string desc) {
   logger << "finish: " << desc << nl;
   return result::finish(s);
 }
-static Parser finish(const Sym s, string desc) {
-  return [=](auto _) {
-    return finish_v2(s, desc);
-  };
-}
-
 
 /**
  * Parser that terminates the execution with the successful detection of the given symbol, but only if it is expected.
