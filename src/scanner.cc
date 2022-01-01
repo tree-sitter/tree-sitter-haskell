@@ -946,11 +946,6 @@ static CharParser as_char_parser(Result r) { return ::const_<uint32_t>(::const_<
 static Modifier iff(Condition c) { return [=](Parser next) { return either(c, next, cont); }; }
 
 /**
- * Require a plain `bool` to be true for the next parser to be executed.
- */
-static Modifier when(const bool c) { return iff(::const_<State>(c)); }
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol, but only if it is expected.
  */
 static inline Result finish_if_valid(const Sym s, string desc, State &state) {
