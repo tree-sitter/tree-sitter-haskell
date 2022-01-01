@@ -1098,8 +1098,7 @@ Parser skipspace =
 /**
  * If a layout end is valid at this position, remove one indentation layer and succeed with layout end.
  */
-Parser layout_end(string desc) { return sym(Sym::end)(effect(pop) + finish(Sym::end, desc)); }
-Result layout_end_v2(string desc, State &state) {
+Result layout_end(string desc, State &state) {
   if (SYM(Sym::end)) {
     pop_v2(state);
     return finish_v2(Sym::end, desc);
@@ -1111,7 +1110,7 @@ Result layout_end_v2(string desc, State &state) {
  * Convenience parser, since those two are often used together.
  */
 Result end_or_semicolon(string desc, State &state) {
-  Result res = layout_end_v2(desc, state);
+  Result res = layout_end(desc, state);
   SHORT_SCANNER;
   return finish_if_valid(Sym::semicolon, desc)(state);
 }
@@ -1159,7 +1158,10 @@ uint32_t count_indent(State & state) {
  *
  * If those cases do not apply, parsing fails.
  */
-Result eof(State &state) {
+
+// TODO(414owen) this was a lot faster when it was inlined
+// We should figure out why. Maybe insert it in hot code paths?
+static inline Result eof(State &state) {
   if (PEEK == 0) {
     if (SYM(Sym::empty)) {
       return finish_v2(Sym::empty, "eof");
@@ -1242,11 +1244,9 @@ Result cpp_workaround(State &state) {
   if (PEEK == '#') {
     S_ADVANCE;
     if (cond::seq_v2("el", state)) {
-      // return (consume_until("#endif") + eof + finish(Sym::cpp, "cpp-else"))(state);
       cond::consume_until_v2("#endif", state);
       if (PEEK == 0) {
-        if (SYM(Sym::empty)) return finish_v2(Sym::empty, "eof");
-        Result res = end_or_semicolon("eof", state);
+        Result res = eof(state);
         SHORT_SCANNER;
         return result::fail;
       }
@@ -1275,7 +1275,7 @@ Result cpp_init(State &state) {
  * line after skipping whitespace) is smaller than the layout indent.
  */
 Result dedent(uint32_t indent, State &state) {
-  if (cond::smaller_indent_v2(indent, state)) return layout_end_v2("dedent", state);
+  if (cond::smaller_indent_v2(indent, state)) return layout_end("dedent", state);
   return result::cont;
 }
 
@@ -1327,7 +1327,7 @@ bool end_on_infix(uint32_t indent, Symbolic type, State &state) {
  */
 Result newline_infix(uint32_t indent, Symbolic type, State &state) {
   if (end_on_infix(indent, type, state)) {
-    return layout_end_v2("newline_infix", state);
+    return layout_end("newline_infix", state);
   }
   return result::cont;
 }
@@ -1338,13 +1338,12 @@ Result newline_infix(uint32_t indent, Symbolic type, State &state) {
  * Necessary because `is_newline_where` needs to know that no `where` may follow.
  */
 Result where(State &state) {
-  // token("where")(sym(Sym::where)(mark("where") + finish(Sym::where, "where")) + layout_end("where"));
   if (cond::seq_v2("where", state) && cond::token_end(state)) {
     if (SYM(Sym::where)) {
       util::mark("where", state);
       return finish_v2(Sym::where, "where");
     }
-    return layout_end_v2("where", state);
+    return layout_end("where", state);
   }
   return result::cont;
 }
@@ -1388,11 +1387,8 @@ Result qq_start(State &state) {
 }
 
 Result qq_body(State &state) {
-  if (state::next_char(state) == 0) {
-    if (state.symbols[Sym::empty]) {
-      return finish_v2(Sym::empty, "eof");
-    }
-    Result res = end_or_semicolon("eof", state);
+  if (PEEK == 0) {
+    Result res = eof(state);
     SHORT_SCANNER;
     return result::fail;
   }
@@ -1496,16 +1492,17 @@ Result symop_marked(Symbolic type, State &state) {
  * Otherwise succeed with `Sym::tyconsym` or `Sym::varsym` if they are valid.
  */
 Result symop(Symbolic type, State &state) {
-  Result res = (
-    when(type == Symbolic::bar)(
-      sym(Sym::bar)(mark("bar") + finish(Sym::bar, "bar")) +
-      layout_end("bar") +
-      fail
-    ) +
-    mark("symop")
-  )(state);
-  SHORT_SCANNER;
-  res = symop_marked(type, state);
+  if (type == Symbolic::bar) {
+    if (SYM(Sym::bar)) {
+      util::mark("bar", state);
+      return finish_v2(Sym::bar, "bar");
+    }
+    Result res = layout_end("bar", state);
+    SHORT_SCANNER;
+    return result::fail;
+  }
+  util::mark("symop", state);
+  Result res = symop_marked(type, state);
   SHORT_SCANNER;
   return (
     finish_if_valid(Sym::tyconsym, "symop") +
@@ -1553,8 +1550,7 @@ Result multiline_comment(uint16_t, State &);
 Result nested_comment(uint16_t level, State &state) {
   switch (state::next_char(state)) {
     case 0: {
-      if (state.symbols[Sym::empty]) return finish_v2(Sym::empty, "eof");
-      Result res = end_or_semicolon("eof", state);
+      Result res = eof(state);
       SHORT_SCANNER;
       return result::fail;
     }
@@ -1656,7 +1652,7 @@ Result close_layout_in_list(State &state) {
         util::mark("comma", state);
         return finish_v2(Sym::comma, "comma");
       }
-      Result res = layout_end("comma")(state);
+      Result res = layout_end("comma", state);
       SHORT_SCANNER;
       return result::fail;
     }
@@ -1694,7 +1690,7 @@ Result inline_tokens(State &state) {
       return result::fail;
     }
     case ')': {
-      Result res = layout_end(")")(state);
+      Result res = layout_end(")", state);
       SHORT_SCANNER;
       return result::fail;
     }
@@ -1776,7 +1772,7 @@ Result post_end_semicolon(uint32_t column, State &state) {
  */
 Result repeat_end(uint32_t column, State &state) {
   if (state.symbols[Sym::end] && cond::smaller_indent_v2(column, state)) {
-    return layout_end("repeat_end")(state);
+    return layout_end("repeat_end", state);
   }
   return result::cont;
 }
