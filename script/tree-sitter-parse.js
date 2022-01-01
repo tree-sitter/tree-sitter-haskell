@@ -4,7 +4,7 @@ const fs = require('fs');
 const Parser = require('web-tree-sitter');
 
 if (process.argv.length < 3) {
-  console.log('Usage: script/parse-example.js <haskell-file..>')
+  console.log('Usage: script/tree-sitter-parse.js <haskell-file..>')
   process.exit(1)
 }
 
