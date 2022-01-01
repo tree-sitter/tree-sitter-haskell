@@ -428,7 +428,7 @@ static Condition consumes(Peek pred) { return fst<bool, uint32_t> * consume_if(p
  */
 static Condition consume(uint32_t c) { return consumes(eq(c)); }
 
-static bool seq_v2(const string &s, State &state) {
+static bool seq(const string &s, State &state) {
   for (auto &c : s) {
     uint32_t c2 = state::next_char(state);
     if (c != c2) return false;
@@ -451,7 +451,7 @@ static function<void(State &)> consume_while(Peek pred) {
 static void consume_until(string target, State &state) {
   assert(!target.empty());
   uint32_t first = target[0];
-  while (PEEK != 0 && !seq_v2(target, state)) {
+  while (PEEK != 0 && !seq(target, state)) {
     while (PEEK != 0 && PEEK != first) S_ADVANCE;
     // TODO(414owen): This mimics the combinator's behaviour, but it seems a bit silly.
     // Why mark where the first char matched? Let's just not do this check.
@@ -499,7 +499,7 @@ static Condition token_end =
  * See `seq`
  */
 static bool token(const string & s, State &state) { 
-  return seq_v2(s, state) && token_end(state);
+  return seq(s, state) && token_end(state);
 }
 
 /**
@@ -995,7 +995,7 @@ static Result cpp_consume(State &state) {
 static Result cpp_workaround(State &state) {
   if (PEEK == '#') {
     S_ADVANCE;
-    if (cond::seq_v2("el", state)) {
+    if (cond::seq("el", state)) {
       cond::consume_until("#endif", state);
       if (PEEK == 0) {
         Result res = eof(state);
@@ -1279,7 +1279,7 @@ static Result symop(Symbolic type, State &state) {
  *   - Operator matching was done already
  */
 static Result minus(State &state) {
-  if (!cond::seq_v2("--", state)) return result::cont;
+  if (!cond::seq("--", state)) return result::cont;
   while (state::next_char(state) == '-') {
     state::advance(state);
   }
