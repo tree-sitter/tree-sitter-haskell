@@ -436,14 +436,14 @@ static bool token(const string & s, State &state) {
  * Require that the stack of layout indentations is not empty.
  * This is mostly used for safety.
  */
-static const bool indent_exists(State & state) { return !state.indents.empty(); };
+static inline bool indent_exists(State & state) { return !state.indents.empty(); };
 
 /**
  * Require that the current line's indent is greater or equal than the containing layout's, so the current layout is
  * continued.
  */
 static bool keep_layout(uint16_t indent, State &state) {
-  return !state.indents.empty() && indent >= state.indents.back();
+  return indent_exists(state) && indent >= state.indents.back();
 }
 
 /**
