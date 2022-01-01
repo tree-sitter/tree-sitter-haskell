@@ -832,11 +832,6 @@ typedef function<Result(State&)> Parser;
 typedef Result (*NewParser)(State&);
 
 /**
- * Parsers that depend on the next character.
- */
-typedef function<Parser(uint32_t)> CharParser;
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
 static Result finish(const Sym s, string desc) {
