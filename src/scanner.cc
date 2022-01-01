@@ -1111,6 +1111,11 @@ Result layout_end_v2(string desc, State &state) {
  * Convenience parser, since those two are often used together.
  */
 Parser end_or_semicolon(string desc) { return layout_end(desc) + finish_if_valid(Sym::semicolon, desc); }
+Result end_or_semicolon_v2(string desc, State &state) {
+  Result res = layout_end_v2(desc, state);
+  SHORT_SCANNER;
+  return finish_if_valid(Sym::semicolon, desc)(state);
+}
 
 }
 
@@ -1155,7 +1160,17 @@ uint32_t count_indent(State & state) {
  *
  * If those cases do not apply, parsing fails.
  */
-Parser eof = peek(0)(sym(Sym::empty)(finish(Sym::empty, "eof")) + end_or_semicolon("eof") + fail);
+Result eof(State &state) {
+  if (PEEK == 0) {
+    if (SYM(Sym::empty)) {
+      return finish_v2(Sym::empty, "eof");
+    }
+    Result res = end_or_semicolon_v2("eof", state);
+    SHORT_SCANNER;
+    return result::fail;
+  }
+  return result::cont;
+}
 
 /**
  * Set the initial indentation at the beginning of the file or module decl to the column of first nonwhite character,
