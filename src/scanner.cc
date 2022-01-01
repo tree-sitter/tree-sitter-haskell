@@ -878,18 +878,6 @@ static Parser operator+(Parser fa, Parser fb) {
 }
 
 /**
- * Depending on the result of a condition, execute one of the supplied parsers.
- */
-static Parser either(Condition c, Parser match, Parser nomatch) {
-  return [=](State & state) { return c(state) ? match(state) : nomatch(state); };
-}
-
-/**
- * Depending on the result of a condition, execute one of the supplied parsers.
- */
-static Parser either(bool c, Parser match, Parser nomatch) { return either(const_<State &>(c), match, nomatch); }
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
 static Result finish(const Sym s, string desc) {
