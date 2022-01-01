@@ -330,19 +330,6 @@ static Peek operator|(const Peek & l, const Peek & r) { return [=](uint32_t c) {
 static Peek not_(Peek con) { return [=](uint32_t c) { return !con(c); }; }
 
 /**
- * This type abstracts over a boolean predicate of the current state.
- * It is used whenever a condition should guard a nested parser.
- *
- * With the provided operator overloads, conditions can be logically combined without having to write lambdas for
- * passing along the `State`.
- */
-typedef function<bool(State&)> Condition;
-
-static Condition operator&(const Condition & l, const Condition & r) { return [=](auto s) { return l(s) && r(s); }; }
-static Condition operator|(const Condition & l, const Condition & r) { return [=](auto s) { return l(s) || r(s); }; }
-static Condition not_(const Condition & c) { return [=](State & state) { return !c(state); }; }
-
-/**
  * Peeking the next character uses the `State` to access the lexer and returns the predicate success as well as the
  * character itself.
  */
@@ -352,8 +339,6 @@ typedef function<pair<bool, uint32_t>(State &)> PeekResult;
  * The set of conditions used in the parser implementation.
  */
 namespace cond {
-
-static Condition pure(bool c) { return const_<State&>(c); }
 
 static bool varid_start_char(const uint32_t c) { return c == '_' || iswlower(c); }
 
@@ -403,11 +388,6 @@ static u32string read_string(bool (*cond)(uint32_t), State &state) {
   }
   return s;
 }
-
-/**
- * Require that the argument symbol is valid for the current parse tree state.
- */
-static Condition sym(Sym t) { return [=](State & state) { return state.symbols[t]; }; }
 
 #define WS_CASES \
   case ' ': \
@@ -459,28 +439,21 @@ static bool token(const string & s, State &state) {
 static const bool indent_exists(State & state) { return !state.indents.empty(); };
 
 /**
- * Helper function for executing a condition callback with the current indentation.
- */
-static Condition check_indent(function<bool(uint16_t)> f) {
-  return [=](State & state) { return indent_exists(state) && f(state.indents.back()); };
-}
-
-/**
  * Require that the current line's indent is greater or equal than the containing layout's, so the current layout is
  * continued.
  */
-static Condition keep_layout(uint16_t indent) { return check_indent([=](auto i) { return indent >= i; }); }
+static bool keep_layout(uint16_t indent, State &state) {
+  return !state.indents.empty() && indent >= state.indents.back();
+}
 
 /**
  * Require that the current line's indent is equal to the containing layout's, so the line may start a new `decl`.
  */
 static bool same_indent_v2(uint32_t indent, State &state) { return indent_exists(state) && indent == state.indents.back(); }
-static Condition same_indent(uint32_t indent) { return check_indent([=](auto i) { return indent == i; }); }
 
 /**
  * Require that the current line's indent is smaller than the containing layout's, so the layout may be ended.
  */
-static Condition smaller_indent(uint32_t indent) { return check_indent([=](auto i) { return indent < i; }); }
 static bool smaller_indent_v2(uint32_t indent, State &state) {
   return indent_exists(state) && indent < state.indents.back();
 }
@@ -497,7 +470,7 @@ static bool indent_lesseq(uint32_t indent, State &state) { return indent_exists(
  * This does only check whether the line begins with a `w`, the entire `where` is consumed by the calling parser below.
  */
 static bool is_newline_where(uint32_t indent, State &state) {
-  return keep_layout(indent)(state)
+  return keep_layout(indent, state)
     && (SYM(Sym::semicolon) || SYM(Sym::end))
     && !SYM(Sym::where) 
     && PEEK == 'w';
