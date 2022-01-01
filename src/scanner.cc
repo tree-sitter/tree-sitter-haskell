@@ -535,8 +535,7 @@ static bool smaller_indent_v2(uint32_t indent, State &state) {
   return indent_exists(state) && indent < state.indents.back();
 }
 
-static bool indent_lesseq_v2(uint32_t indent, State &state) { return indent_exists(state) && indent <= state.indents.back(); }
-static Condition indent_lesseq(uint32_t indent) { return check_indent([=](auto i) { return indent <= i; }); }
+static bool indent_lesseq(uint32_t indent, State &state) { return indent_exists(state) && indent <= state.indents.back(); }
 
 /**
  * Composite condition examining whether the current layout can be terminated if the line after the position where the
@@ -1070,7 +1069,7 @@ static Result newline_semicolon(uint32_t indent, State &state) {
  * The same applies for `infix` functions.
  */
 static bool end_on_infix(uint32_t indent, Symbolic type, State &state) {
-  return cond::indent_lesseq_v2(indent, state)
+  return cond::indent_lesseq(indent, state)
     && (symbolic::expression_op(type)
         || PEEK == '`');
 }
@@ -1533,7 +1532,7 @@ static Result layout_start(uint32_t column, State &state) {
  * semicolon. Since `f` is on the same indent as the outer `do`'s layout, this parser matches.
  */
 static Result post_end_semicolon(uint32_t column, State &state) {
-  return SYM(Sym::semicolon) && cond::indent_lesseq_v2(column, state)
+  return SYM(Sym::semicolon) && cond::indent_lesseq(column, state)
     ? finish(Sym::semicolon, "post_end_semicolon")
     : result::cont;
 }
