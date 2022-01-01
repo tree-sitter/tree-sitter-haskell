@@ -842,11 +842,6 @@ typedef function<Parser(uint32_t)> CharParser;
 typedef function<Parser(Parser)> Modifier;
 
 /**
- * Combinators that manipulate the state without producing a value or parse result.
- */
-typedef function<void(State&)> Effect;
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
 static Result finish(const Sym s, string desc) {
