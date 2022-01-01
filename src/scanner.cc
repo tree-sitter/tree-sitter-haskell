@@ -1110,8 +1110,7 @@ Result layout_end_v2(string desc, State &state) {
 /**
  * Convenience parser, since those two are often used together.
  */
-Parser end_or_semicolon(string desc) { return layout_end(desc) + finish_if_valid(Sym::semicolon, desc); }
-Result end_or_semicolon_v2(string desc, State &state) {
+Result end_or_semicolon(string desc, State &state) {
   Result res = layout_end_v2(desc, state);
   SHORT_SCANNER;
   return finish_if_valid(Sym::semicolon, desc)(state);
@@ -1165,7 +1164,7 @@ Result eof(State &state) {
     if (SYM(Sym::empty)) {
       return finish_v2(Sym::empty, "eof");
     }
-    Result res = end_or_semicolon_v2("eof", state);
+    Result res = end_or_semicolon("eof", state);
     SHORT_SCANNER;
     return result::fail;
   }
@@ -1247,7 +1246,7 @@ Result cpp_workaround(State &state) {
       cond::consume_until_v2("#endif", state);
       if (PEEK == 0) {
         if (SYM(Sym::empty)) return finish_v2(Sym::empty, "eof");
-        Result res = end_or_semicolon("eof")(state);
+        Result res = end_or_semicolon("eof", state);
         SHORT_SCANNER;
         return result::fail;
       }
@@ -1289,7 +1288,7 @@ Result newline_where(uint32_t indent, State &state) {
   if (cond::is_newline_where(indent)(state)) {
     util::mark("newline_where", state);
     if (cond::seq_v2("where", state) && cond::token_end(state)) {
-      return end_or_semicolon("newline_where")(state);
+      return end_or_semicolon("newline_where", state);
     }
     return result::fail;
   }
@@ -1367,7 +1366,7 @@ Result in(State &state) {
  */
 Result else_(State &state) {
   if (cond::seq_v2("else", state) && cond::token_end(state)) {
-    return end_or_semicolon("else")(state);
+    return end_or_semicolon("else", state);
   }
   return result::cont;
 }
@@ -1393,7 +1392,9 @@ Result qq_body(State &state) {
     if (state.symbols[Sym::empty]) {
       return finish_v2(Sym::empty, "eof");
     }
-    return (end_or_semicolon("eof") + fail)(state);
+    Result res = end_or_semicolon("eof", state);
+    SHORT_SCANNER;
+    return result::fail;
   }
   util::mark("qq_body", state);
   if (PEEK == '\\') {
@@ -1551,9 +1552,12 @@ Result multiline_comment(uint16_t, State &);
  */
 Result nested_comment(uint16_t level, State &state) {
   switch (state::next_char(state)) {
-    case 0:
+    case 0: {
       if (state.symbols[Sym::empty]) return finish_v2(Sym::empty, "eof");
-      return (end_or_semicolon("eof") + fail)(state);
+      Result res = end_or_semicolon("eof", state);
+      SHORT_SCANNER;
+      return result::fail;
+    }
     case '{':
       state::advance(state);
       if (state::next_char(state) == '-') {
