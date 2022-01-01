@@ -951,11 +951,6 @@ static Modifier iff(Condition c) { return [=](Parser next) { return either(c, ne
 static Modifier when(const bool c) { return iff(::const_<State>(c)); }
 
 /**
- * Require the given symbol to be valid for the next parser to be executed.
- */
-static Modifier sym(const Sym s) { return iff(cond::sym(s)); }
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol, but only if it is expected.
  */
 static inline Result finish_if_valid(const Sym s, string desc, State &state) {
@@ -1359,7 +1354,7 @@ static Result symop_marked(Symbolic type, State &state) {
       return result::fail;
     case Symbolic::star:
     case Symbolic::modifier:
-      return sym(Sym::tyconsym)(fail)(state);
+      return SYM(Sym::tyconsym) ? result::fail : result::cont;
     case Symbolic::tilde:
     case Symbolic::minus: {
       Result res = finish_if_valid(Sym::tyconsym, "symop", state);
@@ -1683,7 +1678,9 @@ static Result layout_start(uint32_t column, State &state) {
  * semicolon. Since `f` is on the same indent as the outer `do`'s layout, this parser matches.
  */
 static Result post_end_semicolon(uint32_t column, State &state) {
-  return sym(Sym::semicolon)(iff(cond::indent_lesseq(column))(finish(Sym::semicolon, "post_end_semicolon")))(state);
+  return SYM(Sym::semicolon) && cond::indent_lesseq_v2(column, state)
+    ? finish_v2(Sym::semicolon, "post_end_semicolon")
+    : result::cont;
 }
 
 /**
