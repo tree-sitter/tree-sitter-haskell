@@ -866,18 +866,6 @@ template<class A> function<Parser(function<Parser(A)>)> with(function<A(State &)
 }
 
 /**
- * Variant of `with` that discards the left operand's result. (>>)
- *
- * Semantics are "execute the right parser if the left parser doesn't finish".
- */
-static Parser operator+(Parser fa, Parser fb) {
-  return [=](State & state) {
-    auto res = fa(state);
-    return res.finished ? res : fb(state);
-  };
-}
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
 static Result finish(const Sym s, string desc) {
