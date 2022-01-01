@@ -1025,18 +1025,6 @@ Parser consume_while(Peek pred) { return effect(cond::consume_while(pred)); }
 Parser consume_until(string s) { return effect(cond::consume_until(s)); }
 
 /**
- * Advance the lexer.
- */
-Parser advance = effect(state::advance);
-
-/**
- * Skip whitespace.
- */
-Parser skip_ws = effect([](State & state) { while (cond::peekws(state)) state::skip(state); });
-
-Modifier seq(string s) { return iff(cond::seq(s)); }
-
-/**
  * Add one level of indentation to the stack, caused by starting a layout.
  */
 static void push(uint16_t ind, State & state) {
