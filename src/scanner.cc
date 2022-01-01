@@ -1076,18 +1076,12 @@ Parser push(uint16_t ind) { return effect([=](State & state) {
 /**
  * Remove one level of indentation from the stack, caused by the end of a layout.
  */
-void pop_v2(State &state) {
+void pop(State &state) {
   if (cond::indent_exists(state)) {
     logger("pop");
     state.indents.pop_back();
   }
 }
-
-Parser pop =
-  iff(cond::indent_exists)(effect([](State & state) {
-    logger("pop");
-    if(cond::indent_exists(state)) state.indents.pop_back();
-  }));
 
 /**
  * Advance the lexer until the following character is neither space nor tab.
@@ -1111,7 +1105,7 @@ void skipspace(State &state) {
  */
 Result layout_end(string desc, State &state) {
   if (SYM(Sym::end)) {
-    pop_v2(state);
+    pop(state);
     return finish_v2(Sym::end, desc);
   }
   return result::cont;
@@ -1365,7 +1359,7 @@ Result where(State &state) {
 Result in(State &state) {
   if (SYM(Sym::in) && cond::seq_v2("in", state) && cond::token_end(state)) {
     util::mark("in", state);
-    pop_v2(state);
+    pop(state);
     return finish_v2(Sym::in, "in");
   }
   return result::cont;
@@ -1652,7 +1646,7 @@ Result close_layout_in_list(State &state) {
   switch (state::next_char(state)) {
     case ']': {
       if (state.symbols[Sym::end]) {
-        pop_v2(state);
+        pop(state);
         return finish_v2(Sym::end, "bracket");
       }
       break;
