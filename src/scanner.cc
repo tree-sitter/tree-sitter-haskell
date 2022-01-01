@@ -837,11 +837,6 @@ typedef Result (*NewParser)(State&);
 typedef function<Parser(uint32_t)> CharParser;
 
 /**
- * Convenience alias for a function that attaches conditions to a parser.
- */
-typedef function<Parser(Parser)> Modifier;
-
-/**
  * Parser that terminates the execution with the successful detection of the given symbol.
  */
 static Result finish(const Sym s, string desc) {
