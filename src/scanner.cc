@@ -3,7 +3,6 @@
 #include <vector>
 #include <cstdio>
 #include <iostream>
-#include <functional>
 #include <algorithm>
 #include <string>
 #include <iterator>
@@ -81,20 +80,6 @@ Log & operator<<(Log & l, Endl) {
 }
 
 template<class A, class B> A fst(pair<A, B> p) { return p.first; }
-
-template<class A, class B, class C> function<C(A)> operator*(function<C(B)> f, function<B(A)> g) {
-  return [=](A a) { return f(g(a)); };
-}
-
-template<class A, class B, class C> function<C(A)> operator*(function<C(B)> f, B (&g)(A)) {
-  return [=](A a) { return f(g(a)); };
-}
-
-template<class A, class B, class C> function<C(A)> operator*(C (&f)(B), function<B(A)> g) {
-  return [=](A a) { return f(g(a)); };
-}
-
-template<class A, class B> function<B(A)> const_(B b) { return [=](auto _) { return b; }; }
 
 // --------------------------------------------------------------------------------------------------------
 // Symbols
