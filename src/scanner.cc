@@ -598,10 +598,7 @@ static Peek ticked = eq('`');
  */
 static bool uninitialized(State & state) { return !indent_exists(state); }
 
-static Condition column(uint32_t col) {
-  return [=](State & state) { return state::column(state) == col; };
-}
-static bool column_v2(uint32_t col, State &state) {
+static bool column(uint32_t col, State &state) {
   return state::column(state) == col;
 }
 
@@ -644,7 +641,9 @@ static bool symbolic(uint32_t c) {
   }
 }
 
-static Peek valid_first_varsym = not_(eq(':')) & symbolic;
+static bool valid_first_varsym(uint32_t c) {
+  return c != ':' && symbolic(c);
+}
 
 /**
  * Test for reserved operators of two characters.
@@ -1047,7 +1046,7 @@ static Result cpp_workaround(State &state) {
  * If the current column i 0, a cpp directive may begin.
  */
 static Result cpp_init(State &state) {
-  if (cond::column_v2(0, state)) {
+  if (cond::column(0, state)) {
     return cpp_workaround(state);
   }
   return result::cont;
