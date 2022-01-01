@@ -486,16 +486,15 @@ static void consume_until_v2(string target, State &state) {
   }
 }
 
-static function<u32string(State &)> read_string(Peek pred) {
-  return [=](State & state) {
-    u32string s;
-    consume_while([&](uint32_t c) {
-        auto res = pred(c);
-        if (res) s += static_cast<uint32_t>(c);
-        return res;
-    })(state);
-    return s;
-  };
+static u32string read_string(bool (*cond)(uint32_t), State &state) {
+  u32string s;
+  uint32_t c = PEEK;
+  while (cond(c)) {
+    s += static_cast<uint32_t>(c);
+    S_ADVANCE;
+    c = PEEK;
+  }
+  return s;
 }
 
 /**
@@ -1226,7 +1225,7 @@ static Result inline_comment(State &state) {
  * Parse a sequence of symbolic characters and convert it into the enum `Symbolic`.
  * This decides whether the sequence is an operator or a special case.
  */
-static Symbolic read_symop(State & state) { return symbolic::symop(cond::read_string(cond::symbolic)(state), state); }
+static Symbolic read_symop(State & state) { return symbolic::symop(cond::read_string(cond::symbolic, state), state); }
 
 static Result symop_marked(Symbolic type, State &state) {
   switch (type) {
