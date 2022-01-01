@@ -1008,7 +1008,7 @@ static void pop(State &state) {
 /**
  * Advance the lexer until the following character is neither space nor tab.
  */
-void skipspace(State &state) {
+static void skipspace(State &state) {
   while (true) {
     switch (PEEK) {
       case ' ':
@@ -1025,7 +1025,7 @@ void skipspace(State &state) {
 /**
  * If a layout end is valid at this position, remove one indentation layer and succeed with layout end.
  */
-Result layout_end(string desc, State &state) {
+static Result layout_end(string desc, State &state) {
   if (SYM(Sym::end)) {
     pop(state);
     return finish_v2(Sym::end, desc);
@@ -1168,7 +1168,7 @@ Result cpp_consume(State &state) {
  * This is a workaround for the problem described in `cpp`. It will simply consume all code between `#else` or `#elif`
  * and `#endif`.
  */
-Result cpp_workaround(State &state) {
+static Result cpp_workaround(State &state) {
   if (PEEK == '#') {
     S_ADVANCE;
     if (cond::seq_v2("el", state)) {
@@ -1191,7 +1191,7 @@ Result cpp_workaround(State &state) {
 /**
  * If the current column i 0, a cpp directive may begin.
  */
-Result cpp_init(State &state) {
+static Result cpp_init(State &state) {
   if (cond::column_v2(0, state)) {
     return cpp_workaround(state);
   }
@@ -1202,7 +1202,7 @@ Result cpp_init(State &state) {
  * End a layout by removing an indentation from the stack, but only if the current column (which should be in the next
  * line after skipping whitespace) is smaller than the layout indent.
  */
-Result dedent(uint32_t indent, State &state) {
+static Result dedent(uint32_t indent, State &state) {
   if (cond::smaller_indent_v2(indent, state)) return layout_end("dedent", state);
   return result::cont;
 }
@@ -1212,7 +1212,7 @@ Result dedent(uint32_t indent, State &state) {
  *
  * This is the case after `do` or `of`, where the `where` can be on the same indent.
  */
-Result newline_where(uint32_t indent, State &state) {
+static Result newline_where(uint32_t indent, State &state) {
   if (cond::is_newline_where(indent)(state)) {
     state::mark("newline_where", state);
     if (cond::token("where", state)) {
@@ -1226,7 +1226,7 @@ Result newline_where(uint32_t indent, State &state) {
 /**
  * Succeed for `Sym::semicolon` if the indent of the next line is equal to the current layout's.
  */
-Result newline_semicolon(uint32_t indent, State &state) {
+static Result newline_semicolon(uint32_t indent, State &state) {
   if (SYM(Sym::semicolon) && cond::same_indent_v2(indent, state)) {
     return finish_v2(Sym::semicolon, "newline_semicolon");
   }
@@ -1244,7 +1244,7 @@ Result newline_semicolon(uint32_t indent, State &state) {
  * In this situation, the entire `do` block is the left operand of the `>>=`.
  * The same applies for `infix` functions.
  */
-bool end_on_infix(uint32_t indent, Symbolic type, State &state) {
+static bool end_on_infix(uint32_t indent, Symbolic type, State &state) {
   return cond::indent_lesseq_v2(indent, state)
     && (symbolic::expression_op(type)
         || PEEK == '`');
@@ -1253,7 +1253,7 @@ bool end_on_infix(uint32_t indent, Symbolic type, State &state) {
 /**
  * End a layout if the next token is an infix operator and the indent is equal to or less than the current layout.
  */
-Result newline_infix(uint32_t indent, Symbolic type, State &state) {
+static Result newline_infix(uint32_t indent, Symbolic type, State &state) {
   if (end_on_infix(indent, type, state)) {
     return layout_end("newline_infix", state);
   }
@@ -1265,7 +1265,7 @@ Result newline_infix(uint32_t indent, Symbolic type, State &state) {
  *
  * Necessary because `is_newline_where` needs to know that no `where` may follow.
  */
-Result where(State &state) {
+static Result where(State &state) {
   if (cond::token("where", state)) {
     if (SYM(Sym::where)) {
       state::mark("where", state);
@@ -1279,7 +1279,7 @@ Result where(State &state) {
 /**
  * An `in` token ends the layout openend by a `let` and its nested layouts.
  */
-Result in(State &state) {
+static Result in(State &state) {
   if (SYM(Sym::in) && cond::token("in", state)) {
     state::mark("in", state);
     pop(state);
@@ -1291,7 +1291,7 @@ Result in(State &state) {
 /**
  * An `else` token may end a layout opened in the body of a `then`.
  */
-Result else_(State &state) {
+static Result else_(State &state) {
   if (cond::token("else", state)) {
     return end_or_semicolon("else", state);
   }
@@ -1302,7 +1302,7 @@ Result else_(State &state) {
  * Detect the start of a quasiquote: An opening bracket followed by an optional varid and a vertical bar, all without
  * whitespace in between.
  */
-Result qq_start(State &state) {
+static Result qq_start(State &state) {
   S_ADVANCE;
   state::mark("qq_start", state);
   while (cond::quoter_char(PEEK)) {
@@ -1314,7 +1314,7 @@ Result qq_start(State &state) {
   return result::cont;
 }
 
-Result qq_body(State &state) {
+static Result qq_body(State &state) {
   if (PEEK == 0) {
     Result res = eof(state);
     SHORT_SCANNER;
@@ -1341,7 +1341,7 @@ Result qq_body(State &state) {
 /**
  * When a dollar is followed by a varid or opening paren, parse a splice.
  */
-Result splice(State &state) {
+static Result splice(State &state) {
   uint32_t c = state::next_char(state);
   if ((cond::varid_start_char(c) || c == '(') && state.symbols[Sym::splice]) {
     state::mark("splice", state);
@@ -1350,7 +1350,7 @@ Result splice(State &state) {
   return result::cont;
 }
 
-Result unboxed_tuple_close(State &state) {
+static Result unboxed_tuple_close(State &state) {
   if (state.symbols[Sym::unboxed_tuple_close]) {
     if (state::next_char(state) == ')') {
       state::advance(state);
@@ -1364,7 +1364,7 @@ Result unboxed_tuple_close(State &state) {
 /**
  * Consume all characters up to the end of line and succeed with `Sym::commment`.
  */
-Result inline_comment(State &state) {
+static Result inline_comment(State &state) {
   while (!cond::is_newline(state::next_char(state))) {
     state::advance(state);
   }
@@ -1376,9 +1376,9 @@ Result inline_comment(State &state) {
  * Parse a sequence of symbolic characters and convert it into the enum `Symbolic`.
  * This decides whether the sequence is an operator or a special case.
  */
-Symbolic read_symop(State & state) { return symbolic::symop(cond::read_string(cond::symbolic)(state))(state); }
+static Symbolic read_symop(State & state) { return symbolic::symop(cond::read_string(cond::symbolic)(state))(state); }
 
-Result symop_marked(Symbolic type, State &state) {
+static Result symop_marked(Symbolic type, State &state) {
   switch (type) {
     case Symbolic::invalid:
       return result::fail;
@@ -1419,7 +1419,7 @@ Result symop_marked(Symbolic type, State &state) {
  *
  * Otherwise succeed with `Sym::tyconsym` or `Sym::varsym` if they are valid.
  */
-Result symop(Symbolic type, State &state) {
+static Result symop(Symbolic type, State &state) {
   if (type == Symbolic::bar) {
     if (SYM(Sym::bar)) {
       state::mark("bar", state);
@@ -1448,7 +1448,7 @@ Result symop(Symbolic type, State &state) {
  *   - `Sym::start` is valid
  *   - Operator matching was done already
  */
-Result minus(State &state) {
+static Result minus(State &state) {
   if (!cond::seq_v2("--", state)) return result::cont;
   while (state::next_char(state) == '-') {
     state::advance(state);
@@ -1465,7 +1465,7 @@ static Result multiline_comment_success(State &state) {
   return finish_v2(Sym::comment, "multiline_comment");
 }
 
-Result multiline_comment(uint16_t, State &);
+static Result multiline_comment(uint16_t, State &);
 
 /**
  * Mutually recursive with `multiline_comment`.
@@ -1475,7 +1475,7 @@ Result multiline_comment(uint16_t, State &);
  *
  * This part looks for the comment markers at the current position and recurses with an adjusted nesting level.
  */
-Result nested_comment(uint16_t level, State &state) {
+static Result nested_comment(uint16_t level, State &state) {
   switch (state::next_char(state)) {
     case 0: {
       Result res = eof(state);
@@ -1511,7 +1511,7 @@ Result nested_comment(uint16_t level, State &state) {
 
 // TODO(414owen): this probably shouldn't be recursive, some people like putting
 // lots of dashes in comments...
-Result multiline_comment(uint16_t level, State &state) {
+static Result multiline_comment(uint16_t level, State &state) {
   uint32_t next = state::next_char(state);
   while (next != '-' && next != '{' && next != 0) {
     state::advance(state);
@@ -1526,7 +1526,7 @@ Result multiline_comment(uint16_t level, State &state) {
  * When a brace is encountered, it can be an explicitly started layout, a pragma, or a comment. In the latter case, the
  * comment is parsed, otherwise parsing fails to delegate to the corresponding grammar rule.
  */
-Result brace(State &state) {
+static Result brace(State &state) {
   if (state::next_char(state) != '{') return result::fail;
   state::advance(state);
   if (state::next_char(state) != '-') return result::fail;
@@ -1538,7 +1538,7 @@ Result brace(State &state) {
 /**
  * Parse either inline or block comments.
  */
-Result comment(State &state) {
+static Result comment(State &state) {
   switch (state::next_char(state)) {
     case '-': {
       Result res = minus(state);
@@ -1565,7 +1565,7 @@ Result comment(State &state) {
  * Because commas can also occur in class layouts at the top level, e.g. in fixity decls, the comma rule has to be
  * parsed here as well.
  */
-Result close_layout_in_list(State &state) {
+static Result close_layout_in_list(State &state) {
   switch (state::next_char(state)) {
     case ']': {
       if (state.symbols[Sym::end]) {
@@ -1600,7 +1600,7 @@ Result close_layout_in_list(State &state) {
  *   - '[' can be a list or a quasiquote
  *   - '|' in a quasiquote, since it can be followed by symbolic operator characters, which would be consumed
  */
-Result inline_tokens(State &state) {
+static Result inline_tokens(State &state) {
   switch (state::next_char(state)) {
     case 'w': {
       Result res = where(state);
@@ -1664,7 +1664,7 @@ Result inline_tokens(State &state) {
  *
  * This pushes the indentation of the first non-whitespace character onto the stack.
  */
-Result layout_start(uint32_t column, State &state) {
+static Result layout_start(uint32_t column, State &state) {
   if (state.symbols[Sym::start]) {
     switch (PEEK) {
       case '{': {
@@ -1701,14 +1701,14 @@ Result layout_start(uint32_t column, State &state) {
  * Here, when the inner `do`'s  layout is ended, the next step is started at `f`, but the outer `do`'s layout expects a
  * semicolon. Since `f` is on the same indent as the outer `do`'s layout, this parser matches.
  */
-Result post_end_semicolon(uint32_t column, State &state) {
+static Result post_end_semicolon(uint32_t column, State &state) {
   return sym(Sym::semicolon)(iff(cond::indent_lesseq(column))(finish(Sym::semicolon, "post_end_semicolon")))(state);
 }
 
 /**
  * Like `post_end_semicolon`, but for layout end.
  */
-Result repeat_end(uint32_t column, State &state) {
+static Result repeat_end(uint32_t column, State &state) {
   if (state.symbols[Sym::end] && cond::smaller_indent_v2(column, state)) {
     return layout_end("repeat_end", state);
   }
@@ -1718,7 +1718,7 @@ Result repeat_end(uint32_t column, State &state) {
 /**
  * Rules that decide based on the indent of the next line.
  */
-Result newline_indent(uint32_t indent, State &state) {
+static Result newline_indent(uint32_t indent, State &state) {
   Result res = dedent(indent, state);
   SHORT_SCANNER;
   res = close_layout_in_list(state);
@@ -1729,7 +1729,7 @@ Result newline_indent(uint32_t indent, State &state) {
 /**
  * Rules that decide based on the first token on the next line.
  */
-Result newline_token(uint32_t indent, State &state) {
+static Result newline_token(uint32_t indent, State &state) {
   // TODO(414owen): fix
   // TODO Convert to switch
   if (cond::symbolic(PEEK) || PEEK == '`') {
@@ -1747,7 +1747,7 @@ Result newline_token(uint32_t indent, State &state) {
 /**
  * To be called after parsing a newline, with the indent of the next line as argument.
  */
-Result newline(uint32_t indent, State &state) {
+static Result newline(uint32_t indent, State &state) {
   Result res = eof(state);
   SHORT_SCANNER;
   res = initialize(indent, state);
@@ -1771,7 +1771,7 @@ Result newline(uint32_t indent, State &state) {
  *   - Tokens `where`, `in`, `$`, `)`, `]`, `,`
  *   - comments
  */
-Result immediate(uint32_t column, State &state) {
+static Result immediate(uint32_t column, State &state) {
   auto res = layout_start(column, state);
   SHORT_SCANNER;
   res = post_end_semicolon(column, state);
@@ -1790,7 +1790,7 @@ Result immediate(uint32_t column, State &state) {
  *   - cpp
  *   - quasiquote body, which overrides everything
  */
-Result init(State &state) {
+static Result init(State &state) {
   auto res =  eof(state);
   SHORT_SCANNER;
   res = iff(cond::after_error)(fail)(state);
@@ -1810,7 +1810,7 @@ Result init(State &state) {
 /**
  * The main parser checks whether the first non-space character is a newline and delegates accordingly.
  */
-Result main(State &state) {
+static Result main(State &state) {
   skipspace(state);
   Result res = eof(state);
   SHORT_SCANNER;
@@ -1826,7 +1826,7 @@ Result main(State &state) {
 /**
  * The entry point to the parser.
  */
-Result all(State &state) {
+static Result all(State &state) {
   auto res = init(state);
   return res.finished ? res : main(state);
 }
@@ -1844,7 +1844,7 @@ namespace eval {
   *
   * Note: This may break the parser, since not all paths use `mark`.
   */
-void debug_lookahead(State & state) {
+static void debug_lookahead(State & state) {
   string s = "";
   for (;;) {
     if (cond::peekws(state) || cond::peekeof(state)) break;
@@ -1869,7 +1869,7 @@ void debug_lookahead(State & state) {
   *
   * If the `debug_next_token` flag is set, the next token will be printed.
   */
-bool eval(parser::NewParser chk, State & state) {
+static bool eval(parser::NewParser chk, State & state) {
   auto result = chk(state);
   if (debug_next_token) debug_lookahead(state);
   if (result.finished && result.sym != Sym::fail) {
