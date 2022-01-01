@@ -295,20 +295,13 @@ static inline void advance(State & state) { state.lexer->advance(state.lexer, fa
  */
 static inline void skip(State & state) { state.lexer->advance(state.lexer, true); }
 
-function<void(State&)> mark(string marked_by) {
-  return [=](State & state) {
-    if (debug) {
-      state.marked = column(state);
-      state.marked_by = marked_by;
-    }
-    state.lexer->mark_end(state.lexer);
-  };
-}
-
-}
-
-namespace util {
-
+/**
+ * Instruct the lexer that the current position is the end of the potentially detected symbol, causing the next run to
+ * be started after this character in the success case.
+ *
+ * This is useful if the validity of the detected symbol depends on what follows, e.g. in the case of a layout end
+ * before a `where` token.
+ */
 static inline void mark(string marked_by, State &state) {
   if (debug) {
     state.marked = state::column(state);
@@ -318,6 +311,7 @@ static inline void mark(string marked_by, State &state) {
 }
 
 }
+
 
 // --------------------------------------------------------------------------------------------------------
 // Condition
@@ -469,7 +463,7 @@ function<void(State &)> consume_until(string target) {
   return [=](State & state) {
     Peek check = [&](uint32_t c) {
       if (eq(first)(c)) {
-        state::mark("consume_until " + target)(state);
+        state::mark("consume_until " + target, state);
         return !seq(target)(state);
       }
       else return true;
@@ -487,7 +481,7 @@ void consume_until_v2(string target, State &state) {
     // Why mark where the first char matched? Let's just not do this check.
     if (first == PEEK) {
       string mark_target = "consume_until " + target;
-      util::mark(mark_target, state);
+      state::mark(mark_target, state);
     }
   }
 }
@@ -1047,15 +1041,6 @@ Modifier seq(string s) { return iff(cond::seq(s)); }
 Modifier token(string s) { return iff(cond::token(s)); }
 
 /**
- * Instruct the lexer that the current position is the end of the potentially detected symbol, causing the next run to
- * be started after this character in the success case.
- *
- * This is useful if the validity of the detected symbol depends on what follows, e.g. in the case of a layout end
- * before a `where` token.
- */
-Parser mark(string target) { return effect(state::mark(target)); }
-
-/**
  * Add one level of indentation to the stack, caused by starting a layout.
  */
 static void push(uint16_t ind, State & state) {
@@ -1176,7 +1161,7 @@ static Result eof(State &state) {
  */
 Result initialize(uint32_t column, State &state) {
   if (cond::uninitialized(state)) {
-    util::mark("initialize", state);
+    state::mark("initialize", state);
     Result res = token("module")(fail)(state);
     SHORT_SCANNER;
     push(column, state);
@@ -1208,7 +1193,7 @@ Result dot(State &state) {
     if (PEEK == '.') {
       S_ADVANCE;
       if (SYM(Sym::varsym) && iswspace(PEEK)) return finish_v2(Sym::varsym, "dot");
-      util::mark("dot", state);
+      state::mark("dot", state);
       return finish_v2(Sym::dot, "dot");
     }
   }
@@ -1250,7 +1235,7 @@ Result cpp_workaround(State &state) {
     }
     Result res = cpp_consume(state);
     SHORT_SCANNER; // TODO(414owen): this might not be needed?
-    util::mark("cpp_workaround", state);
+    state::mark("cpp_workaround", state);
     return finish_v2(Sym::cpp, "cpp");
   }
   return result::cont;
@@ -1282,7 +1267,7 @@ Result dedent(uint32_t indent, State &state) {
  */
 Result newline_where(uint32_t indent, State &state) {
   if (cond::is_newline_where(indent)(state)) {
-    util::mark("newline_where", state);
+    state::mark("newline_where", state);
     if (cond::seq_v2("where", state) && cond::token_end(state)) {
       return end_or_semicolon("newline_where", state);
     }
@@ -1336,7 +1321,7 @@ Result newline_infix(uint32_t indent, Symbolic type, State &state) {
 Result where(State &state) {
   if (cond::seq_v2("where", state) && cond::token_end(state)) {
     if (SYM(Sym::where)) {
-      util::mark("where", state);
+      state::mark("where", state);
       return finish_v2(Sym::where, "where");
     }
     return layout_end("where", state);
@@ -1349,7 +1334,7 @@ Result where(State &state) {
  */
 Result in(State &state) {
   if (SYM(Sym::in) && cond::seq_v2("in", state) && cond::token_end(state)) {
-    util::mark("in", state);
+    state::mark("in", state);
     pop(state);
     return finish_v2(Sym::in, "in");
   }
@@ -1372,7 +1357,7 @@ Result else_(State &state) {
  */
 Result qq_start(State &state) {
   S_ADVANCE;
-  util::mark("qq_start", state);
+  state::mark("qq_start", state);
   while (cond::quoter_char(PEEK)) {
     S_ADVANCE;
   }
@@ -1388,7 +1373,7 @@ Result qq_body(State &state) {
     SHORT_SCANNER;
     return result::fail;
   }
-  util::mark("qq_body", state);
+  state::mark("qq_body", state);
   if (PEEK == '\\') {
     S_ADVANCE;
     S_ADVANCE;
@@ -1412,7 +1397,7 @@ Result qq_body(State &state) {
 Result splice(State &state) {
   uint32_t c = state::next_char(state);
   if ((cond::varid_start_char(c) || c == '(') && state.symbols[Sym::splice]) {
-    util::mark("splice", state);
+    state::mark("splice", state);
     return finish_v2(Sym::splice, "splice");
   }
   return result::cont;
@@ -1422,7 +1407,7 @@ Result unboxed_tuple_close(State &state) {
   if (state.symbols[Sym::unboxed_tuple_close]) {
     if (state::next_char(state) == ')') {
       state::advance(state);
-      util::mark("unboxed_tuple_close", state);
+      state::mark("unboxed_tuple_close", state);
       return finish_v2(Sym::unboxed_tuple_close, "unboxed_tuple_close");
     }
   }
@@ -1436,7 +1421,7 @@ Result inline_comment(State &state) {
   while (!cond::is_newline(state::next_char(state))) {
     state::advance(state);
   }
-  util::mark("inline_comment", state);
+  state::mark("inline_comment", state);
   return finish_v2(Sym::comment, "inline_comment");
 }
 
@@ -1490,14 +1475,14 @@ Result symop_marked(Symbolic type, State &state) {
 Result symop(Symbolic type, State &state) {
   if (type == Symbolic::bar) {
     if (SYM(Sym::bar)) {
-      util::mark("bar", state);
+      state::mark("bar", state);
       return finish_v2(Sym::bar, "bar");
     }
     Result res = layout_end("bar", state);
     SHORT_SCANNER;
     return result::fail;
   }
-  util::mark("symop", state);
+  state::mark("symop", state);
   Result res = symop_marked(type, state);
   SHORT_SCANNER;
   return (
@@ -1529,7 +1514,7 @@ Result minus(State &state) {
  * Succeed for a comment.
  */
 static Result multiline_comment_success(State &state) {
-  util::mark("multiline_comment", state);
+  state::mark("multiline_comment", state);
   return finish_v2(Sym::comment, "multiline_comment");
 }
 
@@ -1645,7 +1630,7 @@ Result close_layout_in_list(State &state) {
     case ',': {
       state::advance(state);
       if (state.symbols[Sym::comma]) {
-        util::mark("comma", state);
+        state::mark("comma", state);
         return finish_v2(Sym::comma, "comma");
       }
       Result res = layout_end("comma", state);
@@ -1699,7 +1684,7 @@ Result inline_tokens(State &state) {
     case '|': {
       if (state.symbols[Sym::qq_bar]) {
         state::advance(state);
-        util::mark("qq_bar", state);
+        state::mark("qq_bar", state);
         return result::finish(Sym::qq_bar);
       }
       Symbolic s = read_symop(state);
@@ -1824,7 +1809,7 @@ Result newline(uint32_t indent, State &state) {
   SHORT_SCANNER;
   res = comment(state);
   SHORT_SCANNER;
-  util::mark("newline", state);
+  state::mark("newline", state);
   res = newline_token(indent, state);
   SHORT_SCANNER;
   return newline_indent(indent, state);
@@ -1882,7 +1867,7 @@ Result main(State &state) {
   skipspace(state);
   Result res = eof(state);
   SHORT_SCANNER;
-  util::mark("main", state);
+  state::mark("main", state);
   if (cond::skips(cond::newline)(state)) {
     auto indent = count_indent(state);
     return newline(indent, state);
