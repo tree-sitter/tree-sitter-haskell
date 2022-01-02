@@ -14,7 +14,7 @@ node_modules/web-tree-sitter:
 	cp tree-sitter.patch tmp/tree-sitter/
 	cd tmp/tree-sitter\
 		&& git apply tree-sitter.patch\
-		&& ./script/build-wasm
+		&& ./script/build-wasm --debug
 	mkdir -p node_modules/web-tree-sitter
 	cp tmp/tree-sitter/LICENSE node_modules/web-tree-sitter
 	cp $(addprefix tmp/tree-sitter/lib/binding_web/,$(WEB_TREE_SITTER)) node_modules/web-tree-sitter
