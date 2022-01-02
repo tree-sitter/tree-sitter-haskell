@@ -222,7 +222,7 @@ static const string format_indents(State & state) {
   if (state.indents.empty()) return "empty";
   bool empty = true;
   string s;
-  for (int i = 0; i < state.indents.size(); i++) {
+  for (size_t i = 0; i < state.indents.size(); i++) {
     if (!empty) s += '-';
     s += itoa(state.indents[i], 10);
     empty = false;
@@ -299,9 +299,9 @@ static bool varid_char(const uint32_t c) {
 static bool quoter_char(const uint32_t c) { return varid_char(c) || c == '.'; };
 
 static bool seq(const string &s, State &state) {
-  for (int i = 0; i < s.size(); i++) {
-    uint32_t c = s[i];
-    uint32_t c2 = PEEK;
+  for (size_t i = 0; i < s.size(); i++) {
+    int32_t c = s[i];
+    int32_t c2 = PEEK;
     if (c != c2) return false;
     S_ADVANCE;
   }
@@ -310,7 +310,7 @@ static bool seq(const string &s, State &state) {
 
 static void consume_until(string target, State &state) {
   assert(!target.empty());
-  uint32_t first = target[0];
+  int32_t first = target[0];
   while (PEEK != 0 && !seq(target, state)) {
     while (PEEK != 0 && PEEK != first) S_ADVANCE;
     // TODO(414owen): This mimics the combinator's behaviour, but it seems a bit silly.
@@ -484,10 +484,6 @@ static bool symbolic(uint32_t c) {
   }
 }
 
-static bool valid_first_varsym(uint32_t c) {
-  return c != ':' && symbolic(c);
-}
-
 /**
  * Test for reserved operators of two characters.
  */
@@ -532,30 +528,7 @@ enum Symbolic {
   invalid,
 };
 
-static bool success(Symbolic type) { return type == symbolic::con || type == symbolic::op; }
-
 static Symbolic con_or_var(uint32_t c) { return c == ':' ? symbolic::con : symbolic::op; }
-
-static bool single(uint32_t c) {
-  switch (c) {
-    case '!':
-    case '#':
-    case '%':
-    case '&':
-    case '*':
-    case '+':
-    case '/':
-    case '<':
-    case '>':
-    case '?':
-    case '^':
-    case '.':
-    case '$':
-      return true;
-    default:
-      return false;
-  }
-}
 
 /**
  * Symbolic operators that are eligible to close a layout when they are on a newline with less/eq indent.
@@ -615,7 +588,7 @@ static Symbolic symop(string s, State &state) {
     }
   } else {
     bool is_comment = true;
-    for (int i = 0; i < s.size(); i++) { is_comment &= s[i] == '-'; }
+    for (size_t i = 0; i < s.size(); i++) { is_comment &= s[i] == '-'; }
     if (is_comment) return symbolic::comment;
     if (s.size() == 2) {
       if (s[0] == '$' && s[1] == '$' && cond::valid_splice(state)) return symbolic::splice;
@@ -1596,8 +1569,13 @@ static bool eval(parser::NewParser chk, State & state) {
   if (result.finished && result.sym != syms::fail) {
     if (debug) {
       string s;
-      if (state.marked == -1) s += itoa(state::column(state), 10);
-      else s += state.marked_by; s += '@'; s += itoa(state.marked, 10);
+      if (state.marked == -1) {
+        s += itoa(state::column(state), 10);
+      } else {
+        s += state.marked_by;
+        s += '@';
+        s += itoa(state.marked, 10);
+      }
       logger("result: " + syms::name(result.sym) + ", " + s);
     }
     state.lexer->result_symbol = result.sym;
