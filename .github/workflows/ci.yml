@@ -12,21 +12,19 @@ on:
 jobs:
   test:
     name: tree-sitter-haskell / ${{ matrix.runs-on }}
-
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      runs-on: [ubuntu-latest, macOS-latest]
-      include:
-      - runs-on: ubuntu-latest
-        cxx: [g++-9]
+      matrix:
+        os: [macOS-latest, ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: 14
-      - if: matrix.cxx
-        run: echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+      - if: runner.os == 'Linux'
+        run: echo "CXX=g++-9" >> $GITHUB_ENV
       - run: npm install
       - run: npm test
       - run: npm run examples
