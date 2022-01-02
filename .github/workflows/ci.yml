@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    name: tree-sitter-haskell / ${{ matrix.runs-on }}
+    name: tree-sitter-haskell / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
