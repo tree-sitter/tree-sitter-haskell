@@ -34,6 +34,6 @@ jobs:
       - run: npm install
       - run: npm test
       - run: npm run examples
-      - name: Build patched version of web-tree-sitter
-        run: make -B node_modules/web-tree-sitter
-      - run: npm run examples-wasm
+      - run: |
+          make -B node_modules/web-tree-sitter
+          ./script/parse-examples wasm
