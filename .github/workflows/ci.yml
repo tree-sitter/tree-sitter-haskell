@@ -23,6 +23,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 14
+      - uses: mymindstorm/setup-emsdk@v11
+        with:
+          version: 3.0.1
+          actions-cache-folder: 'emsdk-cache'
       - if: runner.os == 'Linux'
         run: echo "CXX=g++-9" >> $GITHUB_ENV
       - run: npm install
