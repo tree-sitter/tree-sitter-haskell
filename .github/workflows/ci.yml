@@ -42,4 +42,5 @@ jobs:
         run: npm run examples
 
       - name: Parse examples with web binding
-        run: npm run examples-wasm
+        run: ( cmdpid=$BASHPID; (sleep 1200; kill $cmdpid) & exec npm run examples-wasm )
+        shell: bash
