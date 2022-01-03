@@ -1,10 +1,10 @@
 # tree-sitter-haskell
 
-[![build](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/test.yml/badge.svg)](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/test.yml)
+[![build](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml/badge.svg)](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml)
 
 Haskell grammar for [tree-sitter].
 
-**Note** This grammar needs at least tree-sitter 0.19.4 and C++-03.
+**Note** This grammar needs at least tree-sitter 0.19.4.
 
 # References
 
@@ -27,21 +27,6 @@ parser_config.haskell = {
 EOF
 ```
 
-Depending on what compilers are installed in your system, it may be necessary to force `nvim-treesitter` to use a
-specific one to satisfy the C++-14 requirement (see
-[this issue](https://github.com/tree-sitter/tree-sitter-haskell/issues/34) for more info):
-
-```vim
-lua require'nvim-treesitter.install'.compilers = { "clang" }
-" or
-lua require'nvim-treesitter.install'.compilers = { "clang++" }
-```
-
-or
-
-```vim
-lua require'nvim-treesitter.install'.compilers = { "gcc" }
-```
 
 # Supported Language Extensions
 
