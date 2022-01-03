@@ -21,7 +21,10 @@
 // short circuit
 #define SHORT_SCANNER if (res.finished) return res;
 #define PEEK state->lexer->lookahead
+// Move the parser position one character to the right.
 #define S_ADVANCE state->lexer->advance(state->lexer, false)
+// Move the parser position one character to the right, treating the consumed character as whitespace.
+#define S_SKIP state->lexer->advance(state->lexer, true)
 #define SYM(s) (state->symbols[s])
 
 #ifdef DEBUG
@@ -249,11 +252,6 @@ static bool is_eof(State *state) { return state->lexer->eof(state->lexer); }
 static uint32_t column(State *state) {
   return is_eof(state) ? 0 : state->lexer->get_column(state->lexer);
 }
-
-/**
- * Move the parser position one character to the right, treating the consumed character as whitespace.
- */
-static void skip(State *state) { state->lexer->advance(state->lexer, true); }
 
 /**
  * Instruct the lexer that the current position is the end of the potentially detected symbol, causing the next run to
@@ -680,7 +678,7 @@ static void skipspace(State *state) {
     switch (PEEK) {
       case ' ':
       case '\t':
-        S_ADVANCE;
+        S_SKIP;
         break;
       default:
         return;
@@ -728,15 +726,15 @@ static uint32_t count_indent(State *state) {
   for (;;) {
     switch (PEEK) {
       NEWLINE_CASES:
-        S_ADVANCE;
+        S_SKIP;
         indent = 0;
         break;
       case ' ':
-        S_ADVANCE;
+        S_SKIP;
         indent++;
         break;
       case '\t':
-        S_ADVANCE;
+        S_SKIP;
         indent += 8;
         break;
       default:
@@ -819,7 +817,7 @@ static Result dot(State *state) {
  *
  * Since they can contain escaped newlines, they have to be consumed, after which the parser recurses.
  */
-static Result cpp_consume(State *state) {
+static void cpp_consume(State *state) {
   for (;;) {
     while (PEEK != 0 && !is_newline(PEEK) && PEEK != '\\') S_ADVANCE;
     if (PEEK == '\\') {
@@ -827,7 +825,7 @@ static Result cpp_consume(State *state) {
       S_ADVANCE;
       continue;
     }
-    return res_cont;
+    return;
   }
 }
 
@@ -850,7 +848,7 @@ static Result cpp_workaround(State *state) {
       }
       return finish(CPP, "cpp-else");
     }
-    Result res = cpp_consume(state);
+    cpp_consume(state);
     MARK("cpp_workaround", false, state);
     return finish(CPP, "cpp");
   }
@@ -1480,7 +1478,7 @@ static Result scan_main(State *state) {
   SHORT_SCANNER;
   MARK("main", false, state);
   if (is_newline(PEEK)) {
-    S_ADVANCE;
+    S_SKIP;
     uint32_t indent = count_indent(state);
     return newline(indent, state);
   }
