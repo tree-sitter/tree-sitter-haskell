@@ -28,9 +28,10 @@ jobs:
           node-version: '14'
 
       - name: Install emscripten
-        uses: mymindstorm/setup-emsdk@v10
+        uses: mymindstorm/setup-emsdk@v11
         with:
           version: '2.0.24'
+          actions-cache-folder: 'emsdk-cache'
 
       - name: Build tree-sitter-haskell
         run: npm install
