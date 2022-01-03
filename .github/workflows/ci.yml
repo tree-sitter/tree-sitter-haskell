@@ -19,21 +19,37 @@ jobs:
         os: [macOS-latest, ubuntu-latest]
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install node
+        uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: '14'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install emscripten
+        uses: mymindstorm/setup-emsdk@v10
+        with:
+          version: '2.0.24'
+
       - name: Set C/C++ compiler
         if: runner.os == 'Linux'
         run: |
           echo "CC=gcc-9" >> $GITHUB_ENV
           echo "CXX=g++-9" >> $GITHUB_ENV
-      - name: Install Emscripten
-        if: runner.os == 'macOS'
-        run: brew install emscripten
-      - run: npm install
-      - run: npm test
-      - run: npm run examples
-      - run: |
+
+      - name: Build tree-sitter-haskell
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Parse examples
+        run: npm run examples
+
+      - name: Parse examples with web binding
+        run: |
           make -B node_modules/web-tree-sitter
           ./script/parse-examples wasm

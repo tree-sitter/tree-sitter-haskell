@@ -13,7 +13,7 @@ Parser.init().then(() => {
     const parser = new Parser;
     parser.setLanguage(Haskell);
     for (let i = 2; i < process.argv.length - 1; i++) {
-      const fileName = process.argv[2]
+      const fileName = process.argv[i]
       const sourceCode = fs.readFileSync(fileName, 'utf8')
       const tree = parser.parse(sourceCode);
     }
