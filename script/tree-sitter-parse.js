@@ -1,6 +1,7 @@
-#!/usr/bin/env node --trace-warnings --unhandled-rejections=strict
+#!/usr/bin/env node
 
 const fs = require('fs');
+const assert = require('assert');
 const Parser = require('web-tree-sitter');
 
 if (process.argv.length < 3) {
@@ -8,14 +9,17 @@ if (process.argv.length < 3) {
   process.exit(1)
 }
 
-Parser.init().then(() => {
-  Parser.Language.load('tree-sitter-haskell.wasm').then((Haskell) => {
-    const parser = new Parser;
-    parser.setLanguage(Haskell);
-    for (let i = 2; i < process.argv.length - 1; i++) {
-      const fileName = process.argv[i]
-      const sourceCode = fs.readFileSync(fileName, 'utf8')
-      const tree = parser.parse(sourceCode);
-    }
-  });
-});
+async function main() {
+  await Parser.init()
+  Haskell = await Parser.Language.load('tree-sitter-haskell.wasm')
+  const parser = new Parser()
+  parser.setLanguage(Haskell)
+  for (let i = 2; i < process.argv.length; i++) {
+    const fileName = process.argv[i]
+    const sourceCode = fs.readFileSync(fileName, 'utf8')
+    const tree = parser.parse(sourceCode)
+    assert.equal(tree.rootNode.type, 'haskell')
+  }
+}
+
+main()
