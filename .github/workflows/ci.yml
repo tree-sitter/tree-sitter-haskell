@@ -27,10 +27,10 @@ jobs:
         with:
           node-version: '14'
 
-      # - name: Install emscripten
-      #   uses: mymindstorm/setup-emsdk@v10
-      #   with:
-      #     version: '2.0.24'
+      - name: Install emscripten
+        uses: mymindstorm/setup-emsdk@v10
+        with:
+          version: '2.0.24'
 
       - name: Build tree-sitter-haskell
         run: npm install
@@ -41,6 +41,5 @@ jobs:
       - name: Parse examples
         run: npm run examples
 
-      # - name: Parse examples with web binding
-      #   run: npm run examples-wasm
-
+      - name: Parse examples with web binding
+        run: npm run examples-wasm
