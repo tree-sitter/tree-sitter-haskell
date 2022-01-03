@@ -26,8 +26,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
 
       - name: Install emscripten
         uses: mymindstorm/setup-emsdk@v10
