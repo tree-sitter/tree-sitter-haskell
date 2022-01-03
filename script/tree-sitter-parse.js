@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --trace-warnings --unhandled-rejections=strict
 
 const fs = require('fs');
 const Parser = require('web-tree-sitter');
