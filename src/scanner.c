@@ -270,6 +270,7 @@ static void MARK(char *marked_by, bool needs_free, State *state) {
   if (state->needs_free) free(state->marked_by);
   state->marked_by = marked_by;
   state->needs_free = needs_free;
+  state->lexer->mark_end(state->lexer);
 }
 #else
 #define MARK(s, nf, state) state->lexer->mark_end(state->lexer);
