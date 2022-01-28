@@ -1,1 +1,2 @@
 examples/haskell-language-server/test/testdata/FuncTestFail.hs
+examples/haskell-language-server/test/testdata/format/BrittanyCRLF.formatted_range.hs:

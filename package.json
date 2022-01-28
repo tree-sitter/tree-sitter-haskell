@@ -15,8 +15,8 @@
     "node-gyp": "^7.1.2"
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.20.1",
-		"web-tree-sitter": "github:wenkokke/web-tree-sitter#v0.20.1"
+    "tree-sitter-cli": "^0.20.4",
+		"web-tree-sitter": "^0.20.3"
   },
   "scripts": {
     "test": "tree-sitter test",
