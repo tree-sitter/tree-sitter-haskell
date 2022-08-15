@@ -12,12 +12,19 @@ module.exports = {
     optional($._type_annotation),
   ),
 
+  class_tyfam: $ => seq(
+    'type',
+    optional('family'),
+    $._simpletype,
+    optional($._type_annotation),
+  ),
+
   _cdecl: $ => choice(
     $._gendecl,
     $.default_signature,
     $.function,
-    $.decl_tyfam_sig,
-    $.decl_type,
+    alias($.class_tyfam, $.type_family),
+    alias($.inst_tyinst, $.type_instance),
     alias($.class_datafam, $.data_family),
   ),
 

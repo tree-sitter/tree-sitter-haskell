@@ -2455,27 +2455,6 @@
         }
       ]
     },
-    "decl_tyfam_sig": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "type"
-        },
-        {
-          "type": "STRING",
-          "value": "family"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_simpletype"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_type_annotation"
-        }
-      ]
-    },
     "tyfam_head": {
       "type": "SYMBOL",
       "name": "_simpletype"
@@ -7297,6 +7276,43 @@
         }
       ]
     },
+    "class_tyfam": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "type"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "family"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_simpletype"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_type_annotation"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
     "_cdecl": {
       "type": "CHOICE",
       "members": [
@@ -7313,12 +7329,22 @@
           "name": "function"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_tyfam_sig"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "class_tyfam"
+          },
+          "named": true,
+          "value": "type_family"
         },
         {
-          "type": "SYMBOL",
-          "name": "decl_type"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "inst_tyinst"
+          },
+          "named": true,
+          "value": "type_instance"
         },
         {
           "type": "ALIAS",

@@ -188,9 +188,9 @@ class A a where
   (class_head (class_name (type)) (type_name (type_variable)))
   (class_body
    (where)
-   (decl_type (type) (type_variable) (type_name (type_variable)))
-   (decl_type (type) (type_variable) (type_name (type)))
-   (decl_tyfam_sig (type) (type_variable) (type_name (type_variable))))))
+   (type_family (type) (type_variable) (type_name (type_variable)))
+   (type_instance (type_name (type)) (type_name (type_variable)) (type_name (type)))
+   (type_family (type) (type_variable) (type_name (type_variable))))))
 
 ================================================================================
 class: associated data
@@ -244,3 +244,33 @@ class a ++ b
     left: (type_name (type_variable))
     op: (type_operator)
     right: (type_name (type_variable))))))
+
+================================================================================
+class: multiple type families unannotated
+================================================================================
+
+{-# LANGUAGE TypeFamilies #-}
+module Wtf where
+class TwoAssocs a where
+  type First a
+  type Second a
+  type Second a = ()
+
+  someItem :: a
+
+---
+
+(haskell
+  (pragma)
+  (module)
+  (where)
+  (class
+    (class_head (class_name (type))
+      (type_name (type_variable)))
+    (class_body
+      (where)
+      (type_family (type) (type_variable))
+      (type_family (type) (type_variable))
+      (type_instance (type_name (type)) (type_name (type_variable)) (type_literal (con_unit)))
+      (signature (variable) (type_name (type_variable))))))
+
