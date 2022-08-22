@@ -5,8 +5,13 @@ module.exports = {
   // var
   // ------------------------------------------------------------------------
 
-  _varid: _ => /[_a-z](\w|')*#?/,
-  label: _ => /#[_a-z](\w|')*/,
+  // https://www.haskell.org/onlinereport/lexemes.html
+  //
+  // varid: "small { small | large | digit | ' }" per the report,
+  // where small: ascSmall | uniSmall | _ (and uniSmall is a superset of ascSmall)
+  // Then, uniSmall is implemented as the unicode class "Ll": letter lowercase
+  _varid: _ => /[_\p{Ll}](\w|')*#?/u,
+  label: _ => /#[_\p{Ll}](\w|')*/u,
   variable: $ => $._varid,
   qualified_variable: $ => qualified($, $.variable),
   _qvarid: $ => choice($.qualified_variable, $.variable),
@@ -25,13 +30,17 @@ module.exports = {
   _qvarop: $ => choice($._qvarsym, ticked($._qvarid)),
   _qvarop_nominus: $ => choice($._qvarsym_nominus, ticked($._qvarid)),
 
-  implicit_parid: _ => /\?[_a-z](\w|')*/,
+  implicit_parid: _ => /\?[_\p{Ll}](\w|')*/u,
 
   // ------------------------------------------------------------------------
   // con
   // ------------------------------------------------------------------------
 
-  _conid: _ => /[A-Z](\w|')*#?/,
+  // per the report,
+  //   conid: "large { small | large | digit | ' }"
+  // large (via uniLarge) is "any uppercase or titlecase unicode character"
+  // which are the unicode categories "Lu": letter uppercase, "Lt": letter titlecase
+  _conid: _ => /[\p{Lu}\p{Lt}](\w|')*#?/u,
   constructor: $ => $._conid,
   qualified_constructor: $ => qualified($, $.constructor),
   _qconid: $ => choice($.qualified_constructor, $.constructor),
