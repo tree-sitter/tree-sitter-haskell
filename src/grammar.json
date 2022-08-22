@@ -624,11 +624,11 @@
     },
     "_varid": {
       "type": "PATTERN",
-      "value": "[_a-z](\\w|')*#?"
+      "value": "[_\\p{Ll}](\\w|')*#?"
     },
     "label": {
       "type": "PATTERN",
-      "value": "#[_a-z](\\w|')*"
+      "value": "#[_\\p{Ll}](\\w|')*"
     },
     "variable": {
       "type": "SYMBOL",
@@ -857,11 +857,11 @@
     },
     "implicit_parid": {
       "type": "PATTERN",
-      "value": "\\?[_a-z](\\w|')*"
+      "value": "\\?[_\\p{Ll}](\\w|')*"
     },
     "_conid": {
       "type": "PATTERN",
-      "value": "[A-Z](\\w|')*#?"
+      "value": "[\\p{Lu}\\p{Lt}](\\w|')*#?"
     },
     "constructor": {
       "type": "SYMBOL",
