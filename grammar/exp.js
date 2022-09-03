@@ -163,7 +163,7 @@ module.exports = {
 
   alts: $ => layouted($, $.alt),
 
-  exp_case: $ => seq('case', $._exp, 'of', $.alts),
+  exp_case: $ => seq('case', $._exp, 'of', optional($.alts)),
 
   /**
    * left associative because the alts are optional

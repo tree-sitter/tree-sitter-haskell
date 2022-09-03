@@ -4085,8 +4085,16 @@
           "value": "of"
         },
         {
-          "type": "SYMBOL",
-          "name": "alts"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "alts"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },
