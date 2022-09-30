@@ -8,3 +8,4 @@ examples/*
 .gdb_history
 *.o
 *.so
+/.build/
