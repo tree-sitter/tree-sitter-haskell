@@ -1334,3 +1334,20 @@ a = \case { a -> a }
     (alt
      (pat_name (variable))
      (exp_name (variable)))))))
+
+================================================================================
+exp: unicode do bind arrow
+================================================================================
+
+a = do
+  a ← a
+  a
+
+---
+
+(haskell
+ (function
+  (variable)
+  (exp_do
+   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
+   (stmt (exp_name (variable))))))

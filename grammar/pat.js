@@ -12,7 +12,7 @@ module.exports = {
 
   pat_parens: $ => parens($._nested_pat),
 
-  pat_view: $ => seq($._exp, '->', $._nested_pat),
+  pat_view: $ => seq($._exp, $._arrow, $._nested_pat),
 
   pat_tuple: $ => parens(sep2($.comma, $._nested_pat)),
 

@@ -16,7 +16,7 @@ module.exports = {
 
   _forall_kw: _ => choice('forall', '∀'),
 
-  _forall_dot: _ => choice('.', '->'),
+  _forall_dot: $ => choice('.', $._arrow),
 
   _forall: $ => seq(
     $._forall_kw,
@@ -132,7 +132,7 @@ module.exports = {
     ),
   ),
 
-  _context: $ => seq($._context_constraints, '=>'),
+  _context: $ => seq($._context_constraints, $._carrow),
 
   context: $ => $._context,
 
@@ -144,7 +144,7 @@ module.exports = {
 
   _fun_arrow: $ => seq(
     optional($.modifier),
-    '->',
+    $._arrow,
   ),
 
   _type_fun: $ => prec('function-type', seq($._type_infix, $._fun_arrow, $._type)),
@@ -162,7 +162,7 @@ module.exports = {
   ),
 
   _type_annotation: $ => seq(
-    '::',
+    $._colon2,
     field('type', $._type_or_implicit),
   ),
 

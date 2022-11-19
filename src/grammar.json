@@ -586,6 +586,58 @@
         }
       ]
     },
+    "_carrow": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "⇒"
+        },
+        {
+          "type": "STRING",
+          "value": "=>"
+        }
+      ]
+    },
+    "_arrow": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "→"
+        },
+        {
+          "type": "STRING",
+          "value": "->"
+        }
+      ]
+    },
+    "_larrow": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "←"
+        },
+        {
+          "type": "STRING",
+          "value": "<-"
+        }
+      ]
+    },
+    "_colon2": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "∷"
+        },
+        {
+          "type": "STRING",
+          "value": "::"
+        }
+      ]
+    },
     "pragma": {
       "type": "TOKEN",
       "content": {
@@ -1391,8 +1443,8 @@
           "value": "("
         },
         {
-          "type": "STRING",
-          "value": "->"
+          "type": "SYMBOL",
+          "name": "_arrow"
         },
         {
           "type": "STRING",
@@ -1567,8 +1619,8 @@
           "value": "."
         },
         {
-          "type": "STRING",
-          "value": "->"
+          "type": "SYMBOL",
+          "name": "_arrow"
         }
       ]
     },
@@ -2188,8 +2240,8 @@
           "name": "_context_constraints"
         },
         {
-          "type": "STRING",
-          "value": "=>"
+          "type": "SYMBOL",
+          "name": "_carrow"
         }
       ]
     },
@@ -2252,8 +2304,8 @@
           ]
         },
         {
-          "type": "STRING",
-          "value": "->"
+          "type": "SYMBOL",
+          "name": "_arrow"
         }
       ]
     },
@@ -2335,8 +2387,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "::"
+          "type": "SYMBOL",
+          "name": "_colon2"
         },
         {
           "type": "FIELD",
@@ -3110,8 +3162,8 @@
           "name": "_typed_pat"
         },
         {
-          "type": "STRING",
-          "value": "<-"
+          "type": "SYMBOL",
+          "name": "_larrow"
         },
         {
           "type": "SYMBOL",
@@ -3458,8 +3510,8 @@
           }
         },
         {
-          "type": "STRING",
-          "value": "->"
+          "type": "SYMBOL",
+          "name": "_arrow"
         },
         {
           "type": "SYMBOL",
@@ -3777,8 +3829,8 @@
           "name": "_pat"
         },
         {
-          "type": "STRING",
-          "value": "<-"
+          "type": "SYMBOL",
+          "name": "_larrow"
         },
         {
           "type": "SYMBOL",
@@ -3845,8 +3897,8 @@
           "name": "guards"
         },
         {
-          "type": "STRING",
-          "value": "->"
+          "type": "SYMBOL",
+          "name": "_arrow"
         },
         {
           "type": "SYMBOL",
@@ -3861,8 +3913,8 @@
           "type": "SEQ",
           "members": [
             {
-              "type": "STRING",
-              "value": "->"
+              "type": "SYMBOL",
+              "name": "_arrow"
             },
             {
               "type": "SYMBOL",
@@ -4979,8 +5031,8 @@
           "name": "_exp"
         },
         {
-          "type": "STRING",
-          "value": "->"
+          "type": "SYMBOL",
+          "name": "_arrow"
         },
         {
           "type": "SYMBOL",
@@ -6188,8 +6240,8 @@
           ]
         },
         {
-          "type": "STRING",
-          "value": "::"
+          "type": "SYMBOL",
+          "name": "_colon2"
         },
         {
           "type": "CHOICE",
@@ -6610,8 +6662,8 @@
           ]
         },
         {
-          "type": "STRING",
-          "value": "->"
+          "type": "SYMBOL",
+          "name": "_arrow"
         },
         {
           "type": "SYMBOL",
@@ -6650,8 +6702,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "::"
+          "type": "SYMBOL",
+          "name": "_colon2"
         },
         {
           "type": "CHOICE",
@@ -6692,8 +6744,8 @@
                   "name": "record_fields"
                 },
                 {
-                  "type": "STRING",
-                  "value": "->"
+                  "type": "SYMBOL",
+                  "name": "_arrow"
                 },
                 {
                   "type": "SYMBOL",
@@ -7376,8 +7428,8 @@
           }
         },
         {
-          "type": "STRING",
-          "value": "->"
+          "type": "SYMBOL",
+          "name": "_arrow"
         },
         {
           "type": "REPEAT1",
@@ -8790,8 +8842,8 @@
           }
         },
         {
-          "type": "STRING",
-          "value": "<-"
+          "type": "SYMBOL",
+          "name": "_larrow"
         },
         {
           "type": "FIELD",

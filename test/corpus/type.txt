@@ -534,3 +534,24 @@ type A =
   (type_unboxed_tuple
    (type_name
     (type_variable)))))
+
+================================================================================
+type decl: unicode arrows
+================================================================================
+
+type A = A ⇒ a → a
+
+---
+
+(haskell
+  (type_alias
+    (type)
+    (context
+      (constraint
+        (class_name
+          (type)))
+      (fun
+        (type_name
+          (type_variable))
+        (type_name
+          (type_variable))))))

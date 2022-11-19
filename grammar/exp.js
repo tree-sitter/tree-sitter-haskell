@@ -50,7 +50,7 @@ module.exports = {
 
   bind_pattern: $ => seq(
     $._typed_pat,
-    '<-',
+    $._larrow,
     $._exp,
   ),
 
@@ -111,7 +111,7 @@ module.exports = {
   exp_lambda: $ => seq(
     '\\',
     repeat1($._apat),
-    '->',
+    $._arrow,
     $._exp,
   ),
 
@@ -140,7 +140,7 @@ module.exports = {
 
   pattern_guard: $ => seq(
     $._pat,
-    '<-',
+    $._larrow,
     $._exp_infix,
   ),
 
@@ -152,10 +152,10 @@ module.exports = {
 
   guards: $ => seq('|', sep1($.comma, $.guard)),
 
-  gdpat: $ => seq($.guards, '->', $._exp),
+  gdpat: $ => seq($.guards, $._arrow, $._exp),
 
   _alt_variants: $ => choice(
-    seq('->', $._exp),
+    seq($._arrow, $._exp),
     repeat1($.gdpat),
   ),
 

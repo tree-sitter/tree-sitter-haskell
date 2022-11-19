@@ -197,3 +197,17 @@ a :: a -> [a|a|] -> a
    (fun
     (quasiquote (quasiquote_start) (quoter) (quasiquote_bar) (quasiquote_body))
     (type_name (type_variable))))))
+
+================================================================================
+signature: unicode herald
+================================================================================
+
+a ∷ a
+
+---
+
+(haskell
+ (signature
+  (variable)
+  (type_name
+   (type_variable))))

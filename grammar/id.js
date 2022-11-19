@@ -103,7 +103,7 @@ module.exports = {
     $._qtyconops,
   ),
 
-  tycon_arrow: _ => parens('->'),
+  tycon_arrow: $ => parens($._arrow),
 
   type_literal: $ => choice(
     $._literal,

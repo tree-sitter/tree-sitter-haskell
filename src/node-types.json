@@ -2153,6 +2153,10 @@
           {
             "type": "type_unboxed_tuple",
             "named": true
+          },
+          {
+            "type": "∷",
+            "named": false
           }
         ]
       },
@@ -2656,6 +2660,10 @@
           {
             "type": "type_unboxed_tuple",
             "named": true
+          },
+          {
+            "type": "∷",
+            "named": false
           }
         ]
       },
@@ -2830,6 +2838,10 @@
           {
             "type": "type_unboxed_tuple",
             "named": true
+          },
+          {
+            "type": "∷",
+            "named": false
           }
         ]
       },
@@ -3004,6 +3016,10 @@
           {
             "type": "type_unboxed_tuple",
             "named": true
+          },
+          {
+            "type": "∷",
+            "named": false
           }
         ]
       },
@@ -3462,6 +3478,10 @@
           {
             "type": "type_unboxed_tuple",
             "named": true
+          },
+          {
+            "type": "∷",
+            "named": false
           }
         ]
       },
@@ -3636,6 +3656,10 @@
           {
             "type": "type_unboxed_tuple",
             "named": true
+          },
+          {
+            "type": "∷",
+            "named": false
           }
         ]
       },
@@ -3810,6 +3834,10 @@
           {
             "type": "type_unboxed_tuple",
             "named": true
+          },
+          {
+            "type": "∷",
+            "named": false
           }
         ]
       },
@@ -7397,6 +7425,10 @@
           {
             "type": "type_unboxed_tuple",
             "named": true
+          },
+          {
+            "type": "∷",
+            "named": false
           }
         ]
       },
@@ -11882,6 +11914,10 @@
           {
             "type": "type_unboxed_tuple",
             "named": true
+          },
+          {
+            "type": "∷",
+            "named": false
           }
         ]
       }
@@ -14140,7 +14176,23 @@
     "named": false
   },
   {
+    "type": "←",
+    "named": false
+  },
+  {
+    "type": "→",
+    "named": false
+  },
+  {
+    "type": "⇒",
+    "named": false
+  },
+  {
     "type": "∀",
+    "named": false
+  },
+  {
+    "type": "∷",
     "named": false
   }
 ]
