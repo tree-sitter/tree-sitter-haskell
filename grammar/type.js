@@ -206,9 +206,9 @@ module.exports = {
   ),
 
   _tyfam_pat_infix: $ => seq(
-    $._atype,
+    $._btype,
     field('op', $._qtyconop),
-    $._atype,
+    $._btype,
   ),
 
   tyfam_pat: $ => choice(

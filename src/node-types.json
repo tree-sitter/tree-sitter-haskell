@@ -10986,6 +10986,10 @@
           "named": true
         },
         {
+          "type": "type_apply",
+          "named": true
+        },
+        {
           "type": "type_list",
           "named": true
         },

@@ -2536,7 +2536,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_atype"
+          "name": "_btype"
         },
         {
           "type": "FIELD",
@@ -2548,7 +2548,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_atype"
+          "name": "_btype"
         }
       ]
     },

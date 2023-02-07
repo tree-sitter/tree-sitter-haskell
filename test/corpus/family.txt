@@ -236,3 +236,24 @@ type family A a = r | r -> a where
   (tyfam_injectivity (type_variable) (type_variable))
   (where)
   (equation (pattern (type) (type_name (type_variable))) (type_name (type_variable)))))
+
+================================================================================
+family: symbolic with btype
+================================================================================
+
+type family A a where
+  A a <> a = a
+
+
+---
+
+(haskell
+ (type_family
+  (head (type) (type_variable))
+  (where)
+  (equation
+   (pattern
+    (type_apply (type_name (type)) (type_name (type_variable)))
+    (type_operator)
+    (type_name (type_variable)))
+   (type_name (type_variable)))))
