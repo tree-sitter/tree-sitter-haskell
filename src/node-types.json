@@ -12543,6 +12543,40 @@
     "fields": {}
   },
   {
+    "type": "tyfam_injectivity",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "type_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tyfam_result_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "annotated_type_variable",
+          "named": true
+        },
+        {
+          "type": "type_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "type",
     "named": true,
     "fields": {}
@@ -12909,6 +12943,14 @@
         },
         {
           "type": "head",
+          "named": true
+        },
+        {
+          "type": "tyfam_injectivity",
+          "named": true
+        },
+        {
+          "type": "tyfam_result_type",
           "named": true
         },
         {

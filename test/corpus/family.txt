@@ -214,3 +214,25 @@ type family A a where
   (equation
    (pattern (type_name (type_variable)) (type_operator) (type_name (type_variable)))
    (type_name (type_variable)))))
+
+================================================================================
+family: injectivity annotation
+================================================================================
+
+type family A a = r
+
+type family A a = r | r -> a where
+  A a = a
+
+---
+
+(haskell
+ (type_family
+  (head (type) (type_variable))
+  (tyfam_result_type (type_variable)))
+ (type_family
+  (head (type) (type_variable))
+  (tyfam_result_type (type_variable))
+  (tyfam_injectivity (type_variable) (type_variable))
+  (where)
+  (equation (pattern (type) (type_name (type_variable))) (type_name (type_variable)))))

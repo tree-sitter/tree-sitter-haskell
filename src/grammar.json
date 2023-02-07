@@ -2587,6 +2587,64 @@
         }
       ]
     },
+    "tyfam_result_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_tyvar"
+        }
+      ]
+    },
+    "tyfam_injectivity": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "|"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_variable"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_arrow"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type_variable"
+          }
+        }
+      ]
+    },
+    "_tyfam_inj": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "tyfam_result_type"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "tyfam_injectivity"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
     "decl_tyfam": {
       "type": "SEQ",
       "members": [
@@ -2611,8 +2669,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_type_annotation"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_type_annotation"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_tyfam_inj"
+                }
+              ]
             },
             {
               "type": "BLANK"

@@ -222,11 +222,20 @@ module.exports = {
     $._type_or_implicit,
   ),
 
+  tyfam_result_type: $ => seq('=', $._tyvar),
+
+  tyfam_injectivity: $ => seq('|', $.type_variable, $._arrow, repeat1($.type_variable)),
+
+  _tyfam_inj: $ => seq(
+    $.tyfam_result_type,
+    optional($.tyfam_injectivity),
+  ),
+
   decl_tyfam: $ => seq(
     'type',
     'family',
     alias($.tyfam_head, $.head),
-    optional($._type_annotation),
+    optional(choice($._type_annotation, $._tyfam_inj)),
     optional(where($, alias($.tyfam_eq, $.equation))),
   ),
 
