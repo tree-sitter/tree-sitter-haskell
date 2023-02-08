@@ -260,3 +260,13 @@ varsym: minus as operator decl
 ---
 
 (haskell (function (operator) (exp_name (operator))))
+
+================================================================================
+varsym: unicode symbol
+================================================================================
+
+(▽/▽) = a
+
+---
+
+(haskell (function (operator) (exp_name (variable))))

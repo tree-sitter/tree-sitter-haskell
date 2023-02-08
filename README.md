@@ -19,7 +19,7 @@ local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
 parser_config.haskell = {
   install_info = {
     url = "~/path/to/tree-sitter-haskell",
-    files = {"src/parser.c", "src/scanner.c"}
+    files = {"src/parser.c", "src/scanner.c", "src/unicode.h"}
   }
 }
 EOF
