@@ -984,6 +984,10 @@ static Result qq_body(State *state) {
       S_ADVANCE;
       S_ADVANCE;
     } else {
+      if (PEEK == 0x27e7) {
+        S_ADVANCE;
+        return finish(QQ_BODY, "qq_body");
+      }
       if (PEEK == '|') {
         S_ADVANCE;
         if (PEEK == ']') {

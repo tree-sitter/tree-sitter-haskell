@@ -11692,7 +11692,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "quasiquote_bar",
@@ -13489,6 +13489,11 @@
     "fields": {}
   },
   {
+    "type": "type_star",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "type_tuple",
     "named": true,
     "fields": {},
@@ -13866,6 +13871,10 @@
     "named": false
   },
   {
+    "type": "*",
+    "named": false
+  },
+  {
     "type": "-",
     "named": false
   },
@@ -14178,10 +14187,6 @@
     "named": true
   },
   {
-    "type": "type_star",
-    "named": true
-  },
-  {
     "type": "unsafe",
     "named": false
   },
@@ -14239,6 +14244,18 @@
   },
   {
     "type": "∷",
+    "named": false
+  },
+  {
+    "type": "★",
+    "named": false
+  },
+  {
+    "type": "⟦",
+    "named": false
+  },
+  {
+    "type": "⟧",
     "named": false
   }
 ]

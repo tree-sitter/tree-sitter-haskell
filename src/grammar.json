@@ -1859,8 +1859,17 @@
       ]
     },
     "type_star": {
-      "type": "STRING",
-      "value": "*"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "*"
+        },
+        {
+          "type": "STRING",
+          "value": "★"
+        }
+      ]
     },
     "type_unboxed_tuple": {
       "type": "SEQ",
@@ -9217,29 +9226,43 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "quasiquote_start"
-        },
-        {
           "type": "CHOICE",
           "members": [
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_qvarid"
-              },
-              "named": true,
-              "value": "quoter"
+              "type": "STRING",
+              "value": "⟦"
             },
             {
-              "type": "BLANK"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "quasiquote_start"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_qvarid"
+                      },
+                      "named": true,
+                      "value": "quoter"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "quasiquote_bar"
+                }
+              ]
             }
           ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "quasiquote_bar"
         },
         {
           "type": "CHOICE",
@@ -9254,11 +9277,20 @@
           ]
         },
         {
-          "type": "TOKEN",
-          "content": {
-            "type": "STRING",
-            "value": "|]"
-          }
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "TOKEN",
+              "content": {
+                "type": "STRING",
+                "value": "|]"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "⟧"
+            }
+          ]
         }
       ]
     }

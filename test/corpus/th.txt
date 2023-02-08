@@ -148,3 +148,13 @@ a = [a|
 ---
 
 (haskell (function (variable) (quasiquote (quasiquote_start) (quoter) (quasiquote_bar) (MISSING "|]"))))
+
+================================================================================
+template haskell: unicode brackets
+================================================================================
+
+a = ⟦a⟧
+
+---
+
+(haskell (function (variable) (quasiquote (quasiquote_body))))

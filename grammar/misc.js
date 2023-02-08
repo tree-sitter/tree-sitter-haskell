@@ -28,10 +28,15 @@ module.exports = {
    * `token.immediate` since the scanner already verifies it.
    */
   quasiquote: $ => seq(
-    $.quasiquote_start,
-    optional(alias($._qvarid, $.quoter)),
-    $.quasiquote_bar,
+    choice(
+      '⟦',
+      seq(
+        $.quasiquote_start,
+        optional(alias($._qvarid, $.quoter)),
+        $.quasiquote_bar,
+      )
+    ),
     optional($.quasiquote_body),
-    token('|]'),
+    choice(token('|]'), '⟧'),
   ),
 }

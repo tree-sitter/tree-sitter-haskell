@@ -60,7 +60,7 @@ module.exports = {
     $._gtycon,
   ),
 
-  type_star: _ => '*',
+  type_star: _ => choice('*', '★'),
 
   /**
   * The `(##)` format of the unary tuple is parsed as an operator, see `exp_unboxed_tuple`.
