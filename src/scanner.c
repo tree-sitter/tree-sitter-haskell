@@ -17,6 +17,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <wctype.h>
+#include "unicode.h"
 
 // short circuit
 #define SHORT_SCANNER if (res.finished) return res;
@@ -489,7 +490,7 @@ static bool symbolic(uint32_t c) {
     SYMBOLIC_CASES:
       return true;
     default:
-      return false;
+      return unicode_symbol(c);
   }
 }
 
@@ -1263,7 +1264,9 @@ static Result close_layout_in_list(State *state) {
  *   - '|' in a quasiquote, since it can be followed by symbolic operator characters, which would be consumed
  */
 static Result inline_tokens(State *state) {
-  switch (PEEK) {
+  uint32_t c = PEEK;
+  bool is_symbolic = false;
+  switch (c) {
     case 'w': {
       Result res = where(state);
       SHORT_SCANNER;
@@ -1287,8 +1290,7 @@ static Result inline_tokens(State *state) {
     // TODO(414owen) does this clash with inline comments '--'?
     // I'm not sure why there's a `symbolic::comment` and a `COMMENT`...
     SYMBOLICS_WITHOUT_BAR: {
-      Symbolic s = read_symop(state);
-      return symop(s, state);
+      is_symbolic = true;
     }
     case '|': {
       if (state->symbols[QQ_BAR]) {
@@ -1312,6 +1314,10 @@ static Result inline_tokens(State *state) {
       Result res = comment(state);
       SHORT_SCANNER;
     }
+  }
+  if (is_symbolic || unicode_symbol(c)) {
+    Symbolic s = read_symop(state);
+    return symop(s, state);
   }
   return close_layout_in_list(state);
 }
@@ -1396,14 +1402,19 @@ static Result newline_indent(uint32_t indent, State *state) {
  * Rules that decide based on the first token on the next line.
  */
 static Result newline_token(uint32_t indent, State *state) {
-  switch (PEEK) {
+  uint32_t c = PEEK;
+  bool is_symbolic = false;
+  switch (c) {
     SYMBOLIC_CASES:
     case '`': {
-      Symbolic s = read_symop(state);
-      Result res = newline_infix(indent, s, state);
-      SHORT_SCANNER;
-      return res_fail;
+      is_symbolic = true;
     }
+  }
+  if (is_symbolic || unicode_symbol(c)) {
+    Symbolic s = read_symop(state);
+    Result res = newline_infix(indent, s, state);
+    SHORT_SCANNER;
+    return res_fail;
   }
   Result res = newline_where(indent, state);
   SHORT_SCANNER;
