@@ -85,6 +85,7 @@ module.exports = grammar({
     $._quantifiers,
     $._tyfam_pat_prefix,
     $._tyfam_pat_infix,
+    $._qualifying_module,
   ],
 
   precedences: _ => [
