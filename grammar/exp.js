@@ -1,4 +1,4 @@
-const {parens, brackets, braces, sep1, layouted, qualified} = require('./util.js')
+const {parens, brackets, braces, sep1, layouted, qualified, varid_pattern} = require('./util.js')
 
 module.exports = {
   // ------------------------------------------------------------------------
@@ -54,10 +54,26 @@ module.exports = {
     $._exp,
   ),
 
+  /**
+    * An expression like `[1,2..20]`.
+    *
+    * The two dots are handled in the scanner to disambiguate module and projection dots:
+    *
+    * - `[A.b]`
+    * - `[a.b]`
+    *
+    * The reason for `choice($._arith_dotdot, '..')` is simply to avoid having to add another case to the scanner.
+    * The disambiguation is only performed when the first dot occurs immediately after the identifier, since succeeding
+    * whitespace is not allowed for module/projection dots.
+    * When the scanner encounters two dots with no further symbolic characters, it rejects the token, deferring to the
+    * grammar.
+    * We could instead check for the `_arith_dotdot` symbol, but we have to reject the token anyway for record
+    * wildcards, so we can just fall back to the grammar for this as well.
+    */
   exp_arithmetic_sequence: $ => brackets(
     field('from', $._exp),
     optional(seq($.comma, field('step', $._exp))),
-    '..',
+    choice($._arith_dotdot, '..'),
     optional(field('to', $._exp)),
   ),
 
@@ -103,7 +119,11 @@ module.exports = {
 
   exp_field: $ => choice(
     alias('..', $.wildcard),
-    seq($._qvar, optional(seq('=', $._exp)))
+    seq(
+      field('field', $._qvar),
+      repeat(seq($._immediate_dot, field('subfield', $._immediate_variable))),
+      optional(seq('=', $._exp))
+    ),
   ),
 
   exp_type_application: $ => seq('@', $._atype),
@@ -186,9 +206,6 @@ module.exports = {
     $.rec,
   ),
 
-  /**
-   * TODO does this hide the keyword entirely?
-   */
   _do_keyword: _ => choice('mdo', 'do'),
 
   do_module: $ => qualified($, $._do_keyword),
@@ -206,15 +223,49 @@ module.exports = {
     $.label,
   ),
 
-  _aexp: $ => choice(
+  /**
+    * Unlike module dot or projection dot, the projection selector dot can match in positions where any varsym can
+    * match: `(.name)` vs. `(.::+)`.
+    * Furthermore, it can have whitespace between the paren and the dot.
+    * Handling this with the dot logic in the scanner would require unreasonable complexity, and since record fields can
+    * only be varids, we simply hardcode that here.
+    */
+  exp_projection_selector: $ => parens(
+    '.',
+    field('field', $._immediate_variable),
+    repeat(seq($._immediate_dot, field('field', $._immediate_variable))),
+  ),
+
+  /**
+   * The Report lists for `aexp` only expressions that don't have any unbracketed whitespace, except for record
+   * construction/update.
+   * The GHC parser, however, includes lambdas, let/in and extensions like lambda case in it.
+   *
+   * Dot-syntax projection works only with simple `aexp`s. For example, these are valid:
+   *
+   * - `(a <> b).name`
+   * - `[a, b].name`
+   * - `(,).name`
+   * - `[e|a|].name`
+   * - `$splice.name`
+   * - `Animal {name = "cat"}.name`
+   * - `(.name).name`
+   * - `(# 1, 2 #).name` (doesn't typecheck, but might in the future?)
+   *
+   * Some are clear parse errors:
+   *
+   * - `@Int.name`
+   *
+   * Others simply don't make sense since they bind the projection into a subexpression, (lambda case and do), even
+   * though the grammar works fine if they are included here.
+   * We simply keep them out to reduce complexity.
+   */
+  _aexp_projection: $ => choice(
     $.exp_name,
     $.exp_parens,
     $.exp_tuple,
     $.exp_list,
     $.exp_th_quoted_name,
-    $.exp_type_application,
-    $.exp_lambda_case,
-    $.exp_do,
     $.exp_record,
     $.exp_arithmetic_sequence,
     $.exp_list_comprehension,
@@ -222,9 +273,42 @@ module.exports = {
     $.exp_section_right,
     $.exp_unboxed_tuple,
     $.exp_unboxed_sum,
+    $.exp_projection_selector,
     $.splice,
     $.quasiquote,
     alias($.literal, $.exp_literal),
+  ),
+
+  exp_projection: $ => seq(
+    choice($._aexp_projection, $.exp_projection),
+    $._immediate_dot,
+    field('field', $._immediate_variable),
+  ),
+
+  _aexp: $ => choice(
+    $._aexp_projection,
+    $.exp_type_application,
+    $.exp_lambda_case,
+    $.exp_do,
+    $.exp_projection,
+  ),
+
+  /**
+    * A dot-syntax field projection like `var.name.othername`.
+    * Since fields can only be varids, we can just use `token.immediate` to enforce no whitespace between dot and ids.
+    */
+  exp_projection: $ => seq(
+    choice($._aexp_projection, $.exp_projection),
+    $._immediate_dot,
+    field('field', $._immediate_variable),
+  ),
+
+  _aexp: $ => choice(
+    $._aexp_projection,
+    $.exp_type_application,
+    $.exp_lambda_case,
+    $.exp_do,
+    $.exp_projection,
   ),
 
   /**
@@ -264,7 +348,7 @@ module.exports = {
 
   /**
    * This is left-associative, although in reality this would depend on the fixity declaration for the operator.
-   * The default is left, even though the reerence specifies it the other way around.
+   * The default is left, even though the reference specifies it the other way around.
    * In any case, this seems to be more stable.
    */
   exp_infix: $ => seq($._exp_infix, $._qop, $._lexp),

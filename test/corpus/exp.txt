@@ -76,6 +76,23 @@ a = [a,a..a]
   (exp_arithmetic_sequence (exp_name (variable)) (comma) (exp_name (variable)) (exp_name (variable)))))
 
 ================================================================================
+exp: arithmethic sequence
+================================================================================
+
+a = [1..4]
+a = [1 .. 4]
+
+---
+
+(haskell
+ (function
+  (variable)
+  (exp_arithmetic_sequence (exp_literal (integer)) (exp_literal (integer))))
+ (function
+  (variable)
+  (exp_arithmetic_sequence (exp_literal (integer)) (exp_literal (integer)))))
+
+================================================================================
 exp: comprehension
 ================================================================================
 
@@ -776,17 +793,11 @@ a = A.A.a . aa
 a = A.A.a . A.aa
 a = A.A.a. aa
 a = A.A.a. A.aa
-a = A.A.a .aa
-a = A.A.a .A.aa
-a = A.A.a.aa
-a = A.A.a.A.aa
 
 a = A.A.A . aa
 a = A.A.A . A.aa
 a = A.A.A. aa
 a = A.A.A. A.aa
-a = A.A.A .aa
-a = A.A.A .A.aa
 
 ---
 
@@ -813,42 +824,6 @@ a = A.A.A .A.aa
   (variable)
   (exp_infix
    (exp_name (qualified_variable (module) (module) (variable)))
-   (operator)
-   (exp_name (qualified_variable (module) (variable)))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_variable (module) (module) (variable)))
-   (operator)
-   (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_variable (module) (module) (variable)))
-   (operator)
-   (exp_name (qualified_variable (module) (variable)))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_variable (module) (module) (variable)))
-   (operator)
-   (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_variable (module) (module) (variable)))
-   (operator)
-   (exp_name (qualified_variable (module) (variable)))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_constructor (module) (module) (constructor)))
-   (operator)
-   (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_constructor (module) (module) (constructor)))
    (operator)
    (exp_name (qualified_variable (module) (variable)))))
  (function
@@ -1351,3 +1326,79 @@ a = do
   (exp_do
    (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
    (stmt (exp_name (variable))))))
+
+================================================================================
+exp: field projection with OverloadedRecordDot
+================================================================================
+
+a = a.a
+a = (a + a).a
+a = a.a.a.a
+
+---
+
+(haskell
+ (function
+  (variable)
+  (exp_projection (exp_name (variable)) (variable)))
+ (function
+  (variable)
+  (exp_projection
+   (exp_parens (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
+   (variable)))
+ (function
+  (variable)
+  (exp_projection
+   (exp_projection
+    (exp_projection (exp_name (variable)) (variable))
+    (variable))
+   (variable))))
+
+================================================================================
+exp: field selector from projection
+================================================================================
+
+a = (.a) a
+a = (.a).a.a
+a = ( .a)
+
+---
+
+(haskell
+ (function
+  (variable)
+  (exp_apply (exp_projection_selector (variable)) (exp_name (variable))))
+ (function
+  (variable)
+  (exp_projection (exp_projection (exp_projection_selector (variable)) (variable)) (variable)))
+ (function
+  (variable)
+  (exp_projection_selector (variable))))
+
+================================================================================
+exp: prefix notation operator starting with dot
+================================================================================
+
+a = (.)
+a = (.=)
+
+---
+
+(haskell
+ (function (variable) (exp_name (operator)))
+ (function (variable) (exp_name (operator))))
+
+================================================================================
+exp: OverloadedRecordUpdate
+================================================================================
+
+a = a {a.a.a = a}
+
+---
+
+(haskell
+ (function
+  name: (variable)
+  rhs: (exp_record
+   (exp_name (variable))
+   (exp_field field: (variable) subfield: (variable) subfield: (variable) (exp_name (variable))))))
