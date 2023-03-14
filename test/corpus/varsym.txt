@@ -68,7 +68,7 @@ f = a =>> a
 ---
 
 (haskell
-  (function (variable) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable))))
+  (function (variable) (exp_apply (exp_name (variable)) (ERROR (UNEXPECTED '>')) (exp_name (variable))))
   (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
 )
 
@@ -270,3 +270,7 @@ varsym: unicode symbol
 ---
 
 (haskell (function (operator) (exp_name (variable))))
+
+================================================================================
+varsym: unicode arrow
+================================================================================

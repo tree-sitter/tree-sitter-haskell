@@ -295,6 +295,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -655,6 +663,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -1999,6 +2015,14 @@
             "named": true
           },
           {
+            "type": "exp_projection",
+            "named": true
+          },
+          {
+            "type": "exp_projection_selector",
+            "named": true
+          },
+          {
             "type": "exp_record",
             "named": true
           },
@@ -2443,6 +2467,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -2563,6 +2595,14 @@
           },
           {
             "type": "exp_parens",
+            "named": true
+          },
+          {
+            "type": "exp_projection",
+            "named": true
+          },
+          {
+            "type": "exp_projection_selector",
             "named": true
           },
           {
@@ -2744,6 +2784,14 @@
             "named": true
           },
           {
+            "type": "exp_projection",
+            "named": true
+          },
+          {
+            "type": "exp_projection_selector",
+            "named": true
+          },
+          {
             "type": "exp_record",
             "named": true
           },
@@ -2919,6 +2967,14 @@
           },
           {
             "type": "exp_parens",
+            "named": true
+          },
+          {
+            "type": "exp_projection",
+            "named": true
+          },
+          {
+            "type": "exp_projection_selector",
             "named": true
           },
           {
@@ -3261,6 +3317,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -3381,6 +3445,14 @@
           },
           {
             "type": "exp_parens",
+            "named": true
+          },
+          {
+            "type": "exp_projection",
+            "named": true
+          },
+          {
+            "type": "exp_projection_selector",
             "named": true
           },
           {
@@ -3562,6 +3634,14 @@
             "named": true
           },
           {
+            "type": "exp_projection",
+            "named": true
+          },
+          {
+            "type": "exp_projection_selector",
+            "named": true
+          },
+          {
             "type": "exp_record",
             "named": true
           },
@@ -3737,6 +3817,14 @@
           },
           {
             "type": "exp_parens",
+            "named": true
+          },
+          {
+            "type": "exp_projection",
+            "named": true
+          },
+          {
+            "type": "exp_projection_selector",
             "named": true
           },
           {
@@ -3940,6 +4028,46 @@
     "type": "exp_field",
     "named": true,
     "fields": {
+      "field": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": "operator",
+            "named": true
+          },
+          {
+            "type": "qualified_operator",
+            "named": true
+          },
+          {
+            "type": "qualified_variable",
+            "named": true
+          },
+          {
+            "type": "variable",
+            "named": true
+          }
+        ]
+      },
+      "subfield": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "variable",
+            "named": true
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": false,
@@ -4016,8 +4144,8 @@
       }
     },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
         {
           "type": "exp_apply",
@@ -4084,6 +4212,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -4116,27 +4252,11 @@
           "named": true
         },
         {
-          "type": "operator",
-          "named": true
-        },
-        {
-          "type": "qualified_operator",
-          "named": true
-        },
-        {
-          "type": "qualified_variable",
-          "named": true
-        },
-        {
           "type": "quasiquote",
           "named": true
         },
         {
           "type": "splice",
-          "named": true
-        },
-        {
-          "type": "variable",
           "named": true
         },
         {
@@ -4309,6 +4429,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -4429,6 +4557,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -4643,6 +4779,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -4937,6 +5081,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -5131,6 +5283,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -5305,6 +5465,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -5498,6 +5666,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -5538,6 +5714,112 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "exp_projection",
+    "named": true,
+    "fields": {
+      "field": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "variable",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "exp_arithmetic_sequence",
+          "named": true
+        },
+        {
+          "type": "exp_list",
+          "named": true
+        },
+        {
+          "type": "exp_list_comprehension",
+          "named": true
+        },
+        {
+          "type": "exp_literal",
+          "named": true
+        },
+        {
+          "type": "exp_name",
+          "named": true
+        },
+        {
+          "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
+          "type": "exp_record",
+          "named": true
+        },
+        {
+          "type": "exp_section_left",
+          "named": true
+        },
+        {
+          "type": "exp_section_right",
+          "named": true
+        },
+        {
+          "type": "exp_th_quoted_name",
+          "named": true
+        },
+        {
+          "type": "exp_tuple",
+          "named": true
+        },
+        {
+          "type": "exp_unboxed_sum",
+          "named": true
+        },
+        {
+          "type": "exp_unboxed_tuple",
+          "named": true
+        },
+        {
+          "type": "quasiquote",
+          "named": true
+        },
+        {
+          "type": "splice",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "exp_projection_selector",
+    "named": true,
+    "fields": {
+      "field": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "variable",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -5586,6 +5868,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -5709,6 +5999,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -5856,6 +6154,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -6164,6 +6470,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -6409,6 +6723,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -6600,6 +6922,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -7331,6 +7661,14 @@
             "named": true
           },
           {
+            "type": "exp_projection",
+            "named": true
+          },
+          {
+            "type": "exp_projection_selector",
+            "named": true
+          },
+          {
             "type": "exp_record",
             "named": true
           },
@@ -7799,6 +8137,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -7915,6 +8261,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -8113,6 +8467,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -10805,6 +11167,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -11094,6 +11464,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -11485,6 +11863,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {
@@ -12112,6 +12498,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -12309,6 +12703,14 @@
           "named": true
         },
         {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
           "type": "exp_record",
           "named": true
         },
@@ -12496,6 +12898,14 @@
         },
         {
           "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
           "named": true
         },
         {

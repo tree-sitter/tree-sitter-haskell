@@ -57,6 +57,8 @@ where = ($, rule) => seq(
   optional(layouted($, rule)),
 )
 
+varid_pattern = /[_\p{Ll}](\w|')*#?/u
+
 module.exports = {
   parens,
   braces,
@@ -70,4 +72,5 @@ module.exports = {
   terminated,
   layouted,
   where,
+  varid_pattern,
 }

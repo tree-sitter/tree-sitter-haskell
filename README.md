@@ -104,6 +104,8 @@ These extensions are supported ✅, unsupported ❌ or not applicable because th
 * OverlappingInstances ➖️
 * OverloadedLabels ✅
 * OverloadedLists ➖️
+* OverloadedRecordDot ✅
+* OverloadedRecordUpdate ✅
 * OverloadedStrings ➖️
 * PackageImports ✅
 * ParallelListComp ✅

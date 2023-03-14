@@ -74,6 +74,7 @@
  *   - end: End an implicit layout, in place of a closing brace
  *   - dot: For qualified modules `Data.List.null`, which have to be disambiguated from the `(.)` operator based on
  *     surrounding whitespace.
+ *   - arith_dotdot: The two dots in an arithmetic sequence, since both module dots and projection dots are valid here.
  *   - where: Parse an inline `where` token. This is necessary because `where` tokens can end layouts and it's necesary
  *     to know whether it is valid at that position, which can mean that it belongs to the last statement of the layout
  *   - splice: A TH splice starting with a `$`, to disambiguate from the operator
@@ -101,6 +102,7 @@ typedef enum {
   START,
   END,
   DOT,
+  ARITH_DOTDOT,
   WHERE,
   SPLICE,
   VARSYM,
@@ -127,6 +129,7 @@ static char *sym_names[] = {
   "start",
   "end",
   "dot",
+  "arith_dot",
   "where",
   "splice",
   "varsym",
@@ -579,6 +582,7 @@ static Symbolic s_symop(wchar_vec s, State *state) {
     if (c == '?' && varid_start_char(PEEK)) return S_IMPLICIT;
     if (c == '%' && !(isws(PEEK) || PEEK == ')')) return S_MODIFIER;
     if (c == '|') return S_BAR;
+    if (c == '.' &&  !(isws(PEEK) || PEEK == ')')) return S_INVALID;
     switch (c) {
       case '*':
         return S_STAR;
@@ -792,7 +796,8 @@ static Result initialize_init(State *state) {
 }
 
 /**
- * If a dot is neither preceded nor succeded by whitespace, it may be parsed as a qualified module dot.
+ * If a dot is neither preceded nor succeeded by whitespace, it may be parsed as a qualified module dot or a field
+ * projection.
  *
  * The preceding space is ensured by sequencing this parser before `skipspace` in `init`.
  * Since this parser cannot look back to see whether the preceding name is a conid, this has to be ensured by the
@@ -800,14 +805,24 @@ static Result initialize_init(State *state) {
  *
  * Since the dot is consumed here, the alternative interpretation, a `VARSYM`, has to be emitted here.
  * A `TYCONSYM` is invalid here, because the dot is only expected in expressions.
+ *
+ * In arithmetic sequences, the initial expression may be followed by module dots and projection dots as well as the two
+ * dots that denote the sequence, so the latter have to be disambiguated here as well.
  */
 static Result dot(State *state) {
-  if (SYM(DOT)) {
+  if (SYM(DOT) || SYM(ARITH_DOTDOT)) {
     if (PEEK == '.') {
       S_ADVANCE;
-      if (SYM(VARSYM) && iswspace(PEEK)) return finish(VARSYM, "dot");
+      if (SYM(VARSYM) && (iswspace(PEEK))) return finish(VARSYM, "dot");
       MARK("dot", false, state);
-      return finish(DOT, "dot");
+      if (SYM(ARITH_DOTDOT) && PEEK == '.') {
+        S_ADVANCE;
+        if (!symbolic(PEEK)) {
+          MARK("dot", false, state);
+          return finish(ARITH_DOTDOT, "dot");
+        }
+      }
+      else if (SYM(DOT)) return finish(DOT, "dot");
     }
   }
   return res_cont;

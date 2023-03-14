@@ -1,4 +1,4 @@
-const {parens} = require('./util.js')
+const {parens, varid_pattern} = require('./util.js')
 
 module.exports = {
   // ------------------------------------------------------------------------
@@ -10,9 +10,11 @@ module.exports = {
   // varid: "small { small | large | digit | ' }" per the report,
   // where small: ascSmall | uniSmall | _ (and uniSmall is a superset of ascSmall)
   // Then, uniSmall is implemented as the unicode class "Ll": letter lowercase
-  _varid: _ => /[_\p{Ll}](\w|')*#?/u,
+  _varid: _ => varid_pattern,
+  _immediate_varid: _ => token.immediate(varid_pattern),
   label: _ => /#[_\p{Ll}](\w|')*/u,
   variable: $ => $._varid,
+  _immediate_variable: $ => alias($._immediate_varid, $.variable),
   qualified_variable: $ => qualified($, $.variable),
   _qvarid: $ => choice($.qualified_variable, $.variable),
 

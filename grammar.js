@@ -37,6 +37,7 @@ module.exports = grammar({
     $._layout_start,
     $._layout_end,
     $._dot,
+    $._arith_dotdot,
     $.where,
     $._splice_dollar,
     $._varsym,
@@ -163,6 +164,7 @@ module.exports = grammar({
     [$.signature, $.pat_name],
     [$.exp_name, $._pat_constructor],
     [$.exp_name, $.pat_name],
+    [$._aexp_projection, $._apat],
     [$._aexp, $._apat],
     [$.pat_negation, $._literal],
 
