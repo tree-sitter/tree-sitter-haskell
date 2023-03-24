@@ -214,3 +214,23 @@ data A where
    (constructor)
    (context (constraint (type_infix (type_name (type)) (type_operator) (type_name (type)))))
    (fun (type_name (type)) (type_name (type))))))
+
+================================================================================
+gadt: type data
+================================================================================
+
+type data A a where
+  A :: A ~ A => A a
+
+---
+
+(haskell
+ (adt
+  (type)
+  (type_variable)
+  (where)
+  (gadt_constructor
+   (constructor)
+   (context
+    (constraint (type_infix (type_name (type)) (type_operator) (type_name (type)))))
+   (type_apply (type_name (type)) (type_name (type_variable))))))

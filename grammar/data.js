@@ -96,6 +96,7 @@ module.exports = {
   ),
 
   decl_adt: $ => seq(
+    optional('type'),
     'data',
     optional($.context),
     $._simpletype,

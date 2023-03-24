@@ -418,3 +418,16 @@ data a :<- b = a :<- b
     (type_name (type_variable))
     (constructor_operator)
     (type_name (type_variable))))))
+
+================================================================================
+plain adt: type data
+================================================================================
+
+type data A = A
+
+---
+
+(haskell
+ (adt
+  (type)
+  (constructors (data_constructor (constructor)))))

@@ -138,6 +138,7 @@ These extensions are supported ✅, unsupported ❌ or not applicable because th
 * Trustworthy ➖️
 * TupleSections ✅
 * TypeApplications ✅
+* TypeData ✅
 * TypeFamilies ✅
 * TypeFamilyDependencies ✅
 * TypeInType ✅
