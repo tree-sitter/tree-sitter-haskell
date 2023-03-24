@@ -8,18 +8,18 @@ module.exports = {
   field: $ => seq(
     sep1($.comma, $.variable),
     $._colon2,
-    choice($.strict_type, $._type),
+    choice($.strict_type, $.lazy_type, $._type),
   ),
 
   data_constructor: $ => seq(
     $.constructor,
-    repeat(choice($.strict_type, $._atype))
+    repeat(choice($.strict_type, $.lazy_type, $._atype))
   ),
 
   data_constructor_infix: $ => seq(
-    choice($.strict_type, $._type_infix),
+    choice($.strict_type, $.lazy_type, $._type_infix),
     $._conop,
-    choice($.strict_type, $._type_infix),
+    choice($.strict_type, $.lazy_type, $._type_infix),
   ),
 
   _record_field: $ => braces($.field),
@@ -67,11 +67,11 @@ module.exports = {
     repeat($.deriving),
   ),
 
-  _gadt_fun: $ => seq(choice($.strict_type, $._type_infix), $._arrow, $._gadt_sig),
+  _gadt_fun: $ => seq(choice($.strict_type, $.lazy_type, $._type_infix), $._arrow, $._gadt_sig),
 
   _gadt_sig: $ => choice(
     alias($._gadt_fun, $.fun),
-    choice($.strict_type, $._type_infix)
+    choice($.strict_type, $.lazy_type, $._type_infix)
   ),
 
   /**

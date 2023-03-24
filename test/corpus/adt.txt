@@ -46,6 +46,30 @@ data A = A !A !(A A)
     (strict_type (type_parens (type_apply (type_name (type)) (type_name (type)))))))))
 
 ================================================================================
+plain adt: lazy
+================================================================================
+
+data A = A ~A
+data A = ~A :+ ~A
+
+---
+
+(haskell
+ (adt
+  (type)
+  (constructors
+   (data_constructor
+    (constructor)
+    (lazy_type (type_name (type))))))
+ (adt
+  (type)
+  (constructors
+   (data_constructor_infix
+    (lazy_type (type_name (type)))
+    (constructor_operator)
+    (lazy_type (type_name (type)))))))
+
+================================================================================
 plain adt: tyvars
 ================================================================================
 

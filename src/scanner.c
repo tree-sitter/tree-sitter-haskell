@@ -89,6 +89,7 @@
  *     when the quasiquote body starts with an operator character.
  *   - qq_body: Prevent extras, like comments, from breaking quasiquotes
  *   - strict: Disambiguate strictness annotation `!` from symbolic operators
+ *   - lazy: Disambiguate laziness annotation `~` from symbolic operators
  *   - unboxed_close: Disambiguate the closing parens for unboxed tuples/sums `#)` from symbolic operators
  *   - bar: The vertical bar `|`, used for guards and list comprehension
  *   - in: Closes the layout of a `let` and consumes the token `in`
@@ -115,6 +116,7 @@ typedef enum {
   QQ_BAR,
   QQ_BODY,
   STRICT,
+  LAZY,
   UNBOXED_TUPLE_CLOSE,
   BAR,
   IN,
@@ -142,6 +144,7 @@ static char *sym_names[] = {
   "qq_bar",
   "qq_body",
   "strict",
+  "lazy",
   "unboxed_close",
   "bar",
   "in",
@@ -526,6 +529,7 @@ typedef enum {
   S_OP,
   S_SPLICE,
   S_STRICT,
+  S_LAZY,
   S_STAR,
   S_TILDE,
   S_IMPLICIT,
@@ -576,6 +580,7 @@ static Symbolic s_symop(wchar_vec s, State *state) {
   int32_t c = s.data[0];
   if (s.len == 1) {
     if (c == '!' && !(isws(PEEK) || PEEK == ')')) return S_STRICT;
+    if (c == '~' && !(isws(PEEK) || PEEK == ')')) return S_LAZY;
     if (c == '#' && PEEK == ')') return S_UNBOXED_TUPLE_CLOSE;
     if (c == '#' && varid_start_char(PEEK)) return S_INVALID;
     if (c == '$' && valid_splice(state)) return S_SPLICE;
@@ -1089,6 +1094,8 @@ static Result symop_marked(Symbolic type, State *state) {
       return res_fail;
     case S_SPLICE:
       return splice(state);
+    case S_LAZY:
+      return finish_if_valid(LAZY, "lazy", state);
     case S_STRICT:
       return finish_if_valid(STRICT, "strict", state);
     case S_COMMENT:

@@ -55,6 +55,8 @@ module.exports = {
 
   strict_type: $ => seq($._strict, $._atype),
 
+  lazy_type: $ => seq($._lazy, $._atype),
+
   type_name: $ => choice(
     $._tyvar,
     $._gtycon,

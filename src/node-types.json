@@ -1212,6 +1212,10 @@
           "named": true
         },
         {
+          "type": "lazy_type",
+          "named": true
+        },
+        {
           "type": "promoted",
           "named": true
         },
@@ -1276,6 +1280,10 @@
         },
         {
           "type": "constructor_operator",
+          "named": true
+        },
+        {
+          "type": "lazy_type",
           "named": true
         },
         {
@@ -7143,6 +7151,10 @@
           "named": true
         },
         {
+          "type": "lazy_type",
+          "named": true
+        },
+        {
           "type": "promoted",
           "named": true
         },
@@ -7391,6 +7403,10 @@
         },
         {
           "type": "fun",
+          "named": true
+        },
+        {
+          "type": "lazy_type",
           "named": true
         },
         {
@@ -7924,6 +7940,10 @@
         },
         {
           "type": "fun",
+          "named": true
+        },
+        {
+          "type": "lazy_type",
           "named": true
         },
         {
@@ -9458,6 +9478,61 @@
     "type": "integer",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "lazy_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "promoted",
+          "named": true
+        },
+        {
+          "type": "quasiquote",
+          "named": true
+        },
+        {
+          "type": "splice",
+          "named": true
+        },
+        {
+          "type": "type_list",
+          "named": true
+        },
+        {
+          "type": "type_literal",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        },
+        {
+          "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
+          "named": true
+        },
+        {
+          "type": "type_tuple",
+          "named": true
+        },
+        {
+          "type": "type_unboxed_sum",
+          "named": true
+        },
+        {
+          "type": "type_unboxed_tuple",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "let",
@@ -14630,10 +14705,6 @@
   },
   {
     "type": "}",
-    "named": false
-  },
-  {
-    "type": "~",
     "named": false
   },
   {

@@ -1868,6 +1868,19 @@
         }
       ]
     },
+    "lazy_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_lazy"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_atype"
+        }
+      ]
+    },
     "type_name": {
       "type": "CHOICE",
       "members": [
@@ -5461,8 +5474,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "~"
+          "type": "SYMBOL",
+          "name": "_lazy"
         },
         {
           "type": "SYMBOL",
@@ -6476,6 +6489,10 @@
             },
             {
               "type": "SYMBOL",
+              "name": "lazy_type"
+            },
+            {
+              "type": "SYMBOL",
               "name": "_type"
             }
           ]
@@ -6500,6 +6517,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "lazy_type"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "_atype"
               }
             ]
@@ -6519,6 +6540,10 @@
             },
             {
               "type": "SYMBOL",
+              "name": "lazy_type"
+            },
+            {
+              "type": "SYMBOL",
               "name": "_type_infix"
             }
           ]
@@ -6533,6 +6558,10 @@
             {
               "type": "SYMBOL",
               "name": "strict_type"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "lazy_type"
             },
             {
               "type": "SYMBOL",
@@ -6881,6 +6910,10 @@
             },
             {
               "type": "SYMBOL",
+              "name": "lazy_type"
+            },
+            {
+              "type": "SYMBOL",
               "name": "_type_infix"
             }
           ]
@@ -6913,6 +6946,10 @@
             {
               "type": "SYMBOL",
               "name": "strict_type"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "lazy_type"
             },
             {
               "type": "SYMBOL",
@@ -9672,6 +9709,10 @@
     {
       "type": "SYMBOL",
       "name": "_strict"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_lazy"
     },
     {
       "type": "SYMBOL",

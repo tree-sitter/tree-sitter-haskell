@@ -50,6 +50,7 @@ module.exports = grammar({
     $.quasiquote_bar,
     $.quasiquote_body,
     $._strict,
+    $._lazy,
     $._unboxed_close,
     '|',
     'in',

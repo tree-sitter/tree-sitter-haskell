@@ -130,7 +130,7 @@ These extensions are supported ✅, unsupported ❌ or not applicable because th
 * StarIsType ✅
 * StaticPointers ❌
 * Strict ➖️
-* StrictData ➖️
+* StrictData ✅
 * TemplateHaskell ✅
 * TemplateHaskellQuotes ✅
 * TraditionalRecordSyntax ➖️
@@ -201,7 +201,7 @@ $ tree-sitter test
 
 ## Test parsing an example codebase
 
-**Requires**: `bc`  
+**Requires**: `bc`
 This will print the percentage of the codebase parsed, and the time taken
 
 ```

@@ -188,3 +188,29 @@ data (:#) a where
 ---
 
 (haskell (adt (constructor_operator) (type_variable) (where)))
+
+================================================================================
+gadt: strict/lazy
+================================================================================
+
+data A where
+  A :: ~A -> A
+  A :: !A -> A
+  A :: A ~ A => A -> A
+
+---
+
+(haskell
+ (adt
+  (type)
+  (where)
+  (gadt_constructor
+   (constructor)
+   (fun (lazy_type (type_name (type))) (type_name (type))))
+  (gadt_constructor
+   (constructor)
+   (fun (strict_type (type_name (type))) (type_name (type))))
+  (gadt_constructor
+   (constructor)
+   (context (constraint (type_infix (type_name (type)) (type_operator) (type_name (type)))))
+   (fun (type_name (type)) (type_name (type))))))
