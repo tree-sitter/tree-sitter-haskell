@@ -483,3 +483,64 @@ f (-(a)) = a
    (pat_parens
     (pat_negation (pat_parens (pat_name (variable))))))
   (exp_name (variable))))
+
+================================================================================
+pat: or pattern
+================================================================================
+
+a = case a of
+  (one of a, a, a :: A) -> a
+
+a (a -> (one of a -> a, A a)) = a
+
+a = let (one of a, a) = a in a
+
+a = \ (one of A a, A a) -> a
+
+---
+
+(haskell
+ (function
+  (variable)
+  (exp_case
+   (exp_name (variable))
+   (alts
+    (alt
+     (pat_or
+      (pat_name (variable))
+      (comma)
+      (pat_name (variable))
+      (comma)
+      (pat_typed (pat_name (variable)) (type_name (type))))
+     (exp_name (variable))))))
+  (function
+   (variable)
+   (patterns
+    (pat_parens
+     (pat_view
+      (exp_name (variable))
+      (pat_or
+       (pat_view (exp_name (variable)) (pat_name (variable)))
+       (comma)
+       (pat_apply (pat_name (constructor)) (pat_name (variable)))))))
+   (exp_name (variable)))
+  (function
+   (variable)
+   (exp_let_in
+    (exp_let
+     (decls
+      (function
+       (pat_or
+        (pat_name (variable))
+        (comma)
+        (pat_name (variable)))
+       (exp_name (variable)))))
+    (exp_in (exp_name (variable)))))
+  (function
+   (variable)
+   (exp_lambda
+    (pat_or
+     (pat_apply (pat_name (constructor)) (pat_name (variable)))
+     (comma)
+     (pat_apply (pat_name (constructor)) (pat_name (variable))))
+    (exp_name (variable)))))

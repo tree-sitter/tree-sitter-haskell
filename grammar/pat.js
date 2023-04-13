@@ -1,4 +1,4 @@
-const {parens} = require('./util.js')
+const {parens, braces, layouted} = require('./util.js')
 
 module.exports = {
   pat_field: $ => choice(
@@ -28,6 +28,8 @@ module.exports = {
 
   pat_irrefutable: $ => seq($._lazy, $._apat),
 
+  pat_or: $ => parens(seq('one', 'of', sep2($.comma, $._nested_pat))),
+
   pat_negation: $ => seq('-', $._apat),
 
   pat_name: $ => $._var,
@@ -55,6 +57,7 @@ module.exports = {
     $.pat_list,
     $.pat_strict,
     $.pat_irrefutable,
+    $.pat_or,
     $.splice,
     $.quasiquote,
   ),
