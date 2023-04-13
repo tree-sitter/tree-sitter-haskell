@@ -5637,6 +5637,31 @@
         }
       ]
     },
+    "pat_or": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_lpat"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "or"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_lpat"
+              }
+            ]
+          }
+        }
+      ]
+    },
     "pat_infix": {
       "type": "SEQ",
       "members": [
@@ -5654,6 +5679,19 @@
         }
       ]
     },
+    "_pat_infix": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "pat_or"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "pat_infix"
+        }
+      ]
+    },
     "_pat": {
       "type": "CHOICE",
       "members": [
@@ -5662,7 +5700,7 @@
           "value": 2,
           "content": {
             "type": "SYMBOL",
-            "name": "pat_infix"
+            "name": "_pat_infix"
           }
         },
         {

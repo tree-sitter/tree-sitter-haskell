@@ -371,6 +371,10 @@
           "named": true
         },
         {
+          "type": "pat_or",
+          "named": true
+        },
+        {
           "type": "pat_parens",
           "named": true
         },
@@ -735,6 +739,10 @@
         },
         {
           "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_or",
           "named": true
         },
         {
@@ -1909,6 +1917,10 @@
             "named": true
           },
           {
+            "type": "pat_or",
+            "named": true
+          },
+          {
             "type": "pat_parens",
             "named": true
           },
@@ -2104,6 +2116,10 @@
           },
           {
             "type": "pat_negation",
+            "named": true
+          },
+          {
+            "type": "pat_or",
             "named": true
           },
           {
@@ -2325,6 +2341,10 @@
         },
         {
           "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_or",
           "named": true
         },
         {
@@ -7549,6 +7569,10 @@
             "named": true
           },
           {
+            "type": "pat_or",
+            "named": true
+          },
+          {
             "type": "pat_parens",
             "named": true
           },
@@ -8997,6 +9021,10 @@
             "named": true
           },
           {
+            "type": "pat_or",
+            "named": true
+          },
+          {
             "type": "pat_parens",
             "named": true
           },
@@ -9078,6 +9106,10 @@
           },
           {
             "type": "pat_negation",
+            "named": true
+          },
+          {
+            "type": "pat_or",
             "named": true
           },
           {
@@ -10016,6 +10048,10 @@
           "named": true
         },
         {
+          "type": "pat_or",
+          "named": true
+        },
+        {
           "type": "pat_parens",
           "named": true
         },
@@ -10143,6 +10179,10 @@
         },
         {
           "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_or",
           "named": true
         },
         {
@@ -10301,6 +10341,10 @@
         },
         {
           "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_or",
           "named": true
         },
         {
@@ -10492,6 +10536,81 @@
     }
   },
   {
+    "type": "pat_or",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "pat_apply",
+          "named": true
+        },
+        {
+          "type": "pat_as",
+          "named": true
+        },
+        {
+          "type": "pat_irrefutable",
+          "named": true
+        },
+        {
+          "type": "pat_list",
+          "named": true
+        },
+        {
+          "type": "pat_literal",
+          "named": true
+        },
+        {
+          "type": "pat_name",
+          "named": true
+        },
+        {
+          "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_parens",
+          "named": true
+        },
+        {
+          "type": "pat_record",
+          "named": true
+        },
+        {
+          "type": "pat_strict",
+          "named": true
+        },
+        {
+          "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_unboxed_sum",
+          "named": true
+        },
+        {
+          "type": "pat_unboxed_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_wildcard",
+          "named": true
+        },
+        {
+          "type": "quasiquote",
+          "named": true
+        },
+        {
+          "type": "splice",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "pat_parens",
     "named": true,
     "fields": {},
@@ -10529,6 +10648,10 @@
         },
         {
           "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_or",
           "named": true
         },
         {
@@ -10716,6 +10839,10 @@
           "named": true
         },
         {
+          "type": "pat_or",
+          "named": true
+        },
+        {
           "type": "pat_parens",
           "named": true
         },
@@ -10800,6 +10927,10 @@
           },
           {
             "type": "pat_negation",
+            "named": true
+          },
+          {
+            "type": "pat_or",
             "named": true
           },
           {
@@ -10957,6 +11088,10 @@
           "named": true
         },
         {
+          "type": "pat_or",
+          "named": true
+        },
+        {
           "type": "pat_parens",
           "named": true
         },
@@ -11045,6 +11180,10 @@
         },
         {
           "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_or",
           "named": true
         },
         {
@@ -11311,6 +11450,10 @@
         },
         {
           "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_or",
           "named": true
         },
         {
@@ -11611,6 +11754,10 @@
         },
         {
           "type": "pat_negation",
+          "named": true
+        },
+        {
+          "type": "pat_or",
           "named": true
         },
         {
@@ -14589,6 +14736,10 @@
   },
   {
     "type": "of",
+    "named": false
+  },
+  {
+    "type": "or",
     "named": false
   },
   {

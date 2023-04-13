@@ -1,4 +1,4 @@
-const {parens} = require('./util.js')
+const {parens, braces, layouted} = require('./util.js')
 
 module.exports = {
   pat_field: $ => choice(
@@ -70,13 +70,20 @@ module.exports = {
     $.pat_apply,
   ),
 
+  pat_or: $ => sep2('or', $._lpat),
+
   pat_infix: $ => seq($._lpat, $._qconop, $._pat),
+
+  _pat_infix: $ => choice(
+    $.pat_or,
+    $.pat_infix,
+  ),
 
   /**
    * Without the precs, a conflict is needed.
    */
   _pat: $ => choice(
-    prec(2, $.pat_infix),
+    prec(2, $._pat_infix),
     prec(1, $._lpat),
   ),
 
