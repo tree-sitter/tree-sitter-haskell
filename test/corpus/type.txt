@@ -536,6 +536,38 @@ type A =
     (type_variable)))))
 
 ================================================================================
+type decl: unboxed sum
+================================================================================
+
+type A = (# A | A# #)
+
+---
+
+(haskell
+ (type_alias
+  (type)
+  (type_unboxed_sum
+   (type_name (type))
+   (type_name (type)))))
+
+================================================================================
+type decl: prefix notation unboxed sum
+================================================================================
+
+type A = (# | #) @A @A A# A#
+
+---
+
+(haskell
+ (type_alias
+  (type)
+  (type_apply
+   (type_unboxed_sum)
+   (type_invisible (type_name (type)))
+   (type_invisible (type_name (type)))
+   (type_name (type)) (type_name (type)))))
+
+================================================================================
 type decl: unicode arrows
 ================================================================================
 

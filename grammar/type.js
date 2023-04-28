@@ -38,7 +38,7 @@ module.exports = {
 
   type_tuple: $ => parens($._type_tuple),
 
-  _type_sum: $ => sep2('|', $._type_or_implicit),
+  _type_sum: $ => sep2('|', optional($._type_or_implicit)),
 
   _type_promotable_literal: $ => choice(
     $.type_literal,
@@ -65,7 +65,7 @@ module.exports = {
   type_star: _ => choice('*', '★'),
 
   /**
-  * The `(##)` format of the unary tuple is parsed as an operator, see `exp_unboxed_tuple`.
+  * The `(##)` format of the unit tuple is parsed as an operator, see `exp_unboxed_tuple`.
   */
   type_unboxed_tuple: $ => seq($._unboxed_open, sep($.comma, $._type_or_implicit), $._unboxed_close),
 
