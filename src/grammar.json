@@ -2007,6 +2007,19 @@
         }
       ]
     },
+    "type_invisible": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "@"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_atype"
+        }
+      ]
+    },
     "type_apply": {
       "type": "SEQ",
       "members": [
@@ -2017,8 +2030,17 @@
         {
           "type": "REPEAT1",
           "content": {
-            "type": "SYMBOL",
-            "name": "_atype"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_atype"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "type_invisible"
+              }
+            ]
           }
         }
       ]

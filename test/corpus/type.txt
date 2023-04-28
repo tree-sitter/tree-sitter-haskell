@@ -565,3 +565,20 @@ type A = ★
 ---
 
 (haskell (type_alias (type) (type_star)))
+
+================================================================================
+type decl: invisible application
+================================================================================
+
+type A = A @A @A A
+
+---
+
+(haskell
+ (type_alias
+  (type)
+  (type_apply
+   (type_name (type))
+   (type_invisible (type_name (type)))
+   (type_invisible (type_name (type)))
+   (type_name (type)))))

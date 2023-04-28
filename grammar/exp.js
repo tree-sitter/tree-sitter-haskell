@@ -279,20 +279,6 @@ module.exports = {
     alias($.literal, $.exp_literal),
   ),
 
-  exp_projection: $ => seq(
-    choice($._aexp_projection, $.exp_projection),
-    $._immediate_dot,
-    field('field', $._immediate_variable),
-  ),
-
-  _aexp: $ => choice(
-    $._aexp_projection,
-    $.exp_type_application,
-    $.exp_lambda_case,
-    $.exp_do,
-    $.exp_projection,
-  ),
-
   /**
     * A dot-syntax field projection like `var.name.othername`.
     * Since fields can only be varids, we can just use `token.immediate` to enforce no whitespace between dot and ids.

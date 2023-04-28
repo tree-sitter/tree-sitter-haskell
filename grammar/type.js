@@ -82,10 +82,12 @@ module.exports = {
     $.quasiquote,
   ),
 
+  type_invisible: $ => seq('@', $._atype),
+
   /**
-   * Type application, as in `Either e (Int, Text)`.
+   * Type application, as in `Either e (Int, Text)` or `TypeRep @Int`.
    */
-  type_apply: $ => seq($._atype, repeat1($._atype)),
+  type_apply: $ => seq($._atype, repeat1(choice($._atype, $.type_invisible))),
 
   /**
    * The point of this `choice` is to get a node for type application only if there is more than one atype present.
