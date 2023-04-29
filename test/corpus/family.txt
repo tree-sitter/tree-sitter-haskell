@@ -256,3 +256,26 @@ type family (<>) a a where
     (type_operator)
     (type_name (type_variable)))
    (type_name (type_variable)))))
+
+================================================================================
+family: kind signature in pattern
+================================================================================
+
+type family A where
+  A (a :: A, a) = a
+
+---
+
+(haskell
+ (type_family
+  (head (type))
+  (where)
+  (equation
+   (pattern
+    (type)
+    (type_tuple
+     (type_name (type_variable))
+     (kind (type_name (type)))
+     (comma)
+     (type_name (type_variable))))
+   (type_name (type_variable)))))

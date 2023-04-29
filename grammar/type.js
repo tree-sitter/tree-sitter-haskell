@@ -30,15 +30,15 @@ module.exports = {
 
   forall: $ => $._quantifiers,
 
-  type_parens: $ => parens($._type_or_implicit),
+  type_parens: $ => parens($._type_with_kind),
 
-  type_list: $ => brackets(sep1($.comma, $._type_or_implicit)),
+  type_list: $ => brackets(sep1($.comma, $._type_with_kind)),
 
-  _type_tuple: $ => sep2($.comma, $._type_or_implicit),
+  _type_tuple: $ => sep2($.comma, $._type_with_kind),
 
   type_tuple: $ => parens($._type_tuple),
 
-  _type_sum: $ => sep2('|', optional($._type_or_implicit)),
+  _type_sum: $ => sep2('|', optional($._type_with_kind)),
 
   _type_promotable_literal: $ => choice(
     $.type_literal,
@@ -67,7 +67,7 @@ module.exports = {
   /**
   * The `(##)` format of the unit tuple is parsed as an operator, see `exp_unboxed_tuple`.
   */
-  type_unboxed_tuple: $ => seq($._unboxed_open, sep($.comma, $._type_or_implicit), $._unboxed_close),
+  type_unboxed_tuple: $ => seq($._unboxed_open, sep($.comma, $._type_with_kind), $._unboxed_close),
 
   type_unboxed_sum: $ => seq($._unboxed_open, $._type_sum, $._unboxed_close),
 
@@ -169,6 +169,10 @@ module.exports = {
     $._colon2,
     field('type', $._type_or_implicit),
   ),
+
+  kind: $ => $._type_annotation,
+
+  _type_with_kind: $ => seq($._type_or_implicit, optional($.kind)),
 
   _simpletype_infix: $ => seq(
     $._tyvar,

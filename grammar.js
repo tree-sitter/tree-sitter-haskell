@@ -138,7 +138,7 @@ module.exports = grammar({
      * data (A a) => A
      * data (A a) %% A => A
      *
-     * After the `a`, the closing parens is ambiguous.
+     * After the `a`, the closing paren is ambiguous.
      */
     [$._type_infix, $.constraint],
 
@@ -218,6 +218,12 @@ module.exports = grammar({
     [$.exp_unboxed_tuple, $.pat_unboxed_tuple],
 
     [$.exp_lambda_case],
+
+    /**
+     * General kind signatures cause `(a :: k)` to be ambiguous.
+     * This problem might be solvable if `type.js` were to be refactored.
+     */
+    [$.annotated_type_variable, $.type_name],
   ],
 
   word: $ => $._varid,

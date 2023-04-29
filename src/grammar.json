@@ -1694,7 +1694,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_type_or_implicit"
+          "name": "_type_with_kind"
         },
         {
           "type": "STRING",
@@ -1714,7 +1714,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_type_or_implicit"
+              "name": "_type_with_kind"
             },
             {
               "type": "REPEAT",
@@ -1727,7 +1727,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "_type_or_implicit"
+                    "name": "_type_with_kind"
                   }
                 ]
               }
@@ -1745,7 +1745,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_type_or_implicit"
+          "name": "_type_with_kind"
         },
         {
           "type": "REPEAT1",
@@ -1758,7 +1758,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_type_or_implicit"
+                "name": "_type_with_kind"
               }
             ]
           }
@@ -1790,7 +1790,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "_type_or_implicit"
+              "name": "_type_with_kind"
             },
             {
               "type": "BLANK"
@@ -1811,7 +1811,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_type_or_implicit"
+                    "name": "_type_with_kind"
                   },
                   {
                     "type": "BLANK"
@@ -1938,7 +1938,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_type_or_implicit"
+                  "name": "_type_with_kind"
                 },
                 {
                   "type": "REPEAT",
@@ -1951,7 +1951,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "_type_or_implicit"
+                        "name": "_type_with_kind"
                       }
                     ]
                   }
@@ -2480,6 +2480,31 @@
             "type": "SYMBOL",
             "name": "_type_or_implicit"
           }
+        }
+      ]
+    },
+    "kind": {
+      "type": "SYMBOL",
+      "name": "_type_annotation"
+    },
+    "_type_with_kind": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_type_or_implicit"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "kind"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },
@@ -9657,6 +9682,10 @@
     ],
     [
       "exp_lambda_case"
+    ],
+    [
+      "annotated_type_variable",
+      "type_name"
     ]
   ],
   "precedences": [

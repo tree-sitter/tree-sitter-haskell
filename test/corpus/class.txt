@@ -156,7 +156,7 @@ class A where
    (default_signature (signature (variable) (type_name (type)))))))
 
 ================================================================================
-class: type_variable kind
+class: type variable kind
 ================================================================================
 
 class A (a :: [*] -> k)
