@@ -8,11 +8,20 @@ module.exports = {
 
   pat_fields: $ => braces(optional(sep1($.comma, $.pat_field))),
 
+  pat_name: $ => $._var,
+
   pat_as: $ => seq(field('var', $.variable), token.immediate('@'), field('pat', $._apat)),
 
-  pat_parens: $ => parens($._nested_pat),
+  /**
+   * Needed non-inlined for conflict definition.
+   */
+  _pat_constructor: $ => alias($._qcon, $.pat_name),
 
-  pat_view: $ => seq($._exp, $._arrow, $._nested_pat),
+  pat_record: $ => seq(field('con', $._pat_constructor), field('fields', $.pat_fields)),
+
+  pat_wildcard: _ => '_',
+
+  pat_parens: $ => parens($._nested_pat),
 
   pat_tuple: $ => parens(sep2($.comma, $._nested_pat)),
 
@@ -28,18 +37,7 @@ module.exports = {
 
   pat_irrefutable: $ => seq($._lazy, $._apat),
 
-  pat_negation: $ => seq('-', $._apat),
-
-  pat_name: $ => $._var,
-
-  /**
-   * Needed non-inlined for conflict definition.
-   */
-  _pat_constructor: $ => alias($._qcon, $.pat_name),
-
-  pat_wildcard: _ => '_',
-
-  pat_record: $ => seq(field('con', $._pat_constructor), field('fields', $.pat_fields)),
+  pat_type_binder: $ => seq('@', $._atype),
 
   _apat: $ => choice(
     $.pat_name,
@@ -55,9 +53,12 @@ module.exports = {
     $.pat_list,
     $.pat_strict,
     $.pat_irrefutable,
+    $.pat_type_binder,
     $.splice,
     $.quasiquote,
   ),
+
+  pat_negation: $ => seq('-', $._apat),
 
   /**
    * In patterns, application is only legal if the first element is a con.
@@ -86,6 +87,8 @@ module.exports = {
     $._pat,
     $.pat_typed,
   ),
+
+  pat_view: $ => seq($._exp, $._arrow, $._nested_pat),
 
   /**
    * Patterns that occur inside parentheses, and thus can always have view patterns and type annotations.

@@ -387,6 +387,10 @@
           "named": true
         },
         {
+          "type": "pat_type_binder",
+          "named": true
+        },
+        {
           "type": "pat_unboxed_sum",
           "named": true
         },
@@ -751,6 +755,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {
@@ -1925,6 +1933,10 @@
             "named": true
           },
           {
+            "type": "pat_type_binder",
+            "named": true
+          },
+          {
             "type": "pat_unboxed_sum",
             "named": true
           },
@@ -2120,6 +2132,10 @@
           },
           {
             "type": "pat_tuple",
+            "named": true
+          },
+          {
+            "type": "pat_type_binder",
             "named": true
           },
           {
@@ -2341,6 +2357,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {
@@ -4863,6 +4883,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {
@@ -7565,6 +7589,10 @@
             "named": true
           },
           {
+            "type": "pat_type_binder",
+            "named": true
+          },
+          {
             "type": "pat_typed",
             "named": true
           },
@@ -9013,6 +9041,10 @@
             "named": true
           },
           {
+            "type": "pat_type_binder",
+            "named": true
+          },
+          {
             "type": "pat_unboxed_sum",
             "named": true
           },
@@ -9094,6 +9126,10 @@
           },
           {
             "type": "pat_tuple",
+            "named": true
+          },
+          {
+            "type": "pat_type_binder",
             "named": true
           },
           {
@@ -9951,6 +9987,10 @@
           "named": true
         },
         {
+          "type": "pat_type_binder",
+          "named": true
+        },
+        {
           "type": "pat_unboxed_sum",
           "named": true
         },
@@ -10015,6 +10055,10 @@
           },
           {
             "type": "pat_tuple",
+            "named": true
+          },
+          {
+            "type": "pat_type_binder",
             "named": true
           },
           {
@@ -10109,6 +10153,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {
@@ -10242,6 +10290,10 @@
           "named": true
         },
         {
+          "type": "pat_type_binder",
+          "named": true
+        },
+        {
           "type": "pat_unboxed_sum",
           "named": true
         },
@@ -10314,6 +10366,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {
@@ -10397,6 +10453,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {
@@ -10549,6 +10609,10 @@
           "named": true
         },
         {
+          "type": "pat_type_binder",
+          "named": true
+        },
+        {
           "type": "pat_unboxed_sum",
           "named": true
         },
@@ -10625,6 +10689,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {
@@ -10729,6 +10797,10 @@
           "named": true
         },
         {
+          "type": "pat_type_binder",
+          "named": true
+        },
+        {
           "type": "pat_unboxed_sum",
           "named": true
         },
@@ -10812,6 +10884,10 @@
           "named": true
         },
         {
+          "type": "pat_type_binder",
+          "named": true
+        },
+        {
           "type": "pat_typed",
           "named": true
         },
@@ -10837,6 +10913,61 @@
         },
         {
           "type": "splice",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "pat_type_binder",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "promoted",
+          "named": true
+        },
+        {
+          "type": "quasiquote",
+          "named": true
+        },
+        {
+          "type": "splice",
+          "named": true
+        },
+        {
+          "type": "type_list",
+          "named": true
+        },
+        {
+          "type": "type_literal",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        },
+        {
+          "type": "type_parens",
+          "named": true
+        },
+        {
+          "type": "type_star",
+          "named": true
+        },
+        {
+          "type": "type_tuple",
+          "named": true
+        },
+        {
+          "type": "type_unboxed_sum",
+          "named": true
+        },
+        {
+          "type": "type_unboxed_tuple",
           "named": true
         }
       ]
@@ -10896,6 +11027,10 @@
           },
           {
             "type": "pat_tuple",
+            "named": true
+          },
+          {
+            "type": "pat_type_binder",
             "named": true
           },
           {
@@ -11053,6 +11188,10 @@
           "named": true
         },
         {
+          "type": "pat_type_binder",
+          "named": true
+        },
+        {
           "type": "pat_typed",
           "named": true
         },
@@ -11141,6 +11280,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {
@@ -11407,6 +11550,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {
@@ -11710,6 +11857,10 @@
           "named": true
         },
         {
+          "type": "pat_type_binder",
+          "named": true
+        },
+        {
           "type": "pat_unboxed_sum",
           "named": true
         },
@@ -11793,6 +11944,10 @@
         },
         {
           "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
           "named": true
         },
         {

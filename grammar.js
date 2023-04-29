@@ -168,6 +168,7 @@ module.exports = grammar({
     [$._aexp_projection, $._apat],
     [$._aexp, $._apat],
     [$.pat_negation, $._literal],
+    [$.exp_type_application, $.pat_type_binder],
 
     /**
      * Ambiguity between symbolic and regular constructors:

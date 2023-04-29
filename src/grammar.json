@@ -5278,6 +5278,10 @@
         }
       ]
     },
+    "pat_name": {
+      "type": "SYMBOL",
+      "name": "_var"
+    },
     "pat_as": {
       "type": "SEQ",
       "members": [
@@ -5306,6 +5310,40 @@
         }
       ]
     },
+    "_pat_constructor": {
+      "type": "ALIAS",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_qcon"
+      },
+      "named": true,
+      "value": "pat_name"
+    },
+    "pat_record": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "con",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_pat_constructor"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "fields",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pat_fields"
+          }
+        }
+      ]
+    },
+    "pat_wildcard": {
+      "type": "STRING",
+      "value": "_"
+    },
     "pat_parens": {
       "type": "SEQ",
       "members": [
@@ -5320,23 +5358,6 @@
         {
           "type": "STRING",
           "value": ")"
-        }
-      ]
-    },
-    "pat_view": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_exp"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_arrow"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_nested_pat"
         }
       ]
     },
@@ -5546,54 +5567,16 @@
         }
       ]
     },
-    "pat_negation": {
+    "pat_type_binder": {
       "type": "SEQ",
       "members": [
         {
           "type": "STRING",
-          "value": "-"
+          "value": "@"
         },
         {
           "type": "SYMBOL",
-          "name": "_apat"
-        }
-      ]
-    },
-    "pat_name": {
-      "type": "SYMBOL",
-      "name": "_var"
-    },
-    "_pat_constructor": {
-      "type": "ALIAS",
-      "content": {
-        "type": "SYMBOL",
-        "name": "_qcon"
-      },
-      "named": true,
-      "value": "pat_name"
-    },
-    "pat_wildcard": {
-      "type": "STRING",
-      "value": "_"
-    },
-    "pat_record": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "con",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_pat_constructor"
-          }
-        },
-        {
-          "type": "FIELD",
-          "name": "fields",
-          "content": {
-            "type": "SYMBOL",
-            "name": "pat_fields"
-          }
+          "name": "_atype"
         }
       ]
     },
@@ -5659,11 +5642,28 @@
         },
         {
           "type": "SYMBOL",
+          "name": "pat_type_binder"
+        },
+        {
+          "type": "SYMBOL",
           "name": "splice"
         },
         {
           "type": "SYMBOL",
           "name": "quasiquote"
+        }
+      ]
+    },
+    "pat_negation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "-"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_apat"
         }
       ]
     },
@@ -5765,6 +5765,23 @@
         {
           "type": "SYMBOL",
           "name": "pat_typed"
+        }
+      ]
+    },
+    "pat_view": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_exp"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_arrow"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_nested_pat"
         }
       ]
     },
@@ -9686,6 +9703,10 @@
     [
       "annotated_type_variable",
       "type_name"
+    ],
+    [
+      "exp_type_application",
+      "pat_type_binder"
     ]
   ],
   "precedences": [

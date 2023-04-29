@@ -483,3 +483,36 @@ f (-(a)) = a
    (pat_parens
     (pat_negation (pat_parens (pat_name (variable))))))
   (exp_name (variable))))
+
+================================================================================
+pat: invisible type binders
+================================================================================
+
+a (A @a @(a :: a) @(A a :: a) @(∀ a . A a :: a)) = a
+
+---
+
+(haskell
+ (function
+  (variable)
+  (patterns
+   (pat_parens
+    (pat_apply
+     (pat_name (constructor))
+     (pat_type_binder (type_name (type_variable)))
+     (pat_type_binder (type_name (annotated_type_variable (type_variable) (type_name (type_variable)))))
+     (pat_type_binder
+      (type_parens
+       (type_apply
+        (type_name (type))
+        (type_name (type_variable)))
+       (kind (type_name (type_variable)))))
+     (pat_type_binder
+      (type_parens
+       (forall
+        (quantifiers (type_variable))
+        (type_apply
+         (type_name (type))
+         (type_name (type_variable))))
+       (kind (type_name (type_variable))))))))
+  (exp_name (variable))))
