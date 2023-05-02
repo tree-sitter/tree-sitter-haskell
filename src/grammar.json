@@ -2633,8 +2633,17 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "_atype"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_atype"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "type_invisible"
+              }
+            ]
           }
         }
       ]
@@ -9657,6 +9666,10 @@
       "_literal"
     ],
     [
+      "exp_type_application",
+      "pat_type_binder"
+    ],
+    [
       "type_name",
       "data_constructor"
     ],
@@ -9703,10 +9716,6 @@
     [
       "annotated_type_variable",
       "type_name"
-    ],
-    [
-      "exp_type_application",
-      "pat_type_binder"
     ]
   ],
   "precedences": [

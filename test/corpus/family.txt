@@ -279,3 +279,33 @@ type family A where
      (comma)
      (type_name (type_variable))))
    (type_name (type_variable)))))
+
+================================================================================
+family: invisible binders
+================================================================================
+
+type family A where
+  A @A @a @(A a) @(∀ a . A a :: A a) a = a
+
+---
+
+(haskell
+ (type_family
+  (head (type))
+  (where)
+  (equation
+   (pattern
+    (type)
+    (type_invisible (type_name (type)))
+    (type_invisible (type_name (type_variable)))
+    (type_invisible (type_parens (type_apply (type_name (type)) (type_name (type_variable)))))
+    (type_invisible
+     (type_parens
+      (forall
+       (quantifiers (type_variable))
+       (type_apply (type_name (type)) (type_name (type_variable))))
+      (kind (type_apply (type_name (type)) (type_name (type_variable))))))
+  (type_name
+   (type_variable)))
+  (type_name
+   (type_variable)))))

@@ -11662,6 +11662,10 @@
           "named": true
         },
         {
+          "type": "type_invisible",
+          "named": true
+        },
+        {
           "type": "type_list",
           "named": true
         },

@@ -210,7 +210,7 @@ module.exports = {
 
   _tyfam_pat_prefix: $ => seq(
     field('name', $._qtyconid),
-    repeat($._atype),
+    repeat(choice($._atype, $.type_invisible)),
   ),
 
   _tyfam_pat_infix: $ => seq(
