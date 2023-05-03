@@ -17,11 +17,11 @@
 
 (integer) @number
 (exp_negation) @number
-(exp_literal (float)) @float
-(char) @character
+(exp_literal (float)) @number
+(char) @string
 (string) @string
 
-(con_unit) @symbol  ; unit, as in ()
+(con_unit) @punctuation.special  ; unit, as in ()
 
 (comment) @comment
 
@@ -50,9 +50,9 @@
 [
   "forall"
   "∀"
-] @repeat
+] @keyword
 
-(pragma) @constant.macro
+(pragma) @attribute
 
 [
   "if"
@@ -60,20 +60,19 @@
   "else"
   "case"
   "of"
-] @conditional
+] @keyword
 
 [
   "import"
   "qualified"
   "module"
-] @include
+] @keyword
 
 [
   (operator)
   (constructor_operator)
   (type_operator)
   (tycon_arrow)
-  (qualified_module)  ; grabs the `.` (dot), ex: import System.IO
   (all_names)
   (wildcard)
   "="
@@ -87,7 +86,7 @@
   "@"
 ] @operator
 
-(module) @namespace
+(module) @module
 
 [
   (where)
@@ -130,9 +129,6 @@
 
 (exp_infix (variable) @operator)  ; consider infix functions as operators
 
-(exp_infix (exp_name) @function (#set! "priority" 101))
-(exp_apply . (exp_name (variable) @function))
-(exp_apply . (exp_name (qualified_variable (variable) @function)))
 
 
 ;; ----------------------------------------------------------------------------
@@ -141,10 +137,10 @@
 (type) @type
 (type_variable) @type
 
-(constructor) @constructor
+(constructor) @tag
 
 ; True or False
-((constructor) @_bool (#match? @_bool "(True|False)")) @boolean
+((constructor) @_bool (#match? @_bool "(True|False)")) @variable.builtin
 
 
 ;; ----------------------------------------------------------------------------

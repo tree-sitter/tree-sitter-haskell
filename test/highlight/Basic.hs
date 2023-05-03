@@ -1,9 +1,18 @@
 module A where
 
-data A a = A a
+import Prelude
+--     ^ module
+import Data.Text
+--     ^ module
+--          ^ module
 
-class C a where
-
-a :: C a => A a -> A a
-a (A a) =
-  A a
+start :: Brokerage -> Game.World -> IO ThreadId
+start broker world = do
+  raws <- Raws.loadFromDhall
+  -- <- variable
+  forkIO
+    . runRandomFaster rand
+    -- ^ function
+    --                 ^ variable
+    . runTrace
+    $ setup *> loop
