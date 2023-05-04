@@ -96,6 +96,7 @@ module.exports = {
   _ticked_tycon: $ => ticked($._tyconid),
   _simple_tyconop: $ => choice(alias($._ticked_tycon, $.ticked), $._type_operator),
   _simple_tycon: $ => choice($._tyconid, parens($._type_operator)),
+  _simple_qtyconop: $ => choice($._qtyconid, parens($._qtyconsym)),
 
   _ticked_qtycon: $ => ticked($._qtyconid),
   _qtyconops: $ => choice(alias($._ticked_qtycon, $.ticked), $._qtyconsym),

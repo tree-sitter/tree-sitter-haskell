@@ -11597,15 +11597,39 @@
     "named": true,
     "fields": {
       "name": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
+          },
+          {
+            "type": "constructor_operator",
+            "named": true
+          },
+          {
+            "type": "qualified_constructor_operator",
+            "named": true
+          },
           {
             "type": "qualified_type",
             "named": true
           },
           {
+            "type": "qualified_type_operator",
+            "named": true
+          },
+          {
             "type": "type",
+            "named": true
+          },
+          {
+            "type": "type_operator",
             "named": true
           }
         ]

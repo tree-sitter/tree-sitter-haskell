@@ -209,7 +209,7 @@ module.exports = {
   tyfam_head: $ => $._simpletype,
 
   _tyfam_pat_prefix: $ => seq(
-    field('name', $._qtyconid),
+    field('name', $._simple_qtyconop),
     repeat(choice($._atype, $.type_invisible)),
   ),
 

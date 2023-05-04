@@ -1392,6 +1392,32 @@
         }
       ]
     },
+    "_simple_qtyconop": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_qtyconid"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_qtyconsym"
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        }
+      ]
+    },
     "_ticked_qtycon": {
       "type": "SEQ",
       "members": [
@@ -2627,7 +2653,7 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "_qtyconid"
+            "name": "_simple_qtyconop"
           }
         },
         {
@@ -9870,6 +9896,7 @@
     "_gtycon",
     "_simple_tycon",
     "_simple_tyconop",
+    "_simple_qtyconop",
     "_quantifiers",
     "_tyfam_pat_prefix",
     "_tyfam_pat_infix",

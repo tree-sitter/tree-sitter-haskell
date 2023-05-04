@@ -84,6 +84,7 @@ module.exports = grammar({
     $._gtycon,
     $._simple_tycon,
     $._simple_tyconop,
+    $._simple_qtyconop,
     $._quantifiers,
     $._tyfam_pat_prefix,
     $._tyfam_pat_infix,

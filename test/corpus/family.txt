@@ -309,3 +309,18 @@ type family A where
    (type_variable)))
   (type_name
    (type_variable)))))
+
+================================================================================
+family: symbolic prefix
+================================================================================
+
+type family (<>) where
+  (<>) = A
+
+---
+
+(haskell
+ (type_family
+  (head (type_operator))
+  (where)
+  (equation (pattern (type_operator)) (type_name (type)))))
