@@ -211,3 +211,35 @@ a ∷ a
   (variable)
   (type_name
    (type_variable))))
+
+================================================================================
+signature: visible dependent quantification
+================================================================================
+
+a :: ∀ a -> a
+
+---
+
+(haskell
+ (signature
+  (variable)
+  (forall
+   (quantifiers (type_variable))
+   (type_name (type_variable)))))
+
+================================================================================
+signature: inferred type variable
+================================================================================
+
+a :: ∀ {a} a . a
+
+---
+
+(haskell
+ (signature
+  (variable)
+  (forall
+   (quantifiers
+    (inferred_type_variable (type_variable))
+    (type_variable))
+   (type_name (type_variable)))))

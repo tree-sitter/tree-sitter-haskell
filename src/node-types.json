@@ -8985,6 +8985,25 @@
     }
   },
   {
+    "type": "inferred_type_variable",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "annotated_type_variable",
+          "named": true
+        },
+        {
+          "type": "type_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "infix",
     "named": true,
     "fields": {
@@ -12401,6 +12420,10 @@
       "types": [
         {
           "type": "annotated_type_variable",
+          "named": true
+        },
+        {
+          "type": "inferred_type_variable",
           "named": true
         },
         {

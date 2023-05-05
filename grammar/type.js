@@ -7,11 +7,18 @@ module.exports = {
 
   type_variable: $ => $._varid,
 
-  annotated_type_variable: $ => parens($.type_variable, $._type_annotation),
+  annotated_type_variable: $ => seq($.type_variable, $._type_annotation),
 
   _tyvar: $ => choice(
-    $.annotated_type_variable,
+    parens($.annotated_type_variable),
     $.type_variable,
+  ),
+
+  inferred_type_variable: $ => braces(choice($.annotated_type_variable, $.type_variable)),
+
+  _quantifier: $ => choice(
+    $._tyvar,
+    $.inferred_type_variable,
   ),
 
   _forall_kw: _ => choice('forall', '∀'),
@@ -20,7 +27,7 @@ module.exports = {
 
   _forall: $ => seq(
     $._forall_kw,
-    repeat1($._tyvar),
+    repeat1($._quantifier),
   ),
 
   _quantifiers: $ => seq(

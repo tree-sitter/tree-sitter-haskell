@@ -1617,20 +1617,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "("
-        },
-        {
           "type": "SYMBOL",
           "name": "type_variable"
         },
         {
           "type": "SYMBOL",
           "name": "_type_annotation"
-        },
-        {
-          "type": "STRING",
-          "value": ")"
         }
       ]
     },
@@ -1638,12 +1630,64 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "annotated_type_variable"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SYMBOL",
+              "name": "annotated_type_variable"
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
         },
         {
           "type": "SYMBOL",
           "name": "type_variable"
+        }
+      ]
+    },
+    "inferred_type_variable": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "annotated_type_variable"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "type_variable"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "_quantifier": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_tyvar"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "inferred_type_variable"
         }
       ]
     },
@@ -1684,7 +1728,7 @@
           "type": "REPEAT1",
           "content": {
             "type": "SYMBOL",
-            "name": "_tyvar"
+            "name": "_quantifier"
           }
         }
       ]
