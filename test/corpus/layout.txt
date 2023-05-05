@@ -780,3 +780,13 @@ a = a
 ---
 
 (haskell (function (variable) (exp_name (variable))) (function (variable) (exp_name (variable))))
+
+================================================================================
+layout: empty do statements with explicit layout
+================================================================================
+
+a = do { ; a ;;;; a ; }
+
+---
+
+(haskell (function (variable) (exp_do (stmt (exp_name (variable))) (stmt (exp_name (variable))))))
