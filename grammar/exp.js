@@ -156,8 +156,6 @@ module.exports = {
     field('else', $._exp),
   ),
 
-  exp_if_guard: $ => seq('if', prec.left(repeat1($.gdpat))),
-
   pattern_guard: $ => seq(
     $._pat,
     $._larrow,
@@ -173,6 +171,8 @@ module.exports = {
   guards: $ => seq('|', sep1($.comma, $.guard)),
 
   gdpat: $ => seq($.guards, $._arrow, $._exp),
+
+  exp_if_guard: $ => seq('if', repeat1($.gdpat)),
 
   _alt_variants: $ => choice(
     seq($._arrow, $._exp),

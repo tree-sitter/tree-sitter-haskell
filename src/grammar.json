@@ -4088,26 +4088,6 @@
         }
       ]
     },
-    "exp_if_guard": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "if"
-        },
-        {
-          "type": "PREC_LEFT",
-          "value": 0,
-          "content": {
-            "type": "REPEAT1",
-            "content": {
-              "type": "SYMBOL",
-              "name": "gdpat"
-            }
-          }
-        }
-      ]
-    },
     "pattern_guard": {
       "type": "SEQ",
       "members": [
@@ -4190,6 +4170,22 @@
         {
           "type": "SYMBOL",
           "name": "_exp"
+        }
+      ]
+    },
+    "exp_if_guard": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "if"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "gdpat"
+          }
         }
       ]
     },
@@ -9786,6 +9782,9 @@
     [
       "annotated_type_variable",
       "type_name"
+    ],
+    [
+      "exp_if_guard"
     ]
   ],
   "precedences": [

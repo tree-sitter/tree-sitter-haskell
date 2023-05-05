@@ -1005,6 +1005,45 @@ a = if | a -> a
    (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable))))))
 
 ================================================================================
+exp: multiple if guards in a guard rhs
+================================================================================
+
+a | a = if | a -> a
+           | a -> a
+
+---
+
+(haskell
+ (function
+  (variable)
+  (guard_equation
+   (guards (guard (exp_name (variable))))
+   (exp_if_guard
+    (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))
+    (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))))))
+
+================================================================================
+exp: list with if guards
+================================================================================
+
+a = [if | a, a <- a -> a | a -> a]
+
+---
+
+(haskell
+ (function
+  (variable)
+  (exp_list
+   (exp_if_guard
+    (gdpat
+     (guards
+      (guard (exp_name (variable)))
+      (comma)
+      (guard (pattern_guard (pat_name (variable)) (exp_name (variable)))))
+     (exp_name (variable)))
+    (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))))))
+
+================================================================================
 exp: let with sig on rhs
 ================================================================================
 
