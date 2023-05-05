@@ -625,6 +625,22 @@ a = [case a of a -> a | a <- a]
    (qual (bind_pattern (pat_name (variable)) (exp_name (variable)))))))
 
 ================================================================================
+layout: case in an explicitly braced do terminated by brace
+================================================================================
+
+a = do { case a of a -> a }
+
+---
+
+(haskell
+ (function
+  (variable)
+  (exp_do
+   (stmt
+    (exp_case (exp_name (variable))
+     (alts (alt (pat_name (variable)) (exp_name (variable)))))))))
+
+================================================================================
 layout: do in an if-then block
 ================================================================================
 

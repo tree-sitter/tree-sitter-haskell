@@ -1270,6 +1270,13 @@ static Result close_layout_in_list(State *state) {
       SHORT_SCANNER;
       return res_fail;
     }
+    case '}': {
+      if (state->symbols[END]) {
+        pop(state);
+        return finish(END, "brace");
+      }
+      break;
+    }
   }
   return res_cont;
 }
