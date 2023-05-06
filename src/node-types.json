@@ -1663,6 +1663,21 @@
     }
   },
   {
+    "type": "decl_special",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "decl_special_fun_fixity",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "decls",
     "named": true,
     "fields": {},
@@ -8631,6 +8646,10 @@
           "named": true
         },
         {
+          "type": "decl_special",
+          "named": true
+        },
+        {
           "type": "default_declaration",
           "named": true
         },
@@ -14835,6 +14854,10 @@
   {
     "type": "data",
     "named": false
+  },
+  {
+    "type": "decl_special_fun_fixity",
+    "named": true
   },
   {
     "type": "default",

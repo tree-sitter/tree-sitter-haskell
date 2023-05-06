@@ -119,4 +119,14 @@ module.exports = {
     alias($.decl_foreign_import, $.foreign_import),
     alias($.decl_foreign_export, $.foreign_export)
   ),
+
+  // ------------------------------------------------------------------------
+  // Special decls used in GHC
+  // ------------------------------------------------------------------------
+
+  decl_special_fun_fixity: _ => 'infixr -1 ->',
+
+  decl_special: $ => choice(
+    $.decl_special_fun_fixity,
+  ),
 }

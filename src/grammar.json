@@ -219,6 +219,10 @@
         {
           "type": "SYMBOL",
           "name": "top_splice"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "decl_special"
         }
       ]
     },
@@ -9354,6 +9358,19 @@
           },
           "named": true,
           "value": "foreign_export"
+        }
+      ]
+    },
+    "decl_special_fun_fixity": {
+      "type": "STRING",
+      "value": "infixr -1 ->"
+    },
+    "decl_special": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "decl_special_fun_fixity"
         }
       ]
     },

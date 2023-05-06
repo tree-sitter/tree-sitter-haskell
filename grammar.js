@@ -260,6 +260,7 @@ module.exports = grammar({
       $._decl,
       alias($.decl_pattern, $.pattern_synonym),
       $.top_splice,
+      $.decl_special,
     ),
 
     ...basic,
