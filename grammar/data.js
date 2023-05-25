@@ -133,11 +133,15 @@ module.exports = {
   // data family
   // ------------------------------------------------------------------------
 
+  _datafam: $ => seq(
+    $._simpletype,
+    optional($._type_annotation),
+  ),
+
   decl_datafam: $ => seq(
     'data',
     'family',
-    $._simpletype,
-    optional($._type_annotation),
+    $._datafam,
   ),
 
   /**

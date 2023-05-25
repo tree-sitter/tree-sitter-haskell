@@ -8,15 +8,13 @@ module.exports = {
   class_datafam: $ => seq(
     'data',
     optional('family'),
-    $._simpletype,
-    optional($._type_annotation),
+    $._datafam,
   ),
 
   class_tyfam: $ => seq(
     'type',
     optional('family'),
-    $._simpletype,
-    optional($._type_annotation),
+    $._tyfam,
   ),
 
   _cdecl: $ => choice(
@@ -64,16 +62,14 @@ module.exports = {
   inst_tyinst: $ => seq(
     'type',
     optional('instance'),
-    repeat($._atype),
-    '=',
-    $._type,
+    $._tyinst,
   ),
 
   _idecl: $ => choice(
     $.function,
     $.signature,
-    $.inst_datainst,
-    $.inst_tyinst,
+    alias($.inst_datainst, $.data_instance),
+    alias($.inst_tyinst, $.type_instance),
   ),
 
   /**

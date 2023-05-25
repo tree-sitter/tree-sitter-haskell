@@ -246,20 +246,28 @@ module.exports = {
     optional($.tyfam_injectivity),
   ),
 
+  _tyfam: $ => seq(
+    alias($.tyfam_head, $.head),
+    optional(choice($._type_annotation, $._tyfam_inj)),
+  ),
+
   decl_tyfam: $ => seq(
     'type',
     'family',
-    alias($.tyfam_head, $.head),
-    optional(choice($._type_annotation, $._tyfam_inj)),
+    $._tyfam,
     optional(where($, alias($.tyfam_eq, $.equation))),
+  ),
+
+  _tyinst: $ => seq(
+    repeat(choice($._atype, $.type_invisible)),
+    '=',
+    $._type_or_implicit,
   ),
 
   decl_tyinst: $ => seq(
     'type',
     'instance',
-    repeat($._atype),
-    '=',
-    $._type_or_implicit,
+    $._tyinst,
   ),
 
   type_role: _ => choice(

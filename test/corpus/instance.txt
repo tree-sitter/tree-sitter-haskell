@@ -138,7 +138,7 @@ instance: associated type instance
 
 instance A where
   type A A a = A a
-  type instance A a = A
+  type instance A @A a = A
 
 ---
 
@@ -147,13 +147,14 @@ instance A where
   (instance_head
    (class_name (type)))
   (where)
-  (inst_tyinst
+  (type_instance
    (type_name (type))
    (type_name (type))
    (type_name (type_variable))
    (type_apply (type_name (type)) (type_name (type_variable))))
-  (inst_tyinst
+  (type_instance
    (type_name (type))
+   (type_invisible (type_name (type)))
    (type_name (type_variable))
    (type_name (type)))))
 
@@ -171,7 +172,7 @@ instance A where
  (instance
   (instance_head (class_name (type)))
   (where)
-  (inst_datainst
+  (data_instance
    (type_apply
     (type_name (type))
     (type_name (type_variable)))
@@ -180,7 +181,7 @@ instance A where
     (data_constructor_record
      (constructor)
      (record_fields (field (variable) (type_name (type)))))))
-  (inst_datainst
+  (data_instance
    (forall (quantifiers (type_variable)))
    (context (constraint (class_name (type)) (type_name (type_variable))))
    (type_apply

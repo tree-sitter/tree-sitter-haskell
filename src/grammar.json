@@ -2836,17 +2836,9 @@
         }
       ]
     },
-    "decl_tyfam": {
+    "_tyfam": {
       "type": "SEQ",
       "members": [
-        {
-          "type": "STRING",
-          "value": "type"
-        },
-        {
-          "type": "STRING",
-          "value": "family"
-        },
         {
           "type": "ALIAS",
           "content": {
@@ -2876,6 +2868,23 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "decl_tyfam": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "type"
+        },
+        {
+          "type": "STRING",
+          "value": "family"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_tyfam"
         },
         {
           "type": "CHOICE",
@@ -3087,6 +3096,35 @@
         }
       ]
     },
+    "_tyinst": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_atype"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "type_invisible"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_type_or_implicit"
+        }
+      ]
+    },
     "decl_tyinst": {
       "type": "SEQ",
       "members": [
@@ -3099,19 +3137,8 @@
           "value": "instance"
         },
         {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_atype"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "="
-        },
-        {
           "type": "SYMBOL",
-          "name": "_type_or_implicit"
+          "name": "_tyinst"
         }
       ]
     },
@@ -7694,17 +7721,9 @@
         }
       ]
     },
-    "decl_datafam": {
+    "_datafam": {
       "type": "SEQ",
       "members": [
-        {
-          "type": "STRING",
-          "value": "data"
-        },
-        {
-          "type": "STRING",
-          "value": "family"
-        },
         {
           "type": "SYMBOL",
           "name": "_simpletype"
@@ -7720,6 +7739,23 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "decl_datafam": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "data"
+        },
+        {
+          "type": "STRING",
+          "value": "family"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_datafam"
         }
       ]
     },
@@ -7857,19 +7893,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_simpletype"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_type_annotation"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "name": "_datafam"
         }
       ]
     },
@@ -7894,19 +7918,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_simpletype"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_type_annotation"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "name": "_tyfam"
         }
       ]
     },
@@ -8336,19 +8348,8 @@
           ]
         },
         {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_atype"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "="
-        },
-        {
           "type": "SYMBOL",
-          "name": "_type"
+          "name": "_tyinst"
         }
       ]
     },
@@ -8364,12 +8365,22 @@
           "name": "signature"
         },
         {
-          "type": "SYMBOL",
-          "name": "inst_datainst"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "inst_datainst"
+          },
+          "named": true,
+          "value": "data_instance"
         },
         {
-          "type": "SYMBOL",
-          "name": "inst_tyinst"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "inst_tyinst"
+          },
+          "named": true,
+          "value": "type_instance"
         }
       ]
     },
