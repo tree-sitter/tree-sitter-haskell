@@ -24,7 +24,7 @@ module.exports = {
 
   _record_field: $ => braces($.field),
 
-  record_fields: $ => braces(sep1($.comma, $.field)),
+  record_fields: $ => braces(sep($.comma, $.field)),
 
   data_constructor_record: $ => seq(
     $.constructor,

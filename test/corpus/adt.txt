@@ -431,3 +431,16 @@ type data A = A
  (adt
   (type)
   (constructors (data_constructor (constructor)))))
+
+================================================================================
+plain adt: empty record
+================================================================================
+
+data A = A {}
+
+---
+
+(haskell
+ (adt
+  (type)
+  (constructors (data_constructor_record (constructor) (record_fields)))))
