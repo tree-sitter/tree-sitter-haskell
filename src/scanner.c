@@ -1663,4 +1663,5 @@ void tree_sitter_haskell_external_scanner_deserialize(void *indents_v, char *buf
 void tree_sitter_haskell_external_scanner_destroy(void *indents_v) {
   indent_vec *indents = (indent_vec*) indents_v;
   VEC_FREE(indents);
+  free(indents);
 }
