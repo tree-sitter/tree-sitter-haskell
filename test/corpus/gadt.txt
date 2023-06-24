@@ -234,3 +234,24 @@ type data A a where
    (context
     (constraint (type_infix (type_name (type)) (type_operator) (type_name (type)))))
    (type_apply (type_name (type)) (type_name (type_variable))))))
+
+================================================================================
+gadt: multiplicity arrow
+================================================================================
+
+data A a where
+  A :: a %1 -> A a
+
+---
+
+(haskell
+ (adt
+  (type)
+  (type_variable)
+  (where)
+  (gadt_constructor
+   (constructor)
+   (fun
+    (type_name (type_variable))
+    (modifier (type_literal (integer)))
+    (type_apply (type_name (type)) (type_name (type_variable)))))))

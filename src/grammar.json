@@ -7204,7 +7204,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_arrow"
+          "name": "_fun_arrow"
         },
         {
           "type": "SYMBOL",
