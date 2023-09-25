@@ -27,7 +27,7 @@ module.exports = {
 
   _forall: $ => seq(
     $._forall_kw,
-    repeat1($._quantifier),
+    repeat($._quantifier),
   ),
 
   _quantifiers: $ => seq(

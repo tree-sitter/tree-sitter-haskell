@@ -1729,7 +1729,7 @@
           "name": "_forall_kw"
         },
         {
-          "type": "REPEAT1",
+          "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
             "name": "_quantifier"

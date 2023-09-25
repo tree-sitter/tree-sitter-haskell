@@ -243,3 +243,18 @@ a :: ∀ {a} a . a
     (inferred_type_variable (type_variable))
     (type_variable))
    (type_name (type_variable)))))
+
+================================================================================
+signature: forall without variables
+================================================================================
+
+a :: ∀ . Int
+
+---
+
+(haskell
+ (signature
+  (variable)
+  (forall
+   (quantifiers)
+   (type_name (type)))))
