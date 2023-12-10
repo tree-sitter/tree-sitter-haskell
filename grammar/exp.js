@@ -180,7 +180,7 @@ module.exports = {
   ),
 
   alt: $ => seq($._pat, $._alt_variants, optional(seq($.where, optional($.decls)))),
-  nalt: $ => seq(repeat1($._pat), $._alt_variants, optional(seq($.where, optional($.decls)))),
+  nalt: $ => seq(repeat1($._apat), $._alt_variants, optional(seq($.where, optional($.decls)))),
 
   alts: $ => layouted($, $.alt),
   nalts: $ => layouted($, $.nalt),

@@ -9853,15 +9853,7 @@
           "named": true
         },
         {
-          "type": "pat_apply",
-          "named": true
-        },
-        {
           "type": "pat_as",
-          "named": true
-        },
-        {
-          "type": "pat_infix",
           "named": true
         },
         {
@@ -9878,10 +9870,6 @@
         },
         {
           "type": "pat_name",
-          "named": true
-        },
-        {
-          "type": "pat_negation",
           "named": true
         },
         {
