@@ -199,11 +199,11 @@ module.exports = {
   /**
    * alts are NOT optional in a \cases expression
    */
-	exp_lambda_cases: $ => seq(
+  exp_lambda_cases: $ => seq(
     '\\',
     'cases',
     $.nalts,
-	),
+  ),
 
   rec: $ => seq(
     'rec',
