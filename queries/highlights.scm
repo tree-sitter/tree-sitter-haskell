@@ -62,6 +62,8 @@
   "of"
 ] @conditional
 
+(exp_lambda_cases "\\" ("cases" @conditional))
+
 [
   "import"
   "qualified"

@@ -267,6 +267,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -639,6 +643,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -2022,6 +2030,10 @@
             "named": true
           },
           {
+            "type": "exp_lambda_cases",
+            "named": true
+          },
+          {
             "type": "exp_let_in",
             "named": true
           },
@@ -2486,6 +2498,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -2610,6 +2626,10 @@
           },
           {
             "type": "exp_lambda_case",
+            "named": true
+          },
+          {
+            "type": "exp_lambda_cases",
             "named": true
           },
           {
@@ -2799,6 +2819,10 @@
             "named": true
           },
           {
+            "type": "exp_lambda_cases",
+            "named": true
+          },
+          {
             "type": "exp_let_in",
             "named": true
           },
@@ -2982,6 +3006,10 @@
           },
           {
             "type": "exp_lambda_case",
+            "named": true
+          },
+          {
+            "type": "exp_lambda_cases",
             "named": true
           },
           {
@@ -3332,6 +3360,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -3460,6 +3492,10 @@
           },
           {
             "type": "exp_lambda_case",
+            "named": true
+          },
+          {
+            "type": "exp_lambda_cases",
             "named": true
           },
           {
@@ -3649,6 +3685,10 @@
             "named": true
           },
           {
+            "type": "exp_lambda_cases",
+            "named": true
+          },
+          {
             "type": "exp_let_in",
             "named": true
           },
@@ -3832,6 +3872,10 @@
           },
           {
             "type": "exp_lambda_case",
+            "named": true
+          },
+          {
+            "type": "exp_lambda_cases",
             "named": true
           },
           {
@@ -4227,6 +4271,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -4444,6 +4492,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -4572,6 +4624,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -4797,6 +4853,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -4937,6 +4997,21 @@
       "types": [
         {
           "type": "alts",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "exp_lambda_cases",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "nalts",
           "named": true
         }
       ]
@@ -5097,6 +5172,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -5302,6 +5381,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -5495,6 +5578,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_list",
           "named": true
         },
@@ -5682,6 +5769,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -5898,6 +5989,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_list",
           "named": true
         },
@@ -6018,6 +6113,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -6173,6 +6272,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -6489,6 +6592,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -6742,6 +6849,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -6941,6 +7052,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -7692,6 +7807,10 @@
             "named": true
           },
           {
+            "type": "exp_lambda_cases",
+            "named": true
+          },
+          {
             "type": "exp_let_in",
             "named": true
           },
@@ -8172,6 +8291,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -8296,6 +8419,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -8502,6 +8629,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -9521,6 +9652,287 @@
     "type": "module",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "nalt",
+    "named": true,
+    "fields": {
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "context",
+            "named": true
+          },
+          {
+            "type": "forall",
+            "named": true
+          },
+          {
+            "type": "fun",
+            "named": true
+          },
+          {
+            "type": "implicit_param",
+            "named": true
+          },
+          {
+            "type": "promoted",
+            "named": true
+          },
+          {
+            "type": "quasiquote",
+            "named": true
+          },
+          {
+            "type": "splice",
+            "named": true
+          },
+          {
+            "type": "type_apply",
+            "named": true
+          },
+          {
+            "type": "type_infix",
+            "named": true
+          },
+          {
+            "type": "type_list",
+            "named": true
+          },
+          {
+            "type": "type_literal",
+            "named": true
+          },
+          {
+            "type": "type_name",
+            "named": true
+          },
+          {
+            "type": "type_parens",
+            "named": true
+          },
+          {
+            "type": "type_star",
+            "named": true
+          },
+          {
+            "type": "type_tuple",
+            "named": true
+          },
+          {
+            "type": "type_unboxed_sum",
+            "named": true
+          },
+          {
+            "type": "type_unboxed_tuple",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "decls",
+          "named": true
+        },
+        {
+          "type": "exp_apply",
+          "named": true
+        },
+        {
+          "type": "exp_arithmetic_sequence",
+          "named": true
+        },
+        {
+          "type": "exp_case",
+          "named": true
+        },
+        {
+          "type": "exp_cond",
+          "named": true
+        },
+        {
+          "type": "exp_do",
+          "named": true
+        },
+        {
+          "type": "exp_if_guard",
+          "named": true
+        },
+        {
+          "type": "exp_infix",
+          "named": true
+        },
+        {
+          "type": "exp_lambda",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
+          "type": "exp_let_in",
+          "named": true
+        },
+        {
+          "type": "exp_list",
+          "named": true
+        },
+        {
+          "type": "exp_list_comprehension",
+          "named": true
+        },
+        {
+          "type": "exp_literal",
+          "named": true
+        },
+        {
+          "type": "exp_name",
+          "named": true
+        },
+        {
+          "type": "exp_negation",
+          "named": true
+        },
+        {
+          "type": "exp_parens",
+          "named": true
+        },
+        {
+          "type": "exp_projection",
+          "named": true
+        },
+        {
+          "type": "exp_projection_selector",
+          "named": true
+        },
+        {
+          "type": "exp_record",
+          "named": true
+        },
+        {
+          "type": "exp_section_left",
+          "named": true
+        },
+        {
+          "type": "exp_section_right",
+          "named": true
+        },
+        {
+          "type": "exp_th_quoted_name",
+          "named": true
+        },
+        {
+          "type": "exp_tuple",
+          "named": true
+        },
+        {
+          "type": "exp_type_application",
+          "named": true
+        },
+        {
+          "type": "exp_unboxed_sum",
+          "named": true
+        },
+        {
+          "type": "exp_unboxed_tuple",
+          "named": true
+        },
+        {
+          "type": "gdpat",
+          "named": true
+        },
+        {
+          "type": "pat_as",
+          "named": true
+        },
+        {
+          "type": "pat_irrefutable",
+          "named": true
+        },
+        {
+          "type": "pat_list",
+          "named": true
+        },
+        {
+          "type": "pat_literal",
+          "named": true
+        },
+        {
+          "type": "pat_name",
+          "named": true
+        },
+        {
+          "type": "pat_parens",
+          "named": true
+        },
+        {
+          "type": "pat_record",
+          "named": true
+        },
+        {
+          "type": "pat_strict",
+          "named": true
+        },
+        {
+          "type": "pat_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_type_binder",
+          "named": true
+        },
+        {
+          "type": "pat_unboxed_sum",
+          "named": true
+        },
+        {
+          "type": "pat_unboxed_tuple",
+          "named": true
+        },
+        {
+          "type": "pat_wildcard",
+          "named": true
+        },
+        {
+          "type": "quasiquote",
+          "named": true
+        },
+        {
+          "type": "splice",
+          "named": true
+        },
+        {
+          "type": "where",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "nalts",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "nalt",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "namespace",
@@ -11234,6 +11646,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -11563,6 +11979,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -11970,6 +12390,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -12609,6 +13033,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -12814,6 +13242,10 @@
           "named": true
         },
         {
+          "type": "exp_lambda_cases",
+          "named": true
+        },
+        {
           "type": "exp_let_in",
           "named": true
         },
@@ -13009,6 +13441,10 @@
         },
         {
           "type": "exp_lambda_case",
+          "named": true
+        },
+        {
+          "type": "exp_lambda_cases",
           "named": true
         },
         {
@@ -14546,6 +14982,10 @@
   },
   {
     "type": "case",
+    "named": false
+  },
+  {
+    "type": "cases",
     "named": false
   },
   {

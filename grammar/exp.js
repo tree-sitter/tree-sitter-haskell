@@ -180,8 +180,10 @@ module.exports = {
   ),
 
   alt: $ => seq($._pat, $._alt_variants, optional(seq($.where, optional($.decls)))),
+  nalt: $ => seq(repeat1($._apat), $._alt_variants, optional(seq($.where, optional($.decls)))),
 
   alts: $ => layouted($, $.alt),
+  nalts: $ => layouted($, $.nalt),
 
   exp_case: $ => seq('case', $._exp, 'of', optional($.alts)),
 
@@ -192,6 +194,15 @@ module.exports = {
     '\\',
     'case',
     optional($.alts),
+  ),
+
+  /**
+   * alts are NOT optional in a \cases expression
+   */
+  exp_lambda_cases: $ => seq(
+    '\\',
+    'cases',
+    $.nalts,
   ),
 
   rec: $ => seq(
@@ -293,6 +304,7 @@ module.exports = {
     $._aexp_projection,
     $.exp_type_application,
     $.exp_lambda_case,
+    $.exp_lambda_cases,
     $.exp_do,
     $.exp_projection,
   ),
