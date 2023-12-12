@@ -4229,8 +4229,12 @@
           "name": "_arrow"
         },
         {
-          "type": "SYMBOL",
-          "name": "_exp"
+          "type": "FIELD",
+          "name": "rhs",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_exp"
+          }
         }
       ]
     },
@@ -4261,8 +4265,12 @@
               "name": "_arrow"
             },
             {
-              "type": "SYMBOL",
-              "name": "_exp"
+              "type": "FIELD",
+              "name": "rhs",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_exp"
+              }
             }
           ]
         },
@@ -4275,12 +4283,23 @@
         }
       ]
     },
+    "_nalt_patterns": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_apat"
+      }
+    },
     "alt": {
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_pat"
+          "type": "FIELD",
+          "name": "pattern",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_pat"
+          }
         },
         {
           "type": "SYMBOL",
@@ -4321,10 +4340,16 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "REPEAT1",
+          "type": "FIELD",
+          "name": "patterns",
           "content": {
-            "type": "SYMBOL",
-            "name": "_apat"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_nalt_patterns"
+            },
+            "named": true,
+            "value": "nalt_patterns"
           }
         },
         {

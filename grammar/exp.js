@@ -170,17 +170,28 @@ module.exports = {
 
   guards: $ => seq('|', sep1($.comma, $.guard)),
 
-  gdpat: $ => seq($.guards, $._arrow, $._exp),
+  gdpat: $ => seq($.guards, $._arrow, field('rhs', $._exp)),
 
   exp_if_guard: $ => seq('if', repeat1($.gdpat)),
 
   _alt_variants: $ => choice(
-    seq($._arrow, $._exp),
+    seq($._arrow, field('rhs', $._exp)),
     repeat1($.gdpat),
   ),
 
-  alt: $ => seq($._pat, $._alt_variants, optional(seq($.where, optional($.decls)))),
-  nalt: $ => seq(repeat1($._apat), $._alt_variants, optional(seq($.where, optional($.decls)))),
+  _nalt_patterns: $ => repeat1($._apat),
+
+  alt: $ => seq(
+    field('pattern', $._pat),
+    $._alt_variants,
+    optional(seq($.where, optional($.decls))),
+  ),
+
+  nalt: $ => seq(
+    field('patterns', alias($._nalt_patterns, $.nalt_patterns)),
+    $._alt_variants,
+    optional(seq($.where, optional($.decls))),
+  ),
 
   alts: $ => layouted($, $.alt),
   nalts: $ => layouted($, $.nalt),

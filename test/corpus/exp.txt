@@ -608,6 +608,36 @@ a = \case a -> a : a
      (exp_infix (exp_name (variable)) (constructor_operator) (exp_name (variable))))))))
 
 ================================================================================
+exp: n-ary cases
+================================================================================
+
+a = \cases
+  A a a -> a
+  a@(A a) a -> a
+
+---
+
+(haskell
+ (function
+  name: (variable)
+  rhs: (exp_lambda_cases
+   (nalts
+    (nalt
+     patterns: (nalt_patterns
+       (pat_name (constructor))
+       (pat_name (variable))
+       (pat_name (variable)))
+     rhs: (exp_name (variable)))
+    (nalt
+     patterns: (nalt_patterns
+       (pat_as
+        var: (variable)
+        pat: (pat_parens (pat_apply (pat_name (constructor)) (pat_name (variable)))))
+       (pat_name (variable)))
+     rhs: (exp_name (variable)))))))
+
+
+================================================================================
 exp: do and where
 ================================================================================
 
