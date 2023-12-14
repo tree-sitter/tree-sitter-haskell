@@ -2578,6 +2578,10 @@
           "named": true
         },
         {
+          "type": "exp_if_guard",
+          "named": true
+        },
+        {
           "type": "exp_lambda",
           "named": true
         },

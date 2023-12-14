@@ -5511,6 +5511,19 @@
             },
             {
               "type": "SYMBOL",
+              "name": "exp_if_guard"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_aexp"
+            },
+            {
+              "type": "SYMBOL",
               "name": "exp_case"
             }
           ]

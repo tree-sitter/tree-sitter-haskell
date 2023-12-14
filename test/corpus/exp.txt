@@ -961,6 +961,7 @@ exp: block argument: if
 ================================================================================
 
 a = a if a then a else a
+a = a if | a -> a
 
 ---
 
@@ -968,8 +969,13 @@ a = a if a then a else a
  (function
   (variable)
   (exp_apply
-  (exp_name (variable))
-   (exp_cond (exp_name (variable)) (exp_name (variable)) (exp_name (variable))))))
+   (exp_name (variable))
+   (exp_cond (exp_name (variable)) (exp_name (variable)) (exp_name (variable)))))
+ (function
+  (variable)
+  (exp_apply
+   (exp_name (variable))
+   (exp_if_guard (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))))))
 
 ================================================================================
 exp: block argument: case

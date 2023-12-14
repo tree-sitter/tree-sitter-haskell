@@ -333,6 +333,7 @@ module.exports = {
     seq($._aexp, $.exp_lambda),
     seq($._aexp, $.exp_let_in),
     seq($._aexp, $.exp_cond),
+    seq($._aexp, $.exp_if_guard),
     seq($._aexp, $.exp_case),
   ),
 
