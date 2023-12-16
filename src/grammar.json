@@ -6608,49 +6608,55 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "CHOICE",
+              "type": "SEQ",
               "members": [
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "STRING",
-                    "value": ".."
-                  },
-                  "named": true,
-                  "value": "all_names"
-                },
                 {
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "_name"
-                        },
-                        {
-                          "type": "REPEAT",
-                          "content": {
-                            "type": "SEQ",
-                            "members": [
-                              {
-                                "type": "SYMBOL",
-                                "name": "comma"
-                              },
-                              {
-                                "type": "SYMBOL",
-                                "name": "_name"
-                              }
-                            ]
-                          }
-                        }
-                      ]
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "STRING",
+                        "value": ".."
+                      },
+                      "named": true,
+                      "value": "all_names"
                     },
                     {
-                      "type": "BLANK"
+                      "type": "SYMBOL",
+                      "name": "_name"
                     }
                   ]
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "comma"
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "STRING",
+                              "value": ".."
+                            },
+                            "named": true,
+                            "value": "all_names"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "_name"
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 }
               ]
             },

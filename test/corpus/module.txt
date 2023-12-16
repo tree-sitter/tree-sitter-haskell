@@ -34,6 +34,7 @@ module: exports regular
 module A (
   a',
   A,
+  A(),
   A(..),
   A(a, a),
 ) where
@@ -46,6 +47,8 @@ module A (
   (export (variable))
   (comma)
   (export (type))
+  (comma)
+  (export (type) (export_names))
   (comma)
   (export (type) (export_names (all_names)))
   (comma)
@@ -94,6 +97,7 @@ module: exports pattern
 module A (
   pattern A,
   pattern (<>),
+  A (.., a, ..),
 ) where
 
 ---
@@ -104,8 +108,11 @@ module A (
   (export (namespace) (type))
   (comma)
   (export (namespace) (type_operator))
+  (comma)
+  (export (type) (export_names (all_names) (comma) (variable) (comma) (all_names)))
   (comma))
  (where))
+
 
 ================================================================================
 module: exports module

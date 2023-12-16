@@ -12,7 +12,7 @@ module.exports = {
   qualified_module: $ => qualified($, $._modid),
   _qmodid: $ => choice($.qualified_module, $._modid),
 
-  export_names: $ => parens(optional(choice(alias('..', $.all_names), sep($.comma, $._name)))),
+  export_names: $ => parens(sep($.comma, choice(alias('..', $.all_names), $._name))),
 
   export: $ => choice(
     $._qvar,
