@@ -1210,6 +1210,10 @@
           "named": true
         },
         {
+          "type": "data_constructor_special",
+          "named": true
+        },
+        {
           "type": "forall",
           "named": true
         }
@@ -1463,6 +1467,33 @@
         },
         {
           "type": "record_fields",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "data_constructor_special",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "con_unit",
+          "named": true
+        },
+        {
+          "type": "type_tuple",
+          "named": true
+        },
+        {
+          "type": "type_unboxed_sum",
+          "named": true
+        },
+        {
+          "type": "type_unboxed_tuple",
           "named": true
         }
       ]

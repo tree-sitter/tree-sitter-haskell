@@ -7196,6 +7196,27 @@
         }
       ]
     },
+    "data_constructor_special": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "con_unit"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_tuple"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_unboxed_tuple"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_unboxed_sum"
+        }
+      ]
+    },
     "constructors": {
       "type": "SEQ",
       "members": [
@@ -7240,6 +7261,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "data_constructor_record"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "data_constructor_special"
                 }
               ]
             }
@@ -7295,6 +7320,10 @@
                       {
                         "type": "SYMBOL",
                         "name": "data_constructor_record"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "data_constructor_special"
                       }
                     ]
                   }

@@ -444,3 +444,33 @@ data A = A {}
  (adt
   (type)
   (constructors (data_constructor_record (constructor) (record_fields)))))
+
+================================================================================
+plain adt: special constructors
+================================================================================
+
+data A = ()
+data A = (a, a)
+data A# = (# a, a #)
+data A = (# a | #) | (# | a #)
+
+---
+
+
+(haskell
+ (adt
+  (type)
+  (constructors (data_constructor_special (con_unit))))
+ (adt
+  (type)
+  (constructors
+   (data_constructor_special (type_tuple (type_name (type_variable)) (comma) (type_name (type_variable))))))
+ (adt
+  (type)
+  (constructors
+   (data_constructor_special (type_unboxed_tuple (type_name (type_variable)) (comma) (type_name (type_variable))))))
+  (adt
+   (type)
+   (constructors
+    (data_constructor_special (type_unboxed_sum (type_name (type_variable))))
+    (data_constructor_special (type_unboxed_sum (type_name (type_variable)))))))

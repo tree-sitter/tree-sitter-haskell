@@ -31,6 +31,16 @@ module.exports = {
     $.record_fields,
   ),
 
+  // ------------------------------------------------------------------------
+  // Special constructors occurring in GHC code
+  // ------------------------------------------------------------------------
+  data_constructor_special: $ => choice(
+    $.con_unit,
+    $.type_tuple,
+    $.type_unboxed_tuple,
+    $.type_unboxed_sum,
+  ),
+
   /**
    * data constructors only allow single foralls and contexts
    */
@@ -43,6 +53,7 @@ module.exports = {
         $.data_constructor,
         $.data_constructor_infix,
         $.data_constructor_record,
+        $.data_constructor_special,
       ),
     )
   ),
