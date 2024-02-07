@@ -1016,7 +1016,7 @@ static Result qq_body(State *state) {
           return finish(QQ_BODY, "qq_body");
         }
       }
-      S_ADVANCE;
+      else S_ADVANCE;
     }
   }
 }

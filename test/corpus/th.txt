@@ -158,3 +158,28 @@ a = ⟦a⟧
 ---
 
 (haskell (function (variable) (quasiquote (quasiquote_body))))
+
+================================================================================
+template haskell: typed expression quotation
+================================================================================
+
+a = [|| a + a ||]
+
+a = [e|| a + a ||]
+
+---
+
+(haskell
+  (function
+    (variable)
+    (quasiquote
+      (quasiquote_start)
+      (quasiquote_bar)
+      (quasiquote_body)))
+  (function
+    (variable)
+    (quasiquote
+      (quasiquote_start)
+      (quoter)
+      (quasiquote_bar)
+      (quasiquote_body))))
