@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-haskell",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "description": "Haskell grammar for tree-sitter",
   "repository": "github:tree-sitter/tree-sitter-haskell",
   "main": "bindings/node",
