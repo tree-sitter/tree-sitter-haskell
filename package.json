@@ -8,7 +8,8 @@
     "parser",
     "haskell"
   ],
-  "author": "Rick Winfrey",
+  "author": "Torsten Schmits",
+  "contributors": ["Rick Winfrey", "Max Brunsfeld", "Torsten Schmits", "Owen Shepherd"],
   "license": "MIT",
   "dependencies": {
     "nan": "^2.12.1",
