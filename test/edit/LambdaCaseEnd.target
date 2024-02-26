@@ -4,9 +4,9 @@
     rhs: (exp_lambda_case [0, 4] - [1, 8]
       (alts [1, 2] - [1, 8]
         (alt [1, 2] - [1, 8]
-          (pat_name [1, 2] - [1, 3]
+          pattern: (pat_name [1, 2] - [1, 3]
             (variable [1, 2] - [1, 3]))
-          (exp_name [1, 7] - [1, 8]
+          rhs: (exp_name [1, 7] - [1, 8]
             (variable [1, 7] - [1, 8]))))))
   (function [3, 0] - [3, 5]
     name: (variable [3, 0] - [3, 1])

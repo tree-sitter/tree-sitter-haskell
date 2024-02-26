@@ -1,7 +1,7 @@
 /**
  * Print input and result information.
  */
-// #define DEBUG 1
+// #define DEBUG 0
 
 /**
  * Print the upcoming token after parsing finished.
@@ -1318,9 +1318,7 @@ static Result inline_tokens(State *state) {
     }
     // TODO(414owen) does this clash with inline comments '--'?
     // I'm not sure why there's a `symbolic::comment` and a `COMMENT`...
-    SYMBOLICS_WITHOUT_BAR: {
-      is_symbolic = true;
-    }
+    SYMBOLICS_WITHOUT_BAR:
     case '|': {
       if (state->symbols[QQ_BAR]) {
         S_ADVANCE;
