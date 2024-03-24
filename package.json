@@ -9,7 +9,7 @@
     "haskell"
   ],
   "author": "Rick Winfrey",
-  "maintainers": ["Torsten Schmits"], 
+  "maintainers": ["Torsten Schmits"],
   "contributors": ["Max Brunsfeld", "Owen Shepherd"],
   "license": "MIT",
   "dependencies": {
