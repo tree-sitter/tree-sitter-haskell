@@ -32,7 +32,10 @@ let package = Package(
                 sources: [
                     "src/parser.c",
                     "src/scanner.c",
-                    "src/unicode.h",
+                    "src/id.h",
+                    "src/space.h",
+                    "src/symop.h",
+                    "src/varid-start.h",
                 ],
                 resources: [
                     .copy("queries")

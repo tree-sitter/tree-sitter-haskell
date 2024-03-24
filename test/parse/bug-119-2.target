@@ -1,0 +1,16 @@
+(haskell [0, 0] - [2, 0]
+  declarations: (declarations [0, 0] - [2, 0]
+    (bind [0, 0] - [0, 5]
+      name: (variable [0, 0] - [0, 1])
+      match: (match [0, 2] - [0, 5]
+        expression: (literal [0, 4] - [0, 5]
+          (integer [0, 4] - [0, 5]))))
+    (signature [1, 0] - [1, 14]
+      name: (variable [1, 0] - [1, 1])
+      type: (context [1, 4] - [1, 14]
+        context: (parens [1, 5] - [1, 11]
+          (apply [1, 6] - [1, 10]
+            constructor: (name [1, 6] - [1, 8])
+            argument: (variable [1, 9] - [1, 10])))
+        type: (variable [1, 14] - [1, 14])))))
+test/parse/bug-119-2.hs	(MISSING variable [1, 14] - [1, 14])

@@ -1,8 +1,7 @@
 name: Publish package
 
 on:
-  push:
-    tags: ["*"]
+  workflow_call:
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}

@@ -1,14 +1,52 @@
-const {parens, brackets, braces, sep1, layouted, qualified, varid_pattern} = require('./util.js')
+const {
+  sep1,
+  sep,
+  parens,
+  braces,
+  brackets,
+  layout_sort,
+  layout,
+  unboxed_tuple_nonempty,
+  unboxed_sum_single,
+  qualified,
+} = require('./util.js')
 
 module.exports = {
+
   // ------------------------------------------------------------------------
-  // expression
+  // names
   // ------------------------------------------------------------------------
 
-  exp_parens: $ => parens($._exp),
+  _exp_name: $ => choice(
+    $._cons,
+    $._vars,
+    $.variable,
+    $.implicit_variable,
+    $.label,
+  ),
+
+  _exp_th_quoted_name: $ => choice(
+    seq('\'', field('name', choice($._vars, $._cons))),
+    prec('prefix', seq('\'\'', field('type', $.type))),
+  ),
+
+  // ------------------------------------------------------------------------
+  // tuples and parens
+  // ------------------------------------------------------------------------
+
+  _exp_parens: $ => parens($, field('expression', $._exp)),
+
+  // Having this separate reduces size by ~15kB
+  _exp_tuple_elems: $ => seq(
+    choice(
+      seq(repeat1(','), field('element', $._exp)),
+      seq(field('element', $._exp), ',', optional(field('element', $._exp))),
+    ),
+    repeat(seq(',', optional(field('element', $._exp))))
+  ),
 
   /**
-    * This needs to be disambiguated from `gcon_tuple`, which is a constructor with _only_ commas.
+    * This needs to be disambiguated from `prefix_tuple`, which is a constructor with _only_ commas.
     * Tuple sections aren't allowed in patterns.
     *
     * Since tuple expressions can contain singular expressions in sections like `(a,)` and `(,a)`, it has to be ensured
@@ -16,364 +54,360 @@ module.exports = {
     * preceded by any number of further commas, like `(,,,a)`.
     *
     * The final `repeat` is simpler, it just has to ensure that no two `_exp`s can be successive, but this encoding
-    * means that the optional `_exp` after `(5,)` needs to be included in the `choice`, otherwise a simple pair would be
-    * impossible.
+    * means that the optional `_exp` after `(5,)` needs to be included in the `choice`, otherwise a simple pair
+    * would be impossible.
     */
-  _exp_tuple: $ => seq(
-    choice(seq(repeat1($.comma), $._exp), seq($._exp, $.comma, optional($._exp))),
-    repeat(seq($.comma, optional($._exp)))
-  ),
-
-  exp_tuple: $ => parens($._exp_tuple),
+  _exp_tuple: $ => parens($, $._exp_tuple_elems),
 
   /**
-  * Unlike their boxed variants, unboxed tuples may be nullary and unary, making it simpler to parse them.
-  * The nullary tuple may even have no space between the hashes, but this format coincides with the prefix notation of
-  * the `##` symop. Since the latter is already parsed by other rules and is valid in the same positions, it is left out
-  * here.
-  *
-  * The opening lexeme, `(#`, is parsed with a hardcoded trailing space in exp, pat and type. This is a hack that works
-  * around some peculiarities of the interactions with some features like TH and symbolic operators that would most
-  * likely be significantly more complex to implement correctly. As it stands, the grammar can't parse an unboxed sum
-  * exp without a leading space, as in `(#| x #)`.
-  */
-  exp_unboxed_tuple: $ => seq($._unboxed_open, sep($.comma, optional($._exp)), $._unboxed_close),
+   * Unlike their boxed variants, unboxed tuples may be nullary and unary, making it simpler to parse them.
+   */
+  _exp_unboxed_tuple: $ => unboxed_tuple_nonempty($, $._exp),
 
   /**
-  * Unboxed sums must have at least one separating `|`, otherwise the expression would be a unary or nullary tuple.
-  */
-  _exp_unboxed_sum: $ => sep2('|', optional($._exp)),
+   * Unboxed sums must have at least one separating `|`, otherwise the expression would be a unary or nullary tuple.
+   * This is a lenient parser that allows multiple variants to be filled in, for simplicity.
+   */
+  _exp_unboxed_sum: $ => unboxed_sum_single($, $._exp),
 
-  exp_unboxed_sum: $ => seq($._unboxed_open, $._exp_unboxed_sum, $._unboxed_close),
+  // ------------------------------------------------------------------------
+  // lists
+  // ------------------------------------------------------------------------
 
-  exp_list: $ => brackets(sep1($.comma, $._exp)),
-
-  bind_pattern: $ => seq(
-    $._typed_pat,
-    $._larrow,
-    $._exp,
-  ),
+  _exp_list: $ => brackets($, sep1(',', field('element', $._exp)), optional(',')),
 
   /**
     * An expression like `[1,2..20]`.
-    *
-    * The two dots are handled in the scanner to disambiguate module and projection dots:
-    *
-    * - `[A.b]`
-    * - `[a.b]`
-    *
-    * The reason for `choice($._arith_dotdot, '..')` is simply to avoid having to add another case to the scanner.
-    * The disambiguation is only performed when the first dot occurs immediately after the identifier, since succeeding
-    * whitespace is not allowed for module/projection dots.
-    * When the scanner encounters two dots with no further symbolic characters, it rejects the token, deferring to the
-    * grammar.
-    * We could instead check for the `_arith_dotdot` symbol, but we have to reject the token anyway for record
-    * wildcards, so we can just fall back to the grammar for this as well.
     */
-  exp_arithmetic_sequence: $ => brackets(
+  _exp_arithmetic_sequence: $ => brackets(
+    $,
     field('from', $._exp),
-    optional(seq($.comma, field('step', $._exp))),
-    choice($._arith_dotdot, '..'),
+    optional(seq(',', field('step', $._exp))),
+    $._dotdot,
     optional(field('to', $._exp)),
   ),
 
   /**
-   * TransformListComp.
+   * `TransformListComp`, group style.
    *
-   * These have to be spelled out because the keywords are valid varids when the extension is disabled and it causes
-   * errors if they are used individually.
+   * Inlining `_exp` here is necessary to avoid a conflict.
    */
-  transform: $ => choice(
-    seq('then group by', $._exp, 'using', $._exp),
-    seq('then group using', $._exp),
-    seq('then', $._exp),
+  group: $ => seq(
+    'then',
+    'group',
+    optional(seq('by', field('key', choice(alias($._exp_signature, $.signature), $.expression)))),
+    'using',
+    field('classifier', $._exp),
   ),
 
-  qual: $ => choice(
-    $.bind_pattern,
+  /**
+   * `TransformListComp`, simple transformation style.
+   */
+  transform: $ => seq(
+    'then',
+    field('transformation', $._exp),
+    optional(seq('by', field('key', $._exp))),
+  ),
+
+  qualifier: $ => choice(
+    $.generator,
     $.let,
     $.transform,
-    $._exp,
+    $.group,
+    alias($._exp, $.boolean),
   ),
 
-  exp_list_comprehension: $ => brackets(
-    $._exp,
-    '|',
-    sep1($.comma, $.qual),
+  /**
+   * This is a supertype.
+   */
+  qualifiers: $ => seq(sep1(',', field('qualifier', $.qualifier))),
+
+  _exp_list_comprehension: $ => brackets(
+    $,
+    field('expression', $._exp),
+    repeat1(seq('|', field('qualifiers', $.qualifiers))),
   ),
 
-  exp_section_left: $ => parens(
-    $._exp_infix,
-    $._qop,
-  ),
+  // ------------------------------------------------------------------------
+  // greedy block args
+  // ------------------------------------------------------------------------
 
-  exp_section_right: $ => parens(
-    $._qop_nominus,
-    $._exp_infix,
-  ),
-
-  exp_th_quoted_name: $ => choice(
-    seq(quote, choice($._qvar, $._qcon)),
-    seq(quote + quote, $._atype),
-  ),
-
-  exp_field: $ => choice(
-    alias('..', $.wildcard),
-    seq(
-      field('field', $._qvar),
-      repeat(seq($._immediate_dot, field('subfield', $._immediate_variable))),
-      optional(seq('=', $._exp))
-    ),
-  ),
-
-  exp_type_application: $ => seq('@', $._atype),
-
-  exp_lambda: $ => seq(
+  _exp_lambda: $ => seq(
     '\\',
-    repeat1($._apat),
+    field('patterns', $.patterns),
     $._arrow,
-    $._exp,
+    field('expression', $._exp),
   ),
 
-  exp_in: $ => seq('in', $._exp),
+  _exp_let_in: $ => seq($._let, optional($._phantom_in), 'in', field('expression', $._exp)),
 
-  let: $ => seq('let', optional($.decls)),
-
-  _let_decls: $ => layouted_without_end($, $._decl),
-
-  exp_let: $ => seq('let', optional(alias($._let_decls, $.decls))),
-
-  exp_let_in: $ => seq($.exp_let, $.exp_in),
-
-  exp_cond: $ => seq(
+  _exp_conditional: $ => seq(
     'if',
     field('if', $._exp),
-    optional(';'),
+    repeat(';'),
     'then',
     field('then', $._exp),
-    optional(';'),
+    repeat(';'),
     'else',
     field('else', $._exp),
   ),
 
-  pattern_guard: $ => seq(
-    $._pat,
-    $._larrow,
-    $._exp_infix,
+  /**
+   * These block arguments don't end in a layout, so they all range over all following block arguments and will
+   * therefore always be the last argument in an application or infix chain.
+   * They also pull a trailing type annotation into their body.
+   */
+  _exp_greedy: $ => choice(
+    alias($._exp_lambda, $.lambda),
+    alias($._exp_let_in, $.let_in),
+    alias($._exp_conditional, $.conditional),
   ),
 
-  guard: $ => choice(
-    $.pattern_guard,
-    $.let,
-    $._exp_infix,
-  ),
+  // ------------------------------------------------------------------------
+  // do
+  // ------------------------------------------------------------------------
 
-  guards: $ => seq('|', sep1($.comma, $.guard)),
-
-  gdpat: $ => seq($.guards, $._arrow, field('rhs', $._exp)),
-
-  exp_if_guard: $ => seq('if', repeat1($.gdpat)),
-
-  _alt_variants: $ => choice(
-    seq($._arrow, field('rhs', $._exp)),
-    repeat1($.gdpat),
-  ),
-
-  _nalt_patterns: $ => repeat1($._apat),
-
-  alt: $ => seq(
-    field('pattern', $._pat),
-    $._alt_variants,
-    optional(seq($.where, optional($.decls))),
-  ),
-
-  nalt: $ => seq(
-    field('patterns', alias($._nalt_patterns, $.nalt_patterns)),
-    $._alt_variants,
-    optional(seq($.where, optional($.decls))),
-  ),
-
-  alts: $ => layouted($, $.alt),
-  nalts: $ => layouted($, $.nalt),
-
-  exp_case: $ => seq('case', $._exp, 'of', optional($.alts)),
+  _exp_statement: $ => $._exp,
 
   /**
-   * left associative because the alts are optional
+   * This is a supertype.
    */
-  exp_lambda_case: $ => seq(
-    '\\',
-    'case',
-    optional($.alts),
-  ),
-
-  /**
-   * alts are NOT optional in a \cases expression
-   */
-  exp_lambda_cases: $ => seq(
-    '\\',
-    'cases',
-    $.nalts,
-  ),
-
-  rec: $ => seq(
-    'rec',
-    layouted($, $.stmt),
-  ),
-
-  stmt: $ => choice(
-    $._exp,
-    $.bind_pattern,
+  statement: $ => choice(
+    alias($._exp_statement, $.exp),
+    alias($.generator, $.bind),
     $.let,
     $.rec,
   ),
 
+  _statements: $ => layout_sort($, $._cmd_layout_start_do, field('statement', $.statement)),
+
+  rec: $ => seq('rec', $._statements),
+
   _do_keyword: _ => choice('mdo', 'do'),
 
-  do_module: $ => qualified($, $._do_keyword),
+  do_module: $ => field('qualified_do', qualified($, $._do_keyword)),
 
-  exp_do: $ => seq(choice($.do_module, $._do_keyword), layouted($, $.stmt)),
+  _do: $ => choice(
+    $.do_module,
+    $._do_keyword
+  ),
 
-  exp_negation: $ => seq('-', $._aexp),
+  _exp_do: $ => seq($._do, $._statements),
 
-  exp_record: $ => seq($._aexp, braces(sep1($.comma, $.exp_field))),
+  // ------------------------------------------------------------------------
+  // case
+  // ------------------------------------------------------------------------
 
-  exp_name: $ => choice(
-    $._qvar,
-    $._qcon,
-    $.implicit_parid,
-    $.label,
+  match: $ => seq(
+    $._guards,
+    optional($._phantom_arrow),
+    $._arrow,
+    $._cmd_texp_end,
+    field('expression', $._exp),
+  ),
+
+  _simple_match: $ => seq($._arrow, field('expression', $._exp)),
+
+  _matches: $ => field('match', choice(
+    alias($._simple_match, $.match),
+    repeat1($.match),
+  )),
+
+  alternative: $ => seq(
+    field('pattern', $._pat),
+    $._matches,
+    optional($._where_binds),
+  ),
+
+  _nalt: $ => seq(
+    field('patterns', $.patterns),
+    $._matches,
+    optional($._where_binds),
+  ),
+
+  alternatives: $ => layout_sort($, $._cmd_layout_start_case, field('alternative', $.alternative)),
+  _nalts: $ => layout_sort($, $._cmd_layout_start_case, field('alternative', alias($._nalt, $.alternative))),
+
+  _exp_case: $ => seq('case', $._exp, 'of', optional(field('alternatives', $.alternatives))),
+
+  _exp_lambda_case: $ => seq(
+    '\\',
+    'case',
+    optional(field('alternatives', $.alternatives)),
   ),
 
   /**
-    * Unlike module dot or projection dot, the projection selector dot can match in positions where any varsym can
-    * match: `(.name)` vs. `(.::+)`.
-    * Furthermore, it can have whitespace between the paren and the dot.
-    * Handling this with the dot logic in the scanner would require unreasonable complexity, and since record fields can
-    * only be varids, we simply hardcode that here.
-    */
-  exp_projection_selector: $ => parens(
-    '.',
-    field('field', $._immediate_variable),
-    repeat(seq($._immediate_dot, field('field', $._immediate_variable))),
-  ),
-
-  /**
-   * The Report lists for `aexp` only expressions that don't have any unbracketed whitespace, except for record
-   * construction/update.
-   * The GHC parser, however, includes lambdas, let/in and extensions like lambda case in it.
-   *
-   * Dot-syntax projection works only with simple `aexp`s. For example, these are valid:
-   *
-   * - `(a <> b).name`
-   * - `[a, b].name`
-   * - `(,).name`
-   * - `[e|a|].name`
-   * - `$splice.name`
-   * - `Animal {name = "cat"}.name`
-   * - `(.name).name`
-   * - `(# 1, 2 #).name` (doesn't typecheck, but might in the future?)
-   *
-   * Some are clear parse errors:
-   *
-   * - `@Int.name`
-   *
-   * Others simply don't make sense since they bind the projection into a subexpression, (lambda case and do), even
-   * though the grammar works fine if they are included here.
-   * We simply keep them out to reduce complexity.
+   * alternatives are not optional in a `\cases` expression, but we're lenient.
    */
-  _aexp_projection: $ => choice(
-    $.exp_name,
-    $.exp_parens,
-    $.exp_tuple,
-    $.exp_list,
-    $.exp_th_quoted_name,
-    $.exp_record,
-    $.exp_arithmetic_sequence,
-    $.exp_list_comprehension,
-    $.exp_section_left,
-    $.exp_section_right,
-    $.exp_unboxed_tuple,
-    $.exp_unboxed_sum,
-    $.exp_projection_selector,
-    $.splice,
-    $.quasiquote,
-    alias($.literal, $.exp_literal),
+  _exp_lambda_cases: $ => seq(
+    '\\',
+    'cases',
+    optional(field('alternatives', alias($._nalts, $.alternatives))),
+  ),
+
+  _exp_multi_way_if: $ => seq(
+    'if',
+    $._cmd_layout_start_if,
+    repeat(field('match', $.match)),
+    $._cond_layout_end,
+  ),
+
+  // ------------------------------------------------------------------------
+  // record
+  // ------------------------------------------------------------------------
+
+  field_update: $ => choice(
+    alias('..', $.wildcard),
+    seq(
+      field('field', $._field_spec),
+      optional(seq('=', field('expression', $._exp)))
+    ),
+  ),
+
+  _exp_record: $ => prec('record', seq(
+    field('expression', $.expression),
+    braces($, sep(',', field('field', $.field_update)))),
+  ),
+
+  _exp_projection_selector: $ => parens(
+    $,
+    $._any_prefix_dot,
+    field('field', $.variable),
+    repeat(seq($._tight_dot, field('field', $.variable))),
   ),
 
   /**
-    * A dot-syntax field projection like `var.name.othername`.
-    * Since fields can only be varids, we can just use `token.immediate` to enforce no whitespace between dot and ids.
-    */
-  exp_projection: $ => seq(
-    choice($._aexp_projection, $.exp_projection),
-    $._immediate_dot,
-    field('field', $._immediate_variable),
+   * A dot-syntax field projection like `var.name.othername`.
+   */
+  _exp_projection: $ => seq(
+    prec('projection', seq(
+      field('expression', $.expression),
+      $._tight_dot,
+    )),
+    field('field', $.field_name),
   ),
 
-  _aexp: $ => choice(
-    $._aexp_projection,
-    $.exp_type_application,
-    $.exp_lambda_case,
-    $.exp_lambda_cases,
-    $.exp_do,
-    $.exp_projection,
+  // ------------------------------------------------------------------------
+  // application
+  // ------------------------------------------------------------------------
+
+  explicit_type: $ => parens($, 'type', field('type', $.type)),
+
+  _exp_apply: $ => prec.left('apply', seq(
+    field('function', $.expression),
+    field('argument', choice(
+      $.expression,
+      alias($._at_type, $.type_application),
+      $.explicit_type,
+    )),
+  )),
+
+  // ------------------------------------------------------------------------
+  // operators
+  // ------------------------------------------------------------------------
+
+  _exp_op: $ => choice(
+    $._sym,
+    $._op_ticked,
+    alias($._prefix_dot, $.operator),
+  ),
+
+  _exp_section_left: $ => parens(
+    $,
+    field('left_operand', $.expression),
+    $._cond_left_section_op,
+    field('operator', choice(
+      $._exp_op,
+      $._operator_minus,
+      $._qsym,
+    )),
+  ),
+
+  _exp_section_right: $ => parens(
+    $,
+    choice(
+      alias($._operator_qual_dot_head, $.operator),
+      $._ops,
+    ),
+    field('right_operand', $.expression),
+  ),
+
+  _exp_negation: $ => seq(
+    field('minus', '-'),
+    prec('negation', field('expression', $.expression)),
   ),
 
   /**
-   * Function application.
+   * Infix expressions have severe conflicts with several structures:
    *
-   * This convoluted rule is necessary because of BlockArguments with lambda – if `exp_lambda` is in `lexp` as is stated
-   * in the reference, it can only occur after an infix operator; if it is in `aexp`, it causes lots of problems.
-   * Furthermore, the strange way the recursion is done here is to avoid local conflicts.
-   */
-  _exp_apply: $ => choice(
-    $._aexp,
-    seq($._aexp, $._exp_apply),
-    seq($._aexp, $.exp_lambda),
-    seq($._aexp, $.exp_let_in),
-    seq($._aexp, $.exp_cond),
-    seq($._aexp, $.exp_if_guard),
-    seq($._aexp, $.exp_case),
-  ),
-
-  /**
-   * The point of this `choice` is to get a node for function application only if there is more than one expression
-   * present.
-   */
-  _fexp: $ => choice(
-    $._aexp,
-    alias($._exp_apply, $.exp_apply),
-  ),
-
-  _lexp: $ => choice(
-    $.exp_let_in,
-    $.exp_cond,
-    $.exp_if_guard,
-    $.exp_case,
-    $.exp_negation,
-    $._fexp,
-    $.exp_lambda,
-  ),
-
-  /**
-   * This is left-associative, although in reality this would depend on the fixity declaration for the operator.
-   * The default is left, even though the reference specifies it the other way around.
-   * In any case, this seems to be more stable.
-   */
-  exp_infix: $ => seq($._exp_infix, $._qop, $._lexp),
-
-  _exp_infix: $ => choice(
-    $.exp_infix,
-    $._lexp,
-  ),
-
-  /**
-   * `prec.right` because:
+   * - Negation is supposed to bind less tight than application and tighter than infix, which requires an unsolvable
+   *   precedence configuration
+   * - Qualified operators cannot be identified with single-token lookahead, which causes ambiguity with function
+   *   application
+   * - Left operator sections require infix expressions in their operand to reduce before the section operator, but
+   *   single-token lookahead also makes this decision impossible
    *
-   * let x = 1 in x :: Int
-   *
-   * here the type annotation binds to `x`, not the entire expression
+   * All of these are solved with external symbols.
+   * Consult `grammar/externals.js` for more information.
    */
-  _exp: $ => prec.right(seq($._exp_infix, optional($._type_annotation))),
+  _exp_infix: $ => prec.right('infix', seq(
+    field('left_operand', $.expression),
+    optional($._cond_no_section_op),
+    field('operator', choice(
+      seq($._cond_minus, $._operator_minus),
+      $._exp_op,
+      seq($._cond_qualified_op, $._qsym),
+    )),
+    field('right_operand', $.expression),
+  )),
+
+  // ------------------------------------------------------------------------
+  // top level
+  // ------------------------------------------------------------------------
+
+  /**
+   * This is a supertype.
+   */
+  expression: $ => choice(
+    alias($._exp_infix, $.infix),
+    alias($._exp_negation, $.negation),
+    alias($._exp_apply, $.apply),
+    alias($._exp_record, $.record),
+    alias($._exp_projection, $.projection),
+    alias($._exp_arithmetic_sequence, $.arithmetic_sequence),
+    alias($._exp_list_comprehension, $.list_comprehension),
+    alias($._exp_unboxed_tuple, $.unboxed_tuple),
+    alias($._exp_unboxed_sum, $.unboxed_sum),
+    alias($._exp_projection_selector, $.projection_selector),
+    alias($._exp_quote, $.quote),
+    alias($._exp_typed_quote, $.typed_quote),
+    alias($._exp_th_quoted_name, $.th_quoted_name),
+    alias($._exp_lambda_case, $.lambda_case),
+    alias($._exp_lambda_cases, $.lambda_cases),
+    alias($._exp_do, $.do),
+    alias($._exp_parens, $.parens),
+    alias($._exp_tuple, $.tuple),
+    alias($._exp_list, $.list),
+    // Not using a name like "empty list" here because it's only really special in types.
+    alias($._plist, $.list),
+    alias($._exp_section_left, $.left_section),
+    alias($._exp_section_right, $.right_section),
+    $._exp_greedy,
+    alias($._exp_case, $.case),
+    alias($._exp_multi_way_if, $.multi_way_if),
+    $._exp_name,
+    $._universal,
+  ),
+
+  _exp_signature: $ => prec.right('annotated', seq(
+    field('expression', $.expression),
+    $._type_annotation,
+  )),
+
+  _exp: $ => choice(
+    alias($._exp_signature, $.signature),
+    // Right-associative means that the reduction of `expression` to `_exp` loses against any shift.
+    prec.right($.expression),
+  ),
+
 }

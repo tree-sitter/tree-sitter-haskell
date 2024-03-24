@@ -1,0 +1,702 @@
+================================================================================
+decl: two trivial successive functions
+================================================================================
+
+a = a
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+decl: do and where
+================================================================================
+
+a = do
+  a
+  where
+    a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (bind
+      name: (variable)
+      match: (match
+        expression: (do
+          statement: (exp
+            (variable))))
+      binds: (local_binds
+        decl: (bind
+          name: (variable)
+          match: (match
+            expression: (variable)))))))
+
+================================================================================
+decl: empty where
+================================================================================
+
+a =
+  a
+  where
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+decl: where
+================================================================================
+
+a = a where a = a
+a =
+  a
+  where
+    a = a
+    a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))
+        (bind
+          (variable)
+          (match
+            (variable)))))))
+
+================================================================================
+decl: case and where
+================================================================================
+
+a = case a of
+  A a -> a
+  A -> a
+  where a = 1
+        a = 2
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (apply
+                (constructor)
+                (variable))
+              (match
+                (variable)))
+            (alternative
+              (constructor)
+              (match
+                (variable))))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (literal
+              (integer))))
+        (bind
+          (variable)
+          (match
+            (literal
+              (integer))))))))
+
+================================================================================
+decl: do, let, where
+================================================================================
+
+a a = do
+  a <- a
+  let z = a
+  a
+  where a = pure a
+        a = 1
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (patterns
+        (variable))
+      (match
+        (do
+          (bind
+            (variable)
+            (variable))
+          (let
+            (local_binds
+              (bind
+                (variable)
+                (match
+                  (variable)))))
+          (exp
+            (variable))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (apply
+              (variable)
+              (variable))))
+        (bind
+          (variable)
+          (match
+            (literal
+              (integer))))))))
+
+================================================================================
+decl: variable binding list
+================================================================================
+
+a, a, a :: A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (binding_list
+        (variable)
+        (variable)
+        (variable))
+      (name))))
+
+================================================================================
+decl: operator binding list
+================================================================================
+
+(<), (<=), (>=), a, (>) :: a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (binding_list
+        (prefix_id
+          (operator))
+        (prefix_id
+          (operator))
+        (prefix_id
+          (operator))
+        (variable)
+        (prefix_id
+          (operator)))
+      (variable))))
+
+================================================================================
+decl: primop
+================================================================================
+
+a# :: a
+a# = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (variable))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+decl: ticked infix pattern
+================================================================================
+
+a `a` a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (infix
+        (variable)
+        (infix_id
+          (variable))
+        (variable))
+      (match
+        (variable)))))
+
+================================================================================
+decl: comment association
+================================================================================
+
+a = a
+
+-- | a
+a = do a
+
+-- | This comment should be located right before the following decl, but it can
+-- get pulled into the do unless the scanner is careful not to include any
+-- whitespace in layout ends.
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (haddock)
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable)))))
+    (haddock)
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+decl: fixity
+================================================================================
+
+infixr 7 `op`, `ip`, `ap`
+infix <$>
+infixr 7 <$>
+infix 7 :
+infixl 7 :.
+infix 7 :<:
+infixl 1 -
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (fixity
+      (integer)
+      (infix_id
+        (variable))
+      (infix_id
+        (variable))
+      (infix_id
+        (variable)))
+    (fixity
+      (operator))
+    (fixity
+      (integer)
+      (operator))
+    (fixity
+      (integer)
+      (constructor_operator))
+    (fixity
+      (integer)
+      (constructor_operator))
+    (fixity
+      (integer)
+      (constructor_operator))
+    (fixity
+      (integer)
+      (operator))))
+
+================================================================================
+decl: infix function with extra args
+================================================================================
+
+(a ++ a) a a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (function_head_parens
+        (infix
+          (variable)
+          (operator)
+          (variable)))
+      (patterns
+        (variable)
+        (variable))
+      (match
+        (variable)))))
+
+================================================================================
+decl: symop constructor pattern in infix varop decl
+================================================================================
+
+(a :+ a) ! a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (infix
+        (parens
+          (infix
+            (variable)
+            (constructor_operator)
+            (variable)))
+        (operator)
+        (variable))
+      (match
+        (variable)))))
+
+================================================================================
+decl: infix varop decl
+================================================================================
+
+a == a = a
+A a == A a = a == a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (infix
+        (variable)
+        (operator)
+        (variable))
+      (match
+        (variable)))
+    (function
+      (infix
+        (apply
+          (constructor)
+          (variable))
+        (operator)
+        (apply
+          (constructor)
+          (variable)))
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
+
+================================================================================
+decl: error: varop in operand of infix varop decl
+================================================================================
+
+a == a + a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (top_splice
+      (infix
+        (variable)
+        (operator)
+        (apply
+          (infix
+            (variable)
+            (operator)
+            (variable))
+          (ERROR)
+          (variable))))))
+
+================================================================================
+decl: tuple pattern binder
+================================================================================
+
+(a, a) = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (tuple
+        (variable)
+        (variable))
+      (match
+        (variable)))))
+
+================================================================================
+decl: con application pattern binder
+================================================================================
+
+A a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (apply
+        (constructor)
+        (variable))
+      (match
+        (variable)))))
+
+================================================================================
+decl: parens con application pattern binder
+================================================================================
+
+(A a) = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (bind
+      pattern: (parens
+        pattern: (apply
+          function: (constructor)
+          argument: (variable)))
+      match: (match
+        expression: (variable)))))
+
+================================================================================
+decl: function head with parens
+================================================================================
+
+(((((f) a)) b c) d) e f = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (function_head_parens
+        (function_head_parens
+          (function_head_parens
+            (function_head_parens
+              (function_head_parens
+                (variable))
+              (patterns
+                (variable))))
+          (patterns
+            (variable)
+            (variable)))
+        (patterns
+          (variable)))
+      (patterns
+        (variable)
+        (variable))
+      (match
+        (variable)))))
+
+================================================================================
+decl: implicit parameter in where
+================================================================================
+
+a = a
+  where
+    ?a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (bind
+      name: (variable)
+      match: (match
+        expression: (variable))
+      binds: (local_binds
+        decl: (bind
+          implicit: (implicit_variable)
+          match: (match
+            expression: (variable)))))))
+
+================================================================================
+decl: implicit parameter in do-let
+================================================================================
+
+a = do
+  let ?a = a
+  a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (let
+            (local_binds
+              (bind
+                (implicit_variable)
+                (match
+                  (variable)))))
+          (exp
+            (variable)))))))
+
+================================================================================
+decl: function/bind ambiguity
+================================================================================
+
+a a a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (patterns
+        (variable)
+        (variable))
+      (match
+        (variable)))))
+
+================================================================================
+decl: special name
+================================================================================
+
+group :: a
+
+using :: a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (variable))
+    (signature
+      (variable)
+      (variable))))
+
+================================================================================
+decl: local fixity
+================================================================================
+
+a = a where
+  a + a = a
+  infixr 7 +
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable))
+      (local_binds
+        (function
+          (infix
+            (variable)
+            (operator)
+            (variable))
+          (match
+            (variable)))
+        (fixity
+          (integer)
+          (operator))))))
+
+================================================================================
+decl: regression test for ambiguity bug
+================================================================================
+
+a = case a of a -> b
+
+c :: (a, d a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (variable)))))))
+    (signature
+      (variable)
+      (tuple
+        (variable)
+        (apply
+          (variable)
+          (variable))))))
+
+================================================================================
+decl: guards
+================================================================================
+
+a a | a
+    , let a = a
+          a = a
+    , a <- a
+    = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (patterns
+        (variable))
+      (match
+        (guards
+          (boolean
+            (variable))
+          (let
+            (local_binds
+              (bind
+                (variable)
+                (match
+                  (variable)))
+              (bind
+                (variable)
+                (match
+                  (variable)))))
+          (pattern_guard
+            (variable)
+            (variable)))
+        (variable)))))

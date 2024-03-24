@@ -1,0 +1,1207 @@
+================================================================================
+data: empty
+================================================================================
+
+data A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name))))
+
+================================================================================
+data: one nullary con
+================================================================================
+
+data A = A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: one unary con
+================================================================================
+
+data A = A A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (name)))))))
+
+================================================================================
+data: strict
+================================================================================
+
+data A = A !A !(A A)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (strict_field
+              (name))
+            (strict_field
+              (parens
+                (apply
+                  (name)
+                  (name))))))))))
+
+================================================================================
+data: lazy
+================================================================================
+
+data A = A ~A
+data A = ~A :+ ~A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (lazy_field
+              (name))))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (infix
+            (lazy_field
+              (name))
+            (constructor_operator)
+            (lazy_field
+              (name))))))))
+
+================================================================================
+data: tyvars
+================================================================================
+
+data A a a a = A a !a [a]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (type_params
+        (variable)
+        (variable)
+        (variable))
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (variable)
+            (strict_field
+              (variable))
+            (list
+              (variable))))))))
+
+================================================================================
+data: unpack strict
+================================================================================
+
+data A = A {-# unpack #-} !A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (pragma)
+            (strict_field
+              (name))))))))
+
+================================================================================
+data: record
+================================================================================
+
+data A a = A { a :: A, a, a :: A, a :: {-# unpack #-} !a, a :: !A }
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (type_params
+        (variable))
+      (data_constructors
+        (data_constructor
+          (record
+            (constructor)
+            (fields
+              (field
+                (field_name
+                  (variable))
+                (name))
+              (field
+                (field_name
+                  (variable))
+                (field_name
+                  (variable))
+                (name))
+              (field
+                (field_name
+                  (variable))
+                (pragma)
+                (strict_field
+                  (variable)))
+              (field
+                (field_name
+                  (variable))
+                (strict_field
+                  (name))))))))))
+
+================================================================================
+data: record zero indent
+================================================================================
+
+data A = A {
+  a :: A,
+a :: A,
+   a :: A
+, a :: A
+}
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (record
+            (constructor)
+            (fields
+              (field
+                (field_name
+                  (variable))
+                (name))
+              (field
+                (field_name
+                  (variable))
+                (name))
+              (field
+                (field_name
+                  (variable))
+                (name))
+              (field
+                (field_name
+                  (variable))
+                (name)))))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+data: multiple cons
+================================================================================
+
+data A = A | A A | A !A A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))
+        (data_constructor
+          (prefix
+            (constructor)
+            (name)))
+        (data_constructor
+          (prefix
+            (constructor)
+            (strict_field
+              (name))
+            (name)))))))
+
+================================================================================
+data: deriving basic
+================================================================================
+
+data A = A deriving A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor))))
+      (deriving
+        (name)))))
+
+================================================================================
+data: deriving empty
+================================================================================
+
+data A deriving A
+
+data A
+  deriving A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (deriving
+        (name)))
+    (data_type
+      (name)
+      (deriving
+        (name)))))
+
+================================================================================
+data: deriving multi, strategy
+================================================================================
+
+data A = A deriving (A, A) deriving stock (A)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor))))
+      (deriving
+        (tuple
+          (name)
+          (name)))
+      (deriving
+        (deriving_strategy)
+        (parens
+          (name))))))
+
+================================================================================
+data: deriving via
+================================================================================
+
+data A = A deriving (A) via (A A)
+data A = A deriving (A) via A A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor))))
+      (deriving
+        (parens
+          (name))
+        (via
+          (parens
+            (apply
+              (name)
+              (name))))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor))))
+      (deriving
+        (parens
+          (name))
+        (via
+          (apply
+            (name)
+            (name)))))))
+
+================================================================================
+data: deriving on newline, multiple
+================================================================================
+
+data A =
+  A
+  deriving A
+  deriving A
+data A =
+  A
+  deriving A
+  deriving A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor))))
+      (deriving
+        (name))
+      (deriving
+        (name)))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor))))
+      (deriving
+        (name))
+      (deriving
+        (name)))))
+
+================================================================================
+data: deriving with forall/context
+================================================================================
+
+data A = A deriving (∀ a . A => A)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor))))
+      (deriving
+        (parens
+          (forall
+            (quantified_variables
+              (variable))
+            (context
+              (name)
+              (name))))))))
+
+================================================================================
+data: deriving prefix op
+================================================================================
+
+data A = A deriving ((+) A)
+data A = A deriving ((+))
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor))))
+      (deriving
+        (parens
+          (apply
+            (prefix_id
+              (operator))
+            (name)))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor))))
+      (deriving
+        (parens
+          (prefix_id
+            (operator)))))))
+
+================================================================================
+data: deriving with annotation
+================================================================================
+
+data A deriving (A :: A)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (deriving
+        (parens
+          (signature
+            (name)
+            (name)))))))
+
+================================================================================
+data: deriving with all features
+================================================================================
+
+data A deriving (∀ a . A a :: Type -> Constraint)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (deriving
+        (parens
+          (signature
+            (forall
+              (quantified_variables
+                (variable))
+              (apply
+                (name)
+                (variable)))
+            (function
+              (name)
+              (name))))))))
+
+================================================================================
+data: deriving empty
+================================================================================
+
+data A deriving ()
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (deriving
+        (unit)))))
+
+================================================================================
+data: datatype context trivial
+================================================================================
+
+data A => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (context
+        (name))
+      (name))))
+
+================================================================================
+data: datatype context apply
+================================================================================
+
+data A a (A a) => A = A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (context
+        (apply
+          (apply
+            (name)
+            (variable))
+          (parens
+            (apply
+              (name)
+              (variable)))))
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: datatype context tuple
+================================================================================
+
+data (A a, A a) => A = A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (context
+        (tuple
+          (apply
+            (name)
+            (variable))
+          (apply
+            (name)
+            (variable))))
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: datatype context infix basic
+================================================================================
+
+data a +++ b => a *** b
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (context
+        (infix
+          (variable)
+          (operator)
+          (variable)))
+      (infix
+        (variable)
+        (operator)
+        (variable)))))
+
+================================================================================
+data: datatype context infix parens
+================================================================================
+
+data (a %% b) => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (data_type
+      context: (context
+        context: (parens
+          (infix
+            left_operand: (variable)
+            operator: (operator)
+            right_operand: (variable))))
+      name: (name))))
+
+================================================================================
+data: MagicHash
+================================================================================
+
+data A = A !A#
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (strict_field
+              (name))))))))
+
+================================================================================
+data: forall
+================================================================================
+
+data A = forall a . A | ∀ a . A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (forall
+            (quantified_variables
+              (variable)))
+          (prefix
+            (constructor)))
+        (data_constructor
+          (forall
+            (quantified_variables
+              (variable)))
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: constructor context
+================================================================================
+
+data A = ∀ a . A a => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (forall
+            (quantified_variables
+              (variable)))
+          (context
+            (apply
+              (name)
+              (variable)))
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: tyvar kind
+================================================================================
+
+data A (a :: * -> 'A)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (type_params
+        (parens
+          (annotated
+            (variable)
+            (function
+              (star)
+              (promoted
+                (constructor)))))))))
+
+================================================================================
+data: signature
+================================================================================
+
+data A :: (k -> '[ 'A]) -> *
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (function
+        (parens
+          (function
+            (variable)
+            (promoted
+              (list
+                (promoted
+                  (constructor))))))
+        (star)))))
+
+================================================================================
+data: type operator varsym
+================================================================================
+
+data a +++ b = a :+++ b
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (infix
+        (variable)
+        (operator)
+        (variable))
+      (data_constructors
+        (data_constructor
+          (infix
+            (variable)
+            (constructor_operator)
+            (variable)))))))
+
+================================================================================
+data: type operator consym
+================================================================================
+
+data a :<- b = a :<- b
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (infix
+        (variable)
+        (constructor_operator)
+        (variable))
+      (data_constructors
+        (data_constructor
+          (infix
+            (variable)
+            (constructor_operator)
+            (variable)))))))
+
+================================================================================
+data: type operator applied parenthesized consym 1
+================================================================================
+
+data (a :+: a) a a = A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (parens
+        (infix
+          (variable)
+          (constructor_operator)
+          (variable)))
+      (type_params
+        (variable)
+        (variable))
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: type operator applied parenthesized consym 2
+================================================================================
+
+data (((a)) :+: (a :: a)) a (a :: a) = A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (parens
+        (infix
+          (parens
+            (parens
+              (variable)))
+          (constructor_operator)
+          (parens
+            (annotated
+              (variable)
+              (variable)))))
+      (type_params
+        (variable)
+        (parens
+          (annotated
+            (variable)
+            (variable))))
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: type data
+================================================================================
+
+type data A = A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: empty record
+================================================================================
+
+data A = A {}
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (record
+            (constructor)
+            (fields)))))))
+
+================================================================================
+data: special type heads
+================================================================================
+
+data () = ()
+data [] a = MkNil
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (unit)
+      (data_constructors
+        (data_constructor
+          (special
+            (unit)))))
+    (data_type
+      (prefix_list)
+      (type_params
+        (variable))
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: special constructors
+================================================================================
+
+data A = ()
+data A = (a, a)
+data A# = (# #)
+data A# = (# a #)
+data A# = (# a, a #)
+data A = (# a | #) | (# | a #)
+data List a = [] | a : List a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (special
+            (unit)))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (special
+            (tuple
+              (variable)
+              (variable))))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (special
+            (unboxed_unit)))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (special
+            (unboxed_tuple
+              (variable))))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (special
+            (unboxed_tuple
+              (variable)
+              (variable))))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (special
+            (unboxed_sum
+              (variable))))
+        (data_constructor
+          (special
+            (unboxed_sum
+              (variable))))))
+    (data_type
+      (name)
+      (type_params
+        (variable))
+      (data_constructors
+        (data_constructor
+          (special
+            (empty_list)))
+        (data_constructor
+          (infix
+            (variable)
+            (constructor_operator)
+            (apply
+              (name)
+              (variable))))))))
+
+================================================================================
+data: lenient trailing comma in record
+================================================================================
+
+data A =
+  A {
+    a :: A,
+    a :: A,
+  }
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (record
+            (constructor)
+            (fields
+              (field
+                (field_name
+                  (variable))
+                (name))
+              (field
+                (field_name
+                  (variable))
+                (name)))))))))
+
+================================================================================
+data: infix bang
+================================================================================
+
+data A = A { a :: A ! A }
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (record
+            (constructor)
+            (fields
+              (field
+                (field_name
+                  (variable))
+                (infix
+                  (name)
+                  (operator)
+                  (name))))))))))
+
+================================================================================
+data: ticked constructor
+================================================================================
+
+data A = a `A` a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (infix
+            (variable)
+            (infix_id
+              (constructor))
+            (variable)))))))
+
+================================================================================
+data: ticked context
+================================================================================
+
+data A = a `A` a => A
+data A = a `A.A` a => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (context
+            (infix
+              (variable)
+              (infix_id
+                (name))
+              (variable)))
+          (prefix
+            (constructor)))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (context
+            (infix
+              (variable)
+              (infix_id
+                (qualified
+                  (module
+                    (module_id))
+                  (name)))
+              (variable)))
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: complicated field type
+================================================================================
+
+data A = A (∀ a a . A a => A a => A -> A -> a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (data_type
+      name: (name)
+      constructors: (data_constructors
+        constructor: (data_constructor
+          constructor: (prefix
+            name: (constructor)
+            field: (parens
+              type: (forall
+                variables: (quantified_variables
+                  bind: (variable)
+                  bind: (variable))
+                type: (context
+                  context: (apply
+                    constructor: (name)
+                    argument: (variable))
+                  type: (context
+                    context: (apply
+                      constructor: (name)
+                      argument: (variable))
+                    type: (function
+                      parameter: (name)
+                      result: (function
+                        parameter: (name)
+                        result: (variable)))))))))))))
+
+================================================================================
+data: invisible binders
+================================================================================
+
+data A @a (a :: A) @_ @(a :: A) @(_ :: A) = A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (type_params
+        (invisible
+          (variable))
+        (parens
+          (annotated
+            (variable)
+            (name)))
+        (invisible
+          (wildcard))
+        (invisible
+          (parens
+            (annotated
+              (variable)
+              (name))))
+        (invisible
+          (parens
+            (annotated
+              (wildcard)
+              (name)))))
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: parens in prefix head
+================================================================================
+
+data (A a) a = A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (parens
+        (name)
+        (type_params
+          (variable)))
+      (type_params
+        (variable))
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
+
+================================================================================
+data: constructor context infix parens
+================================================================================
+
+data A = (a %% b) => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (data_type
+      name: (name)
+      constructors: (data_constructors
+        constructor: (data_constructor
+          context: (context
+            context: (parens
+              (infix
+                left_operand: (variable)
+                operator: (operator)
+                right_operand: (variable))))
+          constructor: (prefix
+            name: (constructor)))))))

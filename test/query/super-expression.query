@@ -1,0 +1,7 @@
+(apply
+  (expression)
+  (expression/literal (string) @name))
+
+(expression/apply
+  (expression/variable)
+  (expression/literal (string) @name))

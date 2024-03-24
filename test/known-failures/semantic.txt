@@ -1,0 +1,10 @@
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/function-declarations.A.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/function-declarations.B.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/tempate-haskell.A.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/template-haskell.B.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/algebraic-datatype-declarations.A.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/algebraic-datatype-declarations.B.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/newtype-declaration.A.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/newtype-declaration.B.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/type-synonyms.A.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/type-synonyms.B.hs

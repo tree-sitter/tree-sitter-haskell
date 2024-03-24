@@ -1,143 +1,194 @@
-const {parens} = require('./util.js')
+const {
+  sep1,
+  sep,
+  braces,
+  layout,
+  unboxed_sum_single,
+  qualified,
+  context,
+  forall,
+} = require('./util.js')
 
 module.exports = {
+
   // ------------------------------------------------------------------------
-  // adt
+  // fields
   // ------------------------------------------------------------------------
 
-  field: $ => seq(
-    sep1($.comma, $.variable),
+  field_name: $ => $.variable,
+  _qfield_name: $ => qualified($, $.field_name),
+  _field_names: $ => choice($.field_name, alias($._qfield_name, $.qualified)),
+
+  field_path: $ => seq(
+    field('field', $._field_names),
+    repeat1(seq($._tight_dot, field('subfield', $.field_name))),
+  ),
+
+  _field_spec: $ => choice(
+    $._field_names,
+    $.field_path,
+  ),
+
+  field: $ => prec('annotated', seq(
+    sep1(',', field('name', $.field_name)),
     $._colon2,
-    choice($.strict_type, $.lazy_type, $._type),
-  ),
+    field('type', $._parameter_type),
+  )),
 
-  data_constructor: $ => seq(
-    $.constructor,
-    repeat(choice($.strict_type, $.lazy_type, $._atype))
-  ),
+  _record_fields: $ => braces($, sep(',', field('field', $.field)), optional(',')),
 
-  data_constructor_infix: $ => seq(
-    choice($.strict_type, $.lazy_type, $._type_infix),
-    $._conop,
-    choice($.strict_type, $.lazy_type, $._type_infix),
-  ),
+  // ------------------------------------------------------------------------
+  // deriving
+  // ------------------------------------------------------------------------
 
-  _record_field: $ => braces($.field),
+  via: $ => seq('via', field('type', $.quantified_type)),
 
-  record_fields: $ => braces(sep($.comma, $.field)),
+  deriving_strategy: _ => choice('stock', 'newtype', 'anyclass'),
 
-  data_constructor_record: $ => seq(
-    $.constructor,
-    $.record_fields,
+  deriving: $ => seq(
+    optional($._phantom_deriving),
+    'deriving',
+    optional(field('strategy', $.deriving_strategy)),
+    field('classes', $.constraint),
+    optional(field('via', $.via)),
   ),
 
   // ------------------------------------------------------------------------
-  // Special constructors occurring in GHC code
+  // gadt
   // ------------------------------------------------------------------------
-  data_constructor_special: $ => choice(
-    $.con_unit,
-    $.type_tuple,
-    $.type_unboxed_tuple,
-    $.type_unboxed_sum,
+
+  _gadt_con_prefix: $ => field('type', $.quantified_type),
+
+  _gadt_con_record: $ => seq(
+    field('fields', alias($._record_fields, $.fields)),
+    field('arrow', $._fun_arrow),
+    field('type', $.quantified_type),
+  ),
+
+  /**
+   * GADT constructors only allow single foralls and contexts
+   */
+  gadt_constructor: $ => seq(
+    choice(
+      field('name', $._con),
+      field('names', alias($._con_binding_list, $.binding_list)),
+    ),
+    $._colon2,
+    forall($),
+    context($),
+    field('type', choice(
+      alias($._gadt_con_prefix, $.prefix),
+      alias($._gadt_con_record, $.record),
+    )),
+  ),
+
+  gadt_constructors: $ => layout($, field('constructor', $.gadt_constructor)),
+
+  _gadt: $ => seq(
+    optional($._kind_annotation),
+    $._where,
+    optional(field('constructors', $.gadt_constructors)),
+  ),
+
+  // ------------------------------------------------------------------------
+  // data type
+  // ------------------------------------------------------------------------
+
+  _field_type: $ => choice($.strict_field, $.lazy_field, $.type),
+
+  _datacon_prefix: $ => seq(
+    field('name', $._con),
+    repeat(prec('patterns', field('field', $._field_type))),
+  ),
+
+  _datacon_infix: $ => prec('infix', seq(
+    $._cond_data_infix,
+    field('left_operand', $._field_type),
+    field('operator', $._conop),
+    field('right_operand', $._field_type),
+  )),
+
+  _datacon_record: $ => seq(
+    field('name', $._constructor),
+    field('fields', alias($._record_fields, $.fields)),
+  ),
+
+  _datacon_unboxed_sum: $ => unboxed_sum_single($, $.quantified_type),
+
+  /**
+   * Special constructors occurring in GHC code
+   */
+  _datacon_special: $ => choice(
+    $.unit,
+    $.unboxed_unit,
+    alias($._plist, $.empty_list),
+    alias($._type_tuple, $.tuple),
+    alias($._type_unboxed_tuple, $.unboxed_tuple),
+    alias($._datacon_unboxed_sum, $.unboxed_sum),
   ),
 
   /**
    * data constructors only allow single foralls and contexts
    */
-  constructors: $ => sep1(
-    '|',
-    seq(
-      optional($.forall),
-      optional($.context),
-      choice(
-        $.data_constructor,
-        $.data_constructor_infix,
-        $.data_constructor_record,
-        $.data_constructor_special,
-      ),
-    )
+  data_constructor: $ => seq(
+    forall($),
+    context($),
+    field('constructor', choice(
+      alias($._datacon_prefix, $.prefix),
+      alias($._datacon_infix, $.infix),
+      alias($._datacon_record, $.record),
+      alias($._datacon_special, $.special),
+    )),
   ),
 
-  via: $ => seq('via', $._type),
+  data_constructors: $ => sep1($._bar, field('constructor', $.data_constructor)),
 
-  deriving_strategy: _ => choice('stock', 'newtype', 'anyclass'),
-
-  deriving: $ => seq(
-    'deriving',
-    optional($.deriving_strategy),
-    choice(
-      field('class', $._qtyconid),
-      parens(optional(sep1($.comma, field('class', $._constraint))))
-    ),
-    optional($.via),
+  _data_rhs: $ => choice(
+    $._kind_annotation,
+    seq('=', field('constructors', $.data_constructors)),
+    $._gadt,
   ),
 
-  _adt_rhs: $ => seq(
-    '=',
-    $.constructors,
-    repeat($.deriving),
+  _data: $ => seq(
+    context($),
+    $._type_head,
+    optional($._data_rhs),
+    repeat(field('deriving', $.deriving)),
   ),
 
-  _gadt_fun: $ => seq(choice($.strict_type, $.lazy_type, $._type_infix), $._fun_arrow, $._gadt_sig),
-
-  _gadt_sig: $ => choice(
-    alias($._gadt_fun, $.fun),
-    choice($.strict_type, $.lazy_type, $._type_infix)
-  ),
-
-  /**
-   * gadt constructors only allow single foralls and contexts
-   */
-  _gadt_constr_type: $ => seq(
-    $._colon2,
-    optional($.forall),
-    optional($.context),
-    choice($._gadt_sig, seq($.record_fields, $._arrow, $._gadt_sig)),
-  ),
-
-  gadt_constructor: $ => seq(
-    $._con,
-    $._gadt_constr_type,
-  ),
-
-  _gadt_rhs: $ => where($, choice($.gadt_constructor, $.deriving)),
-
-  _adt: $ => seq(
-    choice($._adt_rhs, $._gadt_rhs),
-  ),
-
-  decl_adt: $ => seq(
+  data_type: $ => seq(
     optional('type'),
     'data',
-    optional($.context),
-    $._simpletype,
-    optional($._type_annotation),
-    optional(choice($._adt, repeat($.deriving))),
+    $._data,
   ),
 
+  // ------------------------------------------------------------------------
+  // newtype
+  // ------------------------------------------------------------------------
+
+  _newtype_con_field: $ =>  $.type,
+
   newtype_constructor: $ => seq(
-    $.constructor,
-    choice(
-      $._atype,
-      $._record_field,
-    ),
+    field('name', $._con),
+    field('field', choice(
+      alias($._newtype_con_field, $.field),
+      alias($._record_fields, $.record),
+    )),
   ),
 
   _newtype: $ => seq(
-    '=',
-    $.newtype_constructor,
-    repeat($.deriving),
+    choice(
+      seq('=', field('constructor', $.newtype_constructor)),
+      $._gadt,
+    ),
+    repeat(field('deriving', $.deriving)),
   ),
 
-  _context_newtype: $ => choice(
-    seq($.context, $._simpletype),
-    $._simpletype,
-  ),
-
-  decl_newtype: $ => seq(
+  newtype: $ => seq(
     'newtype',
-    $._context_newtype,
-    choice($._newtype, seq(optional($._type_annotation), $._gadt_rhs)),
+    context($),
+    $._type_head,
+    $._newtype,
   ),
 
   // ------------------------------------------------------------------------
@@ -145,38 +196,46 @@ module.exports = {
   // ------------------------------------------------------------------------
 
   _datafam: $ => seq(
-    $._simpletype,
-    optional($._type_annotation),
+    $._type_head,
+    optional($._kind_annotation),
   ),
 
-  decl_datafam: $ => seq(
+  data_family: $ => seq(
     'data',
     'family',
     $._datafam,
   ),
 
-  /**
-   * data instances only allow single foralls and contexts
-   */
-  _datainst: $ => seq(
-    optional($.forall),
-    optional($.context),
-    $._type_infix,
-    optional($._type_annotation),
+  _inst_adt: $ => seq(
+    forall($),
+    context($),
+    $._type_instance_head,
+    optional($._data_rhs),
+    repeat(field('deriving', $.deriving)),
   ),
 
-  decl_datainst: $ => choice(
-    seq(
-      'data',
-      'instance',
-      $._datainst,
-      optional($._adt),
-    ),
-    seq(
-      'newtype',
-      'instance',
-      $._datainst,
-      $._newtype
-    ),
+  decl_inst_adt: $ => seq(
+    'data',
+    'instance',
+    $._inst_adt,
   ),
+
+  _inst_newtype: $ => seq(
+    forall($),
+    context($),
+    $._type_instance_head,
+    $._newtype,
+  ),
+
+  decl_inst_newtype: $ => seq(
+    'newtype',
+    'instance',
+    $._inst_newtype,
+  ),
+
+  data_instance: $ => choice(
+    alias($.decl_inst_adt, $.data_type),
+    alias($.decl_inst_newtype, $.newtype),
+  ),
+
 }

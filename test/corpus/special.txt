@@ -4,6 +4,10 @@ special: GHC fixity decl for -> in GHC.Types
 
 infixr -1 ->
 
----
+--------------------------------------------------------------------------------
 
-(haskell (decl_special (decl_special_fun_fixity)))
+(haskell
+  declarations: (declarations
+    (fixity
+      precedence: (integer)
+      operator: (operator))))

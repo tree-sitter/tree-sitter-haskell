@@ -1,10 +1,6 @@
 # tree-sitter-haskell
 
-[![CI][ci]](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml)
-[![discord][discord]](https://discord.gg/w7nTvsVJhm)
-[![matrix][matrix]](https://matrix.to/#/#tree-sitter-chat:matrix.org)
-[![crates][crates]](https://crates.io/crates/tree-sitter-haskell)
-[![npm][npm]](https://www.npmjs.com/package/tree-sitter-haskell)
+[![CI](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml/badge.svg)](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml)
 
 Haskell grammar for [tree-sitter].
 
@@ -15,7 +11,7 @@ Haskell grammar for [tree-sitter].
 
 # Building with nvim-treesitter
 
-When installing the grammar from source, be sure to include the scanner in the source files:
+When installing the grammar from source, be sure to include `src/scanner.c` in the source files:
 
 ```vim
 lua <<EOF
@@ -23,12 +19,11 @@ local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
 parser_config.haskell = {
   install_info = {
     url = "~/path/to/tree-sitter-haskell",
-    files = {"src/parser.c", "src/scanner.c", "src/unicode.h"}
+    files = {"src/parser.c", "src/scanner.c"}
   }
 }
 EOF
 ```
-
 
 # Supported Language Extensions
 
@@ -89,6 +84,7 @@ These extensions are supported ✅, unsupported ❌ or not applicable because th
 * LexicalNegation ❌
 * LiberalTypeSynonyms ✅
 * LinearTypes ✅
+* ListTuplePuns ✅
 * MagicHash ✅
 * Modifiers ❌
 * MonadComprehensions ➖️
@@ -100,7 +96,7 @@ These extensions are supported ✅, unsupported ❌ or not applicable because th
 * NamedFieldPuns ✅
 * NamedWildCards ✅
 * NegativeLiterals ➖️
-* NondecreasingIndentation ❌
+* NondecreasingIndentation ✅
 * NPlusKPatterns ➖️
 * NullaryTypeClasses ✅
 * NumDecimals ➖️
@@ -126,6 +122,7 @@ These extensions are supported ✅, unsupported ❌ or not applicable because th
 * RebindableSyntax ➖️
 * RecordWildCards ➖️
 * RecursiveDo ✅
+* RequiredTypeArguments ✅
 * RoleAnnotations ✅
 * Safe ➖️
 * ScopedTypeVariables ✅
@@ -141,6 +138,7 @@ These extensions are supported ✅, unsupported ❌ or not applicable because th
 * TransformListComp ✅
 * Trustworthy ➖️
 * TupleSections ✅
+* TypeAbstractions ✅
 * TypeApplications ✅
 * TypeData ✅
 * TypeFamilies ✅
@@ -166,78 +164,250 @@ Preprocessor `#elif` and `#else` directives cannot be handled correctly, since t
 manually reset to what it was at the `#if`.
 As a workaround, the code blocks in the alternative branches are parsed as part of the directives.
 
-## Layout
+# Querying
 
-`NondecreasingIndentation` is not supported (yet?).
+The grammar contains several [supertypes](https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types),
+which group multiple other node types under a single name.
 
-### Operators on newlines in `do`
+Supertype names do not occur as extra nodes in parse trees, but they can be used in queries in special ways:
 
-A strange edge case is when an infix operator follows an expression statement of a do block with an indent of less or equal the `do`'s layout column:
+* As an alias, matching any of their subtypes
+* As prefix for one of their subtypes, matching its symbol only when it occurs as a production of the supertype
 
-```haskell
-f = do
-  readSomething
-  >>= doSomething
+For example, the query `(expression)` matches the nodes `infix`, `record`, `projection`, `constructor`, and the second
+and third `variable` in this tree for `cats <> Cat {mood = moods.sleepy}`:
+
+```
+(infix
+  (variable)
+  (operator)
+  (record
+    (constructor)
+    (field_update
+      (field_name (variable))
+      (projection (variable) (field_name (variable)))))))))
 ```
 
-The `>>=` causes the `do`'s layout to be terminated, resulting in an AST similar to
+The two occurrences of `variable` in `field_name` (`mood` and `sleepy`) are not expressions, but record field names part
+of a composite `record` expression.
 
-```haskell
-f = (do readSomething) >>= doSomething
+Matching `variable` nodes specifically that are expressions is possible with the second special form.
+A query for `(expression/variable)` will match only the other two, `cats` and `moods`.
+
+The grammar's supertypes consist of the following sets:
+
+* [`expression`](./grammar/exp.js)
+
+  Rules that are valid in any expression position, excluding type applications, explicit types and expression
+  signatures.
+
+* [`pattern`](./grammar/pat.js)
+
+  Rules that are valid in any pattern position, excluding type binders, explicit types and pattern signatures.
+
+* [`type`](./grammar/type.js)
+  
+  Types that are either atomic (have no ambiguous associativity, like bracketed constructs, variables and type
+  constructors), applied types or infix types.
+
+* [`quantified_type`](./grammar/type.js)
+
+  Types prefixed with a `forall`, context or function parameter.
+
+* [`constraint`](./grammar/constraint.js)
+
+  Almost the same rules as `type`, but mirrored for use in contexts.
+
+* [`constraints`](./grammar/constraints.js)
+
+  Analog of `quantified_type`, for constraints with `forall` or context.
+
+* [`type_param`](./grammar/type.js)
+
+  Atomic nodes in type and class heads, like the three nodes following `A` in `data A @k a (b :: k)`.
+
+* [`declaration`](./grammar/module.js)
+
+  All top-level declarations, like functions and data types.
+
+* [`decl`](./grammar/decl.js)
+
+  Shorthand for declarations that are also valid in local bindings (`let` and `where`) and in class and instance bodies,
+  except for fixity declarations.
+  Consists of `signature`, `function` and `bind`.
+
+* [`class_decl` and `instance_decl`](./grammar/class.js)
+
+  All declarations that are valid in classes and instances, which includes associated type and data families.
+
+* [`statement`](./grammar/exp.js)
+
+  Different forms of `do`-notation statements.
+
+* [`qualifier`](./grammar/exp.js)
+
+  Different forms of list comprehension qualifiers.
+
+* [`guard`](./grammar/exp.js)
+
+  Different forms of guards in function equations and case alternatives.
+
+# Development
+
+The main driver for generating and testing the parser for this grammar is the [tree-sitter CLI][cli].
+Other components of the project require additional tools, described below.
+
+Some are made available through `npm` – for example, `npx tree-sitter` runs the CLI.
+If you don't have `tree-sitter` available otherwise, prefix all the commands in the following sections with `npx`.
+
+For [Nix] users, the project's [flake](./flake.nix) provides the full toolkit for maximum convenience, as well as
+a bunch of test apps and packages.
+Run `nix develop` to start a shell with all tools in `$PATH`.
+
+## Output path
+
+The CLI writes the shared library containing the parser to the directory denoted by `$TREE_SITTER_LIBDIR`.
+If that variable is unset, it defaults to `$HOME/.cache/tree-sitter/lib`.
+
+In order to avoid clobbering this global directory with development versions, you can set the env var to a local path:
+
+```
+export TREE_SITTER_LIBDIR=$PWD/.lib
 ```
 
-This is checked heuristically, probably unreliably.
+All CLI commands that use the parser will load it from that path.
+The Nix shell sets this variable automatically.
+
+## The grammar
+
+The javascript file `grammar.js` contains the entry point into the grammar's production rules.
+Please consult the [tree-sitter documentation][grammar-docs] for a comprehensive introduction to the syntax and
+semantics.
+
+Parsing starts with the first item in the `rules` field:
+
+```javascript
+{
+  rules: {
+    haskell: $ => seq(
+      optional($.header),
+      optional($._body),
+    ),
+  }
+}
+```
+
+## Generating the parser
+
+The first step in the development workflow converts the javascript rule definitions to C code in `src/parser.c`:
+
+```
+$ tree-sitter generate
+```
+
+Two byproducts of this process are written to `src/grammar.json` and `src/node-types.json`.
+
+Nix derivation: `nix build .#parser-gen`
+
+## Compiling the parser
+
+The C code is automatically compiled by most of the test tools mentioned below, but you can instruct tree-sitter to do
+it in one go:
+
+```
+$ tree-sitter generate --build
+```
+
+If you've set `$TREE_SITTER_LIBDIR` as mentioned above, the shared object will be written to `$PWD/.lib/haskell.so`.
+
+Aside from the generated `src/parser.c`, tree-sitter will also compile and link `src/scanner.c` into this object.
+This file contains the _external scanner_, which is a custom extension of the built-in lexer whose purpose is to handle
+language constructs that cannot be expressed (efficiently) in the javascript grammar, like Haskell layouts.
+
+Nix derivation: `nix build .#parser-lib`
+
+### WebAssembly
+
+The parser can be compiled to WebAssembly as well, which requires `emscripten`:
+
+```
+$ tree-sitter build --wasm
+```
+
+The resulting binary is written to `$PWD/tree-sitter-haskell.wasm`.
+
+Nix derivation: `nix build .#parser-wasm`
+
+## Testing the parser
+
+The most fundamental test infrastructure for tree-sitter grammars consists of a set of code snippets with associated
+reference ASTs stored in `./test/corpus/*.txt`.
+
+```
+$ tree-sitter test
+```
+
+Individual tests can be run by specifying (a substring of) their description with `-f`:
+
+```
+$ tree-sitter test -f 'module: exports empty'
+```
+
+The project contains several other types of tests:
+
+* `test/parse/run.bash [update] [test names ...]` parses the files in `test/parse/*.hs` and compares the output with
+  `test/parse/*.target`.
+  If `update` is specified as the first argument, it will update the `.target` file for the first failing test.
+
+* `test/query/run.bash [update] [test names ...]` parses the files in `test/query/*.hs`, applies the queries in
+  `test/query/*.query` and compares the output with `test/query/*.target`, similar to `test/parse`.
+
+* `test/rust/parse-test.rs` contains a few tests that use tree-sitter's Rust API to extract the test ranges for
+  terminals in a slightly more convenient way.
+  This requires `cargo` to be installed, and can be executed with `cargo test` (which also runs the tests in
+  `bindings/rust`).
+
+* `test/parse-libs [wasm]` clones a set of Haskell libraries to `test/libs` and parses the entire codebase.
+  When invoked as `test/parse-libs wasm`, it will use the WebAssembly parser.
+  This requires `bc` to be installed.
+
+* `test/parse-lib name [wasm]` parses only the library `name` in that directory (without cloning the repository).
+
+### Debugging
+
+The shared library built by `tree-sitter test` includes debug symbols, so if the scanner segfaults you can just run
+`coredumpctl debug` to inspect the backtrace and memory:
+
+```
+newline_lookahead () at src/scanner.c:2583
+2583                ((Newline *) 0)->indent = 5;
+(gdb) bt
+#0  newline_lookahead () at src/scanner.c:2583
+#1  0x00007ffff7a0740e in newline_start () at src/scanner.c:2604
+#2  scan () at src/scanner.c:2646
+#3  eval () at src/scanner.c:2684
+#4  tree_sitter_haskell_external_scanner_scan (payload=<optimized out>, lexer=<optimized out>,
+    valid_symbols=<optimized out>) at src/scanner.c:2724
+#5  0x0000555555772488 in ts_parser.lex ()
+```
+
+For more control, launch `gdb tree-sitter` and start the process with `run test -f 'some test'`, and set a breakpoint
+with `break tree_sitter_haskell_external_scanner_scan`.
+
+To disable optimizations, run `tree-sitter test --debug-build`.
+
+#### Tracing
+
+The `test` and `parse` commands offer two modes for obtaining detailed information about the parsing process.
+
+With `tree-sitter test --debug`, every lexer step and shift/reduce action is printed to stderr.
+
+With `tree-sitter test --debug-graph`, the CLI will generate an HTML file showing a graph representation of every step.
+This requires `graphviz` to be installed.
 
 [tree-sitter]: https://github.com/tree-sitter/tree-sitter
 [ref]: https://www.haskell.org/onlinereport/haskell2010/haskellch10.html
 [ext]: https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/exts/table.html
-
-# Testing
-
-**Requires**: `tree-sitter(-cli)`
-
-## Run test corpus
-
-These are stored in `./tests/corpus/`
-
-```
-$ tree-sitter test
-```
-
-## Test parsing an example codebase
-
-**Requires**: `bc`
-This will print the percentage of the codebase parsed, and the time taken
-
-```
-$ ./script/parse-examples             # this clones all repos
-$ ./script/parse-example <example>    # where <example> is a project under ./examples/
-```
-
-## Enable scanner debug output
-
-To get an extra-verbose scanner, unoptimized, with debug symbols:
-
-```
-$ CFLAGS='-DDEBUG' make debug.so
-$ cp debug.so $HOME/.cache/tree-sitter/lib/haskell.so    # So `tree-sitter-cli` uses our binary
-$ tree-sitter test
-$ ./script/parse-example <example>
-```
-
-If you want to debug the scanner with `gdb`, you can
-`b tree_sitter_haskell_external_scanner_scan` with `tree-sitter test`.
-
-## Create visual graph of parser steps
-
-**Requires**: `graphviz`
-
-```
-$ tree-sitter parse -D test/Basic.hs    # Produces log.html
-```
-
-[ci]: https://img.shields.io/github/actions/workflow/status/tree-sitter/tree-sitter-haskell/ci.yml?logo=github&label=CI
-[discord]: https://img.shields.io/discord/1063097320771698699?logo=discord&label=discord
-[matrix]: https://img.shields.io/matrix/tree-sitter-chat%3Amatrix.org?logo=matrix&label=matrix
-[npm]: https://img.shields.io/npm/v/tree-sitter-haskell?logo=npm
-[crates]: https://img.shields.io/crates/v/tree-sitter-haskell?logo=rust
+[cli]: https://github.com/tree-sitter/tree-sitter/tree/master/cli
+[Nix]: https://nixos.org/manual/nix/stable/introduction
+[grammar-docs]: https://tree-sitter.github.io/tree-sitter/creating-parsers#writing-the-grammar

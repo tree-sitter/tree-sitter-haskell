@@ -1,0 +1,13 @@
+test/query/super-expression.hs
+  pattern: 0
+    capture: 0 - name, start: (1, 8), end: (1, 15), text: `"name1"`
+  pattern: 1
+    capture: 0 - name, start: (1, 8), end: (1, 15), text: `"name1"`
+  pattern: 0
+    capture: 0 - name, start: (2, 8), end: (2, 15), text: `"name2"`
+  pattern: 1
+    capture: 0 - name, start: (2, 8), end: (2, 15), text: `"name2"`
+  pattern: 0
+    capture: 0 - name, start: (3, 13), end: (3, 20), text: `"name3"`
+  pattern: 0
+    capture: 0 - name, start: (4, 18), end: (4, 25), text: `"name4"`

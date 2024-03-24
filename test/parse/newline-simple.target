@@ -1,0 +1,10 @@
+(haskell [0, 0] - [3, 0]
+  declarations: (declarations [0, 0] - [3, 0]
+    (bind [0, 0] - [0, 5]
+      name: (variable [0, 0] - [0, 1])
+      match: (match [0, 2] - [0, 5]
+        expression: (variable [0, 4] - [0, 5])))
+    (bind [2, 0] - [2, 5]
+      name: (variable [2, 0] - [2, 1])
+      match: (match [2, 2] - [2, 5]
+        expression: (variable [2, 4] - [2, 5])))))
