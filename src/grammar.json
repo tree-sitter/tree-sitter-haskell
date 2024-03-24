@@ -687,21 +687,18 @@
     },
     "_varid": {
       "type": "PATTERN",
-      "value": "[_\\p{Ll}](\\w|')*#?",
-      "flags": "u"
+      "value": "[_\\p{Ll}](\\w|')*#?"
     },
     "_immediate_varid": {
       "type": "IMMEDIATE_TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[_\\p{Ll}](\\w|')*#?",
-        "flags": "u"
+        "value": "[_\\p{Ll}](\\w|')*#?"
       }
     },
     "label": {
       "type": "PATTERN",
-      "value": "#[_\\p{Ll}](\\w|')*",
-      "flags": "u"
+      "value": "#[_\\p{Ll}](\\w|')*"
     },
     "variable": {
       "type": "SYMBOL",
@@ -939,13 +936,11 @@
     },
     "implicit_parid": {
       "type": "PATTERN",
-      "value": "\\?[_\\p{Ll}](\\w|')*",
-      "flags": "u"
+      "value": "\\?[_\\p{Ll}](\\w|')*"
     },
     "_conid": {
       "type": "PATTERN",
-      "value": "[\\p{Lu}\\p{Lt}](\\w|')*#?",
-      "flags": "u"
+      "value": "[\\p{Lu}\\p{Lt}](\\w|')*#?"
     },
     "constructor": {
       "type": "SYMBOL",
@@ -10447,3 +10442,4 @@
   ],
   "supertypes": []
 }
+
