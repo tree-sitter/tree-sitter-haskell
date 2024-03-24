@@ -5,32 +5,45 @@ family: closed, nullary
 type family A where
   A = A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head (type))
-  (where)
-  (equation
-   (pattern (type))
-   (type_name (type)))))
+  (declarations
+    (type_family
+      (name)
+      (equations
+        (equation
+          (name)
+          (name))))))
 
 ================================================================================
 family: closed, tyvars
 ================================================================================
 
 type family A a b c where
-  A a b c = b c
+  A a 'A c = b c
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head name: (type) (type_variable) (type_variable) (type_variable))
-  (where)
-  (equation
-   (pattern name: (type) (type_name (type_variable)) (type_name (type_variable)) (type_name (type_variable)))
-   (type_apply (type_name (type_variable)) (type_name (type_variable))))))
+  declarations: (declarations
+    (type_family
+      name: (name)
+      patterns: (type_params
+        bind: (variable)
+        bind: (variable)
+        bind: (variable))
+      closed_family: (equations
+        equation: (equation
+          name: (name)
+          patterns: (type_patterns
+            (variable)
+            (promoted
+              (constructor))
+            (variable))
+          (apply
+            constructor: (variable)
+            argument: (variable)))))))
 
 ================================================================================
 family: closed, pattern matching
@@ -39,18 +52,32 @@ family: closed, pattern matching
 type family A a b c where
   A (Maybe a) [c] = a (Maybe c)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head (type) (type_variable) (type_variable) (type_variable))
-  (where)
-  (equation
-   (pattern
-    (type)
-    (type_parens (type_apply (type_name (type)) (type_name (type_variable))))
-    (type_list (type_name (type_variable))))
-   (type_apply (type_name (type_variable)) (type_parens (type_apply (type_name (type)) (type_name (type_variable))))))))
+  (declarations
+    (type_family
+      (name)
+      (type_params
+        (variable)
+        (variable)
+        (variable))
+      (equations
+        (equation
+          (name)
+          (type_patterns
+            (parens
+              (apply
+                (name)
+                (variable)))
+            (list
+              (variable)))
+          (apply
+            (variable)
+            (parens
+              (apply
+                (name)
+                (variable)))))))))
 
 ================================================================================
 family: closed, signature
@@ -59,39 +86,94 @@ family: closed, signature
 type family A a :: (k -> *) -> 'Just k where
   A a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head name: (type) (type_variable))
-  type: (fun
-   (type_parens (fun (type_name (type_variable)) (type_star)))
-   (type_apply (type_name (promoted (type))) (type_name (type_variable))))
-(where)
-  (equation
-   (pattern name: (type) (type_name (type_variable)))
-   (type_name (type_variable)))))
+  declarations: (declarations
+    (type_family
+      name: (name)
+      patterns: (type_params
+        bind: (variable))
+      kind: (function
+        parameter: (parens
+          type: (function
+            parameter: (variable)
+            result: (star)))
+        result: (apply
+          constructor: (promoted
+            (constructor))
+          argument: (variable)))
+      closed_family: (equations
+        equation: (equation
+          name: (name)
+          patterns: (type_patterns
+            (variable))
+          (variable))))))
 
 ================================================================================
-family: closed, type_variable kind
+family: closed, variable kind
 ================================================================================
 
 type family A (a :: ([k] -> *) -> k) where
   A a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head
-   (type)
-   (annotated_type_variable
-    (type_variable)
-    (fun
-     (type_parens (fun (type_list (type_name (type_variable))) (type_star)))
-     (type_name (type_variable)))))
-  (where)
-  (equation (pattern (type) (type_name (type_variable))) (type_name (type_variable)))))
+  (declarations
+    (type_family
+      (name)
+      (type_params
+        (parens
+          (annotated
+            (variable)
+            (function
+              (parens
+                (function
+                  (list
+                    (variable))
+                  (star)))
+              (variable)))))
+      (equations
+        (equation
+          (name)
+          (type_patterns
+            (variable))
+          (variable))))))
+
+================================================================================
+family: closed, multiple equations
+================================================================================
+
+type family A a where
+  A a = a
+  A a = a
+  A a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (type_family
+      name: (name)
+      patterns: (type_params
+        bind: (variable))
+      closed_family: (equations
+        equation: (equation
+          name: (name)
+          patterns: (type_patterns
+            (variable))
+          (variable))
+        equation: (equation
+          name: (name)
+          patterns: (type_patterns
+            (variable))
+          (variable))
+        equation: (equation
+          name: (name)
+          patterns: (type_patterns
+            (variable))
+          (variable))))))
 
 ================================================================================
 family: open
@@ -101,25 +183,32 @@ type family A (a :: a) :: *
 type instance A [A] = A
 type instance A (A A) = A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head
-   name: (type)
-   (annotated_type_variable (type_variable) type: (type_name (type_variable))))
-  type: (type_star))
- (type_instance
-  (type_name (type))
-  (type_list (type_name (type)))
-  (type_name (type)))
- (type_instance
-  (type_name (type))
-  (type_parens
-   (type_apply
-    (type_name (type))
-    (type_name (type))))
-  (type_name (type))))
+  (declarations
+    (type_family
+      (name)
+      (type_params
+        (parens
+          (annotated
+            (variable)
+            (variable))))
+      (star))
+    (type_instance
+      (name)
+      (type_patterns
+        (list
+          (name)))
+      (name))
+    (type_instance
+      (name)
+      (type_patterns
+        (parens
+          (apply
+            (name)
+            (name))))
+      (name))))
 
 ================================================================================
 family: data family
@@ -127,14 +216,22 @@ family: data family
 
 data family A a (a :: [a]) :: Type -> *
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (data_family
-  (type)
-  (type_variable)
-  (annotated_type_variable (type_variable) (type_list (type_name (type_variable))))
-  (fun (type_name (type)) (type_star))))
+  (declarations
+    (data_family
+      (name)
+      (type_params
+        (variable)
+        (parens
+          (annotated
+            (variable)
+            (list
+              (variable)))))
+      (function
+        (name)
+        (star)))))
 
 ================================================================================
 family: data instance adt
@@ -145,20 +242,34 @@ data instance ∀ a . A a A =
   |
   A { a :: A }
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (data_instance
-  (forall (quantifiers (type_variable)))
-  (type_apply
-   (type_name (type))
-   (type_name (type_variable))
-   (type_name (type)))
-  (constructors
-   (data_constructor (constructor) (type_name (type_variable)) (type_name (type)) (type_name (type_variable)))
-   (data_constructor_record
-    (constructor)
-    (record_fields (field (variable) (type_name (type))))))))
+  (declarations
+    (data_instance
+      (data_type
+        (forall
+          (quantified_variables
+            (variable)))
+        (name)
+        (type_patterns
+          (variable)
+          (name))
+        (data_constructors
+          (data_constructor
+            (prefix
+              (constructor)
+              (variable)
+              (name)
+              (variable)))
+          (data_constructor
+            (record
+              (constructor)
+              (fields
+                (field
+                  (field_name
+                    (variable))
+                  (name))))))))))
 
 ================================================================================
 family: data instance gadt
@@ -168,94 +279,238 @@ data instance A a where
   A :: A -> A a
   deriving (A, A)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (data_instance
-  (type_apply
-   (type_name (type))
-   (type_name (type_variable)))
-  (where)
-  (gadt_constructor
-   (constructor)
-   (fun (type_name (type)) (type_apply (type_name (type)) (type_name (type_variable)))))
-  (deriving (constraint (class_name (type))) (comma) (constraint (class_name (type))))))
+  (declarations
+    (data_instance
+      (data_type
+        (name)
+        (type_patterns
+          (variable))
+        (gadt_constructors
+          (gadt_constructor
+            (constructor)
+            (prefix
+              (function
+                (name)
+                (apply
+                  (name)
+                  (variable))))))
+        (deriving
+          (tuple
+            (name)
+            (name)))))))
 
 ================================================================================
-family: data instance newtype
+family: data instance newtype simple
 ================================================================================
 
-newtype instance A a a = A a deriving A
+newtype instance A a A = A a deriving A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (data_instance
-  (type_apply
-   (type_name (type))
-   (type_name (type_variable))
-   (type_name (type_variable)))
-  (newtype_constructor (constructor) (type_name (type_variable)))
-  (deriving (type))))
+  (declarations
+    (data_instance
+      (newtype
+        (name)
+        (type_patterns
+          (variable)
+          (name))
+        (newtype_constructor
+          (constructor)
+          (field
+            (variable)))
+        (deriving
+          (name))))))
 
 ================================================================================
-family: symbolic equation
+family: data instance newtype gadt
 ================================================================================
 
-type family A a where
-  a <> a = a
+newtype instance A A where
+  A :: A %1 -> A A
 
----
+newtype instance ∀ a . A a => A (a :: a) :: A where
+  A :: A %1 -> A [a] deriving A
+
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head (type) (type_variable))
-  (where)
-  (equation
-   (pattern (type_name (type_variable)) (type_operator) (type_name (type_variable)))
-   (type_name (type_variable)))))
+  (declarations
+    (data_instance
+      (newtype
+        (name)
+        (type_patterns
+          (name))
+        (gadt_constructors
+          (gadt_constructor
+            (constructor)
+            (prefix
+              (linear_function
+                (name)
+                (modifier
+                  (literal
+                    (integer)))
+                (apply
+                  (name)
+                  (name))))))))
+    (data_instance
+      (newtype
+        (forall
+          (quantified_variables
+            (variable)))
+        (context
+          (apply
+            (name)
+            (variable)))
+        (name)
+        (type_patterns
+          (parens
+            (signature
+              (variable)
+              (variable))))
+        (name)
+        (gadt_constructors
+          (gadt_constructor
+            (constructor)
+            (prefix
+              (linear_function
+                (name)
+                (modifier
+                  (literal
+                    (integer)))
+                (apply
+                  (name)
+                  (list
+                    (variable)))))))
+        (deriving
+          (name))))))
+
+================================================================================
+family: data instance newtype record
+================================================================================
+
+newtype instance A = A { a :: A }
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_instance
+      (newtype
+        (name)
+        (newtype_constructor
+          (constructor)
+          (record
+            (field
+              (field_name
+                (variable))
+              (name))))))))
 
 ================================================================================
 family: injectivity annotation
 ================================================================================
+module A where
 
 type family A a = r
 
-type family A a = r | r -> a where
+type family A a = (r :: A) | r -> a where
   A a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head (type) (type_variable))
-  (tyfam_result_type (type_variable)))
- (type_family
-  (head (type) (type_variable))
-  (tyfam_result_type (type_variable))
-  (tyfam_injectivity (type_variable) (type_variable))
-  (where)
-  (equation (pattern (type) (type_name (type_variable))) (type_name (type_variable)))))
+  (header
+    (module
+      (module_id)))
+  (declarations
+    (type_family
+      (name)
+      (type_params
+        (variable))
+      (type_family_result
+        (variable)))
+    (type_family
+      (name)
+      (type_params
+        (variable))
+      (type_family_result
+        (parens
+          (signature
+            (variable)
+            (name))))
+      (type_family_injectivity
+        (variable)
+        (variable))
+      (equations
+        (equation
+          (name)
+          (type_patterns
+            (variable))
+          (variable))))))
 
 ================================================================================
-family: infix with btype
+family: infix basic
 ================================================================================
 
-type family (<>) a a where
-  A a <> a = a
+type family a <> a where
+  a <> a = a
 
----
+type instance A <> A = a
+
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head (type_operator) (type_variable) (type_variable))
-  (where)
-  (equation
-   (pattern
-    (type_apply (type_name (type)) (type_name (type_variable)))
-    (type_operator)
-    (type_name (type_variable)))
-   (type_name (type_variable)))))
+  (declarations
+    (type_family
+      (infix
+        (variable)
+        (operator)
+        (variable))
+      (equations
+        (equation
+          (infix
+            (variable)
+            (operator)
+            (variable))
+          (variable))))
+    (type_instance
+      (infix
+        (name)
+        (operator)
+        (name))
+      (variable))))
+
+================================================================================
+family: infix pattern mistaken as infix head
+================================================================================
+
+-- Many nodes to ensure the conflict is decided in favor of apply without prec
+type family A a a a a a where
+  a <> a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (type_family
+      (name)
+      (type_params
+        (variable)
+        (variable)
+        (variable)
+        (variable)
+        (variable))
+      (equations
+        (equation
+          (infix
+            (variable)
+            (operator)
+            (variable))
+          (variable))))))
 
 ================================================================================
 family: kind signature in pattern
@@ -264,24 +519,25 @@ family: kind signature in pattern
 type family A where
   A (a :: A, a) = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head (type))
-  (where)
-  (equation
-   (pattern
-    (type)
-    (type_tuple
-     (type_name (type_variable))
-     (kind (type_name (type)))
-     (comma)
-     (type_name (type_variable))))
-   (type_name (type_variable)))))
+  (declarations
+    (type_family
+      (name)
+      (equations
+        (equation
+          (name)
+          (type_patterns
+            (tuple
+              (signature
+                (variable)
+                (name))
+              (variable)))
+          (variable))))))
 
 ================================================================================
-family: invisible binders
+family: kind application
 ================================================================================
 
 type family A where
@@ -289,31 +545,46 @@ type family A where
 
 type instance A @a A = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head (type))
-  (where)
-  (equation
-   (pattern
-    (type)
-    (type_invisible (type_name (type)))
-    (type_invisible (type_name (type_variable)))
-    (type_invisible (type_parens (type_apply (type_name (type)) (type_name (type_variable)))))
-    (type_invisible
-     (type_parens
-      (forall
-       (quantifiers (type_variable))
-       (type_apply (type_name (type)) (type_name (type_variable))))
-      (kind (type_apply (type_name (type)) (type_name (type_variable))))))
-      (type_name (type_variable)))
-      (type_name (type_variable))))
-  (type_instance
-   (type_name (type))
-   (type_invisible (type_name (type_variable)))
-   (type_name (type))
-   (type_name (type_variable))))
+  (declarations
+    (type_family
+      (name)
+      (equations
+        (equation
+          (name)
+          (type_patterns
+            (kind_application
+              (name))
+            (kind_application
+              (variable))
+            (kind_application
+              (parens
+                (apply
+                  (name)
+                  (variable))))
+            (kind_application
+              (parens
+                (signature
+                  (forall
+                    (quantified_variables
+                      (variable))
+                    (apply
+                      (name)
+                      (variable)))
+                  (apply
+                    (name)
+                    (variable)))))
+            (variable))
+          (variable))))
+    (type_instance
+      (name)
+      (type_patterns
+        (kind_application
+          (variable))
+        (name))
+      (variable))))
 
 ================================================================================
 family: symbolic prefix
@@ -322,10 +593,170 @@ family: symbolic prefix
 type family (<>) where
   (<>) = A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_family
-  (head (type_operator))
-  (where)
-  (equation (pattern (type_operator)) (type_name (type)))))
+  (declarations
+    (type_family
+      (prefix_id
+        (operator))
+      (equations
+        (equation
+          (prefix_id
+            (operator))
+          (name))))))
+
+================================================================================
+family: forall before equation
+================================================================================
+
+type family A a where
+  ∀ a . A a = a
+
+type instance ∀ a . A a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_family
+      (name)
+      (type_params
+        (variable))
+      (equations
+        (equation
+          (forall
+            (quantified_variables
+              (variable)))
+          (name)
+          (type_patterns
+            (variable))
+          (variable))))
+    (type_instance
+      (forall
+        (quantified_variables
+          (variable)))
+      (name)
+      (type_patterns
+        (variable))
+      (variable))))
+
+================================================================================
+family: abstract closed family, hs-boot
+================================================================================
+
+type family A where
+  ..
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_family
+      (name)
+      (abstract_family))))
+
+================================================================================
+family: arrow in pattern
+================================================================================
+
+type family A where
+  A (a -> a) = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_family
+      (name)
+      (equations
+        (equation
+          (name)
+          (type_patterns
+            (parens
+              (function
+                (variable)
+                (variable))))
+          (variable))))))
+
+================================================================================
+family: infix asterisk
+================================================================================
+
+type family a * a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_family
+      (infix
+        (variable)
+        (operator)
+        (variable)))))
+
+================================================================================
+family: closed qualified
+================================================================================
+
+type family A where
+  A.A.A a = a
+  a A.A.++ a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_family
+      (name)
+      (equations
+        (equation
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (name))
+          (type_patterns
+            (variable))
+          (variable))
+        (equation
+          (infix
+            (variable)
+            (qualified
+              (module
+                (module_id)
+                (module_id))
+              (operator))
+            (variable))
+          (variable))))))
+
+================================================================================
+family: open qualified
+================================================================================
+
+type instance A.A.A a = a
+type instance a A.A.++ a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_instance
+      (qualified
+        (module
+          (module_id)
+          (module_id))
+        (name))
+      (type_patterns
+        (variable))
+      (variable))
+    (type_instance
+      (infix
+        (variable)
+        (qualified
+          (module
+            (module_id)
+            (module_id))
+          (operator))
+        (variable))
+      (variable))))

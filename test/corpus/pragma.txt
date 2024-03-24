@@ -7,17 +7,29 @@ a = a
 
 a = a
 {-# inline conlike [1] a #-}
+
+a = a
 {-#INLINE [~2] a#-}
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_name (variable)))
- (pragma)
- (function (variable) (exp_name (variable)))
- (pragma)
- (pragma))
-
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (pragma)
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (pragma)
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (pragma)))
 
 ================================================================================
 pragma: without module
@@ -26,9 +38,11 @@ pragma: without module
 {-# LANGUAGE LambdaCase #-}
 {-# language ScopedTypeVariables, DataKinds #-}
 
----
+--------------------------------------------------------------------------------
 
-(haskell (pragma) (pragma) (empty_file))
+(haskell
+  (pragma)
+  (pragma))
 
 ================================================================================
 pragma: before module
@@ -38,23 +52,111 @@ pragma: before module
 {-# language ScopedTypeVariables, DataKinds #-}
 module A where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
   (pragma)
   (pragma)
-  (module)
-  (where))
+  (header
+    (module
+      (module_id))))
 
 ================================================================================
-pragma: instance
+pragma: after module
+================================================================================
+
+module A where
+{-# language X #-}
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (pragma)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+pragma: between imports
+================================================================================
+
+module A where
+{-# language X #-}
+import A
+{-# language X #-}
+import A
+{-# language X #-}
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (pragma)
+  (imports
+    (import
+      (module
+        (module_id)))
+    (pragma)
+    (import
+      (module
+        (module_id)))
+    (pragma))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+pragma: before import inline
+================================================================================
+
+module A where
+
+import A
+{-# language X #-} import A
+import A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (imports
+    (import
+      (module
+        (module_id)))
+    (pragma)
+    (import
+      (module
+        (module_id)))
+    (import
+      (module
+        (module_id)))))
+
+================================================================================
+pragma: instance overlap
 ================================================================================
 
 instance {-# overlappable #-} A where
 
----
+--------------------------------------------------------------------------------
 
-(haskell (instance (pragma) (instance_head (class_name (type))) (where)))
+(haskell
+  (declarations
+    (instance
+      (pragma)
+      (name))))
 
 ================================================================================
 pragma: multiline
@@ -65,6 +167,256 @@ module A where
       "a/a" [2] forall a . a a = a
   #-}
 
----
+a = a
 
-(haskell (module) (where) (pragma))
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (pragma)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+pragma: no whitespace before strictness annotation
+================================================================================
+
+data A = A {-# a #-}!A
+data A = A {- a -}~A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (pragma)
+            (strict_field
+              (name))))))
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (comment)
+            (lazy_field
+              (name))))))))
+
+================================================================================
+pragma: before do statement
+================================================================================
+
+a = do
+  a <- a
+  {-# SCC "a" #-} a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (bind
+            (variable)
+            (variable))
+          (pragma)
+          (exp
+            (variable)))))))
+
+================================================================================
+pragma: instance method with cpp
+================================================================================
+
+instance A where
+#if
+  a = a
+#endif
+  {-# inline a #-}
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (instance
+      (name)
+      (cpp)
+      (instance_declarations
+        (bind
+          (variable)
+          (match
+            (variable)))
+        (cpp)
+        (pragma)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+pragma: indented before decl without module
+================================================================================
+  {-# language A #-}
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (pragma)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+pragma: indented after decl
+================================================================================
+a = a
+
+  {-# prag #-}
+
+a = a
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (pragma)
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+pragma: indented after module
+================================================================================
+module A where
+  {-# prag #-}
+a = a
+-- This is a parse error in GHC, but since we leniently readjust top level indent
+-- when it decreases, it doesn't happen here.
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (pragma)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (comment)))
+
+================================================================================
+pragma: between decls
+================================================================================
+
+a = a
+{-# prag #-}
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (pragma)
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+pragma: followed by inline comment
+================================================================================
+a = a
+{-# prag #-} -- a
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (pragma)
+    (comment)
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+pragma: followed by block comment
+================================================================================
+a = a
+{-# prag #-} {- a
+-}
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (pragma)
+    (comment)
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+pragma: after block comment
+================================================================================
+a = do
+  a
+{- a -}
+{-# prag #-}
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable)))))
+    (comment)
+    (pragma)
+    (bind
+      (variable)
+      (match
+        (variable)))))

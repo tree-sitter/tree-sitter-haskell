@@ -4,9 +4,14 @@ class: minimal
 
 class A a
 
----
+--------------------------------------------------------------------------------
 
-(haskell (class (class_head class: (class_name (type)) (type_name (type_variable)))))
+(haskell
+  declarations: (declarations
+    (class
+      name: (name)
+      patterns: (type_params
+        bind: (variable)))))
 
 ================================================================================
 class: context variants
@@ -15,21 +20,30 @@ class: context variants
 class A a => Read a
 class (A a, A a) => A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (context
-   (constraint (class_name (type)) (type_name (type_variable)))
-  )
-  (class_head (class_name (type)) (type_name (type_variable))))
- (class
-  (context
-   (constraint (class_name (type)) (type_name (type_variable)))
-   (comma)
-   (constraint (class_name (type)) (type_name (type_variable)))
-  )
-  (class_head (class_name (type)) (type_name (type_variable)))))
+  (declarations
+    (class
+      (context
+        (apply
+          (name)
+          (variable)))
+      (name)
+      (type_params
+        (variable)))
+    (class
+      (context
+        (tuple
+          (apply
+            (name)
+            (variable))
+          (apply
+            (name)
+            (variable))))
+      (name)
+      (type_params
+        (variable)))))
 
 ================================================================================
 class: method with context
@@ -37,18 +51,24 @@ class: method with context
 
 class A a where a :: A a => a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head class: (class_name (type)) (type_name (type_variable)))
-  (class_body
-   (where)
-   (signature
-    name: (variable)
-    type: (context
-     (constraint class: (class_name (type)) (type_name (type_variable)))
-     (fun (type_name (type_variable)) (type_name (type_variable))))))))
+  declarations: (declarations
+    (class
+      name: (name)
+      patterns: (type_params
+        bind: (variable))
+      declarations: (class_declarations
+        declaration: (signature
+          name: (variable)
+          type: (context
+            context: (apply
+              constructor: (name)
+              argument: (variable))
+            type: (function
+              parameter: (variable)
+              result: (variable))))))))
 
 ================================================================================
 class: braces
@@ -59,15 +79,21 @@ class Foo a where {
   a :: a;
 }
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head (class_name (type)) (type_name (type_variable)))
-  (class_body
-   (where)
-   (signature (variable) (type_name (type_variable)))
-   (signature (variable) (type_name (type_variable))))))
+  (declarations
+    (class
+      (name)
+      (type_params
+        (variable))
+      (class_declarations
+        (signature
+          (variable)
+          (variable))
+        (signature
+          (variable)
+          (variable))))))
 
 ================================================================================
 class: fixity
@@ -76,56 +102,57 @@ class: fixity
 class A where
   infixl `op`
   a :: Int
-  infixr 7 `op`
+  infixr 7 ++
   a = a
-  infix 7 `op`, `ip`, `ap`
-  infix <$>
-  infix 7 <$>
-  infix 7 :
-  infix 7 :.
-  infix 7 :<:
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head (class_name (type)))
-  (class_body
-   (where)
-   (fixity (varop (variable)))
-   (signature (variable) (type_name (type)))
-   (fixity (integer) (varop (variable)))
-   (function (variable) (exp_name (variable)))
-   (fixity (integer) (varop (variable)) (comma) (varop (variable)) (comma) (varop (variable)))
-   (fixity (varop (operator)))
-   (fixity (integer) (varop (operator)))
-   (fixity (integer) (constructor_operator))
-   (fixity (integer) (constructor_operator))
-   (fixity (integer) (constructor_operator)))))
+  (declarations
+    (class
+      (name)
+      (class_declarations
+        (fixity
+          (infix_id
+            (variable)))
+        (signature
+          (variable)
+          (name))
+        (fixity
+          (integer)
+          (operator))
+        (bind
+          (variable)
+          (match
+            (variable)))))))
 
 ================================================================================
-class: multi method operator
+class: binding list
 ================================================================================
 
 class A where
-  (<), (<=), (>=), (>) :: a
+  (<), a, (<=), (>=), a, (>) :: a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head (class_name (type)))
-  (class_body
-   (where)
-   (signature
-    (operator)
-    (comma)
-    (operator)
-    (comma)
-    (operator)
-    (comma)
-    (operator)
-    (type_name (type_variable))))))
+  (declarations
+    (class
+      (name)
+      (class_declarations
+        (signature
+          (binding_list
+            (prefix_id
+              (operator))
+            (variable)
+            (prefix_id
+              (operator))
+            (prefix_id
+              (operator))
+            (variable)
+            (prefix_id
+              (operator)))
+          (variable))))))
 
 ================================================================================
 class: multi param
@@ -133,9 +160,16 @@ class: multi param
 
 class A a a a
 
----
+--------------------------------------------------------------------------------
 
-(haskell (class (class_head (class_name (type)) (type_name (type_variable)) (type_name (type_variable)) (type_name (type_variable)))))
+(haskell
+  (declarations
+    (class
+      (name)
+      (type_params
+        (variable)
+        (variable)
+        (variable)))))
 
 ================================================================================
 class: default signature
@@ -145,15 +179,20 @@ class A where
   a :: Int
   default a :: Int
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head (class_name (type)))
-  (class_body
-   (where)
-   (signature (variable) (type_name (type)))
-   (default_signature (signature (variable) (type_name (type)))))))
+  (declarations
+    (class
+      (name)
+      (class_declarations
+        (signature
+          (variable)
+          (name))
+        (default_signature
+          (signature
+            (variable)
+            (name)))))))
 
 ================================================================================
 class: type variable kind
@@ -161,16 +200,20 @@ class: type variable kind
 
 class A (a :: [*] -> k)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head
-   (class_name (type))
-   (type_name
-    (annotated_type_variable
-     (type_variable)
-     (fun (type_list (type_star)) (type_name (type_variable))))))))
+  (declarations
+    (class
+      (name)
+      (type_params
+        (parens
+          (annotated
+            (variable)
+            (function
+              (list
+                (star))
+              (variable))))))))
 
 ================================================================================
 class: associated family
@@ -178,19 +221,53 @@ class: associated family
 
 class A a where
   type A a :: a
+  type A a = a | a -> a
   type A a = A
   type family A a :: a
+  type family A a = a | a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head (class_name (type)) (type_name (type_variable)))
-  (class_body
-   (where)
-   (type_family (head (type) (type_variable)) (type_name (type_variable)))
-   (type_instance (type_name (type)) (type_name (type_variable)) (type_name (type)))
-   (type_family (head (type) (type_variable)) (type_name (type_variable))))))
+  (declarations
+    (class
+      (name)
+      (type_params
+        (variable))
+      (class_declarations
+        (type_family
+          (name)
+          (type_params
+            (variable))
+          (variable))
+        (type_family
+          (name)
+          (type_params
+            (variable))
+          (type_family_result
+            (variable))
+          (type_family_injectivity
+            (variable)
+            (variable)))
+        (type_instance
+          (name)
+          (type_patterns
+            (variable))
+          (name))
+        (type_family
+          (name)
+          (type_params
+            (variable))
+          (variable))
+        (type_family
+          (name)
+          (type_params
+            (variable))
+          (type_family_result
+            (variable))
+          (type_family_injectivity
+            (variable)
+            (variable)))))))
 
 ================================================================================
 class: associated data
@@ -200,18 +277,26 @@ class A a where
   data A a
   data family A a :: * -> Type
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head (class_name (type)) (type_name (type_variable)))
-  (class_body
-   (where)
-   (data_family (type) (type_variable))
-   (data_family
-    (type)
-    (type_variable)
-    (fun (type_star) (type_name (type)))))))
+  (declarations
+    (class
+      (name)
+      (type_params
+        (variable))
+      (class_declarations
+        (data_family
+          (name)
+          (type_params
+            (variable)))
+        (data_family
+          (name)
+          (type_params
+            (variable))
+          (function
+            (star)
+            (name)))))))
 
 ================================================================================
 class: fundeps
@@ -219,15 +304,21 @@ class: fundeps
 
 class A | a -> a a, a a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head class: (class_name (type)))
-  (fundeps
-   (fundep (type_variable) (type_variable) (type_variable))
-   (comma)
-   (fundep (type_variable) (type_variable) (type_variable)))))
+  declarations: (declarations
+    (class
+      name: (name)
+      fundeps: (fundeps
+        fundep: (fundep
+          matched: (variable)
+          determined: (variable)
+          determined: (variable))
+        fundep: (fundep
+          matched: (variable)
+          matched: (variable)
+          determined: (variable))))))
 
 ================================================================================
 class: infix operator name
@@ -235,15 +326,69 @@ class: infix operator name
 
 class a ++ b
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class
-  (class_head
-   (type_infix
-    left: (type_name (type_variable))
-    op: (type_operator)
-    right: (type_name (type_variable))))))
+  declarations: (declarations
+    (class
+      (infix
+        bind: (variable)
+        operator: (operator)
+        bind: (variable)))))
+
+================================================================================
+class: infix constructor operator name
+================================================================================
+
+class a :++ b
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (class
+      (infix
+        bind: (variable)
+        operator: (constructor_operator)
+        bind: (variable)))))
+
+================================================================================
+class: prefix operator name
+================================================================================
+
+class (++) a b
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (class
+      (prefix_id
+        (operator))
+      (type_params
+        (variable)
+        (variable)))))
+
+================================================================================
+class: ticked name
+================================================================================
+
+class ((((a)) `A` a))
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (class
+      (parens
+        (parens
+          (infix
+            (parens
+              (parens
+                (variable)))
+            (infix_id
+              (name))
+            (variable)))))))
 
 ================================================================================
 class: multiple type families unannotated
@@ -256,16 +401,46 @@ class A a where
 
   a :: a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
-  (class
-    (class_head (class_name (type))
-      (type_name (type_variable)))
-    (class_body
-      (where)
-      (type_family (head (type) (type_variable)))
-      (type_family (head (type) (type_variable)))
-      (type_instance (type_name (type)) (type_name (type_variable)) (type_literal (con_unit)))
-      (signature (variable) (type_name (type_variable))))))
+  (declarations
+    (class
+      (name)
+      (type_params
+        (variable))
+      (class_declarations
+        (type_family
+          (name)
+          (type_params
+            (variable)))
+        (type_family
+          (name)
+          (type_params
+            (variable)))
+        (type_instance
+          (name)
+          (type_patterns
+            (variable))
+          (unit))
+        (signature
+          (variable)
+          (variable))))))
 
+================================================================================
+class: where on new line
+================================================================================
+
+module A where
+class A
+  where
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (declarations
+    (class
+      (name))))

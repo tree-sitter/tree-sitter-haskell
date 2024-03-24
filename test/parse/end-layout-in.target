@@ -1,0 +1,25 @@
+(haskell [0, 0] - [7, 0]
+  (comment [0, 0] - [0, 124])
+  declarations: (declarations [1, 0] - [7, 0]
+    (bind [1, 0] - [6, 14]
+      name: (variable [1, 0] - [1, 1])
+      match: (match [1, 2] - [6, 14]
+        expression: (let_in [1, 4] - [6, 14]
+          binds: (local_binds [1, 7] - [4, 18]
+            decl: (bind [1, 8] - [4, 18]
+              name: (variable [1, 8] - [1, 9])
+              match: (match [1, 10] - [4, 18]
+                expression: (do [1, 12] - [4, 18]
+                  statement: (exp [2, 10] - [4, 18]
+                    (apply [2, 10] - [4, 18]
+                      function: (variable [2, 10] - [2, 11])
+                      argument: (do [2, 12] - [4, 18]
+                        statement: (bind [3, 12] - [3, 18]
+                          pattern: (variable [3, 12] - [3, 13])
+                          expression: (variable [3, 17] - [3, 18]))
+                        statement: (exp [4, 12] - [4, 18]
+                          (apply [4, 12] - [4, 18]
+                            function: (variable [4, 12] - [4, 16])
+                            argument: (variable [4, 17] - [4, 18]))))))))))
+          (comment [5, 10] - [5, 14])
+          expression: (variable [6, 13] - [6, 14]))))))

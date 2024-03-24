@@ -1,0 +1,11 @@
+test/query/empty-list.hs
+  pattern: 3
+    capture: 0 - result, start: (0, 4), end: (0, 6), text: `[]`
+  pattern: 0
+    capture: 0 - result, start: (0, 4), end: (0, 6), text: `[]`
+  pattern: 1
+    capture: 0 - result, start: (0, 4), end: (0, 6), text: `[]`
+  pattern: 2
+    capture: 0 - result, start: (0, 4), end: (0, 6), text: `[]`
+  pattern: 2
+    capture: 0 - result, start: (1, 4), end: (1, 7), text: `[a]`

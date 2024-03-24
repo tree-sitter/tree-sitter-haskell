@@ -1,0 +1,1725 @@
+================================================================================
+prec: infix qualified varsym with leading dot(s)
+================================================================================
+
+a = a A.!? a
+a = a A .!? a
+
+a = a A..!? a
+a = a A ..!? a
+
+a = a A...!? a
+a = a A ...!? a
+
+a = a A.. a
+a = a A..! a
+a = a A..= a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (variable)
+            (constructor))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (variable)
+            (constructor))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (variable)
+            (constructor))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+prec: infix qualified consym
+================================================================================
+
+a = a A.:!? a
+a = a A :!? a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (constructor_operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (variable)
+            (constructor))
+          (constructor_operator)
+          (variable))))))
+
+================================================================================
+prec: varop decl with leading dot
+================================================================================
+
+(.&) :: a
+(.=) :: a
+(..&) :: a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (prefix_id
+        (operator))
+      (variable))
+    (signature
+      (prefix_id
+        (operator))
+      (variable))
+    (signature
+      (prefix_id
+        (operator))
+      (variable))))
+
+================================================================================
+prec: varop exp with leading dot
+================================================================================
+
+a = (A..!?)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (prefix_id
+          (qualified
+            (module
+              (module_id))
+            (operator)))))))
+
+================================================================================
+prec: varop import with leading dot
+================================================================================
+
+import A ((.=))
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (imports
+    (import
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (prefix_id
+            (operator)))))))
+
+================================================================================
+prec: varop export with leading dot
+================================================================================
+
+module A ((.=)) where
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id))
+    (exports
+      (export
+        (prefix_id
+          (operator))))))
+
+================================================================================
+prec: infix varop with leading dot in list
+================================================================================
+
+a = [a .+ a]
+a = [a ..+ a]
+a = [a A..+ a]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (list
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (list
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (list
+          (infix
+            (variable)
+            (qualified
+              (module
+                (module_id))
+              (operator))
+            (variable)))))))
+
+================================================================================
+prec: tight infix varop with leading dot
+================================================================================
+
+a = a.+a
+a = a..+a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
+
+================================================================================
+prec: arithmetic sequence
+================================================================================
+
+a = [1..]
+a = [a..]
+a = [1 ..]
+a = [a ..]
+
+a = [1..2]
+a = [a..a]
+a = [1 ..2]
+a = [a ..a]
+a = [1.. 2]
+a = [a.. a]
+a = [1 .. 2]
+a = [a .. a]
+
+a = [1,2..]
+a = [a,a..]
+a = [1,2 ..]
+a = [a,a ..]
+
+a = [1,2..3]
+a = [a,a..a]
+a = [1,2 ..3]
+a = [a,a ..a]
+a = [1,2.. 3]
+a = [a,a.. a]
+a = [1,2 .. 3]
+a = [a,a .. a]
+
+-- This should be an error, since a conid followed by two dots parses as the
+-- qualified composition operator, but we allow it since there's no way to use
+-- an operator here, like it would be in a section.
+a = [A..a]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (literal
+            (integer))
+          (literal
+            (integer))
+          (literal
+            (integer)))))
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (variable)
+          (variable)
+          (variable))))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (arithmetic_sequence
+          (constructor)
+          (variable))))))
+
+================================================================================
+prec: section with leading dot
+================================================================================
+
+a = (.& a)
+a = (a .&)
+a = (. a)
+a = (a .)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))))
+
+================================================================================
+prec: composition basic
+================================================================================
+
+a = a. a
+a = a .a
+a = a . a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
+
+================================================================================
+prec: composition in parens
+================================================================================
+
+-- Note: These may be parsed as sections
+a = (a. a)
+a = (a .a)
+a = (a . a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))))
+
+================================================================================
+prec: composition and qualified names
+================================================================================
+
+a = A.A.a . a
+a = A.A.a . A.a
+a = A.A.a. a
+a = A.A.a. A.a
+a = A.A.a .a
+a = A.A.a .A.a
+
+a = A.A.A . a
+a = A.A.A . A.a
+a = A.A.A. a
+a = A.A.A. A.a
+a = A.A.A .a
+a = A.A.A .A.a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (variable))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (variable))
+          (operator)
+          (qualified
+            (module
+              (module_id))
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (variable))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (variable))
+          (operator)
+          (qualified
+            (module
+              (module_id))
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (variable))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (variable))
+          (operator)
+          (qualified
+            (module
+              (module_id))
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (constructor))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (constructor))
+          (operator)
+          (qualified
+            (module
+              (module_id))
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (constructor))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (constructor))
+          (operator)
+          (qualified
+            (module
+              (module_id))
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (constructor))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (constructor))
+          (operator)
+          (qualified
+            (module
+              (module_id))
+            (variable)))))))
+
+================================================================================
+prec: composition before parens
+================================================================================
+
+a = a.(a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (parens
+            (variable)))))))
+
+================================================================================
+prec: if block arguments with exp annotation
+================================================================================
+
+a = a if a :: A then \ a -> a :: A else a :: A
+a = a if | a -> a :: A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (conditional
+            (signature
+              (variable)
+              (name))
+            (lambda
+              (patterns
+                (variable))
+              (signature
+                (variable)
+                (name)))
+            (signature
+              (variable)
+              (name))))))
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (multi_way_if
+            (match
+              (guards
+                (boolean
+                  (variable)))
+              (signature
+                (variable)
+                (name)))))))))
+
+================================================================================
+prec: block argument: apply
+================================================================================
+
+a = do \ a -> a
+    case a of
+      a -> a
+    do a + a
+    if
+   | a -> a
+   | a -> a
+  *
+  do a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (apply
+              (apply
+                (do
+                  (exp
+                    (lambda
+                      (patterns
+                        (variable))
+                      (variable))))
+                (case
+                  (variable)
+                  (alternatives
+                    (alternative
+                      (variable)
+                      (match
+                        (variable))))))
+              (do
+                (exp
+                  (infix
+                    (variable)
+                    (operator)
+                    (variable)))))
+            (multi_way_if
+              (match
+                (guards
+                  (boolean
+                    (variable)))
+                (variable))
+              (match
+                (guards
+                  (boolean
+                    (variable)))
+                (variable))))
+          (operator)
+          (do
+            (exp
+              (variable))))))))
+
+================================================================================
+prec: greedy signature in pattern binder
+================================================================================
+
+a :: A ++ A = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (signature
+        (variable)
+        (infix
+          (name)
+          (operator)
+          (name)))
+      (match
+        (variable)))))
+
+================================================================================
+prec: signature with subsequent function vs. pattern binder
+================================================================================
+
+a :: A
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (name))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+prec: hash: signature lhs
+================================================================================
+
+(#) :: a
+(#!) :: a
+(#?) :: a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (prefix_id
+        (operator))
+      (variable))
+    (signature
+      (prefix_id
+        (operator))
+      (variable))
+    (signature
+      (prefix_id
+        (operator))
+      (variable))))
+
+================================================================================
+prec: hash: prefix expression
+================================================================================
+
+a = (#)
+a = (#!)
+a = (#?)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (prefix_id
+          (operator))))))
+
+================================================================================
+prec: hash: right section
+================================================================================
+
+a = (# a)
+a = (## a)
+a = (#! a)
+a = (#? a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (variable))))))
+
+================================================================================
+prec: hash: left section
+================================================================================
+
+a = (a #)
+a = (a # )
+a = (a ##)
+a = (a #!)
+a = (a #?)
+a = (a !#)
+a = (a ?#)
+a = (a #|)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))))
+
+================================================================================
+prec: hash: unboxed expression
+================================================================================
+
+a = (# #)
+a = (##)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (unboxed_unit)))
+    (bind
+      (variable)
+      (match
+        (unboxed_unit)))))
+
+================================================================================
+prec: hash: infix
+================================================================================
+
+a = a#a
+a = a# a
+a = a #a
+a = a # a
+a = a ## a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (label))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
+
+================================================================================
+prec: hash: prefix type
+================================================================================
+
+type (#) = (#)
+type (#!) = (#!)
+type (#?) = (#?)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (prefix_id
+        (operator))
+      (prefix_id
+        (operator)))
+    (type_synomym
+      (prefix_id
+        (operator))
+      (prefix_id
+        (operator)))
+    (type_synomym
+      (prefix_id
+        (operator))
+      (prefix_id
+        (operator)))))
+
+================================================================================
+prec: hash: unboxed type
+================================================================================
+
+type A = (# a # b, a #)
+type A = (# a, a # b, c #)
+type A = (# a, a # b #)
+type A = (# A | A# #)
+type A = (# a # b | a #)
+type A = (# a | a # b | c #)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (unboxed_tuple
+        (infix
+          (variable)
+          (operator)
+          (variable))
+        (variable)))
+    (type_synomym
+      (name)
+      (unboxed_tuple
+        (variable)
+        (infix
+          (variable)
+          (operator)
+          (variable))
+        (variable)))
+    (type_synomym
+      (name)
+      (unboxed_tuple
+        (variable)
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (type_synomym
+      (name)
+      (unboxed_sum
+        (name)
+        (name)))
+    (type_synomym
+      (name)
+      (unboxed_sum
+        (infix
+          (variable)
+          (operator)
+          (variable))
+        (variable)))
+    (type_synomym
+      (name)
+      (unboxed_sum
+        (variable)
+        (infix
+          (variable)
+          (operator)
+          (variable))
+        (variable)))))
+
+================================================================================
+prec: hash: edge cases
+================================================================================
+
+-- Unboxed sum opening bar without space
+(#|) :: a
+a = (#|)
+a = (#| a)
+-- Unboxed sum closing bar without space
+(|#) :: a
+a = (|#)
+a = (a |#)
+-- MagicHash decl with guard has the sequence `# |` in it
+a# | a = a
+-- Same with operator
+a = a# || a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (signature
+      (prefix_id
+        (operator))
+      (variable))
+    (bind
+      (variable)
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (variable))))
+    (comment)
+    (signature
+      (prefix_id
+        (operator))
+      (variable))
+    (bind
+      (variable)
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (guards
+          (boolean
+            (variable)))
+        (variable)))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
+
+================================================================================
+prec: annotation after lambda
+================================================================================
+
+a = \ a -> a :: A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (lambda
+          (patterns
+            (variable))
+          (signature
+            (variable)
+            (name)))))))
+
+================================================================================
+prec: negation in right infix operand
+================================================================================
+
+a = a $ - a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (negation
+            (variable)))))))
+
+================================================================================
+prec: negation vs. infix with apply
+================================================================================
+
+a = a a a - a a a
+a = a a - a a - a a
+a = a a - a a + a a
+a = a a + a a - a a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (apply
+              (variable)
+              (variable))
+            (variable))
+          (operator)
+          (apply
+            (apply
+              (variable)
+              (variable))
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (variable)
+            (variable))
+          (operator)
+          (infix
+            (apply
+              (variable)
+              (variable))
+            (operator)
+            (apply
+              (variable)
+              (variable))))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (variable)
+            (variable))
+          (operator)
+          (infix
+            (apply
+              (variable)
+              (variable))
+            (operator)
+            (apply
+              (variable)
+              (variable))))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (variable)
+            (variable))
+          (operator)
+          (infix
+            (apply
+              (variable)
+              (variable))
+            (operator)
+            (apply
+              (variable)
+              (variable))))))))
+
+================================================================================
+prec: negation in left operand of infix minus
+================================================================================
+
+a = - a - a
+a = - a a - a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (negation
+            (variable))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (negation
+            (apply
+              (variable)
+              (variable)))
+          (operator)
+          (variable))))))
+
+================================================================================
+prec: left minus section with minus infix
+================================================================================
+
+a = (a - a -)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (left_section
+          (infix
+            (variable)
+            (operator)
+            (variable))
+          (operator))))))
+
+================================================================================
+prec: eldritch horror section
+================================================================================
+
+a = (+ - a + - a)
+a = (+ - a a + - a a)
+a = (+ - a a a + - a a a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (infix
+            (negation
+              (variable))
+            (operator)
+            (negation
+              (variable))))))
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (infix
+            (negation
+              (apply
+                (variable)
+                (variable)))
+            (operator)
+            (negation
+              (apply
+                (variable)
+                (variable)))))))
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (infix
+            (negation
+              (apply
+                (apply
+                  (variable)
+                  (variable))
+                (variable)))
+            (operator)
+            (negation
+              (apply
+                (apply
+                  (variable)
+                  (variable))
+                (variable)))))))))
+
+================================================================================
+prec: qualified infix varsym with two module segments
+================================================================================
+
+a = a A.A.+++ a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+prec: qualified infix varsym with apply in left operand
+================================================================================
+
+-- This has the strong potential to pull the operator into the apply
+a = a a A.+++ a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (variable)
+            (variable))
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+prec: apply in nested infix with all qualified names with two module segments
+================================================================================
+
+a = A.A.a A.A.a A.A.+++ A.A.a A.A.a A.A.+++ A.A.a A.A.a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (apply
+            (qualified
+              (module
+                (module_id)
+                (module_id))
+              (variable))
+            (qualified
+              (module
+                (module_id)
+                (module_id))
+              (variable)))
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (operator))
+          (infix
+            (apply
+              (qualified
+                (module
+                  (module_id)
+                  (module_id))
+                (variable))
+              (qualified
+                (module
+                  (module_id)
+                  (module_id))
+                (variable)))
+            (qualified
+              (module
+                (module_id)
+                (module_id))
+              (operator))
+            (apply
+              (qualified
+                (module
+                  (module_id)
+                  (module_id))
+                (variable))
+              (qualified
+                (module
+                  (module_id)
+                  (module_id))
+                (variable)))))))))
+
+================================================================================
+prec: apply/infix/qualified in type
+================================================================================
+
+type A = A.A.A A.A.A A.A.+++ A.A.A A.A.A A.A.+++ A.A.A A.A.A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (infix
+        (apply
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (name))
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (name)))
+        (qualified
+          (module
+            (module_id)
+            (module_id))
+          (operator))
+        (infix
+          (apply
+            (qualified
+              (module
+                (module_id)
+                (module_id))
+              (name))
+            (qualified
+              (module
+                (module_id)
+                (module_id))
+              (name)))
+          (qualified
+            (module
+              (module_id)
+              (module_id))
+            (operator))
+          (apply
+            (qualified
+              (module
+                (module_id)
+                (module_id))
+              (name))
+            (qualified
+              (module
+                (module_id)
+                (module_id))
+              (name))))))))

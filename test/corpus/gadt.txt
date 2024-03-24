@@ -4,9 +4,12 @@ gadt: empty
 
 data A where
 
----
+--------------------------------------------------------------------------------
 
-(haskell (adt (type) (where)))
+(haskell
+  (declarations
+    (data_type
+      (name))))
 
 ================================================================================
 gadt: basic
@@ -17,26 +20,38 @@ data A a where
     A a
   A :: {-# unpack #-} A -> A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (type_variable)
-  (where)
-  (gadt_constructor
-   (constructor)
-   (fun
-    (type_name (type))
-    (fun
-     (strict_type (type_parens (type_apply (type_name (type)) (type_name (type_variable)))))
-     (type_apply (type_name (type)) (type_name (type_variable))))))
-  (gadt_constructor
-   (constructor)
-   (pragma)
-   (fun
-    (type_name (type))
-    (type_apply (type_name (type)) (type_name (type_variable)))))))
+  (declarations
+    (data_type
+      (name)
+      (type_params
+        (variable))
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (prefix
+            (function
+              (name)
+              (function
+                (strict_field
+                  (parens
+                    (apply
+                      (name)
+                      (variable))))
+                (apply
+                  (name)
+                  (variable))))))
+        (gadt_constructor
+          (constructor)
+          (pragma)
+          (prefix
+            (function
+              (name)
+              (apply
+                (name)
+                (variable)))))))))
 
 ================================================================================
 gadt: record
@@ -45,19 +60,27 @@ gadt: record
 data A where
   A :: { a :: A, a :: !A } -> A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (where)
-  (gadt_constructor
-   (constructor)
-   (record_fields
-    (field (variable) (type_name (type)))
-    (comma)
-    (field (variable) (strict_type (type_name (type)))))
-   (type_name (type)))))
+  (declarations
+    (data_type
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (record
+            (fields
+              (field
+                (field_name
+                  (variable))
+                (name))
+              (field
+                (field_name
+                  (variable))
+                (strict_field
+                  (name))))
+            (name)))))))
 
 ================================================================================
 gadt: signature
@@ -65,15 +88,16 @@ gadt: signature
 
 data A :: [*] -> * where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (fun
-   (type_list (type_star))
-   (type_star))
-  (where)))
+  (declarations
+    (data_type
+      (name)
+      (function
+        (list
+          (star))
+        (star)))))
 
 ================================================================================
 gadt: context
@@ -81,13 +105,16 @@ gadt: context
 
 data A a => A where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (context (constraint (class_name (type)) (type_name (type_variable))))
-  (type)
-  (where)))
+  (declarations
+    (data_type
+      (context
+        (apply
+          (name)
+          (variable)))
+      (name))))
 
 ================================================================================
 gadt: con context
@@ -96,18 +123,21 @@ gadt: con context
 data A where
   A :: A a => A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (where)
-  (gadt_constructor
-   (constructor)
-   (context
-    (constraint (class_name (type)) (type_name (type_variable)))
-   )
-   (type_name (type)))))
+  (declarations
+    (data_type
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (context
+            (apply
+              (name)
+              (variable)))
+          (prefix
+            (name)))))))
 
 ================================================================================
 gadt: forall
@@ -116,16 +146,42 @@ gadt: forall
 data A where
   A :: ∀ a . A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (where)
-  (gadt_constructor
-   (constructor)
-   (forall (quantifiers (type_variable)))
-   (type_name (type)))))
+  (declarations
+    (data_type
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (forall
+            (quantified_variables
+              (variable)))
+          (prefix
+            (name)))))))
+
+================================================================================
+gadt: simple deriving
+================================================================================
+
+data A where
+  A :: A
+  deriving A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (prefix
+            (name))))
+      (deriving
+        (name)))))
 
 ================================================================================
 gadt: deriving
@@ -133,16 +189,45 @@ gadt: deriving
 
 data A where
   A :: A
-  deriving A
+  deriving stock A
+  deriving A via (A A)
 
----
+data A where
+  A :: A deriving A deriving stock A
+
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (where)
-  (gadt_constructor (constructor) (type_name (type)))
-  (deriving (type))))
+  (declarations
+    (data_type
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (prefix
+            (name))))
+      (deriving
+        (deriving_strategy)
+        (name))
+      (deriving
+        (name)
+        (via
+          (parens
+            (apply
+              (name)
+              (name))))))
+    (data_type
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (prefix
+            (name))))
+      (deriving
+        (name))
+      (deriving
+        (deriving_strategy)
+        (name)))))
 
 ================================================================================
 gadt: symbolic operator
@@ -151,22 +236,28 @@ gadt: symbolic operator
 data a +++ b where
   (:+++) :: a -> b -> a +++ b
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type_infix (type_variable) (type_operator) (type_variable))
-  (where)
-  (gadt_constructor
-   (constructor_operator)
-   (fun
-    (type_name (type_variable))
-    (fun
-     (type_name (type_variable))
-     (type_infix
-      (type_name (type_variable))
-      (type_operator)
-      (type_name (type_variable))))))))
+  (declarations
+    (data_type
+      (infix
+        (variable)
+        (operator)
+        (variable))
+      (gadt_constructors
+        (gadt_constructor
+          (prefix_id
+            (constructor_operator))
+          (prefix
+            (function
+              (variable)
+              (function
+                (variable)
+                (infix
+                  (variable)
+                  (operator)
+                  (variable))))))))))
 
 ================================================================================
 gadt: newtype
@@ -175,9 +266,17 @@ gadt: newtype
 newtype A where
   A :: A
 
----
+--------------------------------------------------------------------------------
 
-(haskell (newtype (type) (where) (gadt_constructor (constructor) (type_name (type)))))
+(haskell
+  (declarations
+    (newtype
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (prefix
+            (name)))))))
 
 ================================================================================
 gadt: symbolic type
@@ -185,9 +284,15 @@ gadt: symbolic type
 
 data (:#) a where
 
----
+--------------------------------------------------------------------------------
 
-(haskell (adt (constructor_operator) (type_variable) (where)))
+(haskell
+  (declarations
+    (data_type
+      (prefix_id
+        (constructor_operator))
+      (type_params
+        (variable)))))
 
 ================================================================================
 gadt: strict/lazy
@@ -198,22 +303,38 @@ data A where
   A :: !A -> A
   A :: A ~ A => A -> A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (where)
-  (gadt_constructor
-   (constructor)
-   (fun (lazy_type (type_name (type))) (type_name (type))))
-  (gadt_constructor
-   (constructor)
-   (fun (strict_type (type_name (type))) (type_name (type))))
-  (gadt_constructor
-   (constructor)
-   (context (constraint (type_infix (type_name (type)) (type_operator) (type_name (type)))))
-   (fun (type_name (type)) (type_name (type))))))
+  (declarations
+    (data_type
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (prefix
+            (function
+              (lazy_field
+                (name))
+              (name))))
+        (gadt_constructor
+          (constructor)
+          (prefix
+            (function
+              (strict_field
+                (name))
+              (name))))
+        (gadt_constructor
+          (constructor)
+          (context
+            (infix
+              (name)
+              (operator)
+              (name)))
+          (prefix
+            (function
+              (name)
+              (name))))))))
 
 ================================================================================
 gadt: type data
@@ -222,18 +343,26 @@ gadt: type data
 type data A a where
   A :: A ~ A => A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (type_variable)
-  (where)
-  (gadt_constructor
-   (constructor)
-   (context
-    (constraint (type_infix (type_name (type)) (type_operator) (type_name (type)))))
-   (type_apply (type_name (type)) (type_name (type_variable))))))
+  (declarations
+    (data_type
+      (name)
+      (type_params
+        (variable))
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (context
+            (infix
+              (name)
+              (operator)
+              (name)))
+          (prefix
+            (apply
+              (name)
+              (variable))))))))
 
 ================================================================================
 gadt: multiplicity arrow
@@ -242,16 +371,76 @@ gadt: multiplicity arrow
 data A a where
   A :: a %1 -> A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (type_variable)
-  (where)
-  (gadt_constructor
-   (constructor)
-   (fun
-    (type_name (type_variable))
-    (modifier (type_literal (integer)))
-    (type_apply (type_name (type)) (type_name (type_variable)))))))
+  (declarations
+    (data_type
+      (name)
+      (type_params
+        (variable))
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (prefix
+            (linear_function
+              (variable)
+              (modifier
+                (literal
+                  (integer)))
+              (apply
+                (name)
+                (variable)))))))))
+
+================================================================================
+gadt: con list
+================================================================================
+
+data A where
+  A, A, A :: a -> A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (binding_list
+            (constructor)
+            (constructor)
+            (constructor))
+          (prefix
+            (function
+              (variable)
+              (name))))))))
+
+================================================================================
+gadt: record with context
+================================================================================
+
+data A where
+  A :: ∀ a . A => { a :: A } -> A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (forall
+            (quantified_variables
+              (variable)))
+          (context
+            (name))
+          (record
+            (fields
+              (field
+                (field_name
+                  (variable))
+                (name)))
+            (name)))))))

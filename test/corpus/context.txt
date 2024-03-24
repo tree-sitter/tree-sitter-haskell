@@ -1,4 +1,309 @@
 ================================================================================
+context: smoke
+================================================================================
+
+a ::
+  a ->
+  a a ++ a a =>
+  a a a =>
+  (?aaa :: a -> a -> a) =>
+  (∀ a . A a => A a) =>
+  a ->
+  a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (function
+        (variable)
+        (context
+          (infix
+            (apply
+              (variable)
+              (variable))
+            (operator)
+            (apply
+              (variable)
+              (variable)))
+          (context
+            (apply
+              (apply
+                (variable)
+                (variable))
+              (variable))
+            (context
+              (parens
+                (implicit_parameter
+                  (implicit_variable)
+                  (function
+                    (variable)
+                    (function
+                      (variable)
+                      (variable)))))
+              (context
+                (parens
+                  (forall
+                    (quantified_variables
+                      (variable))
+                    (context
+                      (apply
+                        (name)
+                        (variable))
+                      (apply
+                        (name)
+                        (variable)))))
+                (function
+                  (variable)
+                  (variable))))))))))
+
+================================================================================
+context: trivial
+================================================================================
+
+a :: a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (variable)
+        (variable)))))
+
+================================================================================
+context: infix constraint simple
+================================================================================
+
+a :: a ++ a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (signature
+      name: (variable)
+      type: (context
+        context: (infix
+          left_operand: (variable)
+          operator: (operator)
+          right_operand: (variable))
+        type: (variable)))))
+
+================================================================================
+context: apply in left infix operand
+================================================================================
+
+a :: A a ++ a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (infix
+          (apply
+            (name)
+            (variable))
+          (operator)
+          (variable))
+        (variable)))))
+
+================================================================================
+context: apply in both infix operands
+================================================================================
+
+a :: a -> a a ++ a a => a a a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (function
+        (variable)
+        (context
+          (infix
+            (apply
+              (variable)
+              (variable))
+            (operator)
+            (apply
+              (variable)
+              (variable)))
+          (context
+            (apply
+              (apply
+                (variable)
+                (variable))
+              (variable))
+            (variable)))))))
+
+================================================================================
+context: quantified
+================================================================================
+
+a :: (∀ a . A a => A a) => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (parens
+          (forall
+            (quantified_variables
+              (variable))
+            (context
+              (apply
+                (name)
+                (variable))
+              (apply
+                (name)
+                (variable)))))
+        (variable)))))
+
+================================================================================
+context: apply constraint
+================================================================================
+
+type A = A a => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (context
+        (apply
+          (name)
+          (variable))
+        (name)))))
+
+================================================================================
+context: parens apply constraint
+================================================================================
+
+type A = (a A) a => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (context
+        (apply
+          (parens
+            (apply
+              (variable)
+              (name)))
+          (variable))
+        (name)))))
+
+================================================================================
+context: type annotation
+================================================================================
+
+type A = (A :: A a -> A) a => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (context
+        (apply
+          (parens
+            (signature
+              (name)
+              (function
+                (apply
+                  (name)
+                  (variable))
+                (name))))
+          (variable))
+        (name)))))
+
+================================================================================
+context: constraint, then forall, then infix constraint
+================================================================================
+
+type A = A a => ∀ a . a *+* a => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (context
+        (apply
+          (name)
+          (variable))
+        (forall
+          (quantified_variables
+            (variable))
+          (context
+            (infix
+              (variable)
+              (operator)
+              (variable))
+            (name)))))))
+
+================================================================================
+context: in fun arg
+================================================================================
+
+type A = (A => a a) -> A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (function
+        (parens
+          (context
+            (name)
+            (apply
+              (variable)
+              (variable))))
+        (name)))))
+
+================================================================================
+context: ctuple
+================================================================================
+
+a :: (A, A a) => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (tuple
+          (name)
+          (apply
+            (name)
+            (variable)))
+        (variable)))))
+
+================================================================================
 context: multi, multi line
 ================================================================================
 
@@ -9,22 +314,38 @@ a ::
   A a ->
   a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (context
-   (constraint (class_name (type)) (type_name (type_variable)) (type_name (type_variable)))
-   (context
-    (constraint (class_name (type)) (type_name (type_variable)))
-    (comma)
-    (constraint (class_name (type)) (type_name (type_variable)))
-    (fun
-     (type_parens
-      (context (constraint (class_name (type)))
-      (type_apply (type_name (type_variable)) (type_name (type_variable)))))
-     (fun (type_apply (type_name (type)) (type_name (type_variable))) (type_name (type_variable))))))))
+  (declarations
+    (signature
+      (variable)
+      (context
+        (apply
+          (apply
+            (name)
+            (variable))
+          (variable))
+        (context
+          (tuple
+            (apply
+              (name)
+              (variable))
+            (apply
+              (name)
+              (variable)))
+          (function
+            (parens
+              (context
+                (name)
+                (apply
+                  (variable)
+                  (variable))))
+            (function
+              (apply
+                (name)
+                (variable))
+              (variable))))))))
 
 ================================================================================
 context: multi, single line
@@ -32,52 +353,27 @@ context: multi, single line
 
 a :: A a a => (A a, A a) => a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (context
-   (constraint (class_name (type)) (type_name (type_variable)) (type_name (type_variable)))
-   (context
-    (constraint (class_name (type)) (type_name (type_variable)))
-    (comma)
-    (constraint (class_name (type)) (type_name (type_variable)))
-    (type_name (type_variable))))))
-
-================================================================================
-context: operator
-================================================================================
-
-a :: a ++ a => a
-
----
-
-(haskell
- (signature
-  name: (variable)
-  type: (context
-   (constraint (type_infix left: (type_name (type_variable)) op: (type_operator) right: (type_name (type_variable))))
-   (type_name (type_variable)))))
-
-================================================================================
-context: implicit
-================================================================================
-
-a :: (?aaa :: a -> a -> a) => a -> a
-
----
-
-(haskell
- (signature
-  (variable)
-  (context
-   (implicit_param
-    (implicit_parid)
-    (fun (type_name (type_variable)) (fun (type_name (type_variable)) (type_name (type_variable)))))
-   (fun
-    (type_name (type_variable))
-    (type_name (type_variable))))))
+  (declarations
+    (signature
+      (variable)
+      (context
+        (apply
+          (apply
+            (name)
+            (variable))
+          (variable))
+        (context
+          (tuple
+            (apply
+              (name)
+              (variable))
+            (apply
+              (name)
+              (variable)))
+          (variable))))))
 
 ================================================================================
 context: forall/context in constraint
@@ -85,17 +381,21 @@ context: forall/context in constraint
 
 a :: (forall a . A => A) => A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (context
-   (forall
-    (quantifiers (type_variable))
-    (context (constraint (class_name (type)))
-     (constraint (class_name (type)))))
-   (type_name (type)))))
+  (declarations
+    (signature
+      (variable)
+      (context
+        (parens
+          (forall
+            (quantified_variables
+              (variable))
+            (context
+              (name)
+              (name))))
+        (name)))))
 
 ================================================================================
 context: multiple nested foralls/contexts in constraint
@@ -103,28 +403,35 @@ context: multiple nested foralls/contexts in constraint
 
 a :: (forall a . forall a . (forall a . A => A) => forall a . A => A) => A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (context
-   (forall
-    (quantifiers (type_variable))
-    (forall
-     (quantifiers (type_variable))
-     (context
-      (forall
-       (quantifiers (type_variable))
-       (context
-        (constraint (class_name (type)))
-        (constraint (class_name (type)))))
-      (forall
-       (quantifiers (type_variable))
-       (context
-        (constraint (class_name (type)))
-        (constraint (class_name (type))))))))
-   (type_name (type)))))
+  (declarations
+    (signature
+      (variable)
+      (context
+        (parens
+          (forall
+            (quantified_variables
+              (variable))
+            (forall
+              (quantified_variables
+                (variable))
+              (context
+                (parens
+                  (forall
+                    (quantified_variables
+                      (variable))
+                    (context
+                      (name)
+                      (name))))
+                (forall
+                  (quantified_variables
+                    (variable))
+                  (context
+                    (name)
+                    (name)))))))
+        (name)))))
 
 ================================================================================
 context: double parenthesis
@@ -132,6 +439,681 @@ context: double parenthesis
 
 a :: ((A)) => A
 
----
+--------------------------------------------------------------------------------
 
-(haskell (signature (variable) (context (constraint (class_name (type))) (type_name (type)))))
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (parens
+          (parens
+            (name)))
+        (name)))))
+
+================================================================================
+context: annotated constraint tuple
+================================================================================
+
+a :: ((a, a) :: (A, A)) => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (parens
+          (signature
+            (tuple
+              (variable)
+              (variable))
+            (tuple
+              (name)
+              (name))))
+        (variable)))))
+
+================================================================================
+context: annotated quantified constraint
+================================================================================
+
+a :: ((∀ a . A a) :: (A, A)) => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (parens
+          (signature
+            (parens
+              (forall
+                (quantified_variables
+                  (variable))
+                (apply
+                  (name)
+                  (variable))))
+            (tuple
+              (name)
+              (name))))
+        (variable)))))
+
+================================================================================
+context: parenthesized contexts
+================================================================================
+
+a :: (A a, a ++ a) => a
+a :: ((A a ++ A a)) => a
+a :: (A a => A) => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (tuple
+          (apply
+            (name)
+            (variable))
+          (infix
+            (variable)
+            (operator)
+            (variable)))
+        (variable)))
+    (signature
+      (variable)
+      (context
+        (parens
+          (parens
+            (infix
+              (apply
+                (name)
+                (variable))
+              (operator)
+              (apply
+                (name)
+                (variable)))))
+        (variable)))
+    (signature
+      (variable)
+      (context
+        (parens
+          (context
+            (apply
+              (name)
+              (variable))
+            (name)))
+        (variable)))))
+
+================================================================================
+context: double context, infix, apply right
+================================================================================
+
+a :: a ++ a a => a => a
+a :: a ++ a a a => a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (infix
+          (variable)
+          (operator)
+          (apply
+            (variable)
+            (variable)))
+        (context
+          (variable)
+          (variable))))
+    (signature
+      (variable)
+      (context
+        (infix
+          (variable)
+          (operator)
+          (apply
+            (apply
+              (variable)
+              (variable))
+            (variable)))
+        (context
+          (variable)
+          (variable))))))
+
+================================================================================
+context: double context, infix, apply left
+================================================================================
+
+a :: a a ++ a => a => a
+a :: a a a ++ a => a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (infix
+          (apply
+            (variable)
+            (variable))
+          (operator)
+          (variable))
+        (context
+          (variable)
+          (variable))))
+    (signature
+      (variable)
+      (context
+        (infix
+          (apply
+            (apply
+              (variable)
+              (variable))
+            (variable))
+          (operator)
+          (variable))
+        (context
+          (variable)
+          (variable))))))
+
+================================================================================
+context: double context, apply
+================================================================================
+
+a :: a a => a => a
+a :: a a a => a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (apply
+          (variable)
+          (variable))
+        (context
+          (variable)
+          (variable))))
+    (signature
+      (variable)
+      (context
+        (apply
+          (apply
+            (variable)
+            (variable))
+          (variable))
+        (context
+          (variable)
+          (variable))))))
+
+================================================================================
+context: promoted varsym
+================================================================================
+
+-- It is illegal to promote a varsym but we can be lenient.
+a :: a a '++ a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (signature
+      (variable)
+      (context
+        (infix
+          (apply
+            (variable)
+            (variable))
+          (promoted
+            (operator))
+          (variable))
+        (variable)))))
+
+================================================================================
+context: promoted consym
+================================================================================
+
+a :: a a ':++ a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (infix
+          (apply
+            (variable)
+            (variable))
+          (promoted
+            (constructor_operator))
+          (variable))
+        (variable)))))
+
+================================================================================
+context: splice
+================================================================================
+
+a :: $(a) => a
+a :: (A, $(a)) => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (splice
+          (parens
+            (variable)))
+        (variable)))
+    (signature
+      (variable)
+      (context
+        (tuple
+          (name)
+          (splice
+            (parens
+              (variable))))
+        (variable)))))
+
+================================================================================
+context: parens around class apply constructor
+================================================================================
+
+a :: (A) a => a
+a :: ((A)) a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (apply
+          (parens
+            (name))
+          (variable))
+        (variable)))
+    (signature
+      (variable)
+      (context
+        (apply
+          (parens
+            (parens
+              (name)))
+          (variable))
+        (variable)))))
+
+================================================================================
+context: type application
+================================================================================
+
+a :: A @A a @a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (apply
+          (apply
+            (apply
+              (name)
+              (kind_application
+                (name)))
+            (variable))
+          (kind_application
+            (variable)))
+        (variable)))))
+
+================================================================================
+context: comment before arrow
+================================================================================
+
+a :: A -- a
+  => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (name)
+        (comment)
+        (name)))))
+
+================================================================================
+context: symbol
+================================================================================
+
+a :: A "a" => a
+
+a :: A "a\\\\" => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (apply
+          (name)
+          (literal
+            (string)))
+        (variable)))
+    (signature
+      (variable)
+      (context
+        (apply
+          (name)
+          (literal
+            (string)))
+        (variable)))))
+
+================================================================================
+context: char
+================================================================================
+
+a :: A 'a' => a
+
+a :: A '\n' => a
+
+a :: A '\^[' => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (apply
+          (name)
+          (literal
+            (char)))
+        (variable)))
+    (signature
+      (variable)
+      (context
+        (apply
+          (name)
+          (literal
+            (char)))
+        (variable)))
+    (signature
+      (variable)
+      (context
+        (apply
+          (name)
+          (literal
+            (char)))
+        (variable)))))
+
+================================================================================
+context: prime newline skip
+================================================================================
+
+-- lookahead for ' advances over the space to check for another ' delimiting a
+-- char, which interferes with the subsequent `newline_lookahead` skip
+instance (A' (A)) => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (instance
+      (context
+        (parens
+          (apply
+            (name)
+            (parens
+              (name)))))
+      (name))))
+
+================================================================================
+context: prime char false positive
+================================================================================
+
+-- the first and third ' are parsed as chars. the second char gobbles up the
+-- paren
+a :: (a' 'a')'a' => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (signature
+      (variable)
+      (context
+        (apply
+          (parens
+            (apply
+              (variable)
+              (literal
+                (char))))
+          (literal
+            (char)))
+        (name)))))
+
+================================================================================
+context: nonzero-indent lookahead rejection
+================================================================================
+
+-- A context is valid at `b`, and since lookahead only stops at column 0, the
+-- => on the next line is valid unless :: is a termination token.
+class A where
+  a :: b
+  a :: a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (class
+      (name)
+      (class_declarations
+        (signature
+          (variable)
+          (variable))
+        (signature
+          (variable)
+          (context
+            (variable)
+            (variable)))))))
+
+================================================================================
+context: zero-indent brace context
+================================================================================
+
+-- In record braces, zero-indent does not guarantee a new layout element.
+data A = A {a :: a
+=> a}
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (record
+            (constructor)
+            (fields
+              (field
+                (field_name
+                  (variable))
+                (context
+                  (variable)
+                  (variable))))))))))
+
+================================================================================
+context: conflict between symop and context lookahead reset
+================================================================================
+
+a = a @'(:)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (type_application
+            (promoted
+              (prefix_id
+                (constructor_operator)))))))))
+
+================================================================================
+context: after deriving via
+================================================================================
+
+deriving via A instance A => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (deriving_instance
+      (via
+        (name))
+      (context
+        (name))
+      (name))))
+
+================================================================================
+context: left infix nesting
+================================================================================
+
+a :: (a + a) + a => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (infix
+          (parens
+            (infix
+              (variable)
+              (operator)
+              (variable)))
+          (operator)
+          (variable))
+        (variable)))))
+
+================================================================================
+context: tight infix tilde
+================================================================================
+
+a :: a~a => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (infix
+          (variable)
+          (operator)
+          (variable))
+        (name)))))
+
+================================================================================
+context: annotated infix in tuple
+================================================================================
+
+a :: (a + a :: A, a + a :: A) => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (tuple
+          (signature
+            (infix
+              (variable)
+              (operator)
+              (variable))
+            (name))
+          (signature
+            (infix
+              (variable)
+              (operator)
+              (variable))
+            (name)))
+        (variable)))))
+
+================================================================================
+context: infix in constraint context
+================================================================================
+
+a :: (a + a => a) => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (parens
+          (context
+            (infix
+              (variable)
+              (operator)
+              (variable))
+            (variable)))
+        (variable)))))
+
+================================================================================
+context: empty
+================================================================================
+
+a :: () => a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (unit)
+        (variable)))))

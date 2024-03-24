@@ -4,9 +4,16 @@ varsym: error: |
 
 f = a | a
 
----
+--------------------------------------------------------------------------------
 
-(haskell (function (variable) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable)))))
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable))))
+  (ERROR
+    (variable)))
 
 ================================================================================
 varsym: error: lambda
@@ -15,15 +22,23 @@ varsym: error: lambda
 f = a \\ a
 f = a \ a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
- (function
-  (variable)
-  (exp_name (variable))) (ERROR (variable)))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (ERROR
+      (variable))))
 
 ================================================================================
 varsym: error: ..
@@ -33,13 +48,31 @@ f = a .. a
 f = a ... a
 f = a . a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
-  (function (variable) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable))))
-  (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-  (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (ERROR)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
 
 ================================================================================
 varsym: error: arrow
@@ -48,15 +81,24 @@ varsym: error: arrow
 f = a -> a
 f = a |> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix (exp_name (variable)) (operator) (exp_name (variable)))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (ERROR)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
 
 ================================================================================
 varsym: error: carrow
@@ -65,12 +107,25 @@ varsym: error: carrow
 f = a => a
 f = a =>> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
-  (function (variable) (exp_apply (exp_name (variable)) (ERROR (UNEXPECTED '>')) (exp_name (variable))))
-  (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (ERROR
+            (UNEXPECTED '>'))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
 
 ================================================================================
 varsym: error: larrow
@@ -80,13 +135,31 @@ f = a < a
 f = a <- a
 f = a <-- a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
-  (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-  (function (variable) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable))))
-  (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (ERROR)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
 
 ================================================================================
 varsym: error: @
@@ -94,41 +167,81 @@ varsym: error: @
 
 f = a @ a
 f = a @@ a
+f = a @! a
 
----
-
-(haskell
-  (function (variable) (exp_apply (exp_name (variable)) (exp_type_application (type_name (type_variable)))))
-  (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-)
-
-================================================================================
-varsym: error: ~
-================================================================================
-
-f = a ~ a
-f = a ~~ a
-
----
+--------------------------------------------------------------------------------
 
 (haskell
-  (function (variable) (exp_apply (exp_name (variable)) (ERROR (UNEXPECTED '~')) (exp_name (variable))))
-  (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
 
 ================================================================================
 varsym: error: equals
 ================================================================================
 
-f = a = a
-f = a == a
+a = a = a
+a = a == a
+a == a
+a a a == a
+a =>> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
-  (function (variable) (exp_apply (exp_name (variable)) (ERROR) (exp_name (variable))))
-  (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (ERROR)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (top_splice
+      (infix
+        (variable)
+        (operator)
+        (variable)))
+    (top_splice
+      (infix
+        (apply
+          (apply
+            (variable)
+            (variable))
+          (variable))
+        (operator)
+        (variable)))
+    (top_splice
+      (infix
+        (variable)
+        (operator)
+        (variable)))))
 
 ================================================================================
 varsym: error: leading :
@@ -137,48 +250,46 @@ varsym: error: leading :
 f = a :+ a
 f = a +: a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
-  (function (variable) (exp_infix (exp_name (variable)) (constructor_operator) (exp_name (variable))))
-  (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-)
-
-================================================================================
-varsym: dollar operator
-================================================================================
-
-f = a $ a
-f = a $$ a
-f = a $$$ a
-
----
-
-(haskell
- (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
- (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
- (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable)))))
-
-================================================================================
-varsym: two-symbol dollar operator
-================================================================================
-
-a = a $! a
-
----
-
-(haskell (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable)))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (constructor_operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
 
 ================================================================================
 varsym: comment with more than two dashes
 ================================================================================
 
-a --- a
-a ----- a
+a = a --- a
+a = a ----- a
 
----
+--------------------------------------------------------------------------------
 
-(haskell (top_splice (exp_name (variable))) (comment) (top_splice (exp_name (variable))) (comment))
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (comment)))
 
 ================================================================================
 varsym: operator with large number of dashes
@@ -186,13 +297,18 @@ varsym: operator with large number of dashes
 
 a = a ------> a ----- %
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
- (comment))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (comment)))
 
 ================================================================================
 varsym: implicit parameter
@@ -202,64 +318,47 @@ a = ?a
 (?) = a
 a = a ? a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_name (implicit_parid)))
- (function
-  (operator)
-  (exp_name (variable)))
- (function
-  (variable)
-  (exp_infix (exp_name (variable)) (operator) (exp_name (variable)))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (implicit_variable)))
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))
 
 ================================================================================
 varsym: dollar terminated by opening bracket
 ================================================================================
 
+-- Deliberately excluded from splice expressions to avoid parser size explosion
 a = a $[a]
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_infix (exp_name (variable)) (operator) (exp_list (exp_name (variable))))))
-
-================================================================================
-varsym: bang as operator decl
-================================================================================
-
-(!) :: A
-(!) = a
-
----
-
-(haskell
- (signature (operator) (type_name (type)))
- (function (operator) (exp_name (variable))))
-
-================================================================================
-varsym: bang as infix
-================================================================================
-
-a = a ! a
-
----
-
-(haskell (function (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable)))))
-
-================================================================================
-varsym: minus as operator decl
-================================================================================
-
-(-) = (-)
-
----
-
-(haskell (function (operator) (exp_name (operator))))
+  (comment)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (list
+            (variable)))))))
 
 ================================================================================
 varsym: unicode symbol
@@ -267,10 +366,1380 @@ varsym: unicode symbol
 
 (▽/▽) = a
 
----
+--------------------------------------------------------------------------------
 
-(haskell (function (operator) (exp_name (variable))))
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (variable)))))
 
 ================================================================================
-varsym: unicode arrow
+varsym: single-char operator: bang
 ================================================================================
+
+(!) = (!)
+a = a!a
+a = a! a
+a = a !a
+a = a ! a
+a = (a ! a)
+a = a A.! a
+a = a !! a
+a = (a !! a)
+a ! a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (function
+      (infix
+        (variable)
+        (operator)
+        (variable))
+      (match
+        (variable)))))
+
+================================================================================
+varsym: single-char operator: hash
+================================================================================
+
+(#) = (#)
+a = a#a
+a = a# a
+a = a #a
+a = a # a
+a = (a # a)
+a = a A.# a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (label))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: dollar
+================================================================================
+
+($) = ($)
+-- This turned wrong after moving dollar parsing out of the scanner, but it probably doesn't matter much.
+a = a$a
+a = a$ a
+a = a $a
+a = a $ a
+a = a $$ a
+a = a $$$ a
+a = (a $ a)
+a = a A.$ a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (splice
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (splice
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: percent
+================================================================================
+
+(%) = (%)
+a = a%a
+a = a% a
+a = a %a
+a = a % a
+a = (a % a)
+a = a A.% a
+type A = a % a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (type_synomym
+      (name)
+      (infix
+        (variable)
+        (operator)
+        (variable)))))
+
+================================================================================
+varsym: single-char operator: ampersand
+================================================================================
+
+(&) = (&)
+a = a&a
+a = a& a
+a = a &a
+a = a & a
+a = (a & a)
+a = a A.& a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: star
+================================================================================
+
+(⋆) = (⋆)
+a = a⋆a
+a = a⋆ a
+a = a ⋆a
+a = a ⋆ a
+a = (a ⋆ a)
+a = a A.⋆ a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: asterisk
+================================================================================
+
+(*) = (*)
+a = a*a
+a = a* a
+a = a *a
+a = a * a
+a = (a * a)
+a = a A.* a
+type A = * -> *
+type A = (* -> *)
+type A = A * A
+a = (a *)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (type_synomym
+      (name)
+      (function
+        (star)
+        (star)))
+    (type_synomym
+      (name)
+      (parens
+        (function
+          (star)
+          (star))))
+    (type_synomym
+      (name)
+      (infix
+        (name)
+        (operator)
+        (name)))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))))
+
+================================================================================
+varsym: single-char operator: plus
+================================================================================
+
+(+) = (+)
+a = a+a
+a = a+ a
+a = a +a
+a = a + a
+a = a A.+ a
+a = (a + a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))))
+
+================================================================================
+varsym: single-char operator: dot
+================================================================================
+
+(.) = (.)
+a = a.a
+a = a. a
+a = a .a
+a = a . a
+a = (a . a)
+a = a A.. a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (projection
+          (variable)
+          (field_name
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: slash
+================================================================================
+
+(/) = (/)
+a = a/a
+a = a/ a
+a = a /a
+a = a / a
+a = (a / a)
+a = a A./ a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: left angle
+================================================================================
+
+(<) = (<)
+a = a<a
+a = a< a
+a = a <a
+a = a < a
+a = (a < a)
+a = a A.< a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: right angle
+================================================================================
+
+(>) = (>)
+a = a>a
+a = a> a
+a = a >a
+a = a > a
+a = (a > a)
+a = a A.> a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: question mark
+================================================================================
+
+(?) = (?)
+-- This is correct
+a = a?a
+a = a? a
+a = a ?a
+a = a ? a
+a = (a ? a)
+a = a A.? a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (implicit_variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (implicit_variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: circumflex
+================================================================================
+
+(^) = (^)
+a = a^a
+a = a^ a
+a = a ^a
+a = a ^ a
+a = (a ^ a)
+a = a A.^ a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))))
+
+================================================================================
+varsym: single-char operator: minus
+================================================================================
+
+(-) = (-)
+a = a-a
+a = a- a
+-- This is correct – absence of whitespace doesn't change the interpretation to negation.
+a = a -a
+a = a - a
+a = (a - a)
+a = a A.- a
+a = (-a)
+a = (- a)
+a = (a -)
+a = -a
+a = -(a)
+a = (+++ - a)
+a - a = a
+type A = a - 1
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (negation
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (negation
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (left_section
+          (variable)
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (negation
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (negation
+          (parens
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (right_section
+          (operator)
+          (negation
+            (variable)))))
+    (function
+      (infix
+        (variable)
+        (operator)
+        (variable))
+      (match
+        (variable)))
+    (type_synomym
+      (name)
+      (infix
+        (variable)
+        (operator)
+        (literal
+          (integer))))))
+
+================================================================================
+varsym: single-char operator: tilde
+================================================================================
+
+(~) = (~)
+a = a~a
+a = a~ a
+a = a ~a
+a = a ~ a
+a = (a ~ a)
+a = a A.~ a
+a = a ~~ a
+a = (a ~~ a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (operator))
+      (match
+        (prefix_id
+          (operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (operator))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))))
+
+================================================================================
+varsym: single-char operator: colon
+================================================================================
+
+(:) = (:)
+a = a:a
+a = a: a
+a = a :a
+a = a : a
+a = (a : a)
+a = a A.: a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (prefix_id
+        (constructor_operator))
+      (match
+        (prefix_id
+          (constructor_operator))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (constructor_operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (constructor_operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (constructor_operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (constructor_operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (constructor_operator)
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (qualified
+            (module
+              (module_id))
+            (constructor_operator))
+          (variable))))))
+
+================================================================================
+varsym: operators with bar
+================================================================================
+
+a |> a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (infix
+        (variable)
+        (operator)
+        (variable))
+      (match
+        (variable)))))
+
+================================================================================
+varsym: operators with dollar
+================================================================================
+
+a $! a = a
+a = a $! a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (infix
+        (variable)
+        (operator)
+        (variable))
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))))

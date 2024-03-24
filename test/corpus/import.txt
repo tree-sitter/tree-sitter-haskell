@@ -1,44 +1,74 @@
 ================================================================================
-import: single-segment module plain
+import: unqualified module plain
 ================================================================================
 
 module A where
 
 import A
 
----
+a = a
 
-(haskell (module) (where) (import (module)))
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (imports
+    (import
+      (module
+        (module_id))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
 
 ================================================================================
-import: empty single-segment module
+import: unqualified module with empty export list
 ================================================================================
 
 import A ()
 
----
+--------------------------------------------------------------------------------
 
-(haskell (import (module) (import_list)))
+(haskell
+  (imports
+    (import
+      (module
+        (module_id))
+      (import_list))))
 
 ================================================================================
-import: single-segment module with alias
+import: unqualified module with alias
 ================================================================================
 
 import A as A
 
----
+--------------------------------------------------------------------------------
 
-(haskell (import (module) (module)))
+(haskell
+  (imports
+    (import
+      (module
+        (module_id))
+      (module
+        (module_id)))))
 
 ================================================================================
-import: multi-segment module
+import: qualified module
 ================================================================================
 
 import A.A
 
----
+--------------------------------------------------------------------------------
 
-(haskell (import (qualified_module (module) (module))))
+(haskell
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id)))))
 
 ================================================================================
 import: var only
@@ -46,9 +76,17 @@ import: var only
 
 import Aaa.A (aa)
 
----
+--------------------------------------------------------------------------------
 
-(haskell (import (qualified_module (module) (module)) (import_list (import_item (variable)))))
+(haskell
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (variable))))))
 
 ================================================================================
 import: type only
@@ -56,9 +94,17 @@ import: type only
 
 import Aaa.A (A)
 
----
+--------------------------------------------------------------------------------
 
-(haskell (import (qualified_module (module) (module)) (import_list (import_item (type)))))
+(haskell
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (name))))))
 
 ================================================================================
 import: type with constructor
@@ -66,12 +112,19 @@ import: type with constructor
 
 import Aaa.A (A(A))
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (import
-  (qualified_module (module) (module))
-  (import_list (import_item (type) (import_con_names (constructor))))))
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (name)
+          (children
+            (constructor)))))))
 
 ================================================================================
 import: type with var
@@ -79,12 +132,19 @@ import: type with var
 
 import Aaa.A (A(aa))
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (import
-  (qualified_module (module) (module))
-  (import_list (import_item (type) (import_con_names (variable))))))
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (name)
+          (children
+            (variable)))))))
 
 ================================================================================
 import: type with symbolic var
@@ -92,12 +152,20 @@ import: type with symbolic var
 
 import Aaa.A (A((<>)))
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (import
-  (qualified_module (module) (module))
-  (import_list (import_item (type) (import_con_names (operator))))))
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (name)
+          (children
+            (prefix_id
+              (operator))))))))
 
 ================================================================================
 import: type dotdot
@@ -105,12 +173,19 @@ import: type dotdot
 
 import Aaa.A (A(..))
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (import
-  (qualified_module (module) (module))
-  (import_list (import_item (type) (import_con_names (all_names))))))
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (name)
+          (children
+            (all_names)))))))
 
 ================================================================================
 import: qualified basic
@@ -122,16 +197,41 @@ import qualified Aaa.A (a)
 import Aaa.A qualified (a)
 import qualified Aaa.A hiding (A, a)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (import (qualified_module (module) (module)))
- (import (module) (import_list))
- (import (qualified_module (module) (module)) (import_list (import_item (variable))))
- (import (qualified_module (module) (module)) (import_list (import_item (variable))))
- (import
-  (qualified_module (module) (module))
-  (import_list (import_item (type)) (comma) (import_item (variable)))))
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id)))
+    (import
+      (module
+        (module_id))
+      (import_list))
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (variable))))
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (variable))))
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (name))
+        (import_name
+          (variable))))))
 
 ================================================================================
 import: qualified as
@@ -142,27 +242,78 @@ module A where
 import qualified Aaa.A as A
 import qualified Aaa.A as A (A(A, a), aa)
 import qualified A as A ()
+
+-- a
+
 import qualified Aaa.A as A
 import qualified Aaa.A as Aaa.A
 import qualified Aaa.A as A hiding (a)
 
----
+data A = A
+
+--------------------------------------------------------------------------------
 
 (haskell
- (module)
- (where)
- (import (qualified_module (module) (module)) (module))
- (import
-  (qualified_module (module) (module))
-  (module)
-  (import_list
-   (import_item (type) (import_con_names (constructor) (comma) (variable)))
-   (comma)
-   (import_item (variable))))
- (import (module) (module) (import_list))
- (import (qualified_module (module) (module)) (module))
- (import (qualified_module (module) (module)) (qualified_module (module) (module)))
- (import (qualified_module (module) (module)) (module) (import_list (import_item (variable)))))
+  (header
+    (module
+      (module_id)))
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (module
+        (module_id)))
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (name)
+          (children
+            (constructor)
+            (variable)))
+        (import_name
+          (variable))))
+    (import
+      (module
+        (module_id))
+      (module
+        (module_id))
+      (import_list))
+    (comment)
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (module
+        (module_id)))
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (module
+        (module_id)
+        (module_id)))
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (variable)))))
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)))))))
 
 ================================================================================
 import: prim
@@ -170,12 +321,19 @@ import: prim
 
 import Aaa.Aa (Aa#, aa#)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (import
-  (qualified_module (module) (module))
-  (import_list (import_item (type)) (comma) (import_item (variable)))))
+  (imports
+    (import
+      (module
+        (module_id)
+        (module_id))
+      (import_list
+        (import_name
+          (name))
+        (import_name
+          (variable))))))
 
 ================================================================================
 import: package
@@ -184,15 +342,27 @@ import: package
 import "a" Aaa.Aa
 import qualified "a" Aaa.Aa as Aa (Aa(a))
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (import (import_package) (qualified_module (module) (module)))
- (import
-  (import_package)
-  (qualified_module (module) (module))
-  (module)
-  (import_list (import_item (type) (import_con_names (variable))))))
+  (imports
+    (import
+      (import_package)
+      (module
+        (module_id)
+        (module_id)))
+    (import
+      (import_package)
+      (module
+        (module_id)
+        (module_id))
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (name)
+          (children
+            (variable)))))))
 
 ================================================================================
 import: consym
@@ -200,9 +370,20 @@ import: consym
 
 import A ((:<|>)((:<|>)))
 
----
+--------------------------------------------------------------------------------
 
-(haskell (import (module) (import_list (import_item (constructor_operator) (import_con_names (constructor_operator))))))
+(haskell
+  (imports
+    (import
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (prefix_id
+            (constructor_operator))
+          (children
+            (prefix_id
+              (constructor_operator))))))))
 
 ================================================================================
 import: operator
@@ -210,9 +391,17 @@ import: operator
 
 import A ((<=<))
 
----
+--------------------------------------------------------------------------------
 
-(haskell (import (module) (import_list (import_item (type_operator)))))
+(haskell
+  (imports
+    (import
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (prefix_id
+            (operator)))))))
 
 ================================================================================
 import: pattern/type
@@ -220,15 +409,20 @@ import: pattern/type
 
 import A (pattern A, type A)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (import
-  (module)
-  (import_list
-   (import_item (namespace) (type))
-   (comma)
-   (import_item (namespace) (type)))))
+  (imports
+    (import
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (namespace)
+          (name))
+        (import_name
+          (namespace)
+          (name))))))
 
 ================================================================================
 import: trailing comma
@@ -236,9 +430,16 @@ import: trailing comma
 
 import A (A,)
 
----
+--------------------------------------------------------------------------------
 
-(haskell (import (module) (import_list (import_item (type)) (comma))))
+(haskell
+  (imports
+    (import
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (name))))))
 
 ================================================================================
 import: type operator with namespace
@@ -246,6 +447,39 @@ import: type operator with namespace
 
 import A (type (++)(..))
 
----
+--------------------------------------------------------------------------------
 
-(haskell (import (module) (import_list (import_item (namespace) (type_operator) (import_con_names (all_names))))))
+(haskell
+  (imports
+    (import
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (namespace)
+          (prefix_id
+            (operator))
+          (children
+            (all_names)))))))
+
+================================================================================
+import: namespace for type child
+================================================================================
+
+import A (A (type A, A, ..))
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (imports
+    (import
+      (module
+        (module_id))
+      (import_list
+        (import_name
+          (name)
+          (children
+            (associated_type
+              (name))
+            (constructor)
+            (all_names)))))))

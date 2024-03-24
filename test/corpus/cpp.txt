@@ -1,5 +1,5 @@
 ================================================================================
-cpp: restore layout
+cpp: keep layout from first if branch
 ================================================================================
 
 a = do
@@ -21,30 +21,43 @@ a = do
     a
   a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt
-    (exp_do
-     (stmt
-      (exp_do
-       (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-       (cpp)))
-     (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-     (cpp)
-     (cpp)
-     (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-     (stmt (exp_name (variable)))))
-   (stmt (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (do
+              (exp
+                (do
+                  (bind
+                    (variable)
+                    (variable))))
+              (cpp)
+              (bind
+                (variable)
+                (variable))
+              (cpp)
+              (cpp)
+              (bind
+                (variable)
+                (variable))
+              (exp
+                (variable))))
+          (exp
+            (variable)))))))
 
 ================================================================================
 cpp: multiline
 ================================================================================
 
+a = a
+
 #if a \
+  a \
 a \
 a
 
@@ -52,9 +65,20 @@ a = a
 
 #endif
 
----
+--------------------------------------------------------------------------------
 
-(haskell (cpp) (function (variable) (exp_name (variable))) (cpp))
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (cpp)
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (cpp)))
 
 ================================================================================
 cpp: newline after decl in layout with one-way if
@@ -67,26 +91,544 @@ instance A where
   a = a
 #endif
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (instance_head (class_name (type)))
-  (where)
-  (function (variable) (exp_name (variable)))
-  (cpp)
-  (function (variable) (exp_name (variable)))
-  (cpp)))
+  (declarations
+    (instance
+      (name)
+      (instance_declarations
+        (bind
+          (variable)
+          (match
+            (variable)))
+        (cpp)
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (cpp)))
 
 ================================================================================
 cpp: incomplete #if/#else
 ================================================================================
 
 #if a
+a = a
 #else
 
 a = a
 
----
+--------------------------------------------------------------------------------
 
-(haskell (cpp) (ERROR (empty_file)) (empty_file))
+(haskell
+  (cpp)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (cpp)))
+
+================================================================================
+cpp: mid-line #endif
+================================================================================
+
+#if a
+a = a
+#else
+
+data A #endif
+
+instance A
+#endif
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (cpp)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (cpp)
+    (cpp)))
+
+================================================================================
+cpp: do-let in #if
+================================================================================
+
+a = do
+#if a
+  let a = a
+#else
+#endif
+  a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (cpp)
+          (let
+            (local_binds
+              (bind
+                (variable)
+                (match
+                  (variable)))))
+          (cpp)
+          (cpp)
+          (exp
+            (variable)))))))
+
+================================================================================
+cpp: layout ended in #else first
+================================================================================
+
+-- This ensures that the scanner's newline lookahead skips the entire #else
+-- branch when determining the next layout element's indent.
+-- In this case, the #else contains a new decl, while the actual indent should
+-- be given by the do statement after the #endif.
+a = do
+  a
+#if a
+  a
+#else
+a = do
+  a
+#endif
+  a
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable))
+          (cpp)
+          (exp
+            (variable))
+          (cpp)
+          (cpp)
+          (exp
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+cpp: lambdacase layout interrupted by #else
+================================================================================
+
+a = \case
+#if a
+  a
+#else
+  a
+#endif
+   -> a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (lambda_case
+          (cpp)
+          (alternatives
+            (alternative
+              (variable)
+              (cpp)
+              (cpp)
+              (match
+                (variable)))))))))
+
+================================================================================
+cpp: #include as function body
+================================================================================
+
+-- From GHC.
+allThePrimOps :: [PrimOp]
+allThePrimOps =
+#include "primop-list.hs-incl"
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (signature
+      (variable)
+      (list
+        (name)))
+    (top_splice
+      (variable))
+    (ERROR)
+    (cpp)))
+
+================================================================================
+cpp: nested #if
+================================================================================
+
+a = do
+
+#if
+  a <- a
+#else
+
+#if
+
+#elif
+
+#else
+
+#if
+
+#endif
+  a
+
+a = a
+
+#endif
+  a <- a
+  a
+
+a = a
+
+#endif
+  a <- a
+  a
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (cpp)
+          (bind
+            (variable)
+            (variable))
+          (cpp)
+          (cpp)
+          (bind
+            (variable)
+            (variable))
+          (exp
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+cpp: precedence over comments
+================================================================================
+
+{-
+#if 1
+#else
+-}
+#endif
+-- This is wrong, but it's unlikely that it's possible to get it right.
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (cpp)
+  (comment))
+
+================================================================================
+cpp: label after newline
+================================================================================
+
+a = a
+  #a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (label))))))
+
+================================================================================
+cpp: hash operator in brace layout
+================================================================================
+
+a = A { a = a
+# a
+}
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (record
+          (constructor)
+          (field_update
+            (field_name
+              (variable))
+            (infix
+              (variable)
+              (operator)
+              (variable))))))))
+
+================================================================================
+cpp: only spaces after herald
+================================================================================
+
+a = do
+  a do
+    a <- a
+
+#      
+
+    a
+  a
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (apply
+              (variable)
+              (do
+                (bind
+                  (variable)
+                  (variable))
+                (cpp)
+                (exp
+                  (variable)))))
+          (exp
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+cpp: endif with trailing C comments
+================================================================================
+
+#if
+a = a
+
+#else
+#endif /* a */
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (cpp)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (cpp)
+    (cpp)
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+cpp: endif at eof
+================================================================================
+
+a = a
+  where
+#if
+    a = a
+#else
+    a = a
+#endif
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable))
+      (cpp)
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (cpp)
+    (cpp)))
+
+================================================================================
+cpp: first line if
+================================================================================
+#if
+module A where
+#else
+module A where
+#endif
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (cpp)
+  (header
+    (module
+      (module_id)))
+  (cpp)
+  (cpp)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+cpp: shebang
+================================================================================
+#!/usr/bin/env cabal
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (cpp)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+cpp: mid-line label after block comment
+================================================================================
+
+a = a
+  {-
+-}#define
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (comment)
+          (label))))))
+
+================================================================================
+cpp: mid-line label after newline
+================================================================================
+
+a = a
+
+  #define
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (variable)
+          (label))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+cpp: after do keyword
+================================================================================
+
+a = do
+#if
+    !a <- a
+#endif
+    a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (cpp)
+          (bind
+            (strict
+              (variable))
+            (variable))
+          (cpp)
+          (exp
+            (variable)))))))
+
+================================================================================
+cpp: newline continuation
+================================================================================
+
+#if \
+1
+#endif
+
+-- this one has trailing whitespace, which is valid
+#if \ 	  
+1
+#endif
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (cpp)
+  (cpp)
+  (comment)
+  (cpp)
+  (cpp))

@@ -1,0 +1,179 @@
+================================================================================
+implicit: synonym plain
+================================================================================
+
+type A = ?a :: A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (implicit_parameter
+        (implicit_variable)
+        (name)))))
+
+================================================================================
+implicit: synonym parens
+================================================================================
+
+type A = (?a :: A)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (parens
+        (implicit_parameter
+          (implicit_variable)
+          (name))))))
+
+================================================================================
+implicit: synonym parens kind annotation
+================================================================================
+
+type A = (?a :: Int :: Constraint)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (parens
+        (signature
+          (implicit_parameter
+            (implicit_variable)
+            (name))
+          (name))))))
+
+================================================================================
+implicit: synonym parens constrained
+================================================================================
+
+type A = (A => ?a :: A)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (parens
+        (context
+          (name)
+          (implicit_parameter
+            (implicit_variable)
+            (name)))))))
+
+================================================================================
+implicit: synonym parens constrained
+================================================================================
+
+type A = (?a :: A.A, A)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (tuple
+        (implicit_parameter
+          (implicit_variable)
+          (qualified
+            (module
+              (module_id))
+            (name)))
+        (name)))))
+
+================================================================================
+implicit: synonym tuple
+================================================================================
+
+type A = (?a :: A.A, A)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (tuple
+        (implicit_parameter
+          (implicit_variable)
+          (qualified
+            (module
+              (module_id))
+            (name)))
+        (name)))))
+
+================================================================================
+implicit: synonym context
+================================================================================
+
+type A = (?a :: A) => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (context
+        (parens
+          (implicit_parameter
+            (implicit_variable)
+            (name)))
+        (name)))))
+
+================================================================================
+implicit: synonym forall/context in annotation
+================================================================================
+
+type A = ?a :: ∀ a . A a => A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_synomym
+      (name)
+      (implicit_parameter
+        (implicit_variable)
+        (forall
+          (quantified_variables
+            (variable))
+          (context
+            (apply
+              (name)
+              (variable))
+            (name)))))))
+
+================================================================================
+implicit: signature with function in annotation
+================================================================================
+
+a :: (?aaa :: a -> a -> a) => a -> a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (context
+        (parens
+          (implicit_parameter
+            (implicit_variable)
+            (function
+              (variable)
+              (function
+                (variable)
+                (variable)))))
+        (function
+          (variable)
+          (variable))))))

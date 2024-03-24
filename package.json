@@ -1,35 +1,65 @@
 {
   "name": "tree-sitter-haskell",
-  "version": "0.15.0",
+  "version": "1.0.0",
   "description": "Haskell grammar for tree-sitter",
   "repository": "github:tree-sitter/tree-sitter-haskell",
   "main": "bindings/node",
+  "types": "bindings/node",
   "keywords": [
     "parser",
     "haskell"
   ],
   "author": "Rick Winfrey",
-  "maintainers": ["Torsten Schmits"],
-  "contributors": ["Max Brunsfeld", "Owen Shepherd"],
+  "maintainers": [
+    "Torsten Schmits"
+  ],
+  "contributors": [
+    "Max Brunsfeld",
+    "Owen Shepherd"
+  ],
   "license": "MIT",
+  "files": [
+    "grammar.js",
+    "grammar/*.js",
+    "binding.gyp",
+    "prebuilds/**",
+    "bindings/node/*",
+    "queries/*",
+    "src/**"
+  ],
   "dependencies": {
-    "nan": "^2.12.1",
-    "node-gyp": ">=7 <11"
+    "node-addon-api": "^7.1.0",
+    "node-gyp": ">=7 <11",
+    "node-gyp-build": "^4.8.0"
+  },
+  "peerDependencies": {
+    "tree-sitter": "^0.21.0"
+  },
+  "peerDependenciesMeta": {
+    "tree_sitter": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.20.6",
-    "web-tree-sitter": "^0.20.6"
+    "prebuildify": "^6.0.0",
+    "tree-sitter-cli": "^0.22.0",
+    "web-tree-sitter": "^0.21.0"
   },
   "scripts": {
-    "test": "tree-sitter test",
-    "examples": "script/parse-examples",
-    "examples-wasm": "script/parse-examples wasm"
+    "preinstall": "tree-sitter generate",
+    "install": "node-gyp-build",
+    "postinstall": "node-gyp configure && node-gyp build",
+    "prebuildify": "prebuildify --napi --strip",
+    "test": "test/main",
+    "libs": "test/parse-libs",
+    "libs-wasm": "test/parse-libs wasm"
   },
   "tree-sitter": [
     {
       "scope": "source.haskell",
       "file-types": [
-        "hs"
+        "hs",
+        "hs-boot"
       ],
       "highlights": [
         "queries/highlights.scm"

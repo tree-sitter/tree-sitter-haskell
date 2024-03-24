@@ -1,12 +1,11 @@
 [package]
 name = "tree-sitter-haskell"
 description = "haskell grammar for the tree-sitter parsing library"
-version = "0.15.0"
+version = "1.0.0"
 keywords = ["incremental", "parsing", "haskell"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/tree-sitter/tree-sitter-haskell"
-edition = "2018"
-license = "MIT"
+edition = "2021"
 
 build = "bindings/rust/build.rs"
 include = [
@@ -18,6 +17,24 @@ include = [
 
 [lib]
 path = "bindings/rust/lib.rs"
+
+[[test]]
+name = "parse-test"
+path = "test/rust/parse-test.rs"
+
+[[bin]]
+name = "parse"
+path = "test/rust/parse.rs"
+test = false
+bench = false
+doc = false
+
+[[bin]]
+name = "show"
+path = "test/rust/show.rs"
+test = false
+bench = false
+doc = false
 
 [dependencies]
 tree-sitter = "0.20"
