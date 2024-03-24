@@ -4,9 +4,18 @@ instance: minimal
 
 instance A a
 
----
+--------------------------------------------------------------------------------
 
-(haskell (instance (instance_head (class_name (type)) (type_name (type_variable)))))
+(haskell
+  (declarations
+    (instance
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_name
+            (type_variable)))))))
 
 ================================================================================
 instance: type
@@ -14,15 +23,22 @@ instance: type
 
 instance A A a A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (instance_head
-   (class_name (type))
-   (type_name (type))
-   (type_name (type_variable))
-   (type_name (type)))))
+  (declarations
+    (instance
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_name
+            (type))
+          (type_name
+            (type_variable))
+          (type_name
+            (type)))))))
 
 ================================================================================
 instance: forall
@@ -30,16 +46,20 @@ instance: forall
 
 instance forall a (a :: *) . A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (forall
-   (quantifiers
-    (type_variable)
-    (annotated_type_variable (type_variable) (type_star)))
-  )
-  (instance_head (class_name (type)))))
+  (declarations
+    (instance
+      (forall
+        (quantifiers
+          (type_variable)
+          (annotated_type_variable
+            (type_variable)
+            (type_star))))
+      (instance_head
+        (class_name
+          (type))))))
 
 ================================================================================
 instance: context
@@ -48,36 +68,69 @@ instance: context
 instance A a => A
 instance (A a, A a) => A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (context (constraint (class_name (type)) (type_name (type_variable))))
-  (instance_head (class_name (type))))
- (instance
-  (context
-   (constraint (class_name (type)) (type_name (type_variable)))
-   (comma)
-   (constraint (class_name (type)) (type_name (type_variable)))
-  )
-  (instance_head (class_name (type)))))
+  (declarations
+    (instance
+      (context
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_name
+            (type_variable))))
+      (instance_head
+        (class_name
+          (type))))
+    (instance
+      (context
+        (constraints
+          (class_apply
+            (class_name
+              (type_name
+                (type)))
+            (type_name
+              (type_variable)))
+          (class_apply
+            (class_name
+              (type_name
+                (type)))
+            (type_name
+              (type_variable)))))
+      (instance_head
+        (class_name
+          (type))))))
 
 ================================================================================
-instance: method
+instance: method inline
 ================================================================================
 
 instance A a where a a = Just a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (instance_head (class_name (type)) (type_name (type_variable)))
-  (where)
-  (function
-   (variable)
-   (patterns (pat_name (variable)))
-   (exp_apply (exp_name (constructor)) (exp_name (variable))))))
+  (declarations
+    (instance
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_name
+            (type_variable))))
+      (instance_declarations
+        (function
+          (variable)
+          (patterns
+            (pat_name
+              (variable)))
+          (exp_apply
+            (exp_name
+              (constructor))
+            (exp_name
+              (variable))))))))
 
 ================================================================================
 instance: signature
@@ -87,50 +140,90 @@ instance A a where
   a :: A a => a -> a
   a a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (instance_head (class_name (type)) (type_name (type_variable)))
-  (where)
-  (signature
-   (variable)
-   (context
-    (constraint (class_name (type)) (type_name (type_variable)))
-    (fun (type_name (type_variable)) (type_name (type_variable)))))
-  (function
-   (variable)
-   (patterns (pat_name (variable)))
-   (exp_name (variable)))))
+  (declarations
+    (instance
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_name
+            (type_variable))))
+      (instance_declarations
+        (signature
+          (variable)
+          (type_context
+            (class_apply
+              (class_name
+                (type_name
+                  (type)))
+              (type_name
+                (type_variable)))
+            (type_fun
+              (type_name
+                (type_variable))
+              (type_name
+                (type_variable)))))
+        (function
+          (variable)
+          (patterns
+            (pat_name
+              (variable)))
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 instance: equality constraint
 ================================================================================
 
 instance A a ~ A a => A a
-instance A ~~ A => A a
+instance A ~~ A => ((A) a)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (context
-   (constraint
-    (type_infix
-     left: (type_apply (type_name (type)) (type_name (type_variable)))
-     op: (type_operator)
-     right: (type_apply (type_name (type)) (type_name (type_variable)))))
-  )
-  (instance_head class: (class_name (type)) (type_name (type_variable))))
- (instance
-  (context
-   (constraint
-    (type_infix
-     left: (type_name (type))
-     op: (type_operator)
-     right: (type_name (type))))
-  )
-  (instance_head class: (class_name (type)) (type_name (type_variable)))))
+  (declarations
+    (instance
+      (context
+        (class_infix
+          (type_apply
+            (type_name
+              (type))
+            (type_name
+              (type_variable)))
+          (operator)
+          (type_apply
+            (type_name
+              (type))
+            (type_name
+              (type_variable)))))
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_name
+            (type_variable)))))
+    (instance
+      (context
+        (class_infix
+          (type_name
+            (type))
+          (operator)
+          (type_name
+            (type))))
+      (instance_head
+        (class_parens
+          (class_apply
+            (class_name
+              (type_parens
+                (type_name
+                  (type))))
+            (type_name
+              (type_variable))))))))
 
 ================================================================================
 instance: associated type instance
@@ -140,23 +233,41 @@ instance A where
   type A A a = A a
   type instance A @A a = A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (instance_head
-   (class_name (type)))
-  (where)
-  (type_instance
-   (type_name (type))
-   (type_name (type))
-   (type_name (type_variable))
-   (type_apply (type_name (type)) (type_name (type_variable))))
-  (type_instance
-   (type_name (type))
-   (type_invisible (type_name (type)))
-   (type_name (type_variable))
-   (type_name (type)))))
+  (declarations
+    (instance
+      (instance_head
+        (class_name
+          (type)))
+      (instance_declarations
+        (type_instance
+          (pattern
+            (type_apply
+              (type_name
+                (type))
+              (type_name
+                (type))
+              (type_name
+                (type_variable))))
+          (type_apply
+            (type_name
+              (type))
+            (type_name
+              (type_variable))))
+        (type_instance
+          (pattern
+            (type_apply
+              (type_name
+                (type))
+              (type_invisible
+                (type_name
+                  (type)))
+              (type_name
+                (type_variable))))
+          (type_name
+            (type)))))))
 
 ================================================================================
 instance: associated data instance
@@ -164,30 +275,81 @@ instance: associated data instance
 
 instance A where
   data A a = A a | A { a :: A }
+
   data instance ∀ a . A a => A a = A
 
----
+  newtype A A where
+    A :: A %1 -> A A
+
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (instance_head (class_name (type)))
-  (where)
-  (data_instance
-   (type_apply
-    (type_name (type))
-    (type_name (type_variable)))
-   (constructors
-    (data_constructor (constructor) (type_name (type_variable)))
-    (data_constructor_record
-     (constructor)
-     (record_fields (field (variable) (type_name (type)))))))
-  (data_instance
-   (forall (quantifiers (type_variable)))
-   (context (constraint (class_name (type)) (type_name (type_variable))))
-   (type_apply
-    (type_name (type))
-    (type_name (type_variable)))
-   (constructors (data_constructor (constructor))))))
+  (declarations
+    (instance
+      (instance_head
+        (class_name
+          (type)))
+      (instance_declarations
+        (data_instance
+          (data_type
+            (type_apply
+              (type_name
+                (type))
+              (type_name
+                (type_variable)))
+            (constructors
+              (data_constructor
+                (constructor)
+                (type_name
+                  (type_variable)))
+              (data_constructor_record
+                (constructor)
+                (record_fields
+                  (field
+                    (variable)
+                    (type_name
+                      (type))))))))
+        (data_instance
+          (data_type
+            (forall
+              (quantifiers
+                (type_variable)))
+            (context
+              (class_apply
+                (class_name
+                  (type_name
+                    (type)))
+                (type_name
+                  (type_variable))))
+            (type_apply
+              (type_name
+                (type))
+              (type_name
+                (type_variable)))
+            (constructors
+              (data_constructor
+                (constructor)))))
+        (data_instance
+          (newtype
+            (type_apply
+              (type_name
+                (type))
+              (type_name
+                (type)))
+            (gadt_constructors
+              (gadt_constructor
+                (constructor)
+                (type_linear_fun
+                  (type_name
+                    (type))
+                  (modifier
+                    (type_literal
+                      (integer)))
+                  (type_apply
+                    (type_name
+                      (type))
+                    (type_name
+                      (type))))))))))))
 
 ================================================================================
 instance: infix pattern lhs method
@@ -196,15 +358,24 @@ instance: infix pattern lhs method
 instance A where
   a == a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (instance
-  (instance_head (class_name (type)))
-  (where)
-  (function
-   (infix (pat_name (variable)) (varop (operator)) (pat_name (variable)))
-   (exp_name (variable)))))
+  (declarations
+    (instance
+      (instance_head
+        (class_name
+          (type)))
+      (instance_declarations
+        (function
+          (infix
+            (pat_name
+              (variable))
+            (operator)
+            (pat_name
+              (variable)))
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 instance: standalone deriving
@@ -215,33 +386,77 @@ deriving instance A ++ A
 deriving instance A a => A (A a)
 deriving instance (A a, A a a) => A (A a)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (deriving_declaration (instance_head
-   (class_name (type))
-   (type_parens (type_apply (type_name (type)) (type_name (type_variable))))))
- (deriving_declaration
-  (instance_head
-   (type_infix
-    (type_name (type))
-    (type_operator)
-    (type_name (type)))))
- (deriving_declaration
-  (context (constraint (class_name (type)) (type_name (type_variable))))
-  (instance_head
-   (class_name (type))
-   (type_parens (type_apply (type_name (type)) (type_name (type_variable))))))
- (deriving_declaration
-  (context
-   (constraint (class_name (type)) (type_name (type_variable)))
-   (comma)
-   (constraint (class_name (type)) (type_name (type_variable)) (type_name (type_variable)))
-  )
-  (instance_head
-   (class_name (type))
-   (type_parens (type_apply (type_name (type)) (type_name (type_variable)))))))
-
+  (declarations
+    (deriving_declaration
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_parens
+            (type_apply
+              (type_name
+                (type))
+              (type_name
+                (type_variable)))))))
+    (deriving_declaration
+      (instance_head
+        (class_infix
+          (type_name
+            (type))
+          (operator)
+          (type_name
+            (type)))))
+    (deriving_declaration
+      (context
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_name
+            (type_variable))))
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_parens
+            (type_apply
+              (type_name
+                (type))
+              (type_name
+                (type_variable)))))))
+    (deriving_declaration
+      (context
+        (constraints
+          (class_apply
+            (class_name
+              (type_name
+                (type)))
+            (type_name
+              (type_variable)))
+          (class_apply
+            (class_name
+              (type_name
+                (type)))
+            (type_name
+              (type_variable))
+            (type_name
+              (type_variable)))))
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_parens
+            (type_apply
+              (type_name
+                (type))
+              (type_name
+                (type_variable)))))))))
 
 ================================================================================
 instance: deriving via
@@ -249,9 +464,102 @@ instance: deriving via
 
 deriving via (A a) instance A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (deriving_declaration
-  (via (type_parens (type_apply (type_name (type)) (type_name (type_variable)))))
-  (instance_head (class_name (type)) (type_name (type_variable)))))
+  (declarations
+    (deriving_declaration
+      (via
+        (type_parens
+          (type_apply
+            (type_name
+              (type))
+            (type_name
+              (type_variable)))))
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_name
+            (type_variable)))))))
+
+================================================================================
+instance: qualified class
+================================================================================
+
+instance A.A a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (instance
+      (instance_head
+        (class_apply
+          (class_name
+            (type_name
+              (qualified_type
+                (module)
+                (type))))
+          (type_name
+            (type_variable)))))))
+
+================================================================================
+instance: nullary method
+================================================================================
+
+instance A where
+  a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (instance
+      (instance_head
+        (class_name
+          (type)))
+      (instance_declarations
+        (function
+          (variable)
+          (exp_name
+            (variable)))))))
+
+================================================================================
+instance: annotation
+================================================================================
+
+instance (A :: Constraint)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (instance
+      (instance_head
+        (class_parens
+          (class_annotated
+            (class_name
+              (type))
+            (type_name
+              (type))))))))
+
+================================================================================
+instance: minus
+================================================================================
+
+instance a - b where
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (instance
+      (instance_head
+        (class_infix
+          (type_name
+            (type_variable))
+          (operator)
+          (type_name
+            (type_variable)))))))

@@ -7,21 +7,26 @@ a = 100_00_532
 a = 55#
 a = 55##
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_literal (integer)))
- (function
-  (variable)
-  (exp_literal (integer)))
- (function
-  (variable)
-  (exp_literal (integer)))
- (function
-  (variable)
-  (exp_literal (integer))))
+  (declarations
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))))
 
 ================================================================================
 number: octal
@@ -31,12 +36,22 @@ a = 0o00
 a = 0O77
 a = 0O77##
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_literal (integer)))
- (function (variable) (exp_literal (integer)))
- (function (variable) (exp_literal (integer))))
+  (declarations
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))))
 
 ================================================================================
 number: hex
@@ -49,15 +64,34 @@ a = 0xa_e_123_4##
 a = 0x0.1p-4
 a = 0xFp3
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_literal (integer)))
- (function (variable) (exp_literal (integer)))
- (function (variable) (exp_literal (integer)))
- (function (variable) (exp_literal (integer)))
- (function (variable) (exp_literal (integer)))
- (function (variable) (exp_literal (integer))))
+  (declarations
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))))
 
 ================================================================================
 number: float
@@ -72,17 +106,42 @@ a = 00e01
 a = 00e+01
 a = 99E-01
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_literal (float)))
- (function (variable) (exp_literal (float)))
- (function (variable) (exp_literal (float)))
- (function (variable) (exp_literal (float)))
- (function (variable) (exp_literal (float)))
- (function (variable) (exp_literal (float)))
- (function (variable) (exp_literal (float)))
- (function (variable) (exp_literal (float))))
+  (declarations
+    (function
+      (variable)
+      (exp_literal
+        (float)))
+    (function
+      (variable)
+      (exp_literal
+        (float)))
+    (function
+      (variable)
+      (exp_literal
+        (float)))
+    (function
+      (variable)
+      (exp_literal
+        (float)))
+    (function
+      (variable)
+      (exp_literal
+        (float)))
+    (function
+      (variable)
+      (exp_literal
+        (float)))
+    (function
+      (variable)
+      (exp_literal
+        (float)))
+    (function
+      (variable)
+      (exp_literal
+        (float)))))
 
 ================================================================================
 number: binary
@@ -92,9 +151,19 @@ a = 0b01110
 a = 0B10010
 a = 0B10010##
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_literal (integer)))
- (function (variable) (exp_literal (integer)))
- (function (variable) (exp_literal (integer))))
+  (declarations
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))
+    (function
+      (variable)
+      (exp_literal
+        (integer)))))

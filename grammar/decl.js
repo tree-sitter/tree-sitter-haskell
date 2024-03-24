@@ -1,63 +1,41 @@
-const foreign = ($, kw, pent) => seq(
-    'foreign',
-    kw,
-    $._foreign_pre,
-    optional(pent),
-    $.signature,
-  )
+const {parens} = require('./util.js')
 
 module.exports = {
+
   // ------------------------------------------------------------------------
-  // decl
+  // fixity
   // ------------------------------------------------------------------------
 
-  _funpat_infix: $ => seq(field('lhs', $._pat), field('op', $.varop), field('rhs', $._pat)),
-
-  _funpat: $ => seq(
-    field('pattern', $._typed_pat),
-    $._funrhs,
+  // GHC.Types special decl
+  _fun_arrow_fixity: $ => seq(
+    field('associativity', 'infixr'),
+    '-',
+    field('precedence', alias('1', $.integer)),
+    field('operator', alias('->', $.arrow)),
   ),
 
-  /**
-    * The `implicit_parid` here is for:
-    * g = let ?par = Impy 5 in f
-    */
-  _fun_name: $ => field('name', choice($._var, $.implicit_parid)),
-
-  guard_equation: $ => seq($.guards, '=', $._exp),
-
-  _fun_guards: $ => repeat1($.guard_equation),
-
-  _funrhs: $ => seq(
-    choice(
-      seq('=', field('rhs', $._exp)),
-      $._fun_guards,
+  fixity: $ => choice(
+    $._fun_arrow_fixity,
+    seq(
+      field('associativity', choice('infixl', 'infixr', 'infix')),
+      field('precedence', optional($.integer)),
+      field('operator', sep1(',', choice($._operator_minus, $._varop, $._conop))),
     ),
-    optional(seq($.where, optional($.decls))),
   ),
 
-  _fun_patterns: $ => repeat1($._apat),
+  // ------------------------------------------------------------------------
+  // signature
+  // ------------------------------------------------------------------------
 
-  _funvar: $ => seq($._fun_name, field('patterns', optional(alias($._fun_patterns, $.patterns)))),
+  _con_binding_list: $ => sep2(',', $._con),
 
-  _funlhs: $ => choice(
-    prec.dynamic(2, $._funvar),
-    prec.dynamic(1, field('infix', alias($._funpat_infix, $.infix))),
-  ),
-
-  function: $ => seq(
-    $._funlhs,
-    $._funrhs,
-  ),
-
-  fixity: $ => seq(
-    choice('infixl', 'infixr', 'infix'),
-    optional($.integer),
-    sep1($.comma, $._op),
-  ),
+  _var_binding_list: $ => sep2(',', $._var),
 
   signature: $ => seq(
-    field('lhs', sep1($.comma, field('name', $._var))),
+    field('name', choice(
+      $._var,
+      alias($._var_binding_list, $.binding_list),
+    )),
     field('type', $._type_annotation),
   ),
 
@@ -66,67 +44,169 @@ module.exports = {
     $.fixity,
   ),
 
+  // ------------------------------------------------------------------------
+  // function and pattern bind
+  // ------------------------------------------------------------------------
+
   /**
-    * in the reference, `apat` is a choice in `lpat`, but this creates a conflict:
-    * `decl` allows the lhs to be a `pat`, as in:
-    * let Just 5 = prog
-    * let a = prog
-    * Since patterns can be `variable`s, the `funpat` lhs of the second example cannot be distinguished from a `funvar`.
-    * The precedences here and in `_funlhs` solve this.
-    */
-  _decl_fun: $ => choice(
-    $.function,
-    prec.dynamic(1, alias($._funpat, $.function)),
+  * Declare a `varop`.
+  */
+  _funlhs_infix: $ => prec.right('infix', seq(
+    field('left_operand', $._infixpat),
+    field('operator', choice($._operator_minus, $._varop)),
+    field('right_operand', $._infixpat),
+  )),
+
+  guard_equation: $ => seq($._guards, '=', $._cmd_texp_end, field('expression', $._exp)),
+
+  _fun_guards: $ => repeat1($.guard_equation),
+
+  _funrhs: $ => seq(
+    choice(
+      seq('=', field('expression', $._exp)),
+      $._fun_guards,
+    ),
+    optional($._where_binds),
   ),
 
+  /**
+    * The `implicit_parid` here is for:
+    * g = let ?par = Impy 5 in f
+    */
+  _fun_name: $ => choice($._var, $.implicit_parid),
+
+  _funvar: $ => seq(
+    field('name', $._fun_name),
+    optional($.patterns)
+  ),
+
+  _funlhs_parens: $ => choice(
+    $._funvar,
+    $._funlhs_common,
+  ),
+
+  /**
+   * Patterns following a parenthesized pattern are always optional for simplicity, even though GHC requires them for
+   * the outermost set.
+   */
+  _funlhs_common: $ => choice(
+    alias($._funlhs_infix, $.infix),
+    seq(
+      parens($, $._funlhs_parens),
+      optional($.patterns)
+    ),
+  ),
+
+  _funlhs: $ => choice(
+    seq(
+      field('name', $._fun_name),
+      $.patterns
+    ),
+    $._funlhs_common,
+  ),
+
+  /**
+   * This little contortion ensures that a nullary function declaration/variable binding is not considered for a dynamic
+   * conflict:
+   *
+   * > fun = exp
+   *
+   * vs.
+   *
+   * > fun a b c = exp
+   * > Con a b c = exp
+   *
+   * This works by creating a shift/reduce conflict between `function` and `bind`.
+   * The shift step is from `_var` to `_funrhs` (the latter of which starts with either `=` or `|`, so lookahead is
+   * clear-cut) and the reduce step is from `_var` to `pat_name`.
+   * The shift precedence is set by giving _both_ nodes the prec 'function-nullary', and the reduce precedence is set by
+   * giving `_var` in `pat_name` the prec 'pat-name'.
+   * An entry in the `precedences` config in `grammar.js` defines the order of these precedences, causing the parser to
+   * create only a state transition to `_funrhs` when encountering a `=` or `|` after a `variable`.
+   */
+  function: $ => choice(
+    prec('function-nullary', seq(
+      field('name', choice($._var, $.implicit_parid)),
+      $._funrhs,
+    )),
+    seq(
+      $._funlhs,
+      $._funrhs,
+    ),
+  ),
+
+  bind: $ => seq(
+    field('pattern', $._pat),
+    $._funrhs,
+  ),
+
+  /**
+  * The difference between a `function` with a `_funlhs_infix` and a `bind` is that the former is for _declaring_ a
+  * `varop` and the latter uses a `conop` to pattern match on the rhs expression.
+  * The former may not have a type annotation, while the latter may.
+  *
+  * > h : t :: [Int] = undefined
+  * > a <> b = undefined
+  */
   _decl: $ => choice(
     $._gendecl,
-    $._decl_fun,
+    $.function,
+    $.bind,
   ),
 
-  decls: $ => layouted($, $._decl),
+  binds: $ => layout($, $._decl),
+
+  _binds: $ => seq($._where, optional($.binds)),
+
+  _where_binds: $ => field('where', $._binds),
 
   // ------------------------------------------------------------------------
   // foreign
   // ------------------------------------------------------------------------
 
-  calling_convention: _ => choice(
+  calling_convention: $ => choice(
     'ccall',
     'stdcall',
-    'cplusplus',
-    'jvm',
-    'dotnet',
-    'prim',
     'capi',
+    'prim',
+    'javascript',
+    $._id, // It's common in GHC to use a cpp #define for this
   ),
 
-  safety: _ => choice('unsafe', 'safe', 'interruptible'),
+  safety: _ => token(choice(
+    'unsafe',
+    'safe',
+    'interruptible',
+  )),
 
-  impent: $ => $.string,
+  entity: $ => $.string,
 
-  expent: $ => $.string,
-
-  _foreign_pre: $ => seq(
+  decl_foreign_import: $ => seq(
+    'foreign',
+    'import',
     $.calling_convention,
     optional($.safety),
+    optional($.entity),
+    $.signature,
   ),
 
-  decl_foreign_import: $ => foreign($, 'import', $.impent),
-
-  decl_foreign_export: $ => foreign($, 'export', $.expent),
+  decl_foreign_export: $ => seq(
+    'foreign',
+    'export',
+    $.calling_convention,
+    optional($.entity),
+    $.signature,
+  ),
 
   _decl_foreign: $ => choice(
     alias($.decl_foreign_import, $.foreign_import),
-    alias($.decl_foreign_export, $.foreign_export)
+    alias($.decl_foreign_export, $.foreign_export),
   ),
 
   // ------------------------------------------------------------------------
-  // Special decls used in GHC
+  // default
   // ------------------------------------------------------------------------
 
-  decl_special_fun_fixity: _ => 'infixr -1 ->',
+  decl_default: $ => seq('default', parens($, optional(sep1(',', $._ktype)))),
 
-  decl_special: $ => choice(
-    $.decl_special_fun_fixity,
-  ),
 }

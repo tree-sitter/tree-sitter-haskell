@@ -1,48 +1,78 @@
-const {parens} = require('./util.js')
+const {parens, brackets, braces} = require('./util.js')
 
 module.exports = {
+
   pat_field: $ => choice(
     alias('..', $.wildcard),
-    seq($._qvar, optional(seq('=', $._nested_pat))),
+    seq($._vars, optional(seq('=', $._pat_texp))),
   ),
 
-  pat_fields: $ => braces(optional(sep1($.comma, $.pat_field))),
+  pat_fields: $ => braces($, optional(sep1(',', $.pat_field))),
 
-  pat_name: $ => $._var,
+  pat_name: $ => choice(prec('pat-name', $._var), $._cons),
 
-  pat_as: $ => seq(field('var', $.variable), token.immediate('@'), field('pat', $._apat)),
+  pat_as: $ => prec('prefix', seq(field('bind', $.variable), $._tight_at, field('pattern', $._infixpat))),
 
-  /**
-   * Needed non-inlined for conflict definition.
-   */
-  _pat_constructor: $ => alias($._qcon, $.pat_name),
-
-  pat_record: $ => seq(field('con', $._pat_constructor), field('fields', $.pat_fields)),
+  pat_record: $ => seq(field('constructor', $.pat_name), field('fields', $.pat_fields)),
 
   pat_wildcard: _ => '_',
 
-  pat_parens: $ => parens($._nested_pat),
+  pat_parens: $ => parens($, $._pat_texp),
 
-  pat_tuple: $ => parens(sep2($.comma, $._nested_pat)),
+  pat_tuple: $ => parens($, sep2(',', $._pat_texp)),
 
-  pat_unboxed_tuple: $ => seq($._unboxed_open, sep($.comma, $._nested_pat), $._unboxed_close),
+  pat_unboxed_tuple: $ => unboxed_tuple($, $._pat_texp),
 
-  _pat_unboxed_sum: $ => sep2('|', optional($._nested_pat)),
+  pat_unboxed_sum: $ => unboxed_sum($, $._pat_texp),
 
-  pat_unboxed_sum: $ => seq($._unboxed_open, $._pat_unboxed_sum, $._unboxed_close),
+  pat_list: $ => brackets($, sep1(',', $._pat_texp)),
 
-  pat_list: $ => brackets(sep1($.comma, $._nested_pat)),
+  pat_strict: $ => prec('prefix', seq($._any_prefix_bang, $._infixpat)),
 
-  pat_strict: $ => seq($._strict, $._apat),
+  pat_irrefutable: $ => prec('prefix', seq($._any_prefix_tilde, $._infixpat)),
 
-  pat_irrefutable: $ => seq($._lazy, $._apat),
+  pat_type_binder: $ => seq($._prefix_at, $._atype),
 
-  pat_type_binder: $ => seq('@', $._atype),
+  // -------------------------------------------------------------------------------------------------------------------
+  // non-atomic
+  // -------------------------------------------------------------------------------------------------------------------
 
-  _apat: $ => choice(
+  _pat_apply_arg: $ => choice(
+    $._infixpat,
+    $.pat_type_binder,
+  ),
+
+  pat_apply: $ => prec.left('apply', seq(
+    $._infixpat,
+    field('arg', $._pat_apply_arg),
+  )),
+
+  pat_negation: $ => prec('negation', seq($._negation, $._number)),
+
+  _pat_op: $ => choice(
+    $.constructor_operator,
+    $._conids_ticked,
+  ),
+
+  pat_infix: $ => choice(
+    prec.left('infix', seq(
+      field('left_operand', $._infixpat),
+      field('operator', $._pat_op),
+      field('right_operand', $._infixpat),
+    )),
+    seq(
+      field('left_operand', $._infixpat),
+      field('operator', $._qconsym),
+      prec('infix-qualified', field('right_operand', $._infixpat)),
+    ),
+  ),
+
+  _infixpat: $ => choice(
+    $.pat_infix,
+    $.pat_negation,
+    $.pat_apply,
     $.pat_name,
     $.pat_as,
-    $._pat_constructor,
     $.pat_record,
     alias($.literal, $.pat_literal),
     $.pat_wildcard,
@@ -53,48 +83,27 @@ module.exports = {
     $.pat_list,
     $.pat_strict,
     $.pat_irrefutable,
-    $.pat_type_binder,
     $.splice,
     $.quasiquote,
   ),
 
-  pat_negation: $ => seq('-', $._apat),
+  pat_annotated: $ => prec.right('annotated', seq(
+    field('pattern', $._infixpat),
+    $._type_annotation,
+  )),
 
-  /**
-   * In patterns, application is only legal if the first element is a con.
-   */
-  pat_apply: $ => seq($._pat_constructor, repeat1($._apat)),
-
-  _lpat: $ => choice(
-    $._apat,
-    $.pat_negation,
-    $.pat_apply,
-  ),
-
-  pat_infix: $ => seq($._lpat, $._qconop, $._pat),
-
-  /**
-   * Without the precs, a conflict is needed.
-   */
   _pat: $ => choice(
-    prec(2, $.pat_infix),
-    prec(1, $._lpat),
+    $.pat_annotated,
+    prec.right($._infixpat),
   ),
 
-  pat_typed: $ => seq(field('pattern', $._pat), $._type_annotation),
+  patterns: $ => repeat1(prec('patterns', $._pat_apply_arg)),
 
-  _typed_pat: $ => choice(
-    $._pat,
-    $.pat_typed,
-  ),
+  pat_view: $ => prec.right('view', seq($._exp, $._arrow, $._pat_texp)),
 
-  pat_view: $ => seq($._exp, $._arrow, $._nested_pat),
-
-  /**
-   * Patterns that occur inside parentheses, and thus can always have view patterns and type annotations.
-   */
-  _nested_pat: $ => choice(
-    $._typed_pat,
+  _pat_texp: $ => choice(
     $.pat_view,
+    $._pat,
   )
+
 }

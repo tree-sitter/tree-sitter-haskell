@@ -1,0 +1,29 @@
+(haskell [0, 0] - [14, 0]
+  declarations: (declarations [0, 0] - [14, 0]
+    (function [0, 0] - [0, 10]
+      name: (variable [0, 0] - [0, 1])
+      expression: (exp_infix [0, 4] - [0, 10]
+        left_operand: (exp_name [0, 4] - [0, 5]
+          (variable [0, 4] - [0, 5]))
+        operator: (operator [0, 6] - [0, 8])
+        right_operand: (exp_name [0, 9] - [0, 10]
+          (variable [0, 9] - [0, 10]))))
+    (function [2, 0] - [3, 6]
+      name: (variable [2, 0] - [2, 1])
+      expression: (exp_infix [2, 4] - [3, 6]
+        left_operand: (exp_name [2, 4] - [2, 5]
+          (variable [2, 4] - [2, 5]))
+        operator: (operator [3, 2] - [3, 4])
+        right_operand: (exp_name [3, 5] - [3, 6]
+          (variable [3, 5] - [3, 6]))))
+    (comment [5, 0] - [10, 86])
+    (function [11, 0] - [13, 6]
+      name: (variable [11, 0] - [11, 1])
+      expression: (exp_infix [11, 4] - [13, 6]
+        left_operand: (exp_do [11, 4] - [13, 2]
+          (exp_statement [12, 2] - [12, 3]
+            (exp_name [12, 2] - [12, 3]
+              (variable [12, 2] - [12, 3]))))
+        operator: (operator [13, 2] - [13, 4])
+        right_operand: (exp_name [13, 5] - [13, 6]
+          (variable [13, 5] - [13, 6]))))))

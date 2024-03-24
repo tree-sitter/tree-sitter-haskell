@@ -1,0 +1,30 @@
+(haskell [0, 0] - [6, 0]
+  declarations: (declarations [0, 0] - [6, 0]
+    (function [0, 0] - [5, 14]
+      name: (variable [0, 0] - [0, 1])
+      expression: (exp_let_in [0, 4] - [5, 14]
+        (let [0, 4] - [3, 18]
+          (binds [0, 7] - [3, 18]
+            (function [0, 8] - [3, 18]
+              name: (variable [0, 8] - [0, 9])
+              expression: (exp_do [0, 12] - [3, 18]
+                (exp_statement [1, 10] - [3, 18]
+                  (exp_apply [1, 10] - [3, 18]
+                    (exp_name [1, 10] - [1, 11]
+                      (variable [1, 10] - [1, 11]))
+                    arg: (exp_do [1, 12] - [3, 18]
+                      (bind_statement [2, 12] - [2, 18]
+                        (pat_name [2, 12] - [2, 13]
+                          (variable [2, 12] - [2, 13]))
+                        (exp_name [2, 17] - [2, 18]
+                          (variable [2, 17] - [2, 18])))
+                      (exp_statement [3, 12] - [3, 18]
+                        (exp_apply [3, 12] - [3, 18]
+                          (exp_name [3, 12] - [3, 16]
+                            (variable [3, 12] - [3, 16]))
+                          arg: (exp_name [3, 17] - [3, 18]
+                            (variable [3, 17] - [3, 18])))))))))))
+        (comment [4, 10] - [4, 14])
+        (in [5, 10] - [5, 14]
+          (exp_name [5, 13] - [5, 14]
+            (variable [5, 13] - [5, 14])))))))

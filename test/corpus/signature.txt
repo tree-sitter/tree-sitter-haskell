@@ -4,16 +4,23 @@ signature: basic
 
 a :: a -> A -> A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  name: (variable)
-  type: (fun
-   (type_name (type_variable))
-   (fun
-    (type_name (type))
-    (type_apply (type_name (type)) (type_name (type_variable)))))))
+  declarations: (declarations
+    (signature
+      name: (variable)
+      type: (type_fun
+        (type_name
+          (type_variable))
+        (type_fun
+          (type_name
+            (type))
+          (type_apply
+            head: (type_name
+              (type))
+            argument: (type_name
+              (type_variable))))))))
 
 ================================================================================
 signature: forall
@@ -21,75 +28,86 @@ signature: forall
 
 a :: forall a (a :: * -> Type) . (∀ a . a -> a) -> A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (forall
-   (quantifiers
-    (type_variable)
-    (annotated_type_variable (type_variable) (fun (type_star) (type_name (type)))))
-   (fun
-    (type_parens
-     (forall
-      (quantifiers (type_variable))
-      (fun (type_name (type_variable)) (type_name (type_variable)))))
-    (type_apply (type_name (type)) (type_name (type_variable)))))))
-
+  (declarations
+    (signature
+      (variable)
+      (type_forall
+        (quantifiers
+          (type_variable)
+          (annotated_type_variable
+            (type_variable)
+            (type_fun
+              (type_star)
+              (type_name
+                (type)))))
+        (type_fun
+          (type_parens
+            (type_forall
+              (quantifiers
+                (type_variable))
+              (type_fun
+                (type_name
+                  (type_variable))
+                (type_name
+                  (type_variable)))))
+          (type_apply
+            (type_name
+              (type))
+            (type_name
+              (type_variable))))))))
 
 ================================================================================
-signature: multi method operator
+signature: alternating forall/context/arrow/infix
 ================================================================================
 
-(<), (<=), (>=), (>) :: a
+a :: A a => ∀ a. a ++ a => a -> ∀ a. a -> A => A => A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (operator)
-  (comma)
-  (operator)
-  (comma)
-  (operator)
-  (comma)
-  (operator)
-  (type_name (type_variable))))
-
-
-================================================================================
-signature: alternating forall/context/arrow
-================================================================================
-
-a :: A a => ∀ a . a ++ a => a -> ∀ a . a -> A => A => A a
-
----
-
-(haskell
- (signature
-  name: (variable)
-  type: (context
-   (constraint class: (class_name (type)) (type_name (type_variable)))
-   (forall
-    (quantifiers (type_variable))
-    (context
-     (constraint
-     (type_infix
-      left: (type_name (type_variable))
-      op: (type_operator)
-      right: (type_name (type_variable))))
-     (fun
-      (type_name (type_variable))
-      (forall
-       (quantifiers (type_variable))
-       (fun
-        (type_name (type_variable))
-        (context
-         (constraint class: (class_name (type)))
-         (context
-          (constraint class: (class_name (type)))
-          (type_apply (type_name (type)) (type_name (type_variable)))))))))))))
+  (declarations
+    (signature
+      (variable)
+      (type_context
+        (class_apply
+          (class_name
+            (type_name
+              (type)))
+          (type_name
+            (type_variable)))
+        (type_forall
+          (quantifiers
+            (type_variable))
+          (type_context
+            (class_infix
+              (type_name
+                (type_variable))
+              (operator)
+              (type_name
+                (type_variable)))
+            (type_fun
+              (type_name
+                (type_variable))
+              (type_forall
+                (quantifiers
+                  (type_variable))
+                (type_fun
+                  (type_name
+                    (type_variable))
+                  (type_context
+                    (class_name
+                      (type))
+                    (type_context
+                      (class_name
+                        (type))
+                      (type_apply
+                        (type_name
+                          (type))
+                        (type_name
+                          (type_variable))))))))))))))
 
 ================================================================================
 signature: parenthesized operator fun
@@ -97,23 +115,14 @@ signature: parenthesized operator fun
 
 (<>) = a
 
----
-
-(haskell (function (operator) (exp_name (variable))))
-
-================================================================================
-signature: operator starting with hash
-================================================================================
-
-(#!) :: a
-
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (operator)
-  (type_name (type_variable))))
-
+  (declarations
+    (function
+      (operator)
+      (exp_name
+        (variable)))))
 
 ================================================================================
 signature: HKT annotation
@@ -121,19 +130,25 @@ signature: HKT annotation
 
 a :: (a :: (* -> *) -> *) -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (fun
-   (type_name
-    (annotated_type_variable
-     (type_variable)
-     (fun
-      (type_parens (fun (type_star) (type_star)))
-      (type_star))))
-   (type_name (type_variable)))))
+  (declarations
+    (signature
+      (variable)
+      (type_fun
+        (type_parens
+          (type_annotated
+            (type_name
+              (type_variable))
+            (type_fun
+              (type_parens
+                (type_fun
+                  (type_star)
+                  (type_star)))
+              (type_star))))
+        (type_name
+          (type_variable))))))
 
 ================================================================================
 signature: partial
@@ -141,18 +156,24 @@ signature: partial
 
 a :: A -> _ -> (_, a) -> _a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (fun
-   (type_name (type))
-   (fun
-    (type_name (type_variable))
-    (fun
-     (type_tuple (type_name (type_variable)) (comma) (type_name (type_variable)))
-     (type_name (type_variable)))))))
+  (declarations
+    (signature
+      (variable)
+      (type_fun
+        (type_name
+          (type))
+        (type_fun
+          (type_wildcard)
+          (type_fun
+            (type_tuple
+              (type_wildcard)
+              (type_name
+                (type_variable)))
+            (type_name
+              (type_variable))))))))
 
 ================================================================================
 signature: unboxed tuple
@@ -160,9 +181,17 @@ signature: unboxed tuple
 
 a :: (# A, A #)
 
----
+--------------------------------------------------------------------------------
 
-(haskell (signature (variable) (type_unboxed_tuple (type_name (type)) (comma) (type_name (type)))))
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (type_unboxed_tuple
+        (type_name
+          (type))
+        (type_name
+          (type))))))
 
 ================================================================================
 signature: splice
@@ -170,16 +199,26 @@ signature: splice
 
 a :: a -> $(a ''A) -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (fun
-   (type_name (type_variable))
-   (fun
-    (splice (exp_parens (exp_apply (exp_name (variable)) (exp_th_quoted_name (type_name (type))))))
-    (type_name (type_variable))))))
+  (declarations
+    (signature
+      (variable)
+      (type_fun
+        (type_name
+          (type_variable))
+        (type_fun
+          (splice
+            (exp_parens
+              (exp_apply
+                (exp_name
+                  (variable))
+                (exp_th_quoted_name
+                  (type_name
+                    (type))))))
+          (type_name
+            (type_variable)))))))
 
 ================================================================================
 signature: quasiquote
@@ -187,16 +226,22 @@ signature: quasiquote
 
 a :: a -> [a|a|] -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (fun
-   (type_name (type_variable))
-   (fun
-    (quasiquote (quasiquote_start) (quoter) (quasiquote_bar) (quasiquote_body))
-    (type_name (type_variable))))))
+  (declarations
+    (signature
+      (variable)
+      (type_fun
+        (type_name
+          (type_variable))
+        (type_fun
+          (quasiquote
+            (quoter
+              (variable))
+            (quasiquote_body))
+          (type_name
+            (type_variable)))))))
 
 ================================================================================
 signature: unicode herald
@@ -204,13 +249,14 @@ signature: unicode herald
 
 a ∷ a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (type_name
-   (type_variable))))
+  (declarations
+    (signature
+      (variable)
+      (type_name
+        (type_variable)))))
 
 ================================================================================
 signature: visible dependent quantification
@@ -218,14 +264,17 @@ signature: visible dependent quantification
 
 a :: ∀ a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (forall
-   (quantifiers (type_variable))
-   (type_name (type_variable)))))
+  (declarations
+    (signature
+      (variable)
+      (type_forall
+        (quantifiers
+          (type_variable))
+        (type_name
+          (type_variable))))))
 
 ================================================================================
 signature: inferred type variable
@@ -233,16 +282,19 @@ signature: inferred type variable
 
 a :: ∀ {a} a . a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (forall
-   (quantifiers
-    (inferred_type_variable (type_variable))
-    (type_variable))
-   (type_name (type_variable)))))
+  (declarations
+    (signature
+      (variable)
+      (type_forall
+        (quantifiers
+          (inferred_type_variable
+            (type_variable))
+          (type_variable))
+        (type_name
+          (type_variable))))))
 
 ================================================================================
 signature: forall without variables
@@ -250,11 +302,48 @@ signature: forall without variables
 
 a :: ∀ . Int
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (forall
-   (quantifiers)
-   (type_name (type)))))
+  (declarations
+    (signature
+      (variable)
+      (type_forall
+        (quantifiers)
+        (type_name
+          (type))))))
+
+================================================================================
+signature: regression test for ambiguity bug
+================================================================================
+
+a = case a of a -> b
+
+c :: (a, d a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_case
+        (exp_name
+          (variable))
+        (alts
+          (alt
+            (pat_name
+              (variable))
+            (match
+              (exp_name
+                (variable)))))))
+    (signature
+      (variable)
+      (type_tuple
+        (type_name
+          (type_variable))
+        (type_apply
+          (type_name
+            (type_variable))
+          (type_name
+            (type_variable)))))))

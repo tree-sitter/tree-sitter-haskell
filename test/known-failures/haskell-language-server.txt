@@ -1,0 +1,2 @@
+test/libs/haskell-language-server/test/testdata/FuncTestFail.hs
+test/libs/haskell-language-server/test/functional/Symbol.hs

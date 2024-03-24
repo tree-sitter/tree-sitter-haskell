@@ -1,10 +1,6 @@
 # tree-sitter-haskell
 
-[![CI][ci]](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml)
-[![discord][discord]](https://discord.gg/w7nTvsVJhm)
-[![matrix][matrix]](https://matrix.to/#/#tree-sitter-chat:matrix.org)
-[![crates][crates]](https://crates.io/crates/tree-sitter-haskell)
-[![npm][npm]](https://www.npmjs.com/package/tree-sitter-haskell)
+[![CI](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml/badge.svg)](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml)
 
 Haskell grammar for [tree-sitter].
 
@@ -23,7 +19,7 @@ local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
 parser_config.haskell = {
   install_info = {
     url = "~/path/to/tree-sitter-haskell",
-    files = {"src/parser.c", "src/scanner.c", "src/unicode.h"}
+    files = {"src/parser.c", "src/scanner.c"}
   }
 }
 EOF
@@ -100,7 +96,7 @@ These extensions are supported ✅, unsupported ❌ or not applicable because th
 * NamedFieldPuns ✅
 * NamedWildCards ✅
 * NegativeLiterals ➖️
-* NondecreasingIndentation ❌
+* NondecreasingIndentation ✅
 * NPlusKPatterns ➖️
 * NullaryTypeClasses ✅
 * NumDecimals ➖️
@@ -166,11 +162,7 @@ Preprocessor `#elif` and `#else` directives cannot be handled correctly, since t
 manually reset to what it was at the `#if`.
 As a workaround, the code blocks in the alternative branches are parsed as part of the directives.
 
-## Layout
-
-`NondecreasingIndentation` is not supported (yet?).
-
-### Operators on newlines in `do`
+## Operators on newlines in `do`
 
 A strange edge case is when an infix operator follows an expression statement of a do block with an indent of less or equal the `do`'s layout column:
 
@@ -204,17 +196,19 @@ These are stored in `./tests/corpus/`
 $ tree-sitter test
 ```
 
-## Test parsing an example codebase
+## Parsing the codebase of a real-world library
 
 **Requires**: `bc`
 This will print the percentage of the codebase parsed, and the time taken
 
 ```
-$ ./script/parse-examples             # this clones all repos
-$ ./script/parse-example <example>    # where <example> is a project under ./examples/
+$ ./script/parse-libs         # this clones all repos
+$ ./script/parse-lib <lib>    # where <lib> is a project under ./test/libs/
 ```
 
 ## Enable scanner debug output
+
+<!-- TODO rewrite -->
 
 To get an extra-verbose scanner, unoptimized, with debug symbols:
 
@@ -235,9 +229,3 @@ If you want to debug the scanner with `gdb`, you can
 ```
 $ tree-sitter parse -D test/Basic.hs    # Produces log.html
 ```
-
-[ci]: https://img.shields.io/github/actions/workflow/status/tree-sitter/tree-sitter-haskell/ci.yml?logo=github&label=CI
-[discord]: https://img.shields.io/discord/1063097320771698699?logo=discord&label=discord
-[matrix]: https://img.shields.io/matrix/tree-sitter-chat%3Amatrix.org?logo=matrix&label=matrix
-[npm]: https://img.shields.io/npm/v/tree-sitter-haskell?logo=npm
-[crates]: https://img.shields.io/crates/v/tree-sitter-haskell?logo=rust

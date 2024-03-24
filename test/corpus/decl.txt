@@ -1,0 +1,349 @@
+================================================================================
+decl: two trivial successive functions
+================================================================================
+
+a = a
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_name
+        (variable)))
+    (function
+      (variable)
+      (exp_name
+        (variable)))))
+
+================================================================================
+decl: do and where
+================================================================================
+
+a = do
+  a
+  where
+    a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (function
+      name: (variable)
+      expression: (exp_do
+        (exp_statement
+          (exp_name
+            (variable))))
+      where: (binds
+        (function
+          name: (variable)
+          expression: (exp_name
+            (variable)))))))
+
+================================================================================
+decl: empty where
+================================================================================
+
+a =
+  a
+  where
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_name
+        (variable)))))
+
+================================================================================
+decl: where
+================================================================================
+
+a = a where a = a
+a =
+  a
+  where
+    a = a
+    a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_name
+        (variable))
+      (binds
+        (function
+          (variable)
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_name
+        (variable))
+      (binds
+        (function
+          (variable)
+          (exp_name
+            (variable)))
+        (function
+          (variable)
+          (exp_name
+            (variable)))))))
+
+================================================================================
+decl: case and where
+================================================================================
+
+a = case a of
+  A a -> a
+  A -> a
+  where a = 1
+        a = 2
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_case
+        (exp_name
+          (variable))
+        (alts
+          (alt
+            (pat_apply
+              (pat_name
+                (constructor))
+              (pat_name
+                (variable)))
+            (match
+              (exp_name
+                (variable))))
+          (alt
+            (pat_name
+              (constructor))
+            (match
+              (exp_name
+                (variable))))))
+      (binds
+        (function
+          (variable)
+          (exp_literal
+            (integer)))
+        (function
+          (variable)
+          (exp_literal
+            (integer)))))))
+
+================================================================================
+decl: do, let, where
+================================================================================
+
+a a = do
+  a <- a
+  let z = a
+  a
+  where a = pure a
+        a = 1
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (patterns
+        (pat_name
+          (variable)))
+      (exp_do
+        (bind_statement
+          (pat_name
+            (variable))
+          (exp_name
+            (variable)))
+        (let
+          (binds
+            (function
+              (variable)
+              (exp_name
+                (variable)))))
+        (exp_statement
+          (exp_name
+            (variable))))
+      (binds
+        (function
+          (variable)
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (variable))))
+        (function
+          (variable)
+          (exp_literal
+            (integer)))))))
+
+================================================================================
+decl: variable binding list
+================================================================================
+
+a, a, a :: A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (binding_list
+        (variable)
+        (variable)
+        (variable))
+      (type_name
+        (type)))))
+
+================================================================================
+decl: operator binding list
+================================================================================
+
+(<), (<=), (>=), a, (>) :: a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (binding_list
+        (operator)
+        (operator)
+        (operator)
+        (variable)
+        (operator))
+      (type_name
+        (type_variable)))))
+
+================================================================================
+decl: primop
+================================================================================
+
+a# :: a
+a# = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (type_name
+        (type_variable)))
+    (function
+      (variable)
+      (exp_name
+        (variable)))))
+
+================================================================================
+decl: ticked infix pattern
+================================================================================
+
+a `a` a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (infix
+        (pat_name
+          (variable))
+        (infix_id
+          (variable))
+        (pat_name
+          (variable)))
+      (exp_name
+        (variable)))))
+
+================================================================================
+decl: comment association
+================================================================================
+
+a = a
+
+-- | a
+a = do a
+
+-- | This comment should be located right before the following decl, but it can
+-- get pulled into the do unless the scanner is careful not to include any
+-- whitespace in layout ends.
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_name
+        (variable)))
+    (haddock)
+    (function
+      (variable)
+      (exp_do
+        (exp_statement
+          (exp_name
+            (variable)))))
+    (haddock)
+    (function
+      (variable)
+      (exp_name
+        (variable)))))
+
+================================================================================
+decl: fixity
+================================================================================
+
+infixr 7 `op`, `ip`, `ap`
+infix <$>
+infixr 7 <$>
+infix 7 :
+infixl 7 :.
+infix 7 :<:
+infixl 1 -
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (fixity
+      (integer)
+      (infix_id
+        (variable))
+      (infix_id
+        (variable))
+      (infix_id
+        (variable)))
+    (fixity
+      (operator))
+    (fixity
+      (integer)
+      (operator))
+    (fixity
+      (integer)
+      (constructor_operator))
+    (fixity
+      (integer)
+      (constructor_operator))
+    (fixity
+      (integer)
+      (constructor_operator))
+    (fixity
+      (integer)
+      (operator))))

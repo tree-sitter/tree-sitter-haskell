@@ -6,22 +6,42 @@ a = a a
 a = a a a
 a = a A.a a a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_apply (exp_name (variable)) (exp_name (variable))))
- (function
-  (variable)
-  (exp_apply (exp_name (variable)) (exp_name (variable)) (exp_name (variable))))
- (function
-  (variable)
-   (exp_apply
-    (exp_name (variable))
-    (exp_name (qualified_variable (module) (variable)))
-    (exp_name (variable))
-    (exp_name (variable)))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_apply
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_apply
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (qualified_variable
+                (module)
+                (variable))))
+          (exp_name
+            (variable)))
+        (exp_name
+          (variable))))))
 
 ================================================================================
 exp: con application
@@ -30,15 +50,30 @@ exp: con application
 a = A a a
 a = A a A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  name: (variable)
-  rhs: (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (variable))))
- (function
-  name: (variable)
-  rhs: (exp_apply (exp_name (constructor)) (exp_name (variable)) (exp_name (constructor)))))
+  declarations: (declarations
+    (function
+      name: (variable)
+      expression: (exp_apply
+        (exp_apply
+          (exp_name
+            (constructor))
+          arg: (exp_name
+            (variable)))
+        arg: (exp_name
+          (variable))))
+    (function
+      name: (variable)
+      expression: (exp_apply
+        (exp_apply
+          (exp_name
+            (constructor))
+          arg: (exp_name
+            (variable)))
+        arg: (exp_name
+          (constructor))))))
 
 ================================================================================
 exp: unit
@@ -46,51 +81,14 @@ exp: unit
 
 a = ()
 
----
-
-(haskell (function (variable) (exp_literal (con_unit))))
-
-================================================================================
-exp: arithmetic sequence
-================================================================================
-
-a = [a..]
-a = [a,a..]
-a = [a..a]
-a = [a,a..a]
-
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-   (exp_arithmetic_sequence (exp_name (variable))))
- (function
-  (variable)
-   (exp_arithmetic_sequence (exp_name (variable)) (comma) (exp_name (variable))))
- (function
-  (variable)
-   (exp_arithmetic_sequence (exp_name (variable)) (exp_name (variable))))
- (function
-  (variable)
-  (exp_arithmetic_sequence (exp_name (variable)) (comma) (exp_name (variable)) (exp_name (variable)))))
-
-================================================================================
-exp: arithmethic sequence
-================================================================================
-
-a = [1..4]
-a = [1 .. 4]
-
----
-
-(haskell
- (function
-  (variable)
-  (exp_arithmetic_sequence (exp_literal (integer)) (exp_literal (integer))))
- (function
-  (variable)
-  (exp_arithmetic_sequence (exp_literal (integer)) (exp_literal (integer)))))
+  (declarations
+    (function
+      (variable)
+      (exp_literal
+        (con_unit)))))
 
 ================================================================================
 exp: comprehension
@@ -103,67 +101,130 @@ a = [(a,a) | a <- [1,2],
              a <- [1..4] ]
 a = [ [ (a,a) | a <- [1,2] ] | a <- [1..] ]
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-   (exp_list_comprehension (exp_name (variable))
-    (qual (bind_pattern (pat_name (variable)) (exp_name (variable))))))
- (function
-  (variable)
-   (exp_list_comprehension
-    (exp_tuple (exp_name (variable)) (comma) (exp_name (variable)))
-    (qual (bind_pattern (pat_name (variable)) (exp_name (variable))))
-    (comma)
-    (qual (bind_pattern (pat_name (variable)) (exp_name (variable))))))
-  (function
-   (variable)
-    (exp_list_comprehension (exp_name (variable))
-     (qual
-      (bind_pattern
-       (pat_name (variable))
-       (exp_list
-        (exp_list
-         (exp_tuple (exp_literal (integer)) (comma) (exp_literal (integer)))
-         (comma)
-         (exp_tuple (exp_literal (integer)) (comma) (exp_literal (integer))))
-        (comma)
-        (exp_list
-         (exp_tuple (exp_literal (integer)) (comma) (exp_literal (integer)))
-         (comma)
-         (exp_tuple (exp_literal (integer)) (comma) (exp_literal (integer)))))))
-     (comma)
-     (qual
-      (bind_pattern
-       (pat_tuple (pat_literal (integer)) (comma) (pat_name (variable)))
-       (exp_name (variable))))))
-  (function
-   (variable)
-    (exp_list_comprehension
-     (exp_tuple (exp_name (variable)) (comma) (exp_name (variable)))
-     (qual
-      (bind_pattern
-       (pat_name (variable))
-       (exp_list (exp_literal (integer)) (comma) (exp_literal (integer)))))
-     (comma)
-     (qual
-      (bind_pattern
-       (pat_name (variable))
-       (exp_arithmetic_sequence (exp_literal (integer)) (exp_literal (integer)))))))
-  (function
-   (variable)
-    (exp_list_comprehension
-     (exp_list_comprehension
-      (exp_tuple (exp_name (variable)) (comma) (exp_name (variable)))
-      (qual
-       (bind_pattern
-        (pat_name (variable))
-        (exp_list (exp_literal (integer)) (comma) (exp_literal (integer))))))
-     (qual
-      (bind_pattern
-       (pat_name (variable))
-       (exp_arithmetic_sequence (exp_literal (integer))))))))
+  (declarations
+    (function
+      (variable)
+      (exp_list_comprehension
+        (exp_name
+          (variable))
+        (qualifiers
+          (generator
+            (pat_name
+              (variable))
+            (exp_name
+              (variable))))))
+    (function
+      (variable)
+      (exp_list_comprehension
+        (exp_tuple
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (qualifiers
+          (generator
+            (pat_name
+              (variable))
+            (exp_name
+              (variable)))
+          (generator
+            (pat_name
+              (variable))
+            (exp_name
+              (variable))))))
+    (function
+      (variable)
+      (exp_list_comprehension
+        (exp_name
+          (variable))
+        (qualifiers
+          (generator
+            (pat_name
+              (variable))
+            (exp_list
+              (exp_list
+                (exp_tuple
+                  (exp_literal
+                    (integer))
+                  (exp_literal
+                    (integer)))
+                (exp_tuple
+                  (exp_literal
+                    (integer))
+                  (exp_literal
+                    (integer))))
+              (exp_list
+                (exp_tuple
+                  (exp_literal
+                    (integer))
+                  (exp_literal
+                    (integer)))
+                (exp_tuple
+                  (exp_literal
+                    (integer))
+                  (exp_literal
+                    (integer))))))
+          (generator
+            (pat_tuple
+              (pat_literal
+                (integer))
+              (pat_name
+                (variable)))
+            (exp_name
+              (variable))))))
+    (function
+      (variable)
+      (exp_list_comprehension
+        (exp_tuple
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (qualifiers
+          (generator
+            (pat_name
+              (variable))
+            (exp_list
+              (exp_literal
+                (integer))
+              (exp_literal
+                (integer))))
+          (generator
+            (pat_name
+              (variable))
+            (exp_arithmetic_sequence
+              (exp_literal
+                (integer))
+              (exp_literal
+                (integer)))))))
+    (function
+      (variable)
+      (exp_list_comprehension
+        (exp_list_comprehension
+          (exp_tuple
+            (exp_name
+              (variable))
+            (exp_name
+              (variable)))
+          (qualifiers
+            (generator
+              (pat_name
+                (variable))
+              (exp_list
+                (exp_literal
+                  (integer))
+                (exp_literal
+                  (integer))))))
+        (qualifiers
+          (generator
+            (pat_name
+              (variable))
+            (exp_arithmetic_sequence
+              (exp_literal
+                (integer)))))))))
 
 ================================================================================
 exp: operator section right
@@ -171,16 +232,117 @@ exp: operator section right
 
 a = (: a)
 a = (:< a)
+a = (A.:+ a)
+a = (`a` a)
+a = (`A.a` a)
+a = (+ a + a)
+a = (+ a + a + a)
+a = (A.+ a A.+ a)
+a = (A.+ a + a)
+a = (+ a A.+ a)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_section_right (constructor_operator) (exp_name (variable))))
- (function
-  (variable)
-  (exp_section_right (constructor_operator) (exp_name (variable)))))
+  (declarations
+    (function
+      (variable)
+      (exp_section_right
+        (constructor_operator)
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_section_right
+        (constructor_operator)
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_section_right
+        (qualified_operator
+          (module)
+          (constructor_operator))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_section_right
+        (infix_id
+          (variable))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_section_right
+        (infix_id
+          (qualified_variable
+            (module)
+            (variable)))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_section_right
+        (operator)
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_section_right
+        (operator)
+        (exp_infix
+          (exp_infix
+            (exp_name
+              (variable))
+            (operator)
+            (exp_name
+              (variable)))
+          (operator)
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_section_right
+        (qualified_operator
+          (module)
+          (operator))
+        (exp_infix
+          (exp_name
+            (variable))
+          (qualified_operator
+            (module)
+            (operator))
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_section_right
+        (qualified_operator
+          (module)
+          (operator))
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_section_right
+        (operator)
+        (exp_infix
+          (exp_name
+            (variable))
+          (qualified_operator
+            (module)
+            (operator))
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: operator section left
@@ -188,20 +350,156 @@ exp: operator section left
 
 a = (a :)
 a = (a :|)
+a = (a A.:|)
 a = (a $)
+a = (a a $)
+a = (a a A.$)
+a = (a `a`)
+a = (a `A.a`)
+a = (a + a +)
+a = (a + a + a + a +)
+a = (a A.+ a +)
+-- TODO brokey :(
+a = (a + a A.+)
+a = (a A.A.+ a A.A.+)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_section_left (exp_name (variable)) (constructor_operator)))
- (function
-  (variable)
-  (exp_section_left (exp_name (variable)) (constructor_operator)))
- (function
-  (variable)
-  (exp_section_left (exp_name (variable)) (operator))))
+  (declarations
+    (function
+      (variable)
+      (exp_section_left
+        (exp_name
+          (variable))
+        (constructor_operator)))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_name
+          (variable))
+        (constructor_operator)))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_name
+          (variable))
+        (qualified_operator
+          (module)
+          (constructor_operator))))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_name
+          (variable))
+        (operator)))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (operator)))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (qualified_operator
+          (module)
+          (operator))))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_name
+          (variable))
+        (infix_id
+          (variable))))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_name
+          (variable))
+        (infix_id
+          (qualified_variable
+            (module)
+            (variable)))))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_name
+            (variable)))
+        (operator)))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_infix
+          (exp_infix
+            (exp_infix
+              (exp_name
+                (variable))
+              (operator)
+              (exp_name
+                (variable)))
+            (operator)
+            (exp_name
+              (variable)))
+          (operator)
+          (exp_name
+            (variable)))
+        (operator)))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_infix
+          (exp_name
+            (variable))
+          (qualified_operator
+            (module)
+            (operator))
+          (exp_name
+            (variable)))
+        (operator)))
+    (comment)
+    (function
+      (variable)
+      (exp_parens
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_name
+            (variable)))
+        (ERROR
+          (qualified_operator
+            (module)
+            (operator)))))
+    (function
+      (variable)
+      (exp_parens
+        (exp_infix
+          (exp_name
+            (variable))
+          (qualified_operator
+            (module)
+            (module)
+            (operator))
+          (exp_name
+            (variable)))
+        (ERROR
+          (qualified_operator
+            (module)
+            (module)
+            (operator)))))))
 
 ================================================================================
 exp: infix operator
@@ -213,29 +511,94 @@ a = A <$>
 a = do
   a <- a =<< a
   a <- a >>= a
+a = (a + a)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_infix
-   (exp_infix
-    (exp_infix (exp_name (constructor)) (operator) (exp_name (variable)))
-    (operator)
-    (exp_literal (string)))
-   (operator) (exp_name (variable))))
- (function
-  (variable)
-  (exp_do
-   (stmt
-    (bind_pattern
-     (pat_name (variable))
-     (exp_infix (exp_name (variable)) (operator) (exp_name (variable)))))
-   (stmt
-    (bind_pattern
-     (pat_name (variable))
-     (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))))))
+  (declarations
+    (function
+      (variable)
+      (exp_infix
+        (exp_infix
+          (exp_infix
+            (exp_name
+              (constructor))
+            (operator)
+            (exp_name
+              (variable)))
+          (operator)
+          (exp_literal
+            (string)))
+        (operator)
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_do
+        (bind_statement
+          (pat_name
+            (variable))
+          (exp_infix
+            (exp_name
+              (variable))
+            (operator)
+            (exp_name
+              (variable))))
+        (bind_statement
+          (pat_name
+            (variable))
+          (exp_infix
+            (exp_name
+              (variable))
+            (operator)
+            (exp_name
+              (variable))))))
+    (function
+      (variable)
+      (exp_parens
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_name
+            (variable)))))))
+
+================================================================================
+exp: infix assoc
+================================================================================
+
+a = a + a + a
+a = a . a $ a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_infix
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_name
+            (variable)))
+        (operator)
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_name
+            (variable)))
+        (operator)
+        (exp_name
+          (variable))))))
 
 ================================================================================
 exp: infix con/var
@@ -245,31 +608,59 @@ a = a `a` a
 a = a `A.a` a
 a = a `A` a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_infix (exp_name (variable)) (variable) (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix (exp_name (variable)) (qualified_variable (module) (variable)) (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix (exp_name (variable)) (constructor) (exp_name (variable)))))
+  (declarations
+    (function
+      (variable)
+      (exp_infix
+        (exp_name
+          (variable))
+        (infix_id
+          (variable))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_name
+          (variable))
+        (infix_id
+          (qualified_variable
+            (module)
+            (variable)))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_name
+          (variable))
+        (infix_id
+          (constructor))
+        (exp_name
+          (variable))))))
 
 ================================================================================
-exp: error: infix quoted consym
+exp: error: infix TH-quoted consym
 ================================================================================
 
 a = a ':++ a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_apply (exp_name (variable)) (exp_th_quoted_name (ERROR (UNEXPECTED '+')) (variable)))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_th_quoted_name
+          (ERROR
+            (UNEXPECTED '+'))
+          (variable))))))
 
 ================================================================================
 exp: lambda simple
@@ -278,13 +669,30 @@ exp: lambda simple
 a = \ a -> a
 a = \ (A a) -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_lambda (pat_name (variable)) (exp_name (variable))))
- (function
-  (variable)
-  (exp_lambda (pat_parens (pat_apply (pat_name (constructor)) (pat_name (variable)))) (exp_name (variable)))))
+  (declarations
+    (function
+      (variable)
+      (exp_lambda
+        (patterns
+          (pat_name
+            (variable)))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_lambda
+        (patterns
+          (pat_parens
+            (pat_apply
+              (pat_name
+                (constructor))
+              (pat_name
+                (variable)))))
+        (exp_name
+          (variable))))))
 
 ================================================================================
 exp: double lambda
@@ -292,17 +700,26 @@ exp: double lambda
 
 a = \ a -> a >>= \ a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_lambda
-   (pat_name (variable))
-   (exp_infix
-    (exp_name (variable))
-    (operator)
-    (exp_lambda (pat_name (variable)) (exp_name (variable)))))))
+  (declarations
+    (function
+      (variable)
+      (exp_lambda
+        (patterns
+          (pat_name
+            (variable)))
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_lambda
+            (patterns
+              (pat_name
+                (variable)))
+            (exp_name
+              (variable))))))))
 
 ================================================================================
 exp: lambda and infix
@@ -311,27 +728,46 @@ exp: lambda and infix
 a = \ a -> a : a : a
 a = \ a a a -> a <$> a <*> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_lambda
-   (pat_name (variable))
-   (exp_infix
-    (exp_infix (exp_name (variable)) (constructor_operator) (exp_name (variable)))
-    (constructor_operator)
-    (exp_name (variable)))))
- (function
-  (variable)
-  (exp_lambda
-   (pat_name (variable))
-   (pat_name (variable))
-   (pat_name (variable))
-   (exp_infix
-    (exp_infix (exp_name (variable)) (operator) (exp_name (variable)))
-    (operator)
-    (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_lambda
+        (patterns
+          (pat_name
+            (variable)))
+        (exp_infix
+          (exp_infix
+            (exp_name
+              (variable))
+            (constructor_operator)
+            (exp_name
+              (variable)))
+          (constructor_operator)
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_lambda
+        (patterns
+          (pat_name
+            (variable))
+          (pat_name
+            (variable))
+          (pat_name
+            (variable)))
+        (exp_infix
+          (exp_infix
+            (exp_name
+              (variable))
+            (operator)
+            (exp_name
+              (variable)))
+          (operator)
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: parenthesized infix
@@ -339,41 +775,43 @@ exp: parenthesized infix
 
 a = (a <$> a)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_parens (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_parens
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_name
+            (variable)))))))
 
 ================================================================================
-exp: minus
+exp: apply in operand of qualified varop
 ================================================================================
 
-a = (-)
-a = a - a
-a = (-a)
-a = -a
-a = -(a)
+a = a a A.+++ a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_name (operator)))
- (function
-  (variable)
-  (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
- (function
-  (variable)
-  (exp_parens (exp_negation (exp_name (variable)))))
- (function
-  (variable)
-  (exp_negation (exp_name (variable))))
- (function
-  (variable)
-  (exp_negation (exp_parens (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_infix
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (qualified_operator
+          (module)
+          (operator))
+        (exp_name
+          (variable))))))
 
 ================================================================================
 exp: tuple section
@@ -384,52 +822,81 @@ a = (a,,)
 a = (,a,)
 a = (,,a)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_tuple (exp_name (variable)) (comma)))
- (function
-  (variable)
-  (exp_tuple (exp_name (variable)) (comma) (comma)))
- (function
-  (variable)
-  (exp_tuple (comma) (exp_name (variable)) (comma)))
- (function
-  (variable)
-  (exp_tuple (comma) (comma) (exp_name (variable)))))
+  (declarations
+    (function
+      (variable)
+      (exp_tuple
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_tuple
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_tuple
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_tuple
+        (exp_name
+          (variable))))))
 
 ================================================================================
 exp: conditional
 ================================================================================
 
 a = if a then a else a
-a = if a; then a; else a
 a = if (if a then a else a) then a else a
 a = if if a then a else a then a else a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  name: (variable)
-  rhs: (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable))))
- (function
-  name: (variable)
-  rhs: (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable))))
- (function
-  name: (variable)
-  rhs: (exp_cond
-   if: (exp_parens (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable))))
-   then: (exp_name (variable))
-   else: (exp_name (variable))))
- (function
-  name: (variable)
-  rhs: (exp_cond
-   if: (exp_cond if: (exp_name (variable)) then: (exp_name (variable)) else: (exp_name (variable)))
-   then: (exp_name (variable))
-   else: (exp_name (variable)))))
+  declarations: (declarations
+    (function
+      name: (variable)
+      expression: (exp_cond
+        if: (exp_name
+          (variable))
+        then: (exp_name
+          (variable))
+        else: (exp_name
+          (variable))))
+    (function
+      name: (variable)
+      expression: (exp_cond
+        if: (exp_parens
+          (exp_cond
+            if: (exp_name
+              (variable))
+            then: (exp_name
+              (variable))
+            else: (exp_name
+              (variable))))
+        then: (exp_name
+          (variable))
+        else: (exp_name
+          (variable))))
+    (function
+      name: (variable)
+      expression: (exp_cond
+        if: (exp_cond
+          if: (exp_name
+            (variable))
+          then: (exp_name
+            (variable))
+          else: (exp_name
+            (variable)))
+        then: (exp_name
+          (variable))
+        else: (exp_name
+          (variable))))))
 
 ================================================================================
 exp: implicit
@@ -437,123 +904,50 @@ exp: implicit
 
 a = aa (a ?cmp)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_apply (exp_name (variable)) (exp_parens (exp_apply (exp_name (variable)) (exp_name (implicit_parid)))))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_parens
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (implicit_parid))))))))
 
 ================================================================================
-exp: where
-================================================================================
-
-a = a where a = a
-a =
-  a
-  where
-    a = a
-    a = a
-
----
-
-(haskell
- (function
-  (variable)
-  (exp_name (variable))
-  (where)
-  (decls (function (variable) (exp_name (variable)))))
- (function
-  (variable)
-  (exp_name (variable))
-  (where)
-  (decls
-   (function (variable) (exp_name (variable)))
-   (function (variable) (exp_name (variable))))))
-
-================================================================================
-exp: let
+exp: let basic
 ================================================================================
 
 a = let a = a
         a = a
       in a
 
-a = let a = a; a = a in a
-
-a = let a = a
-        a :: A
-        a = a in a
-
-a = let { a :: A;
-          a = a;
-          a :: A;
-          a = a; } in a
-
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_let_in
-   (exp_let
-    (decls
-     (function (variable) (exp_name (variable)))
-     (function (variable) (exp_name (variable)))))
-   (exp_in (exp_name (variable)))))
- (function
-  (variable)
-  (exp_let_in
-   (exp_let
-    (decls
-     (function (variable) (exp_name (variable)))
-     (function (variable) (exp_name (variable)))))
-   (exp_in (exp_name (variable)))))
- (function
-  (variable)
-  (exp_let_in
-   (exp_let
-    (decls
-     (function (variable) (exp_name (variable)))
-     (signature (variable) (type_name (type)))
-     (function (variable) (exp_name (variable)))))
-   (exp_in (exp_name (variable)))))
-  (function
-   (variable)
-   (exp_let_in
-    (exp_let
-     (decls
-      (signature (variable) (type_name (type)))
-      (function (variable) (exp_name (variable)))
-      (signature (variable) (type_name (type)))
-      (function (variable) (exp_name (variable)))))
-    (exp_in (exp_name (variable))))))
-
-================================================================================
-exp: case
-================================================================================
-
-a = case a of
-  A a -> a
-  A -> a
-  where a = 1
-        a = 2
-
----
-
-(haskell
- (function
-  (variable)
-   (exp_case
-    (exp_name (variable))
-    (alts
-     (alt (pat_apply (pat_name (constructor)) (pat_name (variable))) (exp_name (variable)))
-     (alt (pat_name (constructor)) (exp_name (variable)))))
-   (where)
-   (decls
-    (function (variable) (exp_literal (integer)))
-    (function (variable) (exp_literal (integer))))))
-
+  (declarations
+    (function
+      (variable)
+      (exp_let_in
+        (let
+          (binds
+            (function
+              (variable)
+              (exp_name
+                (variable)))
+            (function
+              (variable)
+              (exp_name
+                (variable)))))
+        (in
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: lambda case simple
@@ -568,27 +962,58 @@ a = a >>= \case
     a
   _ -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_lambda_case (alts (alt (pat_apply (pat_name (constructor)) (pat_name (variable))) (exp_name (variable))))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (variable))
-   (operator)
-   (exp_lambda_case
-    (alts
-     (alt
-      (pat_apply
-       (pat_name (constructor))
-       (pat_parens (pat_apply (pat_name (constructor)) (pat_wildcard) (pat_name (variable)))))
-      (exp_do
-       (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-       (stmt (exp_name (variable)))))
-     (alt (pat_wildcard) (exp_name (variable))))))))
+  (declarations
+    (function
+      (variable)
+      (exp_lambda_case
+        (alts
+          (alt
+            (pat_apply
+              (pat_name
+                (constructor))
+              (pat_name
+                (variable)))
+            (match
+              (exp_name
+                (variable)))))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_name
+          (variable))
+        (operator)
+        (exp_lambda_case
+          (alts
+            (alt
+              (pat_apply
+                (pat_name
+                  (constructor))
+                (pat_parens
+                  (pat_apply
+                    (pat_apply
+                      (pat_name
+                        (constructor))
+                      (pat_wildcard))
+                    (pat_name
+                      (variable)))))
+              (match
+                (exp_do
+                  (bind_statement
+                    (pat_name
+                      (variable))
+                    (exp_name
+                      (variable)))
+                  (exp_statement
+                    (exp_name
+                      (variable))))))
+            (alt
+              (pat_wildcard)
+              (match
+                (exp_name
+                  (variable))))))))))
 
 ================================================================================
 exp: lambda case and exp_infix
@@ -596,16 +1021,24 @@ exp: lambda case and exp_infix
 
 a = \case a -> a : a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_lambda_case
-   (alts
-    (alt
-     (pat_name (variable))
-     (exp_infix (exp_name (variable)) (constructor_operator) (exp_name (variable))))))))
+  (declarations
+    (function
+      (variable)
+      (exp_lambda_case
+        (alts
+          (alt
+            (pat_name
+              (variable))
+            (match
+              (exp_infix
+                (exp_name
+                  (variable))
+                (constructor_operator)
+                (exp_name
+                  (variable))))))))))
 
 ================================================================================
 exp: n-ary cases
@@ -615,45 +1048,40 @@ a = \cases
   A a a -> a
   a@(A a) a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  name: (variable)
-  rhs: (exp_lambda_cases
-   (nalts
-    (nalt
-     patterns: (nalt_patterns
-       (pat_name (constructor))
-       (pat_name (variable))
-       (pat_name (variable)))
-     rhs: (exp_name (variable)))
-    (nalt
-     patterns: (nalt_patterns
-       (pat_as
-        var: (variable)
-        pat: (pat_parens (pat_apply (pat_name (constructor)) (pat_name (variable)))))
-       (pat_name (variable)))
-     rhs: (exp_name (variable)))))))
-
-
-================================================================================
-exp: do and where
-================================================================================
-
-a = do
-  a
-  where
-    a = a
-
----
-
-(haskell
- (function
-  (variable)
-  (exp_do (stmt (exp_name (variable))))
-  (where)
-  (decls (function (variable) (exp_name (variable))))))
+  declarations: (declarations
+    (function
+      name: (variable)
+      expression: (exp_lambda_cases
+        alts: (alts
+          alt: (alt
+            patterns: (patterns
+              (pat_name
+                (constructor))
+              (pat_name
+                (variable))
+              (pat_name
+                (variable)))
+            match: (match
+              body: (exp_name
+                (variable))))
+          alt: (alt
+            patterns: (patterns
+              (pat_as
+                bind: (variable)
+                pattern: (pat_parens
+                  (pat_apply
+                    (pat_name
+                      (constructor))
+                    arg: (pat_name
+                      (variable)))))
+              (pat_name
+                (variable)))
+            match: (match
+              body: (exp_name
+                (variable)))))))))
 
 ================================================================================
 exp: do and let
@@ -666,44 +1094,44 @@ a a = do
   a <- a
   pure a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  name: (variable)
-  patterns: (patterns (pat_name (variable)))
-  rhs: (exp_do
-   (stmt (let (decls (function name: (variable) rhs: (exp_name (variable))))))
-   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (stmt (let (decls (function name: (variable) rhs: (exp_name (variable))))))
-   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (stmt (exp_apply (exp_name (variable)) (exp_name (variable)))))))
-
-================================================================================
-exp: do, let, where
-================================================================================
-
-a a = do
-  a <- a
-  let z = a
-  a
-  where a = pure a
-        a = 1
-
----
-
-(haskell
- (function
-  (variable)
-  (patterns (pat_name (variable)))
-  (exp_do
-   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (stmt (let (decls (function (variable) (exp_name (variable))))))
-   (stmt (exp_name (variable))))
-  (where)
-  (decls
-   (function (variable) (exp_apply (exp_name (variable)) (exp_name (variable))))
-   (function (variable) (exp_literal (integer))))))
+  declarations: (declarations
+    (function
+      name: (variable)
+      (patterns
+        (pat_name
+          (variable)))
+      expression: (exp_do
+        (let
+          (binds
+            (function
+              name: (variable)
+              expression: (exp_name
+                (variable)))))
+        (bind_statement
+          (pat_name
+            (variable))
+          (exp_name
+            (variable)))
+        (let
+          (binds
+            (function
+              name: (variable)
+              expression: (exp_name
+                (variable)))))
+        (bind_statement
+          (pat_name
+            (variable))
+          (exp_name
+            (variable)))
+        (exp_statement
+          (exp_apply
+            (exp_name
+              (variable))
+            arg: (exp_name
+              (variable))))))))
 
 ================================================================================
 exp: do statement with pattern lhs
@@ -713,14 +1141,24 @@ a = do
   ((), a) <- a
   a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt (bind_pattern (pat_tuple (pat_literal (con_unit)) (comma) (pat_name (variable))) (exp_name (variable))))
-   (stmt (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_do
+        (bind_statement
+          (pat_tuple
+            (pat_literal
+              (con_unit))
+            (pat_name
+              (variable)))
+          (exp_name
+            (variable)))
+        (exp_statement
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: qualified do
@@ -729,9 +1167,31 @@ exp: qualified do
 a = A.A.do
   a
 
----
+a = A.A.mdo
+  a
 
-(haskell (function (variable) (exp_do (do_module (module) (module)) (stmt (exp_name (variable))))))
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_do
+        (do_module
+          (module)
+          (module))
+        (exp_statement
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_do
+        (do_module
+          (module)
+          (module))
+        (exp_statement
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: i at eol (scanner tests for `in`)
@@ -739,20 +1199,59 @@ exp: i at eol (scanner tests for `in`)
 
 a = a i
 
----
+--------------------------------------------------------------------------------
 
-(haskell (function (variable) (exp_apply (exp_name (variable)) (exp_name (variable)))))
-
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_name
+          (variable))))))
 
 ================================================================================
 exp: record construction with wildcard
 ================================================================================
 
+a = A {.. }
+a = A { ..}
+a = A {..}
 a = A { .. }
 
----
+--------------------------------------------------------------------------------
 
-(haskell (function (variable) (exp_record (exp_name (constructor)) (exp_field (wildcard)))))
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_record
+        (exp_name
+          (constructor))
+        (exp_field
+          (wildcard))))
+    (function
+      (variable)
+      (exp_record
+        (exp_name
+          (constructor))
+        (exp_field
+          (wildcard))))
+    (function
+      (variable)
+      (exp_record
+        (exp_name
+          (constructor))
+        (exp_field
+          (wildcard))))
+    (function
+      (variable)
+      (exp_record
+        (exp_name
+          (constructor))
+        (exp_field
+          (wildcard))))))
 
 ================================================================================
 exp: record update
@@ -760,22 +1259,71 @@ exp: record update
 
 a = a { a = a, a = a ++ a }
 a = A { a = a } {a = a}
+a = a a {a = a}
+a = a a a {a = a}
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_record
-   (exp_name (variable))
-   (exp_field (variable) (exp_name (variable)))
-   (comma)
-   (exp_field (variable) (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))))
- (function
-  (variable)
-  (exp_record
-   (exp_record (exp_name (constructor)) (exp_field (variable) (exp_name (variable))))
-   (exp_field (variable) (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_record
+        (exp_name
+          (variable))
+        (exp_field
+          (variable)
+          (exp_name
+            (variable)))
+        (exp_field
+          (variable)
+          (exp_infix
+            (exp_name
+              (variable))
+            (operator)
+            (exp_name
+              (variable))))))
+    (function
+      (variable)
+      (exp_record
+        (exp_record
+          (exp_name
+            (constructor))
+          (exp_field
+            (variable)
+            (exp_name
+              (variable))))
+        (exp_field
+          (variable)
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_record
+          (exp_name
+            (variable))
+          (exp_field
+            (variable)
+            (exp_name
+              (variable))))))
+    (function
+      (variable)
+      (exp_apply
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (exp_record
+          (exp_name
+            (variable))
+          (exp_field
+            (variable)
+            (exp_name
+              (variable))))))))
 
 ================================================================================
 exp: record field pun
@@ -783,12 +1331,158 @@ exp: record field pun
 
 a = A { A.a }
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_record (exp_name (constructor)) (exp_field (qualified_variable (module) (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_record
+        (exp_name
+          (constructor))
+        (exp_field
+          (qualified_variable
+            (module)
+            (variable)))))))
+
+================================================================================
+exp: record zero indent update
+================================================================================
+
+a = do
+      a {
+a = a
+, a = a
+} a
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_do
+        (exp_statement
+          (exp_apply
+            (exp_record
+              (exp_name
+                (variable))
+              (exp_field
+                (variable)
+                (exp_name
+                  (variable)))
+              (exp_field
+                (variable)
+                (exp_name
+                  (variable))))
+            (exp_name
+              (variable))))))
+    (function
+      (variable)
+      (exp_name
+        (variable)))))
+
+================================================================================
+exp: record and minus
+================================================================================
+
+a = a {a} - a a
+a = a a {a} - a a
+a = a a a {a} - a a
+a = - a {a}
+a = - a a {a}
+a = - a a a {a}
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_infix
+        (exp_record
+          (exp_name
+            (variable))
+          (exp_field
+            (variable)))
+        (operator)
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_record
+            (exp_name
+              (variable))
+            (exp_field
+              (variable))))
+        (operator)
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (variable)))
+          (exp_record
+            (exp_name
+              (variable))
+            (exp_field
+              (variable))))
+        (operator)
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_negation
+        (exp_record
+          (exp_name
+            (variable))
+          (exp_field
+            (variable)))))
+    (function
+      (variable)
+      (exp_negation
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_record
+            (exp_name
+              (variable))
+            (exp_field
+              (variable))))))
+    (function
+      (variable)
+      (exp_negation
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (variable)))
+          (exp_record
+            (exp_name
+              (variable))
+            (exp_field
+              (variable))))))))
 
 ================================================================================
 exp: type application
@@ -798,88 +1492,42 @@ a = a @A
 a = a @a a
 a = a @A.A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_apply (exp_name (variable)) (exp_type_application (type_name (type)))))
- (function
-  (variable)
-  (exp_apply (exp_name (variable)) (exp_type_application (type_name (type_variable))) (exp_name (variable))))
- (function
-  (variable)
-  (exp_apply
-   (exp_name (variable))
-   (exp_type_application
-    (type_name (qualified_type (module) (type))))
-   (exp_name (variable)))))
-
-================================================================================
-exp: composition and qualified names
-================================================================================
-
-a = A.A.a . aa
-a = A.A.a . A.aa
-a = A.A.a. aa
-a = A.A.a. A.aa
-
-a = A.A.A . aa
-a = A.A.A . A.aa
-a = A.A.A. aa
-a = A.A.A. A.aa
-
----
-
-(haskell
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_variable (module) (module) (variable)))
-   (operator)
-   (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_variable (module) (module) (variable)))
-   (operator)
-   (exp_name (qualified_variable (module) (variable)))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_variable (module) (module) (variable)))
-   (operator)
-   (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_variable (module) (module) (variable)))
-   (operator)
-   (exp_name (qualified_variable (module) (variable)))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_constructor (module) (module) (constructor)))
-   (operator)
-   (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_constructor (module) (module) (constructor)))
-   (operator)
-   (exp_name (qualified_variable (module) (variable)))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_constructor (module) (module) (constructor)))
-   (operator)
-   (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix
-   (exp_name (qualified_constructor (module) (module) (constructor)))
-   (operator)
-   (exp_name (qualified_variable (module) (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_type_application
+          (type_name
+            (type)))))
+    (function
+      (variable)
+      (exp_apply
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_type_application
+            (type_name
+              (type_variable))))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_apply
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_type_application
+            (type_name
+              (qualified_type
+                (module)
+                (type)))))
+        (exp_name
+          (variable))))))
 
 ================================================================================
 exp: repeated type application
@@ -887,17 +1535,50 @@ exp: repeated type application
 
 a = a @A @A @A @A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-   (exp_apply
-    (exp_name (variable))
-    (exp_type_application (type_name (type)))
-    (exp_type_application (type_name (type)))
-    (exp_type_application (type_name (type)))
-    (exp_type_application (type_name (type))))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_apply
+          (exp_apply
+            (exp_apply
+              (exp_name
+                (variable))
+              (exp_type_application
+                (type_name
+                  (type))))
+            (exp_type_application
+              (type_name
+                (type))))
+          (exp_type_application
+            (type_name
+              (type))))
+        (exp_type_application
+          (type_name
+            (type)))))))
+
+================================================================================
+exp: type application with promoted literal
+================================================================================
+
+a = a @'[]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_type_application
+          (promoted
+            (type_literal
+              (con_list))))))))
 
 ================================================================================
 exp: block argument: lambda basic
@@ -905,14 +1586,21 @@ exp: block argument: lambda basic
 
 a = a \ a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_apply
-   (exp_name (variable))
-   (exp_lambda (pat_name (variable)) (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_lambda
+          (patterns
+            (pat_name
+              (variable)))
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: block argument: lambda case
@@ -920,14 +1608,23 @@ exp: block argument: lambda case
 
 a = a \case a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_apply
-   (exp_name (variable))
-   (exp_lambda_case (alts (alt (pat_name (variable)) (exp_name (variable))))))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_lambda_case
+          (alts
+            (alt
+              (pat_name
+                (variable))
+              (match
+                (exp_name
+                  (variable))))))))))
 
 ================================================================================
 exp: block argument: do
@@ -935,12 +1632,19 @@ exp: block argument: do
 
 a = a do a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_apply (exp_name (variable)) (exp_do (stmt (exp_name (variable)))))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_do
+          (exp_statement
+            (exp_name
+              (variable))))))))
 
 ================================================================================
 exp: block argument: let
@@ -948,34 +1652,25 @@ exp: block argument: let
 
 a = a let a = a in a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable)
-  (exp_apply
-  (exp_name (variable))
-   (exp_let_in (exp_let (decls (function (variable) (exp_name (variable))))) (exp_in (exp_name (variable)))))))
-
-================================================================================
-exp: block argument: if
-================================================================================
-
-a = a if a then a else a
-a = a if | a -> a
-
----
-
-(haskell
- (function
-  (variable)
-  (exp_apply
-   (exp_name (variable))
-   (exp_cond (exp_name (variable)) (exp_name (variable)) (exp_name (variable)))))
- (function
-  (variable)
-  (exp_apply
-   (exp_name (variable))
-   (exp_if_guard (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_let_in
+          (let
+            (binds
+              (function
+                (variable)
+                (exp_name
+                  (variable)))))
+          (in
+            (exp_name
+              (variable))))))))
 
 ================================================================================
 exp: block argument: case
@@ -983,13 +1678,119 @@ exp: block argument: case
 
 a = a case a of a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable)
-  (exp_apply
-   (exp_name (variable))
-   (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable))))))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_case
+          (exp_name
+            (variable))
+          (alts
+            (alt
+              (pat_name
+                (variable))
+              (match
+                (exp_name
+                  (variable))))))))))
+
+================================================================================
+exp: greedy block argument: let
+================================================================================
+
+a =
+  let a a = a in a
+  do a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_let_in
+        (let
+          (binds
+            (function
+              (variable)
+              (patterns
+                (pat_name
+                  (variable)))
+              (exp_name
+                (variable)))))
+        (in
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_do
+              (exp_statement
+                (exp_name
+                  (variable))))))))))
+
+================================================================================
+exp: greedy block argument: lambda
+================================================================================
+
+a =
+  a
+  \ a -> a
+  do a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_lambda
+          (patterns
+            (pat_name
+              (variable)))
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_do
+              (exp_statement
+                (exp_name
+                  (variable))))))))))
+
+================================================================================
+exp: greedy block argument: cond
+================================================================================
+
+a =
+  a
+  if a then a else a
+  do a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_name
+          (variable))
+        (exp_cond
+          (exp_name
+            (variable))
+          (exp_name
+            (variable))
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_do
+              (exp_statement
+                (exp_name
+                  (variable))))))))))
 
 ================================================================================
 exp: empty lambda case
@@ -999,11 +1800,17 @@ a = \case
 
 a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_lambda_case))
- (function (variable) (exp_name (variable))))
+  (declarations
+    (function
+      (variable)
+      (exp_lambda_case))
+    (function
+      (variable)
+      (exp_name
+        (variable)))))
 
 ================================================================================
 exp: empty case
@@ -1012,72 +1819,133 @@ exp: empty case
 a =
   case a of
 
-a = a
+a = (case a of)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_case (exp_name (variable))))
- (function (variable) (exp_name (variable))))
+  (declarations
+    (function
+      (variable)
+      (exp_case
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_parens
+        (exp_case
+          (exp_name
+            (variable))
+          (alts))))))
 
 ================================================================================
-exp: if guards
+exp: multi-way if
 ================================================================================
 
-a :: Int
 a = if | a -> a
        | a -> a
+a = if
+ | a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature
-  (variable)
-  (type_name (type)))
- (function
-  (variable)
-  (exp_if_guard
-   (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))
-   (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_multi_way_if
+        (match
+          (guards
+            (boolean_guard
+              (exp_name
+                (variable))))
+          (exp_name
+            (variable)))
+        (match
+          (guards
+            (boolean_guard
+              (exp_name
+                (variable))))
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_multi_way_if
+        (match
+          (guards
+            (boolean_guard
+              (exp_name
+                (variable))))
+          (exp_name
+            (variable)))))))
 
 ================================================================================
-exp: multiple if guards in a guard rhs
+exp: multi-way if with two matches in a guard rhs
 ================================================================================
 
 a | a = if | a -> a
            | a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (guard_equation
-   (guards (guard (exp_name (variable))))
-   (exp_if_guard
-    (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))
-    (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))))))
+  (declarations
+    (function
+      (variable)
+      (guard_equation
+        (guards
+          (boolean_guard
+            (exp_name
+              (variable))))
+        (exp_multi_way_if
+          (match
+            (guards
+              (boolean_guard
+                (exp_name
+                  (variable))))
+            (exp_name
+              (variable)))
+          (match
+            (guards
+              (boolean_guard
+                (exp_name
+                  (variable))))
+            (exp_name
+              (variable))))))))
 
 ================================================================================
-exp: list with if guards
+exp: list with multi-way if
 ================================================================================
 
 a = [if | a, a <- a -> a | a -> a]
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_list
-   (exp_if_guard
-    (gdpat
-     (guards
-      (guard (exp_name (variable)))
-      (comma)
-      (guard (pattern_guard (pat_name (variable)) (exp_name (variable)))))
-     (exp_name (variable)))
-    (gdpat (guards (guard (exp_name (variable)))) (exp_name (variable)))))))
+  (declarations
+    (function
+      (variable)
+      (exp_list
+        (exp_multi_way_if
+          (match
+            (guards
+              (boolean_guard
+                (exp_name
+                  (variable)))
+              (pattern_guard
+                (pat_name
+                  (variable))
+                (exp_name
+                  (variable))))
+            (exp_name
+              (variable)))
+          (match
+            (guards
+              (boolean_guard
+                (exp_name
+                  (variable))))
+            (exp_name
+              (variable))))))))
 
 ================================================================================
 exp: let with sig on rhs
@@ -1085,14 +1953,25 @@ exp: let with sig on rhs
 
 a = let a = a in a :: A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_let_in
-   (exp_let (decls (function (variable) (exp_name (variable)))))
-   (exp_in (exp_name (variable)) (type_name (type))))))
+  (declarations
+    (function
+      (variable)
+      (exp_let_in
+        (let
+          (binds
+            (function
+              (variable)
+              (exp_name
+                (variable)))))
+        (in
+          (exp_annotated
+            (exp_name
+              (variable))
+            (type_name
+              (type))))))))
 
 ================================================================================
 exp: list con
@@ -1100,9 +1979,14 @@ exp: list con
 
 a = []
 
----
+--------------------------------------------------------------------------------
 
-(haskell (function (variable) (exp_literal (con_list))))
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_literal
+        (con_list)))))
 
 ================================================================================
 exp: tuple con
@@ -1110,9 +1994,14 @@ exp: tuple con
 
 a = (,,,)
 
----
+--------------------------------------------------------------------------------
 
-(haskell (function (variable) (exp_literal (con_tuple (comma) (comma) (comma)))))
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_literal
+        (con_tuple)))))
 
 ================================================================================
 exp: qualified symop
@@ -1120,19 +2009,69 @@ exp: qualified symop
 
 a = a A.!? a
 a = (A..!?)
+a = a A.. a
+a = a a a A.!? a
+a = a A.!? a a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_infix
-   (exp_name (variable))
-   (qualified_operator (module) (operator))
-   (exp_name (variable))))
- (function
-  (variable)
-  (exp_name (qualified_operator (module) (operator)))))
+  (declarations
+    (function
+      (variable)
+      (exp_infix
+        (exp_name
+          (variable))
+        (qualified_operator
+          (module)
+          (operator))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_name
+        (qualified_operator
+          (module)
+          (operator))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_name
+          (variable))
+        (qualified_operator
+          (module)
+          (operator))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (variable)))
+          (exp_name
+            (variable)))
+        (qualified_operator
+          (module)
+          (operator))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_name
+          (variable))
+        (qualified_operator
+          (module)
+          (operator))
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: th-promoted qualified symop
@@ -1140,12 +2079,16 @@ exp: th-promoted qualified symop
 
 a = '(A..&)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_th_quoted_name (qualified_operator (module) (operator)))))
+  (declarations
+    (function
+      (variable)
+      (exp_th_quoted_name
+        (qualified_operator
+          (module)
+          (operator))))))
 
 ================================================================================
 exp: implicit parameter in do-let
@@ -1155,23 +2098,78 @@ a = do
   let ?a = a
   a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do (stmt (let (decls (function (implicit_parid) (exp_name (variable))))))
-   (stmt (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_do
+        (let
+          (binds
+            (function
+              (implicit_parid)
+              (exp_name
+                (variable)))))
+        (exp_statement
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: negation in tuple
 ================================================================================
 
-spec = (-a, a)
+a = (-a, a)
 
----
+--------------------------------------------------------------------------------
 
-(haskell (function (variable) (exp_tuple (exp_negation (exp_name (variable))) (comma) (exp_name (variable)))))
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_tuple
+        (exp_negation
+          (exp_name
+            (variable)))
+        (exp_name
+          (variable))))))
+
+================================================================================
+exp: negation in section
+================================================================================
+
+a = (-a :)
+a = (- a a :)
+a = (+ -a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_section_left
+        (exp_negation
+          (exp_name
+            (variable)))
+        (constructor_operator)))
+    (function
+      (variable)
+      (exp_section_left
+        (exp_negation
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (variable))))
+        (constructor_operator)))
+    (function
+      (variable)
+      (exp_section_right
+        (operator)
+        (exp_negation
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: unboxed tuple
@@ -1181,31 +2179,31 @@ a :: (Int#, Int#)
 a :: (# Int, Int #)
 a = (# a, a #)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature (variable) (type_tuple (type_name (type)) (comma) (type_name (type))))
- (signature (variable) (type_unboxed_tuple (type_name (type)) (comma) (type_name (type))))
- (function (variable) (exp_unboxed_tuple (exp_name (variable)) (comma) (exp_name (variable)))))
-
-================================================================================
-exp: unboxed nullary tuple
-================================================================================
-
-a = (# #)
-a = (##)
-
----
-
-(haskell
- (function
-  (variable)
-  (exp_unboxed_tuple))
- (function
-  (variable)
-  (exp_name
-   (operator))))
-
+  (declarations
+    (signature
+      (variable)
+      (type_tuple
+        (type_name
+          (type))
+        (type_name
+          (type))))
+    (signature
+      (variable)
+      (type_unboxed_tuple
+        (type_name
+          (type))
+        (type_name
+          (type))))
+    (function
+      (variable)
+      (exp_unboxed_tuple
+        (exp_name
+          (variable))
+        (exp_name
+          (variable))))))
 
 ================================================================================
 exp: unboxed unary tuple
@@ -1213,18 +2211,22 @@ exp: unboxed unary tuple
 
 a = (# A a + a #)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_unboxed_tuple
-   (exp_infix
-    (exp_apply
-     (exp_name (constructor))
-     (exp_name (variable)))
-    (operator)
-    (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_unboxed_tuple
+        (exp_infix
+          (exp_apply
+            (exp_name
+              (constructor))
+            (exp_name
+              (variable)))
+          (operator)
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: section of unboxed tuple
@@ -1233,22 +2235,20 @@ exp: section of unboxed tuple
 a = (# ,,a, #)
 a = (# a,, #)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_unboxed_tuple
-   (comma)
-   (comma)
-   (exp_name (variable))
-   (comma)))
- (function
-  (variable)
-  (exp_unboxed_tuple
-   (exp_name (variable))
-   (comma)
-   (comma))))
+  (declarations
+    (function
+      (variable)
+      (exp_unboxed_tuple
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_unboxed_tuple
+        (exp_name
+          (variable))))))
 
 ================================================================================
 exp: unboxed sum
@@ -1256,54 +2256,84 @@ exp: unboxed sum
 
 a :: (# A | (# A, A #) | A #)
 a = (# a | | #)
-a = (# | a #)
+a = (#| a #)
 
----
-
-(haskell
- (signature
-  (variable)
-  (type_unboxed_sum
-   (type_name (type))
-   (type_unboxed_tuple (type_name (type)) (comma) (type_name (type)))
-   (type_name (type))))
- (function
-  (variable)
-  (exp_unboxed_sum
-   (exp_name (variable))))
- (function
-  (variable)
-  (exp_unboxed_sum
-   (exp_name (variable)))))
-
-================================================================================
-exp: error: unboxed sum without space
-================================================================================
-
-a = (#| 5 #)
-
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_section_right
-   (operator)
-   (exp_infix
-    (exp_literal (integer))
-    (operator)
+  (declarations
+    (signature
+      (variable)
+      (type_unboxed_sum
+        (type_name
+          (type))
+        (type_unboxed_tuple
+          (type_name
+            (type))
+          (type_name
+            (type)))
+        (type_name
+          (type))))
+    (function
+      (variable)
+      (exp_unboxed_sum
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_unboxed_sum
+        (exp_name
+          (variable))))))
+
+================================================================================
+exp: error: unboxed sum with missing space between bar and closing bracket
+================================================================================
+
+a = (# a |#)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (ERROR
+    (variable)
     (exp_name
-     (variable (MISSING _varid)))))))
+      (variable))
+    (operator)))
 
 ================================================================================
 exp: label
 ================================================================================
 
 a = a #a a
+a = (a)#a
+a = #øøø
 
----
+--------------------------------------------------------------------------------
 
-(haskell (function (variable) (exp_apply (exp_name (variable)) (exp_name (label)) (exp_name (variable)))))
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (label)))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_apply
+        (exp_parens
+          (exp_name
+            (variable)))
+        (exp_name
+          (label))))
+    (function
+      (variable)
+      (exp_name
+        (label)))))
 
 ================================================================================
 exp: TransformListComp
@@ -1319,54 +2349,111 @@ a = [
 
 a = [group using a, group by a using a, by, a by, a by a, using, a using, a using a]
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_list_comprehension
-   (exp_name (variable))
-   (qual (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (comma)
-   (qual (transform (exp_name (variable)) (type_name (type)) (exp_name (variable))))
-   (comma)
-   (qual
-    (transform (exp_apply (exp_name (variable)) (exp_name (variable)))))
-   (comma)
-   (qual
-    (transform
-     (exp_apply
-      (exp_name (variable))
-      (exp_name (variable))
-      (exp_name (variable))
-      (exp_name (variable))
-      (exp_name (variable)))))
-   (comma)
-   (qual (transform (exp_apply (exp_name (variable)) (exp_name (variable)))))))
-  (function
-   (variable)
-   (exp_list
-    (exp_apply (exp_name (variable)) (exp_name (variable)) (exp_name (variable)))
-    (comma)
-    (exp_apply
-     (exp_name (variable))
-     (exp_name (variable))
-     (exp_name (variable))
-     (exp_name (variable))
-     (exp_name (variable)))
-    (comma)
-    (exp_name (variable))
-    (comma)
-    (exp_apply (exp_name (variable)) (exp_name (variable)))
-    (comma)
-    (exp_apply (exp_name (variable)) (exp_name (variable)) (exp_name (variable)))
-    (comma)
-    (exp_name (variable))
-    (comma)
-    (exp_apply (exp_name (variable)) (exp_name (variable)))
-    (comma)
-    (exp_apply (exp_name (variable)) (exp_name (variable)) (exp_name (variable)))))
-  )
+  declarations: (declarations
+    (function
+      name: (variable)
+      expression: (exp_list_comprehension
+        (exp_name
+          (variable))
+        (qualifiers
+          qualifier: (generator
+            (pat_name
+              (variable))
+            (exp_name
+              (variable)))
+          qualifier: (transform
+            (exp_annotated
+              (exp_name
+                (variable))
+              (type_name
+                (type)))
+            (exp_name
+              (variable)))
+          qualifier: (transform
+            (exp_apply
+              (exp_name
+                (variable))
+              arg: (exp_name
+                (variable))))
+          qualifier: (transform
+            (exp_apply
+              (exp_apply
+                (exp_apply
+                  (exp_apply
+                    (exp_name
+                      (variable))
+                    arg: (exp_name
+                      (variable)))
+                  arg: (exp_name
+                    (variable)))
+                arg: (exp_name
+                  (variable)))
+              arg: (exp_name
+                (variable))))
+          qualifier: (transform
+            (exp_apply
+              (exp_name
+                (variable))
+              arg: (exp_name
+                (variable)))))))
+    (function
+      name: (variable)
+      expression: (exp_list
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            arg: (exp_name
+              (variable)))
+          arg: (exp_name
+            (variable)))
+        (exp_apply
+          (exp_apply
+            (exp_apply
+              (exp_apply
+                (exp_name
+                  (variable))
+                arg: (exp_name
+                  (variable)))
+              arg: (exp_name
+                (variable)))
+            arg: (exp_name
+              (variable)))
+          arg: (exp_name
+            (variable)))
+        (exp_name
+          (variable))
+        (exp_apply
+          (exp_name
+            (variable))
+          arg: (exp_name
+            (variable)))
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            arg: (exp_name
+              (variable)))
+          arg: (exp_name
+            (variable)))
+        (exp_name
+          (variable))
+        (exp_apply
+          (exp_name
+            (variable))
+          arg: (exp_name
+            (variable)))
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            arg: (exp_name
+              (variable)))
+          arg: (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: brace layout after lambda case
@@ -1374,16 +2461,20 @@ exp: brace layout after lambda case
 
 a = \case { a -> a }
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_lambda_case
-   (alts
-    (alt
-     (pat_name (variable))
-     (exp_name (variable)))))))
+  (declarations
+    (function
+      (variable)
+      (exp_lambda_case
+        (alts
+          (alt
+            (pat_name
+              (variable))
+            (match
+              (exp_name
+                (variable)))))))))
 
 ================================================================================
 exp: unicode do bind arrow
@@ -1393,14 +2484,21 @@ a = do
   a ← a
   a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (stmt (exp_name (variable))))))
+  (declarations
+    (function
+      (variable)
+      (exp_do
+        (bind_statement
+          (pat_name
+            (variable))
+          (exp_name
+            (variable)))
+        (exp_statement
+          (exp_name
+            (variable)))))))
 
 ================================================================================
 exp: field projection with OverloadedRecordDot
@@ -1410,24 +2508,58 @@ a = a.a
 a = (a + a).a
 a = a.a.a.a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_projection (exp_name (variable)) (variable)))
- (function
-  (variable)
-  (exp_projection
-   (exp_parens (exp_infix (exp_name (variable)) (operator) (exp_name (variable))))
-   (variable)))
- (function
-  (variable)
-  (exp_projection
-   (exp_projection
-    (exp_projection (exp_name (variable)) (variable))
-    (variable))
-   (variable))))
+  (declarations
+    (function
+      (variable)
+      (exp_projection
+        (exp_name
+          (variable))
+        (variable)))
+    (function
+      (variable)
+      (exp_projection
+        (exp_parens
+          (exp_infix
+            (exp_name
+              (variable))
+            (operator)
+            (exp_name
+              (variable))))
+        (variable)))
+    (function
+      (variable)
+      (exp_projection
+        (exp_projection
+          (exp_projection
+            (exp_name
+              (variable))
+            (variable))
+          (variable))
+        (variable)))))
+
+================================================================================
+exp: projection in infix
+================================================================================
+
+a = a ++ a.a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_infix
+        (exp_name
+          (variable))
+        (operator)
+        (exp_projection
+          (exp_name
+            (variable))
+          (variable))))))
 
 ================================================================================
 exp: field selector from projection
@@ -1436,32 +2568,36 @@ exp: field selector from projection
 a = (.a) a
 a = (.a).a.a
 a = ( .a)
+a = (
+  .a)
 
----
-
-(haskell
- (function
-  (variable)
-  (exp_apply (exp_projection_selector (variable)) (exp_name (variable))))
- (function
-  (variable)
-  (exp_projection (exp_projection (exp_projection_selector (variable)) (variable)) (variable)))
- (function
-  (variable)
-  (exp_projection_selector (variable))))
-
-================================================================================
-exp: prefix notation operator starting with dot
-================================================================================
-
-a = (.)
-a = (.=)
-
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_name (operator)))
- (function (variable) (exp_name (operator))))
+  (declarations
+    (function
+      (variable)
+      (exp_apply
+        (exp_projection_selector
+          (variable))
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_projection
+        (exp_projection
+          (exp_projection_selector
+            (variable))
+          (variable))
+        (variable)))
+    (function
+      (variable)
+      (exp_projection_selector
+        (variable)))
+    (function
+      (variable)
+      (exp_projection_selector
+        (variable)))))
 
 ================================================================================
 exp: OverloadedRecordUpdate
@@ -1469,11 +2605,413 @@ exp: OverloadedRecordUpdate
 
 a = a {a.a.a = a}
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  name: (variable)
-  rhs: (exp_record
-   (exp_name (variable))
-   (exp_field field: (variable) subfield: (variable) subfield: (variable) (exp_name (variable))))))
+  declarations: (declarations
+    (function
+      name: (variable)
+      expression: (exp_record
+        (exp_name
+          (variable))
+        (exp_field
+          field: (variable)
+          subfield: (variable)
+          subfield: (variable)
+          (exp_name
+            (variable)))))))
+
+================================================================================
+exp: lambda with $ in list
+================================================================================
+
+a = [a $ \a -> a]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_list
+        (exp_infix
+          (exp_name
+            (variable))
+          (operator)
+          (exp_lambda
+            (patterns
+              (pat_name
+                (variable)))
+            (exp_name
+              (variable))))))))
+
+================================================================================
+exp: annotation on list element
+================================================================================
+
+a = [a :: A, a :: A]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_list
+        (exp_annotated
+          (exp_name
+            (variable))
+          (type_name
+            (type)))
+        (exp_annotated
+          (exp_name
+            (variable))
+          (type_name
+            (type)))))))
+
+================================================================================
+exp: greedy block arg in arithmetic sequence
+================================================================================
+
+a = [a \ a -> a .. a :: A]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_arithmetic_sequence
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_lambda
+            (patterns
+              (pat_name
+                (variable)))
+            (exp_name
+              (variable))))
+        (exp_annotated
+          (exp_name
+            (variable))
+          (type_name
+            (type)))))))
+
+================================================================================
+exp: annotation on tuple element
+================================================================================
+
+a = (a :: A, a :: A)
+a = (# a :: A, a :: A #)
+a = (# | | a :: A | #)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_tuple
+        (exp_annotated
+          (exp_name
+            (variable))
+          (type_name
+            (type)))
+        (exp_annotated
+          (exp_name
+            (variable))
+          (type_name
+            (type)))))
+    (function
+      (variable)
+      (exp_unboxed_tuple
+        (exp_annotated
+          (exp_name
+            (variable))
+          (type_name
+            (type)))
+        (exp_annotated
+          (exp_name
+            (variable))
+          (type_name
+            (type)))))
+    (function
+      (variable)
+      (exp_unboxed_sum
+        (exp_annotated
+          (exp_name
+            (variable))
+          (type_name
+            (type)))))))
+
+================================================================================
+exp: lenient trailing comma in list
+================================================================================
+
+a =
+  [
+    a,
+    A,
+  ]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_list
+        (exp_name
+          (variable))
+        (exp_name
+          (constructor))))))
+
+================================================================================
+exp: dollar infix with applications in operands
+================================================================================
+
+a = a a $ a a a
+a = a a $$ a a a
+a = a a $$$ a
+a = a a a $$$$ a a a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_infix
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (operator)
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (variable)))
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (operator)
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (variable)))
+          (exp_name
+            (variable)))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_apply
+          (exp_name
+            (variable))
+          (exp_name
+            (variable)))
+        (operator)
+        (exp_name
+          (variable))))
+    (function
+      (variable)
+      (exp_infix
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (variable)))
+          (exp_name
+            (variable)))
+        (operator)
+        (exp_apply
+          (exp_apply
+            (exp_name
+              (variable))
+            (exp_name
+              (variable)))
+          (exp_name
+            (variable)))))))
+
+================================================================================
+exp: pattern guard annotation
+================================================================================
+
+a | a <- a :: a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (guard_equation
+        (guards
+          (pattern_guard
+            (pat_name
+              (variable))
+            (exp_annotated
+              (exp_name
+                (variable))
+              (type_name
+                (type_variable)))))
+        (exp_name
+          (variable))))))
+
+================================================================================
+exp: ParallelListComp
+================================================================================
+
+a = [a | a <- a | a <- a, let a = a | a <- a]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_list_comprehension
+        (exp_name
+          (variable))
+        (qualifiers
+          (generator
+            (pat_name
+              (variable))
+            (exp_name
+              (variable))))
+        (qualifiers
+          (generator
+            (pat_name
+              (variable))
+            (exp_name
+              (variable)))
+          (let
+            (binds
+              (function
+                (variable)
+                (exp_name
+                  (variable))))))
+        (qualifiers
+          (generator
+            (pat_name
+              (variable))
+            (exp_name
+              (variable))))))))
+
+================================================================================
+exp: case with multiple alts and matches
+================================================================================
+
+a = case a of
+  a | a, a <- a, let a = a -> a
+    | a -> a
+  a | let a = a, a <- a, a -> a
+    | a -> a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_case
+        (exp_name
+          (variable))
+        (alts
+          (alt
+            (pat_name
+              (variable))
+            (match
+              (guards
+                (boolean_guard
+                  (exp_name
+                    (variable)))
+                (pattern_guard
+                  (pat_name
+                    (variable))
+                  (exp_name
+                    (variable)))
+                (let
+                  (binds
+                    (function
+                      (variable)
+                      (exp_name
+                        (variable))))))
+              (exp_name
+                (variable)))
+            (match
+              (guards
+                (boolean_guard
+                  (exp_name
+                    (variable))))
+              (exp_name
+                (variable))))
+          (alt
+            (pat_name
+              (variable))
+            (match
+              (guards
+                (let
+                  (binds
+                    (function
+                      (variable)
+                      (exp_name
+                        (variable)))))
+                (pattern_guard
+                  (pat_name
+                    (variable))
+                  (exp_name
+                    (variable)))
+                (boolean_guard
+                  (exp_name
+                    (variable))))
+              (exp_name
+                (variable)))
+            (match
+              (guards
+                (boolean_guard
+                  (exp_name
+                    (variable))))
+              (exp_name
+                (variable)))))))))
+
+================================================================================
+exp: identifier named then#
+================================================================================
+
+-- If the hash is not included in the predicate for non-id characters, the
+-- scanner would close the do layout before the `then#`, mistaking it for a
+-- `then`.
+a = if do a then# then a else a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (function
+      (variable)
+      (exp_cond
+        (exp_do
+          (exp_statement
+            (exp_apply
+              (exp_name
+                (variable))
+              (exp_name
+                (variable)))))
+        (exp_name
+          (variable))
+        (exp_name
+          (variable))))))

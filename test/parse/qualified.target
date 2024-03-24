@@ -1,0 +1,18 @@
+(haskell [0, 0] - [3, 0]
+  imports: (imports [0, 0] - [2, 0]
+    (import [0, 0] - [0, 16]
+      (qualified_module [0, 7] - [0, 12]
+        (module [0, 7] - [0, 8])
+        (module [0, 9] - [0, 10])
+        (module [0, 11] - [0, 12]))
+      (import_list [0, 13] - [0, 16]
+        (import_item [0, 14] - [0, 15]
+          (type [0, 14] - [0, 15])))))
+  declarations: (declarations [2, 0] - [3, 0]
+    (function [2, 0] - [2, 9]
+      name: (variable [2, 0] - [2, 1])
+      expression: (exp_name [2, 4] - [2, 9]
+        (qualified_variable [2, 4] - [2, 9]
+          (module [2, 4] - [2, 5])
+          (module [2, 6] - [2, 7])
+          (variable [2, 8] - [2, 9]))))))

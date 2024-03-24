@@ -2,10 +2,12 @@ node_modules
 build
 *.log
 package-lock.json
-repos
-examples/*
-!examples/.gitkeep
+/test/libs/*
+!/test/libs/.gitkeep
 .gdb_history
 *.o
 *.so
 /.build/
+/target/
+/dist-newstyle
+/.lib/

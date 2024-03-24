@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+# Usage: test/parse-lib lib_name [native|wasm]
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Change directory to project root.
+cd "$(dirname "$0")/.."
+
+# Get the repository name
+dir=$1
+name=${dir##*/}
+lib=test/libs/$dir
+
+# Parse libs in 'native' or 'wasm' mode.
+mode=${2:-native}
+
+if [[ -z $name ]]
+then
+  echo 'Please specify a subdir of test/'
+  exit 1
+fi
+
+failures_file="test/known-failures/${name}.txt"
+if [[ ! -f $failures_file ]]
+then
+  failures_file=/dev/null
+fi
+
+files_to_parse=$(comm -13 <(sort $failures_file) <(find $lib -name '*.hs' | sort))
+
+if [ "$mode" == "native" ]; then
+  # Ensure the scanner was recompiled
+  tree-sitter test -f 'just compile it' >/dev/null
+elif [ "$mode" == "wasm" ]; then
+  # Ensure tree-sitter-haskell.wasm was compiled
+  make node_modules/web-tree-sitter -s
+  make tree-sitter-haskell.wasm -s
+else
+  echo "Unsupported mode: $mode"
+fi
+
+start=$(date '+%s.%N')
+if [ "$mode" == "native" ]; then
+  echo $files_to_parse | xargs -n 2000 tree-sitter parse -q
+elif [ "$mode" == "wasm" ]; then
+  echo $files_to_parse | xargs -n 2000 ./script/tree-sitter-parse.js
+fi
+end=$(date '+%s.%N')
+
+skipped=$( cat $failures_file | wc -w )
+parsed=$( echo $files_to_parse | wc -w )
+lines=$( cat $files_to_parse | wc -l )
+chars=$( cat $files_to_parse | wc -c )
+total=$((parsed+skipped))
+percent=$(bc -l <<< "100*$parsed/$total")
+duration=$(bc -l <<< "($end - $start) * 1000.0")
+rate=$( bc -l <<< "$duration * 1000.0 / $lines" )
+char_rate=$( bc -l <<< "$duration * 1000000.0 / $chars" )
+
+printf "\e[34m$name\e[m: \e[35m%.2fms\e[m\n  " $duration
+
+if [[ "$(bc -l <<< "$percent < 99.999")" == "1" ]]
+then
+  printf "%.2f%% of " $percent
+fi
+
+printf "%d files, %d lines\n  \e[33m%.2fµs\e[m / line\n  \e[33m%.0fns\e[m / char\n" $total $lines $rate $char_rate
