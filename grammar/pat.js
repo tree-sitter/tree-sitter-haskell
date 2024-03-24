@@ -1,100 +1,149 @@
-const {parens} = require('./util.js')
+const {
+  sep1,
+  sep2,
+  sep,
+  parens,
+  braces,
+  brackets,
+  unboxed_tuple_full,
+  unboxed_sum_single,
+} = require('./util.js')
 
 module.exports = {
-  pat_field: $ => choice(
+
+  // ------------------------------------------------------------------------
+  // tuples and parens
+  // ------------------------------------------------------------------------
+
+  _pat_parens: $ => parens($, field('pattern', $._pat_texp)),
+
+  _pat_tuple_elems: $ => sep2(',', field('element', $._pat_texp)),
+
+  _pat_tuple: $ => parens($, $._pat_tuple_elems),
+
+  _pat_unboxed_tuple: $ => unboxed_tuple_full($, $._pat_texp),
+
+  _pat_unboxed_sum: $ => unboxed_sum_single($, $._pat_texp),
+
+  _pat_list: $ => brackets($, sep1(',', field('element', $._pat_texp)), optional(',')),
+
+  // ------------------------------------------------------------------------
+  // record
+  // ------------------------------------------------------------------------
+
+  field_pattern: $ => choice(
     alias('..', $.wildcard),
-    seq($._qvar, optional(seq('=', $._nested_pat))),
+    seq(field('field', $._field_names), optional(seq('=', field('pattern', $._pat_texp)))),
   ),
 
-  pat_fields: $ => braces(optional(sep1($.comma, $.pat_field))),
+  _pat_record: $ => prec('record', seq(
+    field('constructor', $.pattern),
+    braces($, sep(',', field('field', $.field_pattern))),
+  )),
 
-  pat_name: $ => $._var,
-
-  pat_as: $ => seq(field('var', $.variable), token.immediate('@'), field('pat', $._apat)),
+  // ------------------------------------------------------------------------
+  // misc
+  // ------------------------------------------------------------------------
 
   /**
-   * Needed non-inlined for conflict definition.
+   * This dynamic precedence penalty is relevant for the conflict between `function` and `bind`.
+   * Consider:
+   *
+   * > f (A a) = exp
+   *
+   * Because of the "single choice disambiguated with named precedences" approach used for `pattern`, the left node in
+   * `pat_apply` can be a variable, even though it's not valid Haskell.
+   * While the static prec 'pat-name' covers this at generation time, Haskell's ambiguity requires us to use a runtime
+   * conflict for `function`/`bind`, where static prec is ineffective.
+   * Giving the reduction of `_var` to `pattern` a strong negative dynamic prec ensures that the runtime branch for
+   * `bind` has lower precedence because of `f`, so `function` always wins.
+   *
+   * While `bind` usually has a lower score than `function` anyway in this situation because it is slightly more
+   * complex, there are never any guarantees for runtime conflicts.
+   * In particular, the presence of minor parse errors later in the declaration can tip the scales randomly.
    */
-  _pat_constructor: $ => alias($._qcon, $.pat_name),
-
-  pat_record: $ => seq(field('con', $._pat_constructor), field('fields', $.pat_fields)),
-
-  pat_wildcard: _ => '_',
-
-  pat_parens: $ => parens($._nested_pat),
-
-  pat_tuple: $ => parens(sep2($.comma, $._nested_pat)),
-
-  pat_unboxed_tuple: $ => seq($._unboxed_open, sep($.comma, $._nested_pat), $._unboxed_close),
-
-  _pat_unboxed_sum: $ => sep2('|', optional($._nested_pat)),
-
-  pat_unboxed_sum: $ => seq($._unboxed_open, $._pat_unboxed_sum, $._unboxed_close),
-
-  pat_list: $ => brackets(sep1($.comma, $._nested_pat)),
-
-  pat_strict: $ => seq($._strict, $._apat),
-
-  pat_irrefutable: $ => seq($._lazy, $._apat),
-
-  pat_type_binder: $ => seq('@', $._atype),
-
-  _apat: $ => choice(
-    $.pat_name,
-    $.pat_as,
-    $._pat_constructor,
-    $.pat_record,
-    alias($.literal, $.pat_literal),
-    $.pat_wildcard,
-    $.pat_parens,
-    $.pat_tuple,
-    $.pat_unboxed_tuple,
-    $.pat_unboxed_sum,
-    $.pat_list,
-    $.pat_strict,
-    $.pat_irrefutable,
-    $.pat_type_binder,
-    $.splice,
-    $.quasiquote,
+  _pat_name: $ => choice(
+    prec('pat-name', prec.dynamic(-1000, $._var)),
+    $._cons,
   ),
 
-  pat_negation: $ => seq('-', $._apat),
+  _pat_as: $ => prec('prefix', seq(field('bind', $.variable), $._tight_at, field('pattern', $.pattern))),
 
-  /**
-   * In patterns, application is only legal if the first element is a con.
-   */
-  pat_apply: $ => seq($._pat_constructor, repeat1($._apat)),
+  _pat_wildcard: _ => '_',
 
-  _lpat: $ => choice(
-    $._apat,
-    $.pat_negation,
-    $.pat_apply,
+  _pat_strict: $ => prec('prefix', seq($._any_prefix_bang, field('pattern', $.pattern))),
+
+  _pat_irrefutable: $ => prec('prefix', seq($._any_prefix_tilde, field('pattern', $.pattern))),
+
+  // ------------------------------------------------------------------------
+  // application
+  // ------------------------------------------------------------------------
+
+  _pat_apply_arg: $ => choice(
+    $.pattern,
+    alias($._at_type, $.type_binder),
+    $.explicit_type,
   ),
 
-  pat_infix: $ => seq($._lpat, $._qconop, $._pat),
+  _pat_apply: $ => prec.left('apply', seq(
+    field('function', $.pattern),
+    field('argument', $._pat_apply_arg),
+  )),
 
-  /**
-   * Without the precs, a conflict is needed.
-   */
+  // ------------------------------------------------------------------------
+  // operators
+  // ------------------------------------------------------------------------
+
+  _pat_negation: $ => seq('-', field('number', $._number)),
+
+  _pat_infix: $ => prec.right('infix', seq(
+    field('left_operand', $.pattern),
+    optional($._cond_no_section_op),
+    field('operator', choice(
+      $.constructor_operator,
+      $._conids_ticked,
+      seq($._cond_qualified_op, $._qconsym),
+    )),
+    field('right_operand', $.pattern),
+  )),
+
+  // ------------------------------------------------------------------------
+  // top level
+  // ------------------------------------------------------------------------
+
+  pattern: $ => choice(
+    alias($._pat_infix, $.infix),
+    alias($._pat_negation, $.negation),
+    alias($._pat_apply, $.apply),
+    $._pat_name,
+    alias($._pat_as, $.as),
+    alias($._pat_record, $.record),
+    alias($._pat_wildcard, $.wildcard),
+    alias($._pat_parens, $.parens),
+    alias($._pat_tuple, $.tuple),
+    alias($._pat_unboxed_tuple, $.unboxed_tuple),
+    alias($._pat_unboxed_sum, $.unboxed_sum),
+    alias($._pat_list, $.list),
+    alias($._plist, $.list),
+    alias($._pat_strict, $.strict),
+    alias($._pat_irrefutable, $.irrefutable),
+    $._universal,
+  ),
+
+  patterns: $ => repeat1(prec('patterns', $._pat_apply_arg)),
+
+  _pat_signature: $ => prec.right('annotated', seq(
+    field('pattern', $.pattern),
+    $._type_annotation,
+  )),
+
   _pat: $ => choice(
-    prec(2, $.pat_infix),
-    prec(1, $._lpat),
+    alias($._pat_signature, $.signature),
+    prec.right($.pattern),
   ),
 
-  pat_typed: $ => seq(field('pattern', $._pat), $._type_annotation),
+  view_pattern: $ => seq(field('expression', $._exp), $._arrow, field('pattern', $._pat_texp)),
 
-  _typed_pat: $ => choice(
-    $._pat,
-    $.pat_typed,
-  ),
+  _pat_texp: $ => choice($.view_pattern, $._pat),
 
-  pat_view: $ => seq($._exp, $._arrow, $._nested_pat),
-
-  /**
-   * Patterns that occur inside parentheses, and thus can always have view patterns and type annotations.
-   */
-  _nested_pat: $ => choice(
-    $._typed_pat,
-    $.pat_view,
-  )
 }

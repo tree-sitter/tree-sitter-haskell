@@ -1,0 +1,4 @@
+((operator) @result (#eq? @result "+"))
+(negation "-" @result)
+(quantified_type/context "=>" @result)
+(promoted "'" @result)

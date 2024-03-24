@@ -1,0 +1,4 @@
+(expression/list . "[" . "]" .) @result
+(expression/list "[" . "]") @result
+(expression/list "[" "]") @result
+(expression/list !element) @result

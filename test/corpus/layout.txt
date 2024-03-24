@@ -3,18 +3,29 @@ layout: where on same level as case alt with nothing following
 ================================================================================
 
 a =
-  case b of
-  c -> d
-  where e = f
+  case a of
+  a -> a
+  where a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable)))))
-  (where)
-  (decls (function (variable) (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (variable))))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
 
 ================================================================================
 layout: error: where on same level as case alt with following alt
@@ -26,37 +37,63 @@ a = case a of
     a = a
   a -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable)))))
-  (where)
-  (decls (function (variable) (exp_name (variable)))))
- (ERROR))
+  (ERROR
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (variable))))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (variable))
+  (declarations
+    (top_splice
+      (variable))))
 
 ================================================================================
-layout: where on deeper level as case alt with following alt
+layout: where on deeper level than case alt with following alt
 ================================================================================
 
-a = case b of
-  c -> d
+a = case a of
+  b -> c
     where
-      e = f
-  g -> h
+      d = e
+  f -> g
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_case
-   (exp_name (variable))
-   (alts
-    (alt (pat_name (variable)) (exp_name (variable))
-     (where) (decls (function (variable) (exp_name (variable)))))
-    (alt (pat_name (variable)) (exp_name (variable)))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (variable))
+              (local_binds
+                (bind
+                  (variable)
+                  (match
+                    (variable)))))
+            (alternative
+              (variable)
+              (match
+                (variable)))))))))
 
 ================================================================================
 layout: where with subsequent top decl
@@ -67,15 +104,23 @@ a =
   where a = a
 a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_name (variable))
-  (where)
-  (decls (function (variable) (exp_name (variable)))))
- (function (variable) (exp_name (variable))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
 
 ================================================================================
 layout: indented empty where with subsequent top decl
@@ -86,49 +131,134 @@ a =
    where
 a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_name (variable))
-  (where))
- (function (variable) (exp_name (variable))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
 
 ================================================================================
-layout: where after case alt in do, then immediate top level where indented further right
+layout: where after case alt in do, then immediate top level where indented equally
 ================================================================================
 
-x = do a <- b
-       case c of
+x = do
+  a <- b
+  case c of
+    _ -> d
+     where e = f
+     where g = h
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (bind
+            (variable)
+            (variable))
+          (exp
+            (case
+              (variable)
+              (alternatives
+                (alternative
+                  (wildcard)
+                  (match
+                    (variable))
+                  (local_binds
+                    (bind
+                      (variable)
+                      (match
+                        (variable))))))))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
+
+================================================================================
+layout: double where in lambda case in do
+================================================================================
+
+x = do \case
          _ -> d
           where e = f
-              where g = h
+          where g = h
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt
-    (bind_pattern
-     (pat_name (variable))
-     (exp_name (variable))))
-   (stmt
-    (exp_case
-     (exp_name (variable))
-     (alts
-      (alt
-       (pat_wildcard)
-       (exp_name (variable))
-       (where)
-       (decls (function (variable) (exp_name (variable)))))))))
-  (where)
-  (decls (function (variable) (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (lambda_case
+              (alternatives
+                (alternative
+                  (wildcard)
+                  (match
+                    (variable))
+                  (local_binds
+                    (bind
+                      (variable)
+                      (match
+                        (variable))))))))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
 
 ================================================================================
-layout: where after case alt in do, then immediate toplevel where at minimum indent
+layout: double where in lambda cases in do
+================================================================================
+
+x = do \cases
+         _ _ -> d
+          where e = f
+          where g = h
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (lambda_cases
+              (alternatives
+                (alternative
+                  (patterns
+                    (wildcard)
+                    (wildcard))
+                  (match
+                    (variable))
+                  (local_binds
+                    (bind
+                      (variable)
+                      (match
+                        (variable))))))))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
+
+================================================================================
+layout: where after case alt in do, then immediate toplevel where at do indent
 ================================================================================
 
 a = do
@@ -137,44 +267,88 @@ a = do
          where a = a
   where a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt
-    (exp_case
-     (exp_name (variable))
-     (alts
-      (alt
-       (pat_name (variable))
-       (exp_name (variable))
-       (where)
-       (decls (function (variable) (exp_name (variable)))))))))
-  (where)
-  (decls (function (variable) (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (case
+              (variable)
+              (alternatives
+                (alternative
+                  (variable)
+                  (match
+                    (variable))
+                  (local_binds
+                    (bind
+                      (variable)
+                      (match
+                        (variable))))))))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
 
 ================================================================================
-layout: where after case alt inline, then immediate toplevel where at minimum indent
+layout: where after case alt inline, then immediate toplevel where at case indent
 ================================================================================
 
 f = case a of
   a -> a where a = a
   where a = a
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_case
-   (exp_name (variable))
-   (alts
-    (alt (pat_name (variable)) (exp_name (variable))
-     (where)
-     (decls (function (variable) (exp_name (variable)))))))
-  (where)
-  (decls (function (variable) (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (variable))
+              (local_binds
+                (bind
+                  (variable)
+                  (match
+                    (variable))))))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
+
+================================================================================
+layout: where inline after do statement
+================================================================================
+
+a = do
+  a where
+  a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
 
 ================================================================================
 layout: do nested
@@ -190,24 +364,34 @@ x = do a
          g
        h
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt (exp_name (variable)))
-   (stmt (exp_name (variable)))
-   (stmt
-    (exp_do
-     (stmt (exp_name (variable)))
-     (stmt (exp_name (variable)))
-     (stmt
-      (exp_do
-       (stmt (exp_name (variable)))
-       (stmt (exp_name (variable)))))
-     (stmt (exp_name (variable)))))
-   (stmt (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable))
+          (exp
+            (variable))
+          (exp
+            (do
+              (exp
+                (variable))
+              (exp
+                (variable))
+              (exp
+                (do
+                  (exp
+                    (variable))
+                  (exp
+                    (variable))))
+              (exp
+                (variable))))
+          (exp
+            (variable)))))))
 
 ================================================================================
 layout: do and indented where
@@ -217,14 +401,48 @@ a = do
   b
     where c = d
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do (stmt (exp_name (variable))))
-  (where)
-  (decls (function (variable) (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
+
+================================================================================
+layout: if and indented where
+================================================================================
+
+a = if
+  | b -> c
+    where d = e
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (multi_way_if
+          (match
+            (guards
+              (boolean
+                (variable)))
+            (variable))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
 
 ================================================================================
 layout: do and empty line
@@ -236,15 +454,22 @@ a = do
   a <- a
   a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (stmt (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (bind
+            (variable)
+            (variable))
+          (bind
+            (variable)
+            (variable))
+          (exp
+            (variable)))))))
 
 ================================================================================
 layout: recursive do with rec keyword
@@ -257,18 +482,35 @@ f = mdo
     c <- pure b
   pure c
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt (bind_pattern (pat_name (variable)) (exp_apply (exp_name (variable)) (exp_literal (integer)))))
-   (stmt
-    (rec
-     (stmt (bind_pattern (pat_name (variable)) (exp_apply (exp_name (variable)) (exp_name (variable)))))
-     (stmt (bind_pattern (pat_name (variable)) (exp_apply (exp_name (variable)) (exp_name (variable)))))))
-   (stmt (exp_apply (exp_name (variable)) (exp_name (variable)))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (bind
+            (variable)
+            (apply
+              (variable)
+              (literal
+                (integer))))
+          (rec
+            (bind
+              (variable)
+              (apply
+                (variable)
+                (variable)))
+            (bind
+              (variable)
+              (apply
+                (variable)
+                (variable))))
+          (exp
+            (apply
+              (variable)
+              (variable))))))))
 
 ================================================================================
 layout: in after let on same indent
@@ -277,19 +519,23 @@ layout: in after let on same indent
 a = let a = a
         in a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_let_in
-   (exp_let
-    (decls
-     (function (variable) (exp_name (variable)))))
-   (exp_in (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (variable))))
+          (variable))))))
 
 ================================================================================
-layout: identifier named "whe" in place of valid "where"
+layout: identifier named "whe" in place of valid "where" in case
 ================================================================================
 
 a =
@@ -297,15 +543,40 @@ a =
   whe -> d
   where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_case
-   (exp_name (variable))
-   (alts (alt (pat_name (variable)) (exp_name (variable)))))
-  (where)))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (variable)))))))))
+
+================================================================================
+layout: identifier named "whe" in place of valid "where" as topdecl
+================================================================================
+
+a = a
+whe = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
 
 ================================================================================
 layout: identifier "i" should not prematurely fail the scanner due to "in" parser
@@ -313,27 +584,28 @@ layout: identifier "i" should not prematurely fail the scanner due to "in" parse
 
 a (i:a) = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (patterns
-   (pat_parens
-    (pat_infix
-     (pat_name (variable))
-     (constructor_operator)
-     (pat_name (variable)))))
-  (exp_name (variable))))
+  (declarations
+    (function
+      (variable)
+      (patterns
+        (parens
+          (infix
+            (variable)
+            (constructor_operator)
+            (variable))))
+      (match
+        (variable)))))
 
 ================================================================================
 layout: empty file
 ================================================================================
 
+--------------------------------------------------------------------------------
 
----
-
-(haskell (empty_file))
+(haskell)
 
 ================================================================================
 layout: indented let/in
@@ -347,24 +619,246 @@ a = let
          a <- a
          a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_let_in
-   (exp_let
-    (decls
-     (function
+  (declarations
+    (bind
       (variable)
-      (exp_let_in
-       (exp_let
-        (decls (function (variable) (exp_name (variable)))))
-       (exp_in (exp_name (variable)))))))
-   (exp_in (exp_do (stmt (bind_pattern (pat_name (variable)) (exp_name (variable)))) (stmt (exp_name (variable))))))))
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (let_in
+                  (local_binds
+                    (bind
+                      (variable)
+                      (match
+                        (variable))))
+                  (variable)))))
+          (do
+            (bind
+              (variable)
+              (variable))
+            (exp
+              (variable))))))))
 
 ================================================================================
-layout: where after stmt, on deeper or same indent
+layout: let layout ended by in with smaller indent
+================================================================================
+
+a = let a = a
+      in a
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (variable))))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: let layout ended by in with larger indent
+================================================================================
+
+a = let a = a
+          in a
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (variable))))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: let with explicit semicolon
+================================================================================
+
+a =
+  let a = a;
+      a = a
+  in a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (variable)))
+            (bind
+              (variable)
+              (match
+                (variable))))
+          (variable))))))
+
+================================================================================
+layout: let with multiple explicit semicolons before and after newline
+================================================================================
+
+a =
+  let a = a;;;;;
+      ;;;;a = a
+  in a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (variable)))
+            (bind
+              (variable)
+              (match
+                (variable))))
+          (variable))))))
+
+================================================================================
+layout: let with explicit braces
+================================================================================
+
+a = let { a :: A;
+          a = a;
+          a :: A;
+          a = a; } in a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (signature
+              (variable)
+              (name))
+            (bind
+              (variable)
+              (match
+                (variable)))
+            (signature
+              (variable)
+              (name))
+            (bind
+              (variable)
+              (match
+                (variable))))
+          (variable))))))
+
+================================================================================
+layout: where in do-let binding
+================================================================================
+
+a = do
+  let a = a
+          where a = a
+  a
+
+a = do
+  let a = a
+          where
+  a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (let
+            (local_binds
+              (bind
+                (variable)
+                (match
+                  (variable))
+                (local_binds
+                  (bind
+                    (variable)
+                    (match
+                      (variable)))))))
+          (exp
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (do
+          (let
+            (local_binds
+              (bind
+                (variable)
+                (match
+                  (variable)))))
+          (exp
+            (variable)))))))
+
+================================================================================
+layout: conditional with explicit semicolon
+================================================================================
+
+a = if a; then a;;; else a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (conditional
+          (variable)
+          (variable)
+          (variable))))))
+
+================================================================================
+layout: where after statement, on deeper or same indent
 ================================================================================
 
 a = do
@@ -375,22 +869,35 @@ a = do
   b
   where d = e
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do (stmt (exp_name (variable))))
-  (where)
-  (decls (function (variable) (exp_name (variable)))))
- (function
-  (variable)
-  (exp_do (stmt (exp_name (variable))))
-  (where)
-  (decls (function (variable) (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable))))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))))
 
 ================================================================================
-layout: empty where, then indented decls after inline where
+layout: empty where, then indented binds after inline where
 ================================================================================
 
 c = d where
@@ -398,20 +905,27 @@ e = f where
   g = h
 i = j
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_name (variable)) (where))
- (function
-  (variable)
-  (exp_name (variable))
-  (where)
-  (decls (function (variable) (exp_name (variable)))))
- (function
-  (variable)
-  (exp_name (variable))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
 
 ================================================================================
 layout: parenthesized case inline
@@ -420,15 +934,23 @@ layout: parenthesized case inline
 a =
   (\case a -> b) . c
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_infix
-   (exp_parens (exp_lambda_case (alts (alt (pat_name (variable)) (exp_name (variable))))))
-   (operator)
-   (exp_name (variable)))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (parens
+            (lambda_case
+              (alternatives
+                (alternative
+                  (variable)
+                  (match
+                    (variable))))))
+          (operator)
+          (variable))))))
 
 ================================================================================
 layout: parenthesized case newline
@@ -438,15 +960,23 @@ a =
   (\case a -> b
                 ) . c
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_infix
-   (exp_parens (exp_lambda_case (alts (alt (pat_name (variable)) (exp_name (variable))))))
-   (operator)
-   (exp_name (variable)))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (parens
+            (lambda_case
+              (alternatives
+                (alternative
+                  (variable)
+                  (match
+                    (variable))))))
+          (operator)
+          (variable))))))
 
 ================================================================================
 layout: comment between where and decl
@@ -467,45 +997,65 @@ a = b where {- comment -}
 
 a = b where -1 = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_name (variable))
-  (where)
-  (comment)
-  (decls (function (variable) (exp_name (variable)))))
- (function
-  (variable)
-  (exp_name (variable))
-  (where)
-  (comment)
-  (decls (function (variable) (exp_name (variable)))))
- (function
-  (variable)
-  (exp_name (variable))
-  (where)
-  (comment)
-  (decls (function (variable) (exp_name (variable)))))
- (function
-  (variable)
-  (exp_name (variable))
-  (where)
-  (comment)
-  (decls (function (variable) (exp_name (variable)))))
- (function
-  (variable)
-  (exp_name (variable))
-  (where)
-  (decls (function (pat_negation (pat_literal (integer))) (exp_name (variable))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable))
+      (comment)
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable))
+      (comment)
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable))
+      (comment)
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable))
+      (comment)
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable))
+      (local_binds
+        (bind
+          (negation
+            (integer))
+          (match
+            (variable)))))))
 
 ================================================================================
 layout: comment in empty where on next line indented
 ================================================================================
 
-a = b where
-    {-# pragma #-}
 a = a where
   {- comment
 -}
@@ -517,46 +1067,188 @@ a = b
     {- comment -}
 c = d
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_name (variable)) (where))
- (pragma)
- (function (variable) (exp_name (variable)) (where))
- (comment)
- (function (variable) (exp_name (variable)) (where))
- (comment)
- (function (variable) (exp_name (variable)) (where))
- (comment)
-  (function (variable) (exp_name (variable))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (variable)))))
 
 ================================================================================
-layout: normal module
+layout: module in first line
+================================================================================
+module A where
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: empty line before module
 ================================================================================
 
 module A where
+
 a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (module)
- (where)
- (function (variable) (exp_name (variable))))
+  (header
+    (module
+      (module_id)))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
 
 ================================================================================
-layout: indented module keyword, decls further left
+layout: indented module keyword, binds further left
 ================================================================================
 
     module A where
   a = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (module)
- (where)
- (function (variable) (exp_name (variable))))
+  (header
+    (module
+      (module_id)))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: closing exports paren in column 0
+================================================================================
+module A (
+)
+where
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id))
+    (exports))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: comment in column 0 before first decl in column 2
+================================================================================
+-- a
+  a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: decl in line 0
+================================================================================
+a = a
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: module with smaller indent after nonzero indent at top level
+================================================================================
+module A where
+-- Lenient, see end_layout_indent
+#define foo
+  data A
+instance A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (comment)
+  (cpp)
+  (declarations
+    (data_type
+      (name))
+    (instance
+      (name))))
+
+================================================================================
+layout: smaller indent after nonzero indent at top level
+================================================================================
+-- a
+#define foo
+  data A
+instance A
+-- This could be an error like above, but there's no point in being strict.
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (cpp)
+  (declarations
+    (data_type
+      (name))
+    (instance
+      (name))
+    (comment)))
 
 ================================================================================
 layout: end two layouts at the same position
@@ -566,13 +1258,25 @@ a = case a of
   a -> do a
 a :: a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_do (stmt (exp_name (variable))))))))
- (signature (variable) (type_name (type_variable))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (do
+                  (exp
+                    (variable)))))))))
+    (signature
+      (variable)
+      (variable))))
 
 ================================================================================
 layout: case in a list terminated by bracket
@@ -582,15 +1286,32 @@ a = [case a of a -> a]
 a = [case a of a -> a
       ]
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_list (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable)))))))
- (function
-  (variable)
-  (exp_list (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable))))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (list
+          (case
+            (variable)
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (variable))))))))
+    (bind
+      (variable)
+      (match
+        (list
+          (case
+            (variable)
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (variable))))))))))
 
 ================================================================================
 layout: case in a list terminated by comma
@@ -599,15 +1320,22 @@ layout: case in a list terminated by comma
 a = [case a of a -> a, a]
 
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_list
-   (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable)))))
-   (comma)
-   (exp_name (variable)))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (list
+          (case
+            (variable)
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (variable)))))
+          (variable))))))
 
 ================================================================================
 layout: case in a list terminated by comprehension bar
@@ -615,14 +1343,25 @@ layout: case in a list terminated by comprehension bar
 
 a = [case a of a -> a | a <- a]
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_list_comprehension
-   (exp_case (exp_name (variable)) (alts (alt (pat_name (variable)) (exp_name (variable)))))
-   (qual (bind_pattern (pat_name (variable)) (exp_name (variable)))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (list_comprehension
+          (case
+            (variable)
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (variable)))))
+          (qualifiers
+            (generator
+              (variable)
+              (variable))))))))
 
 ================================================================================
 layout: case in an explicitly braced do terminated by brace
@@ -630,15 +1369,139 @@ layout: case in an explicitly braced do terminated by brace
 
 a = do { case a of a -> a }
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt
-    (exp_case (exp_name (variable))
-     (alts (alt (pat_name (variable)) (exp_name (variable)))))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (case
+              (variable)
+              (alternatives
+                (alternative
+                  (variable)
+                  (match
+                    (variable)))))))))))
+
+================================================================================
+layout: empty do statements with explicit braces
+================================================================================
+
+a = do { ; a ;;;; a ; }
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable))
+          (exp
+            (variable)))))))
+
+================================================================================
+layout: empty brace layout
+================================================================================
+
+a = case a of {}
+a = case a of { }
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives))))
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: end in tuple
+================================================================================
+
+a =
+  (
+    case a of
+      a -> a
+      a -> a,
+    a,
+    case a of
+      a -> a
+      a -> a
+  )
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (tuple
+          (case
+            (variable)
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (variable)))
+              (alternative
+                (variable)
+                (match
+                  (variable)))))
+          (variable)
+          (case
+            (variable)
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (variable)))
+              (alternative
+                (variable)
+                (match
+                  (variable))))))))))
+
+================================================================================
+layout: do in an if block
+================================================================================
+
+a = if do a; a then a else a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (conditional
+          (do
+            (exp
+              (variable))
+            (exp
+              (variable)))
+          (variable)
+          (variable))))))
 
 ================================================================================
 layout: do in an if-then block
@@ -646,15 +1509,21 @@ layout: do in an if-then block
 
 a = if a then do a; a else a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_cond
-   (exp_name (variable))
-   (exp_do (stmt (exp_name (variable))) (stmt (exp_name (variable))))
-   (exp_name (variable)))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (conditional
+          (variable)
+          (do
+            (exp
+              (variable))
+            (exp
+              (variable)))
+          (variable))))))
 
 ================================================================================
 layout: nondecreasing indent for do in if-then
@@ -669,22 +1538,66 @@ a = do
   a <- a
   pure a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (stmt
-    (exp_cond
-     (exp_name (variable))
-     (exp_do
-      (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-      (stmt (exp_apply (exp_name (variable)) (exp_name (variable)))))
-     (exp_name (variable))))
-   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (stmt (exp_apply (exp_name (variable)) (exp_name (variable)))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (bind
+            (variable)
+            (variable))
+          (exp
+            (conditional
+              (variable)
+              (do
+                (bind
+                  (variable)
+                  (variable))
+                (exp
+                  (apply
+                    (variable)
+                    (variable))))
+              (variable)))
+          (bind
+            (variable)
+            (variable))
+          (exp
+            (apply
+              (variable)
+              (variable))))))))
+
+================================================================================
+layout: do not emit newline semicolon if the first token is "then" or "else"
+================================================================================
+
+a = do
+  a <- a
+  if a
+  then a
+  else do
+    a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (bind
+            (variable)
+            (variable))
+          (exp
+            (conditional
+              (variable)
+              (variable)
+              (do
+                (exp
+                  (variable))))))))))
 
 ================================================================================
 layout: infix in statement position ends layout
@@ -698,15 +1611,101 @@ a = do
   a
   `a` a
 
----
+a = do
+  a
+-- a
+  >>= a
+
+a = \case
+    a ->
+      pure a
+    =<< a
+
+-- don't end here
+a = \case
+    a ->
+      a
+     =<< a
+    a -> a
+
+a = do
+  a
+  {-# prag #-} >>= a
+
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_infix (exp_do (stmt (exp_name (variable)))) (operator) (exp_name (variable))))
- (function
-  (variable)
-  (exp_infix (exp_do (stmt (exp_name (variable)))) (variable) (exp_name (variable)))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (do
+            (exp
+              (variable)))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (do
+            (exp
+              (variable)))
+          (infix_id
+            (variable))
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (do
+            (exp
+              (variable))
+            (comment))
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (lambda_case
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (apply
+                    (variable)
+                    (variable))))))
+          (operator)
+          (variable))))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (lambda_case
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (infix
+                  (variable)
+                  (operator)
+                  (variable))))
+            (alternative
+              (variable)
+              (match
+                (variable)))))))
+    (bind
+      (variable)
+      (match
+        (infix
+          (do
+            (exp
+              (variable))
+            (pragma))
+          (operator)
+          (variable))))))
 
 ================================================================================
 layout: two lines starting with m without leading newline or module
@@ -714,28 +1713,48 @@ layout: two lines starting with m without leading newline or module
 m1 :: a -> a
 m1 = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (signature (variable) (fun (type_name (type_variable)) (type_name (type_variable))))
- (function (variable) (exp_name (variable))))
+  (declarations
+    (signature
+      (variable)
+      (function
+        (variable)
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
 
 ================================================================================
-layout: do not end do layout with strictness annotation
+layout: do not end do layout with bang pattern
 ================================================================================
 
 a = do
   a <- a
   !a <- a
+  ~a <- a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt (bind_pattern (pat_name (variable)) (exp_name (variable))))
-   (stmt (bind_pattern (pat_strict (pat_name (variable))) (exp_name (variable)))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (bind
+            (variable)
+            (variable))
+          (bind
+            (strict
+              (variable))
+            (variable))
+          (bind
+            (irrefutable
+              (variable))
+            (variable)))))))
 
 ================================================================================
 layout: let/in after do
@@ -745,16 +1764,54 @@ a = do
   let g = a
    in a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function
-  (variable)
-  (exp_do
-   (stmt
-    (exp_let_in
-     (exp_let (decls (function (variable) (exp_name (variable)))))
-     (exp_in (exp_name (variable))))))))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (let_in
+              (local_binds
+                (bind
+                  (variable)
+                  (match
+                    (variable))))
+              (variable))))))))
+
+================================================================================
+layout: expr after newline in exp_in, with layout ended by "in" token
+================================================================================
+
+a =
+  let
+    a = case a of
+      a -> a
+  in
+    a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (case
+                  (variable)
+                  (alternatives
+                    (alternative
+                      (variable)
+                      (match
+                        (variable))))))))
+          (variable))))))
 
 ================================================================================
 layout: instance after where, triggers rule for "in" token
@@ -764,11 +1821,14 @@ class A where
 
 instance A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (class (class_head (class_name (type))) (class_body (where)))
- (instance (instance_head (class_name (type)))))
+  (declarations
+    (class
+      (name))
+    (instance
+      (name))))
 
 ================================================================================
 layout: carriage return
@@ -777,16 +1837,1569 @@ layout: carriage return
 a = a
 a = a
 
----
+--------------------------------------------------------------------------------
 
-(haskell (function (variable) (exp_name (variable))) (function (variable) (exp_name (variable))))
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
 
 ================================================================================
-layout: empty do statements with explicit layout
+layout: error: unparenthesized multi-way if in list comprehension result
 ================================================================================
 
-a = do { ; a ;;;; a ; }
+a = [if | a -> a | a <- a]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (list
+          (ERROR
+            (match
+              (guards
+                (boolean
+                  (variable)))
+              (variable))
+            (guards
+              (pattern_guard
+                (variable)
+                (variable)))))))))
+
+================================================================================
+layout: newline after record brace in pattern
+================================================================================
+
+a = \case
+  A{}
+      -> a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (lambda_case
+          (alternatives
+            (alternative
+              (record
+                (constructor))
+              (match
+                (variable)))))))))
+
+================================================================================
+layout: signature with function arrow on new line with two chars of indent
+================================================================================
+
+a :: A
+  -> A
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (function
+        (name)
+        (name)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: same indent is permitted for multi-way if
+================================================================================
+
+a = if
+    |
+    a
+    ->
+    a
+  a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (apply
+          (multi_way_if
+            (match
+              (guards
+                (boolean
+                  (variable)))
+              (variable)))
+          (variable))))))
+
+================================================================================
+layout: close layout in guard at comma
+================================================================================
+
+a
+  | case a of
+      _ -> a,
+    a
+  = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (guards
+          (boolean
+            (case
+              (variable)
+              (alternatives
+                (alternative
+                  (wildcard)
+                  (match
+                    (variable))))))
+          (boolean
+            (variable)))
+        (variable)))))
+
+================================================================================
+layout: obscure canary for pat prec bugs
+================================================================================
+
+a = do
+  a a
+
+a :: A (A [(A, A)])
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (apply
+              (variable)
+              (variable))))))
+    (signature
+      (variable)
+      (apply
+        (name)
+        (parens
+          (apply
+            (name)
+            (list
+              (tuple
+                (name)
+                (name)))))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: bar operator in case layout in texp
+================================================================================
+
+a = (
+    case a of
+      a -> a || a
+      a -> a
+  )
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (parens
+          (case
+            (variable)
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (infix
+                    (variable)
+                    (operator)
+                    (variable))))
+              (alternative
+                (variable)
+                (match
+                  (variable))))))))))
+
+================================================================================
+layout: unboxed texp
+================================================================================
+
+a = (# a, case a of
+  a -> a #)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (unboxed_tuple
+          (variable)
+          (case
+            (variable)
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (variable))))))))))
+
+================================================================================
+layout: only end on bar if guard is not valid
+================================================================================
+
+a =
+  [case a of
+    a | a -> a
+      | a -> a,
+   a]
 
 ---
 
-(haskell (function (variable) (exp_do (stmt (exp_name (variable))) (stmt (exp_name (variable))))))
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (list
+          (case
+            (variable)
+            (alternatives
+              (alternative
+                (variable)
+                (match
+                  (guards
+                    (boolean
+                      (variable)))
+                  (variable))
+                (match
+                  (guards
+                    (boolean
+                      (variable)))
+                  (variable)))))
+          (variable))))
+    (comment)))
+
+================================================================================
+layout: closing brace before cpp else
+================================================================================
+
+#if a
+a = case a of {}
+#else
+a = a
+#endif
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (cpp)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives))))
+    (cpp)
+    (cpp)
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: brace layout in virtual layout ending at the same position
+================================================================================
+
+a = do
+  a do {
+    a
+  }
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (apply
+              (variable)
+              (do
+                (exp
+                  (variable))))))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: strict data field after newline
+================================================================================
+
+data A =
+  A
+  !A
+  ~A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (strict_field
+              (name))
+            (lazy_field
+              (name))))))))
+
+================================================================================
+layout: splice in do statement
+================================================================================
+
+a = do
+  $a
+  a <- a
+  $$a
+  a <- a
+  a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (splice
+              (variable)))
+          (bind
+            (variable)
+            (variable))
+          (exp
+            (splice
+              (variable)))
+          (bind
+            (variable)
+            (variable))
+          (exp
+            (variable)))))))
+
+================================================================================
+layout: modifier at start of line
+================================================================================
+
+a :: a
+  %1 ->
+  a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (linear_function
+        (variable)
+        (modifier
+          (literal
+            (integer)))
+        (variable)))))
+
+================================================================================
+layout: composition dot after newline
+================================================================================
+
+a =
+  a
+  .
+  a
+
+a = (
+  a
+  .
+  a
+  )
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (variable)
+          (operator)
+          (variable))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (infix
+            (variable)
+            (operator)
+            (variable)))))))
+
+================================================================================
+layout: comment before module without newline
+================================================================================
+{- a -} module A where
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (header
+    (module
+      (module_id)))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: pragma, module, import
+================================================================================
+{-# language NoHaskell #-}
+module A where
+import A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (pragma)
+  (header
+    (module
+      (module_id)))
+  (imports
+    (import
+      (module
+        (module_id)))))
+
+================================================================================
+layout: newline, pragma, module, import
+================================================================================
+
+{-# language NoHaskell #-}
+module A where
+import A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (pragma)
+  (header
+    (module
+      (module_id)))
+  (imports
+    (import
+      (module
+        (module_id)))))
+
+================================================================================
+layout: function starting with special token
+================================================================================
+
+-- Newline lookahead has a special case for 'then' and 'else', which has the
+-- potential to prevent a semi
+a = a
+then' = a
+elsex = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: case in let, single line
+================================================================================
+
+a = let a = case a of a -> a in a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (case
+                  (variable)
+                  (alternatives
+                    (alternative
+                      (variable)
+                      (match
+                        (variable))))))))
+          (variable))))))
+
+================================================================================
+layout: do in case in nested let, single line
+================================================================================
+
+a = let a = let a = case a of a -> do a in a in a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (let_in
+                  (local_binds
+                    (bind
+                      (variable)
+                      (match
+                        (case
+                          (variable)
+                          (alternatives
+                            (alternative
+                              (variable)
+                              (match
+                                (do
+                                  (exp
+                                    (variable))))))))))
+                  (variable)))))
+          (variable))))))
+
+================================================================================
+layout: "the" at end of file
+================================================================================
+a =
+  the
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: obscure case where eof layout end happens prematurely without no_lookahead check
+================================================================================
+
+a =
+  a
+  where a = do
+            let a = a
+            a
+          `a` if a then a else a e
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (infix
+              (do
+                (let
+                  (local_binds
+                    (bind
+                      (variable)
+                      (match
+                        (variable)))))
+                (exp
+                  (variable)))
+              (infix_id
+                (variable))
+              (conditional
+                (variable)
+                (variable)
+                (apply
+                  (variable)
+                  (variable))))))))))
+
+================================================================================
+layout: space at eof
+================================================================================
+-- This test only has a purpose when looking at scanner debug output.
+-- If we don't mark after skipped space at eof, the scanner gets called again.
+module A where
+a = a   
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (header
+    (module
+      (module_id)))
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: braces on new line
+================================================================================
+
+a = do
+  { a }
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable)))))))
+
+================================================================================
+layout: allow any indent nested in brace layout
+================================================================================
+
+a = do do { case a of
+  a -> a
+  }
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (do
+              (exp
+                (case
+                  (variable)
+                  (alternatives
+                    (alternative
+                      (variable)
+                      (match
+                        (variable)))))))))))))
+
+================================================================================
+layout: let guard in decl
+================================================================================
+
+a | let a = a = a
+a | let a = a == a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (guards
+          (let
+            (local_binds
+              (bind
+                (variable)
+                (match
+                  (variable))))))
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (guards
+          (let
+            (local_binds
+              (bind
+                (variable)
+                (match
+                  (infix
+                    (variable)
+                    (operator)
+                    (variable)))))))
+        (variable)))))
+
+================================================================================
+layout: do expr in guard
+================================================================================
+
+a | do a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (guards
+          (boolean
+            (do
+              (exp
+                (variable)))))
+        (variable)))))
+
+================================================================================
+layout: case in guard
+================================================================================
+
+a | case a of a -> a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (guards
+          (boolean
+            (case
+              (variable)
+              (alternatives
+                (alternative
+                  (variable)
+                  (match
+                    (variable)))))))
+        (variable)))))
+
+================================================================================
+layout: multi-way if in guard
+================================================================================
+
+a | if | a -> a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (guards
+          (boolean
+            (multi_way_if
+              (match
+                (guards
+                  (boolean
+                    (variable)))
+                (variable)))))
+        (variable)))))
+
+================================================================================
+layout: let guard in case
+================================================================================
+
+a = case a of
+  a | let a = a -> a
+
+a = case a of
+  a | let a = a → a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (guards
+                  (let
+                    (local_binds
+                      (bind
+                        (variable)
+                        (match
+                          (variable))))))
+                (variable)))))))
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (guards
+                  (let
+                    (local_binds
+                      (bind
+                        (variable)
+                        (match
+                          (variable))))))
+                (variable)))))))))
+
+================================================================================
+layout: signature with arrow in let in texp
+================================================================================
+
+a = (let a :: a -> a in a)
+a = (let a :: ∀ a -> a -> a in a)
+a = (let (a -> a) = a in a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (parens
+          (let_in
+            (local_binds
+              (signature
+                (variable)
+                (function
+                  (variable)
+                  (variable))))
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (let_in
+            (local_binds
+              (signature
+                (variable)
+                (forall_required
+                  (quantified_variables
+                    (variable))
+                  (function
+                    (variable)
+                    (variable)))))
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (parens
+          (let_in
+            (local_binds
+              (bind
+                (parens
+                  (view_pattern
+                    (variable)
+                    (variable)))
+                (match
+                  (variable))))
+            (variable)))))))
+
+================================================================================
+layout: guard bar ends layout at the same indent
+================================================================================
+
+a
+  | a = do
+  let a = a
+  a
+
+  | a = a
+
+a =
+  a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (guards
+          (boolean
+            (variable)))
+        (do
+          (let
+            (local_binds
+              (bind
+                (variable)
+                (match
+                  (variable)))))
+          (exp
+            (variable))))
+      (match
+        (guards
+          (boolean
+            (variable)))
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: symop dot ends layout
+================================================================================
+
+a = do
+  a
+  . a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (do
+            (exp
+              (variable)))
+          (operator)
+          (variable))))))
+
+================================================================================
+layout: symop hash ends layout
+================================================================================
+
+a = do
+  a
+  # a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (infix
+          (do
+            (exp
+              (variable)))
+          (operator)
+          (variable))))))
+
+================================================================================
+layout: do in then branch in another do with else in indent column
+================================================================================
+
+a = do
+    if a then do a
+    else a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (conditional
+              (variable)
+              (do
+                (exp
+                  (variable)))
+              (variable))))))))
+
+================================================================================
+layout: explicit semicolon between topdecls
+================================================================================
+
+a = a;
+a = a; a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: semicolon after last statement in do
+================================================================================
+
+a = do a;
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable)))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: do-let layout ended by indent of next statement with leading semicolon
+================================================================================
+
+a = do
+  ; let a = a
+  ; a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (let
+            (local_binds
+              (bind
+                (variable)
+                (match
+                  (variable)))))
+          (exp
+            (variable)))))))
+
+================================================================================
+layout: random indent with leading semicolons in do
+================================================================================
+
+a = do
+  ; a
+      ; a ; a
+    ; a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (exp
+            (variable))
+          (exp
+            (variable))
+          (exp
+            (variable))
+          (exp
+            (variable)))))))
+
+================================================================================
+layout: pragmas, cpp, then module
+================================================================================
+{-# prag #-}
+#include "a"
+module A (A (..)) where
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (pragma)
+  (cpp)
+  (header
+    (module
+      (module_id))
+    (exports
+      (export
+        (name)
+        (children
+          (all_names))))))
+
+================================================================================
+layout: semicolon at beginning of file
+================================================================================
+;
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: semicolon before imports
+================================================================================
+module A where
+;
+import A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module
+      (module_id)))
+  (imports
+    (import
+      (module
+        (module_id)))))
+
+================================================================================
+layout: brace layout after comment
+================================================================================
+
+a = do
+  {- -} {
+    a <- a
+  }
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (comment)
+          (bind
+            (variable)
+            (variable)))))))
+
+================================================================================
+layout: brace layout after pragma
+================================================================================
+
+a = do
+  {-# prag #-} {
+    a <- a
+  }
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (do
+          (pragma)
+          (bind
+            (variable)
+            (variable)))))))
+
+================================================================================
+layout: brace layout in first column
+================================================================================
+{
+a = a
+}
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: empty brace alternatives separated from case by comment
+================================================================================
+
+a = case a of
+  -- a
+  {}
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (comment)
+          (alternatives))))))
+
+================================================================================
+layout: comment before multi-way if bar on newline
+================================================================================
+
+-- This is only relevant for the scanner –` `newline_lookahead sets a flag when
+-- encountering the bar, which is read by `start_layout_newline` to decide that
+-- an MWI layout is valid and emit it right away, rather than deferring to the
+-- next run with `interior`.
+a = if
+  {- a -} | a -> a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (comment)
+  (declarations
+    (bind
+      (variable)
+      (match
+        (multi_way_if
+          (comment)
+          (match
+            (guards
+              (boolean
+                (variable)))
+            (variable)))))))
+
+================================================================================
+layout: block comment at eof without newline
+================================================================================
+a = a {-
+a -}
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable))))
+  (comment))
+
+================================================================================
+layout: unicode whitespace
+================================================================================
+
+a = case a of
+                 a -> a
+-- This line's leading whitespace consists of all 17 code points of the General
+-- Category Zs.
+-- Take care not to replace them! (This should probably be a generated test)
+-- That dash character is the Ogham Space Mark, and the last character is extra
+-- wide.
+                　a -> a
+                 a -> a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (variable)))
+            (comment)
+            (alternative
+              (variable)
+              (match
+                (variable)))
+            (alternative
+              (variable)
+              (match
+                (variable)))))))))
+
+================================================================================
+layout: inline braces followed by layout semicolon
+================================================================================
+
+a = case a of { a -> a; }
+
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (case
+          (variable)
+          (alternatives
+            (alternative
+              (variable)
+              (match
+                (variable)))))))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: nonzero toplevel indent
+================================================================================
+
+  a = a
+  a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable)))
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: comment after semicolon
+================================================================================
+
+a :: a; -- a
+a :: a; {- a
+-}
+a = a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (signature
+      (variable)
+      (variable))
+    (comment)
+    (signature
+      (variable)
+      (variable))
+    (comment)
+    (bind
+      (variable)
+      (match
+        (variable)))))
+
+================================================================================
+layout: comment and pragma after semicolon with following layout element
+================================================================================
+
+x = let
+  a = 1; b = 2
+  c = 3; {- x -}
+  d = 4; {- x -} e = 5
+  f = 6; {-# x #-}
+  g = 7; {-# x #-} h = 8
+  i = 9
+  in c
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (variable)
+              (match
+                (literal
+                  (integer))))
+            (bind
+              (variable)
+              (match
+                (literal
+                  (integer))))
+            (bind
+              (variable)
+              (match
+                (literal
+                  (integer))))
+            (comment)
+            (bind
+              (variable)
+              (match
+                (literal
+                  (integer))))
+            (comment)
+            (bind
+              (variable)
+              (match
+                (literal
+                  (integer))))
+            (bind
+              (variable)
+              (match
+                (literal
+                  (integer))))
+            (pragma)
+            (bind
+              (variable)
+              (match
+                (literal
+                  (integer))))
+            (pragma)
+            (bind
+              (variable)
+              (match
+                (literal
+                  (integer))))
+            (bind
+              (variable)
+              (match
+                (literal
+                  (integer)))))
+          (variable))))))
+
+================================================================================
+layout: list pattern in let
+================================================================================
+
+a = let [a] = a
+    in a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (let_in
+          (local_binds
+            (bind
+              (list
+                (variable))
+              (match
+                (variable))))
+          (variable))))))
+
+================================================================================
+layout: instance after splice in expression splice
+================================================================================
+
+a $(a)
+
+instance A where
+  type A = A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (top_splice
+      (apply
+        (variable)
+        (splice
+          (parens
+            (variable)))))
+    (instance
+      (name)
+      (instance_declarations
+        (type_instance
+          (name)
+          (name))))))
+
+================================================================================
+layout: comment containing tab exceeding layout indent
+================================================================================
+
+a = a
+  where
+            a = a
+{- a	 -} a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (bind
+      (variable)
+      (match
+        (variable))
+      (local_binds
+        (bind
+          (variable)
+          (match
+            (apply
+              (variable)
+              (comment)
+              (variable))))))))

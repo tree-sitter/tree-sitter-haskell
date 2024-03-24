@@ -2,17 +2,16 @@ name: CI
 
 on:
   push:
-    branches:
-      - "**"
+    branches: [main]
+    tags: ['**']
   pull_request:
-    types:
-      - opened
-      - synchronize
+    types: [opened, synchronize]
 
 jobs:
   test:
-    name: test / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: test / ${{matrix.os}}
+    runs-on: ${{matrix.os}}
+    if: github.event.pull_request.merged == true || github.event.action != 'closed'
     strategy:
       fail-fast: false
       matrix:
@@ -27,20 +26,39 @@ jobs:
         with:
           node-version: '18'
 
-      # - name: Install emscripten
-      #   uses: mymindstorm/setup-emsdk@v10
-      #   with:
-      #     version: '2.0.24'
+      - name: Install emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: '3.1.47'
 
-      - name: Build tree-sitter-haskell
+      - name: Build dependencies
         run: npm install
 
       - name: Run tests
         run: npm test
 
-      - name: Parse examples
-        run: npm run examples
+      - name: Parse libraries
+        run: npm run libs
 
-      # - name: Parse examples with web binding
-      #   run: npm run examples-wasm
+      - name: Parse libraries with wasm
+        run: npm run libs-wasm
 
+      - name: Run fuzzer
+        if: ${{matrix.os == 'ubuntu-latest'}}
+        uses: tree-sitter/fuzz-action@v4
+
+  legacy:
+    permissions:
+      contents: write
+      id-token: write
+    needs: test
+    if: github.ref_type == 'tag'
+    uses: ./.github/workflows/legacy.yml
+
+  release:
+    permissions:
+      contents: read
+      id-token: write
+    needs: test
+    if: github.ref_type == 'tag'
+    uses: ./.github/workflows/release.yml

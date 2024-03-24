@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+# Usage: test/parse-lib lib_name [native|wasm]
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Change directory to project root.
+cd "$(dirname "$0")/.."
+
+# Get the repository name
+dir=$1
+name=${dir##*/}
+
+# Parse libs in 'native' or 'wasm' mode.
+mode=${2:-native}
+
+ghc_lib="tsh-test-ghc/libraries/$dir"
+if [[ $dir == 'compiler' ]]
+then
+  dir="tsh-test-ghc/compiler"
+elif [[ -d "test/libs/$ghc_lib" ]]
+then
+  dir=$ghc_lib
+fi
+
+lib=test/libs/$dir
+
+if [[ ! -d $lib ]]
+then
+  echo 'Please specify a subdirectory of test/libs/'
+  exit 1
+fi
+
+failures_file="test/known-failures/${name}.txt"
+if [[ ! -f $failures_file ]]
+then
+  failures_file=/dev/null
+fi
+
+files_to_parse=$(comm -13 <(sort $failures_file) <(find $lib -name '*.hs' | sort))
+
+if [[ -z "$parsing_all" ]]
+then
+  test/ensure-parser.bash $mode
+fi
+
+if [[ "$mode" == "native" ]]
+then
+  runner='tree-sitter parse'
+elif [[ "$mode" == "wasm" ]]
+then
+  runner='./test/parse-wasm.mjs'
+else
+  echo "Unsupported mode: '$mode' (should be 'native' or 'wasm')"
+  exit 1
+fi
+
+if [[ $(uname) == Darwin ]]
+then
+  date="date '+%s'"
+else
+  date="date '+%s.%N'"
+fi
+
+start=$(eval $date)
+eval $runner -q $files_to_parse
+end=$(eval $date)
+
+skipped=$(cat $failures_file | wc -w)
+parsed=$(echo $files_to_parse | wc -w)
+lines=$(cat $files_to_parse | wc -l)
+chars=$(cat $files_to_parse | wc -c)
+total=$((parsed + skipped))
+percent=$(bc -l <<< "100 * $parsed / $total")
+duration=$(bc -l <<< "($end - $start) * 1000.0")
+rate=$( bc -l <<< "$duration * 1000.0 / $lines" )
+char_rate=$( bc -l <<< "$duration * 1000000.0 / $chars" )
+
+printf "\e[34m$name\e[m: \e[35m%.2fms\e[m\n  " $duration
+
+if [[ "$(bc -l <<< "$percent < 99.999")" == "1" ]]
+then
+  printf "%.2f%% of " $percent
+fi
+
+printf "%d files, %d lines\n  \e[33m%.2fµs\e[m / line\n  \e[33m%.0fns\e[m / char\n" $total $lines $rate $char_rate

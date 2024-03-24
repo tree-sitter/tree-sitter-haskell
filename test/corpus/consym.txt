@@ -4,17 +4,18 @@ consym: valid
 
 data A = Int :+ Int
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (constructors
-   (data_constructor_infix
-    (type_name (type))
-    (constructor_operator)
-    (type_name (type))))))
-
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (infix
+            (name)
+            (constructor_operator)
+            (name)))))))
 
 ================================================================================
 consym: error: ::
@@ -22,6 +23,15 @@ consym: error: ::
 
 data A = Int :: Int
 
----
+--------------------------------------------------------------------------------
 
-(haskell (adt (type) (constructors (data_constructor (constructor) (ERROR) (type_name (type))))))
+(haskell
+  (declarations
+    (data_type
+      (name)
+      (data_constructors
+        (data_constructor
+          (prefix
+            (constructor)
+            (ERROR)
+            (name)))))))

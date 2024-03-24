@@ -1,0 +1,288 @@
+================================================================================
+patsyn: unidirectional simple
+================================================================================
+
+pattern A a <- a : a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (pattern_synonym
+      (equation
+        (apply
+          (constructor)
+          (variable))
+        (infix
+          (variable)
+          (constructor_operator)
+          (variable))))))
+
+================================================================================
+patsyn: unidirectional strict
+================================================================================
+
+pattern A a = A !a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (pattern_synonym
+      (equation
+        (apply
+          (constructor)
+          (variable))
+        (apply
+          (constructor)
+          (strict
+            (variable)))))))
+
+================================================================================
+patsyn: explicit bidirectional list
+================================================================================
+
+pattern A a <- a : a where
+  A a = [a]
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (pattern_synonym
+      (equation
+        (apply
+          (constructor)
+          (variable))
+        (infix
+          (variable)
+          (constructor_operator)
+          (variable))
+        (constructor_synonyms
+          (constructor_synonym
+            (apply
+              (constructor)
+              (variable))
+            (match
+              (list
+                (variable)))))))))
+
+================================================================================
+patsyn: explicit bidirectional strict
+================================================================================
+
+pattern A a <- A !a where
+  A !a = A a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (pattern_synonym
+      (equation
+        (apply
+          (constructor)
+          (variable))
+        (apply
+          (constructor)
+          (strict
+            (variable)))
+        (constructor_synonyms
+          (constructor_synonym
+            (apply
+              (constructor)
+              (strict
+                (variable)))
+            (match
+              (apply
+                (constructor)
+                (variable)))))))))
+
+================================================================================
+patsyn: explicit bidirectional record
+================================================================================
+
+pattern A { a } <- A a where
+  A a = if a >= 0 then a else a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (pattern_synonym
+      (equation
+        synonym: (record
+          constructor: (constructor)
+          field: (field_pattern
+            field: (field_name
+              (variable))))
+        pattern: (apply
+          function: (constructor)
+          argument: (variable))
+        constructors: (constructor_synonyms
+          (constructor_synonym
+            pattern: (apply
+              function: (constructor)
+              argument: (variable))
+            match: (match
+              expression: (conditional
+                if: (infix
+                  left_operand: (variable)
+                  operator: (operator)
+                  right_operand: (literal
+                    (integer)))
+                then: (variable)
+                else: (variable)))))))))
+
+================================================================================
+patsyn: explicit bidirectional guards
+================================================================================
+
+pattern A a <- A a where
+  A a
+    | a >= 0    = (A a)
+    | otherwise = A a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (pattern_synonym
+      (equation
+        synonym: (apply
+          function: (constructor)
+          argument: (variable))
+        pattern: (apply
+          function: (constructor)
+          argument: (variable))
+        constructors: (constructor_synonyms
+          (constructor_synonym
+            pattern: (apply
+              function: (constructor)
+              argument: (variable))
+            match: (match
+              guards: (guards
+                guard: (boolean
+                  (infix
+                    left_operand: (variable)
+                    operator: (operator)
+                    right_operand: (literal
+                      (integer)))))
+              expression: (parens
+                expression: (apply
+                  function: (constructor)
+                  argument: (variable))))
+            match: (match
+              guards: (guards
+                guard: (boolean
+                  (variable)))
+              expression: (apply
+                function: (constructor)
+                argument: (variable)))))))))
+
+================================================================================
+patsyn: signature
+================================================================================
+
+pattern A :: A -> A -> (A, A)
+pattern A, A :: A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (pattern_synonym
+      (signature
+        synonym: (constructor)
+        type: (function
+          parameter: (name)
+          result: (function
+            parameter: (name)
+            result: (tuple
+              element: (name)
+              element: (name))))))
+    (pattern_synonym
+      (signature
+        synonym: (binding_list
+          name: (constructor)
+          name: (constructor))
+        type: (name)))))
+
+================================================================================
+patsyn: unidirectional record
+================================================================================
+
+pattern A {a, a} = (a, a)
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (pattern_synonym
+      (equation
+        (record
+          (constructor)
+          (field_pattern
+            (field_name
+              (variable)))
+          (field_pattern
+            (field_name
+              (variable))))
+        (tuple
+          (variable)
+          (variable))))))
+
+================================================================================
+patsyn: operator
+================================================================================
+
+pattern (:->) :: A
+pattern a :-> b <- a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  declarations: (declarations
+    (pattern_synonym
+      (signature
+        synonym: (prefix_id
+          (constructor_operator))
+        type: (name)))
+    (pattern_synonym
+      (equation
+        synonym: (infix
+          left_operand: (variable)
+          operator: (constructor_operator)
+          right_operand: (variable))
+        pattern: (variable)))))
+
+================================================================================
+patsyn: ticked infix
+================================================================================
+
+pattern A <- a `A` a
+pattern A <- a `A.A` a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (pattern_synonym
+      (equation
+        (constructor)
+        (infix
+          (variable)
+          (infix_id
+            (constructor))
+          (variable))))
+    (pattern_synonym
+      (equation
+        (constructor)
+        (infix
+          (variable)
+          (infix_id
+            (qualified
+              (module
+                (module_id))
+              (constructor)))
+          (variable))))))

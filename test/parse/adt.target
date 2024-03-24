@@ -1,0 +1,29 @@
+(haskell [0, 0] - [8, 0]
+  (header [0, 0] - [0, 14]
+    module: (module [0, 7] - [0, 8]
+      (module_id [0, 7] - [0, 8])))
+  declarations: (declarations [2, 0] - [8, 0]
+    (data_type [2, 0] - [5, 17]
+      name: (name [2, 5] - [2, 6])
+      patterns: (type_params [2, 7] - [2, 8]
+        bind: (variable [2, 7] - [2, 8]))
+      constructors: (data_constructors [3, 2] - [3, 3]
+        constructor: (data_constructor [3, 2] - [3, 3]
+          constructor: (prefix [3, 2] - [3, 3]
+            name: (constructor [3, 2] - [3, 3]))))
+      deriving: (deriving [4, 2] - [4, 15]
+        classes: (parens [4, 11] - [4, 15]
+          (name [4, 12] - [4, 14])))
+      deriving: (deriving [5, 2] - [5, 17]
+        classes: (parens [5, 11] - [5, 17]
+          (name [5, 12] - [5, 16]))))
+    (data_type [7, 0] - [7, 24]
+      name: (name [7, 5] - [7, 6])
+      patterns: (type_params [7, 7] - [7, 8]
+        bind: (variable [7, 7] - [7, 8]))
+      constructors: (data_constructors [7, 11] - [7, 12]
+        constructor: (data_constructor [7, 11] - [7, 12]
+          constructor: (prefix [7, 11] - [7, 12]
+            name: (constructor [7, 11] - [7, 12]))))
+      deriving: (deriving [7, 13] - [7, 24]
+        classes: (name [7, 22] - [7, 24])))))

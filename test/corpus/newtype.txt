@@ -4,12 +4,16 @@ newtype: basic
 
 newtype A = A A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (newtype
-  (type)
-  (newtype_constructor (constructor) (type_name (type)))))
+  (declarations
+    (newtype
+      (name)
+      (newtype_constructor
+        (constructor)
+        (field
+          (name))))))
 
 ================================================================================
 newtype: context
@@ -17,14 +21,22 @@ newtype: context
 
 newtype A a => A a = A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (newtype
-  (context (constraint (class_name (type)) (type_name (type_variable))))
-  (type)
-  (type_variable)
-  (newtype_constructor (constructor) (type_name (type_variable)))))
+  (declarations
+    (newtype
+      (context
+        (apply
+          (name)
+          (variable)))
+      (name)
+      (type_params
+        (variable))
+      (newtype_constructor
+        (constructor)
+        (field
+          (variable))))))
 
 ================================================================================
 newtype: record
@@ -32,33 +44,49 @@ newtype: record
 
 newtype A = A { a :: A a }
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (newtype
-  (type)
-  (newtype_constructor
-   (constructor)
-   (field (variable) (type_apply (type_name (type)) (type_name (type_variable)))))))
+  (declarations
+    (newtype
+      (name)
+      (newtype_constructor
+        (constructor)
+        (record
+          (field
+            (field_name
+              (variable))
+            (apply
+              (name)
+              (variable))))))))
 
 ================================================================================
-newtype: type_variable kind
+newtype: tyvar kind
 ================================================================================
 
 newtype A a (a :: [* -> *]) a =
   A a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (newtype
-  (type)
-  (type_variable)
-  (annotated_type_variable
-   (type_variable)
-   (type_list (fun (type_star) (type_star))))
-  (type_variable)
-  (newtype_constructor (constructor) (type_name (type_variable)))))
+  (declarations
+    (newtype
+      (name)
+      (type_params
+        (variable)
+        (parens
+          (annotated
+            (variable)
+            (list
+              (function
+                (star)
+                (star)))))
+        (variable))
+      (newtype_constructor
+        (constructor)
+        (field
+          (variable))))))
 
 ================================================================================
 newtype: deriving
@@ -71,22 +99,43 @@ newtype A a =
   deriving newtype A
   deriving A via (A a)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (newtype
-  (type)
-  (newtype_constructor (constructor) (type_name (type_variable)))
-  (deriving (type)))
- (newtype
-  (type)
-  (type_variable)
-  (newtype_constructor (constructor) (field (variable) (type_name (type))))
-  (deriving (constraint (class_name (type))) (comma) (constraint (class_name (type))))
-  (deriving (deriving_strategy) (type))
-  (deriving
-   (type)
-   (via (type_parens (type_apply (type_name (type)) (type_name (type_variable))))))))
+  (declarations
+    (newtype
+      (name)
+      (newtype_constructor
+        (constructor)
+        (field
+          (variable)))
+      (deriving
+        (name)))
+    (newtype
+      (name)
+      (type_params
+        (variable))
+      (newtype_constructor
+        (constructor)
+        (record
+          (field
+            (field_name
+              (variable))
+            (name))))
+      (deriving
+        (tuple
+          (name)
+          (name)))
+      (deriving
+        (deriving_strategy)
+        (name))
+      (deriving
+        (name)
+        (via
+          (parens
+            (apply
+              (name)
+              (variable))))))))
 
 ================================================================================
 newtype: unlifted
@@ -95,15 +144,41 @@ newtype: unlifted
 newtype A :: TYPE 'A where
   A :: A# -> A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (newtype
-  (type)
-  (type_apply
-   (type_name (type))
-   (type_name (promoted (type))))
-  (where)
-  (gadt_constructor
-   (constructor)
-   (fun (type_name (type)) (type_name (type))))))
+  (declarations
+    (newtype
+      (name)
+      (apply
+        (name)
+        (promoted
+          (constructor)))
+      (gadt_constructors
+        (gadt_constructor
+          (constructor)
+          (prefix
+            (function
+              (name)
+              (name))))))))
+
+================================================================================
+newtype: prefix operator
+================================================================================
+
+newtype (++) a = (:++) a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (newtype
+      (prefix_id
+        (operator))
+      (type_params
+        (variable))
+      (newtype_constructor
+        (prefix_id
+          (constructor_operator))
+        (field
+          (variable))))))

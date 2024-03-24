@@ -1,80 +1,162 @@
-const
+// ------------------------------------------------------------------------
+// structure
+// ------------------------------------------------------------------------
 
-parens = (...rule) => seq('(', ...rule, ')')
+const sep1 = (s, rule) => seq(rule, repeat(seq(s, rule)))
 
-braces = (...rule) => seq('{', ...rule, '}')
+const sep2 = (s, rule) => seq(rule, repeat1(seq(s, rule)))
 
-brackets = (...rule) => seq('[', ...rule, ']')
+const sep = (s, rule) => optional(sep1(s, rule))
 
-ticked = (...rule) => seq('`', ...rule, '`')
+// ------------------------------------------------------------------------
+// syntax
+// ------------------------------------------------------------------------
 
-quote = '\''
+const parens = ($, ...rule) => seq($._paren_open, ...rule, $._paren_close)
 
-qualified = ($, id) => seq($._qualifying_module, id)
+const braces = ($, ...rule) => seq('{', $._cmd_brace_open, ...rule, '}', $._cmd_brace_close)
 
-sep = (sep, rule) => optional(seq(rule, repeat(seq(sep, rule))))
+const brackets = ($, ...rule) => seq($._bracket_open, ...rule, $._bracket_close)
 
-sep1 = (sep, rule) => seq(rule, repeat(seq(sep, rule)))
+const ticked = (...rule) => seq('`', ...rule, '`')
 
-sep2 = (sep, rule) => seq(rule, repeat1(seq(sep, rule)))
+const promoted = (...rule) => seq('\'', ...rule)
 
-/**
-  * Wrap a repeated rule with semicolon rules.
-  * Between any two occurrences of a rule in a layout, if no explicit semicolon is encountered, delegate to the scanner
-  * to determine heuristically where a statement or decl may end.
-  * After the last repetition, the semicolon is optional.
-  * The dynamic precision is needed because of some irregularities with standalone deriving decls and data deriving
-  * clauses.
-  */
-terminated = ($, rule) => seq(
-  sep1(prec.dynamic(1, choice(';', $._layout_semicolon)), rule),
-  optional(choice(';', $._layout_semicolon)),
-)
+const prefix_at = ($, ...rule) => prec('prefix', seq($._prefix_at, ...rule))
 
-/**
-  * Explicitly braced layouts may have arbitrary numbers of semicolons before and after each statement, but this causes
-  * strange conflicts, so we only allow them once in leading and trailing position, but many times between statements.
-  */
-layouted_braces = rule => braces(optional(';'), sep(repeat1(';'), rule), optional(';')),
+const semi = $ => choice(repeat1(';'), $._cond_layout_semicolon)
+
+const semi_opt = $ => optional(semi($))
+
+const semis = ($, rule) => sep1(semi($), rule)
+
+// ------------------------------------------------------------------------
+// layout
+// ------------------------------------------------------------------------
 
 /**
-  * Wrap a repeated rule in a layout.
-  * This is used for `where`, `let`, `of` and `do`, and the toplevel module.
-  * The `_layout_start` rule is picked up by the scanner and causes the current column (or indent, for newline
-  * layouts) to be recorded.
-  * When a `_layout_end` or `_layout_semicolon` is encountered by the scanner, the recorded indent is compared to the
-  * current one to make a decision.
-  * If explicit braces are provided, the scanner isn't relevant.
-  */
-layouted = ($, rule) => choice(
-  layouted_braces(rule),
-  seq($._layout_start, optional(terminated($, rule)), $._layout_end),
+ * More general variant of `layout_sort`.
+ */
+const layout_sort_single = ($, start, rule) => seq(
+  choice(start, alias($._cmd_layout_start_explicit, '{')),
+  rule,
+  $._layout_end,
 )
 
-layouted_without_end = ($, rule) => choice(
-  layouted_braces(rule),
-  seq($._layout_start, optional(terminated($, rule))),
+/**
+ * Wrap a repeated rule in a layout.
+ * This is used for `where`, `let`, `of`, `if` and `do`, and the toplevel module.
+ * The `start` rule must be one of the externals starting with `_cmd_layout_<type>`, which instruct the scanner to push
+ * a layout context with the current column as its indentation.
+ * When a `_cond_layout_end` or `_cond_layout_semicolon` is encountered by the scanner, the recorded indent is compared
+ * to the current one to make a decision.
+ */
+const layout_sort = ($, start, rule) => seq(
+  choice(start, alias($._cmd_layout_start_explicit, '{')),
+  optional(seq(
+    semi_opt($),
+    semis($, rule),
+    semi_opt($),
+  )),
+  $._layout_end,
 )
 
-where = ($, rule) => seq(
-  $.where,
-  optional(layouted($, rule)),
+/**
+ * Same as `layout`, but using `layout_sort_single`.
+ * This is necessary for braces without repeating layout elements.
+ * Usually it is enough to just use `braces` for this (e.g. records), but if the rule is in a choice with a full
+ * layout, we need to allow the layout start token since the scanner emits that unconditionally based on preceding
+ * tokens.
+ */
+const layout_single = ($, rule) => layout_sort_single($, $._cmd_layout_start, rule)
+
+/**
+ * Alias for `layout_sort` using the common layout type for the start token, which corresponds to declarations and GADT
+ * constructors.
+ */
+const layout = ($, rule) => layout_sort($, $._cmd_layout_start, rule)
+
+// ------------------------------------------------------------------------
+// unboxed
+// ------------------------------------------------------------------------
+
+const unboxed = ($, ...rules) => seq($._unboxed_open, ...rules, $._unboxed_close)
+
+/**
+ * At least one element is filled, for expressions.
+ */
+const unboxed_tuple_nonempty = ($, rule) => unboxed(
+  $,
+  repeat(','),
+  field('element', rule),
+  repeat(seq(',', optional(field('element', rule))))
 )
 
-varid_pattern = /[_\p{Ll}](\w|')*#?/u
+/**
+ * All elements are filled in, for types and patterns.
+ */
+const unboxed_tuple_full = ($, rule) => unboxed($, sep1(',', field('element', rule)))
+
+/**
+ * Exactly one element is filled in, used by expressions, patterns and the special data constructors.
+ */
+const unboxed_sum_single = ($, rule) => unboxed(
+  $,
+  choice(
+    seq(repeat1($._unboxed_bar), field('element', rule)),
+    seq(field('element', rule), $._unboxed_bar)
+  ),
+  repeat($._unboxed_bar),
+)
+
+/**
+ * All elements are filled in, for types.
+ */
+const unboxed_sum_full = ($, rule) => unboxed($, sep2($._unboxed_bar, field('element', rule)))
+
+// ------------------------------------------------------------------------
+// where
+// ------------------------------------------------------------------------
+
+const optional_where = ($, rule) => optional(seq($._where, optional(rule)))
+
+// ------------------------------------------------------------------------
+// misc
+// ------------------------------------------------------------------------
+
+const qualified = ($, id) => prec('qualified-id', seq(
+  field('module', alias($._qualifying_module, $.module)),
+  field('id', id),
+))
+
+const context = $ => optional(field('context', $.context))
+
+const forall = $ => optional(field('forall', $._forall))
 
 module.exports = {
+  sep1,
+  sep2,
+  sep,
   parens,
   braces,
   brackets,
   ticked,
-  quote,
+  promoted,
+  prefix_at,
+  semi,
+  semi_opt,
+  semis,
+  layout_sort_single,
+  layout_sort,
+  layout_single,
+  layout,
+  unboxed,
+  unboxed_tuple_nonempty,
+  unboxed_tuple_full,
+  unboxed_sum_single,
+  unboxed_sum_full,
+  optional_where,
   qualified,
-  sep,
-  sep1,
-  sep2,
-  terminated,
-  layouted,
-  where,
-  varid_pattern,
+  context,
+  forall,
 }

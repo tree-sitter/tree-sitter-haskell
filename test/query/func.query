@@ -1,0 +1,7 @@
+(apply
+  [
+    (variable) @func
+    (qualified (variable) @func)
+  ]
+  (#eq? @func "test")
+  (expression/literal (string) @name))
