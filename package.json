@@ -16,8 +16,8 @@
     "node-gyp": ">=7 <11"
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.20.6",
-    "web-tree-sitter": "^0.20.6"
+    "tree-sitter-cli": "^0.20.8",
+    "web-tree-sitter": "^0.20.8"
   },
   "scripts": {
     "test": "tree-sitter test",

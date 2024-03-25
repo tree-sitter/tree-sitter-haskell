@@ -1,10 +1,10 @@
-#!/usr/bin/env node --trace-warnings --unhandled-rejections=strict
+#!/usr/bin/env node
 
 const fs = require('fs');
 const Parser = require('web-tree-sitter');
 
-if (process.argv.length < 3) {
-  console.log('Usage: script/tree-sitter-parse.js <haskell-file..>')
+if (process.argv.length < 2) {
+  console.log('Usage: test/tree-sitter-parse.js <haskell-file..>')
   process.exit(1)
 }
 
@@ -12,7 +12,7 @@ Parser.init().then(() => {
   Parser.Language.load('tree-sitter-haskell.wasm').then((Haskell) => {
     const parser = new Parser;
     parser.setLanguage(Haskell);
-    for (let i = 2; i < process.argv.length - 1; i++) {
+    for (let i = 1; i < process.argv.length; i++) {
       const fileName = process.argv[i]
       const sourceCode = fs.readFileSync(fileName, 'utf8')
       const tree = parser.parse(sourceCode);

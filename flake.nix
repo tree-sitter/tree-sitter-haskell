@@ -49,7 +49,7 @@
       override = {fast, ...}: fast;
     };
 
-    envs.dev.buildInputs = pkgs: [pkgs.tree-sitter];
+    envs.dev.buildInputs = pkgs: [pkgs.nodejs pkgs.tree-sitter pkgs.emscripten pkgs.python3];
 
     outputs = let
       inherit (config) pkgs;

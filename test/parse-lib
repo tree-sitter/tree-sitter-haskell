@@ -33,20 +33,18 @@ files_to_parse=$(comm -13 <(sort $failures_file) <(find $lib -name '*.hs' | sort
 if [ "$mode" == "native" ]; then
   # Ensure the scanner was recompiled
   tree-sitter test -f 'just compile it' >/dev/null
+  runner='tree-sitter parse -q'
 elif [ "$mode" == "wasm" ]; then
   # Ensure tree-sitter-haskell.wasm was compiled
   make node_modules/web-tree-sitter -s
   make tree-sitter-haskell.wasm -s
+  runner='./test/tree-sitter-parse.js'
 else
   echo "Unsupported mode: $mode"
 fi
 
 start=$(date '+%s.%N')
-if [ "$mode" == "native" ]; then
-  echo $files_to_parse | xargs -n 2000 tree-sitter parse -q
-elif [ "$mode" == "wasm" ]; then
-  echo $files_to_parse | xargs -n 2000 ./script/tree-sitter-parse.js
-fi
+eval $runner $files_to_parse
 end=$(date '+%s.%N')
 
 skipped=$( cat $failures_file | wc -w )
