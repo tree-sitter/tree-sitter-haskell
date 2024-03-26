@@ -338,7 +338,6 @@ typedef struct {
 
 typedef struct {
   Contexts contexts;
-  bool disabled;
   Newline newline;
   Lookahead *lookahead;
 #if DEBUG
@@ -857,7 +856,6 @@ static bool debug_init() {
   debug_contexts();
   dbg(", newline = ");
   debug_newline();
-  if (state->disabled) dbg(", disabled");
   dbg(" }\n");
   return false;
 }
@@ -991,17 +989,9 @@ void debug_finish(Symbol result) {
   if (env->debug.marked == -1) dbg("%d", column());
   else dbg("%s@%d", env->debug.marked_by, env->debug.marked);
   dbg("\n\n");
-  if (state->disabled) {
-    if (result) {
-      push_comment_to_parse_buffer();
-      debug_parse();
-    }
-  }
-  else {
-    fill_parse_buffer();
-    debug_parse();
-    state->parse.len -= env->debug.marked_line;
-  }
+  fill_parse_buffer();
+  debug_parse();
+  state->parse.len -= env->debug.marked_line;
 }
 
 #endif
@@ -1547,7 +1537,6 @@ static Lexed lex_splice(int32_t c) {
  *   selectors as well due to ambiguity.
  *   This is not a regular tight op since it needs to allow symops and conid.
  */
-
 static Lexed lex_symop() {
   uint32_t len = symop_lookahead();
   if (len == 0) return LNothing;
@@ -2288,9 +2277,8 @@ static bool eval() {
 // --------------------------------------------------------------------------------------------------------
 
 typedef struct {
-  bool disabled;
-  Newline newline;
   unsigned contexts;
+  Newline newline;
 #if DEBUG
   unsigned parse;
 #endif
@@ -2326,7 +2314,7 @@ bool tree_sitter_haskell_external_scanner_scan(void *payload, TSLexer *lexer, co
 unsigned tree_sitter_haskell_external_scanner_serialize(void *payload, char *buffer) {
   State *state = (State *) payload;
   Persist *persist = (Persist *) buffer;
-  *persist = (Persist) {.disabled = state->disabled, .newline = state->newline, .contexts = state->contexts.len};
+  *persist = (Persist) {.contexts = state->contexts.len, .newline = state->newline};
 #if DEBUG
   persist->parse = state->parse.len;
 #endif
@@ -2347,12 +2335,11 @@ void tree_sitter_haskell_external_scanner_deserialize(void *payload, const char 
   if (length > 0)
     persist = (Persist *) buffer;
   else {
-    p = (Persist) {.disabled = false};
+    p = (Persist) {.contexts = 0};
     persist = &p;
     persist->newline.state = NResume;
   }
   unsigned contexts_size = persist->contexts * sizeof(Context);
-  state->disabled = persist->disabled;
   state->newline = persist->newline;
   VEC_GROW(&state->contexts, persist->contexts);
   state->contexts.len = persist->contexts;
