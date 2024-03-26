@@ -1,3 +1,63 @@
+/**
+ * The scanner is an extension to the built-in lexer that handles cases that are hard or impossible to express with the
+ * high-level grammar rules.
+ * Since Haskell is indentation sensitive and uses parse errors to end layouts, this component has many
+ * responsibilities.
+ *
+ * tree-sitter runs the scanner at every position repeatedly until it fails, after which the built-in lexer consumes one
+ * token.
+ * When the scanner succeeds, it returns the index of a symbol in the `externals` array in `grammar.js`, which is then
+ * processed like other grammar symbols, except that it terminates any conflict branches in which the symbol isn't
+ * valid.
+ * The scanner's state is persisted and passed into the next run, but it is discarded when the scanner fails, i.e. when
+ * it yields control back to the built-in lexer.
+ *
+ * The high-level workflow of the scanner consists of three distinct modes.
+ * When the first character after whitespace is a newline, the scanner starts newline lookahead, otherwise it processes
+ * an interior position.
+ * If the state indicates that the previous run performed newline lookahead, it enters newline processing mode.
+ *
+ * In interior mode, a single lexing pass is performed.
+ *
+ * Such a pass consists of two steps:
+ *
+ * In the first step, the scanner identifies the immediate token by branching on the first character after whitespace
+ * and examining different conditions to select one of the variants of the enum `Lexed`, which enumerates all known,
+ * interesting, situations.
+ * The position of the lexer may be advanced in the process to look at subsequent characters.
+ * To avoid having to arrange different parts of the logic according to how many characters have been consumed,
+ * lookahead is written to an array in the transient state on demand, so that each component can specify the index
+ * relative to the position at the beginning of the run (modulo whitespace).
+ * The entry point for this step is the function `lex`.
+ *
+ * The second step is different for each mode.
+ * In interior mode, the `Lexed` token determines which symbol to return to the grammar based on the current state, like
+ * layout contexts and valid symbols.
+ * Most symbols do not contain any text, but only act as conditions in the grammar, but for symbolic operators, CPP,
+ * comments, pragmas, and quasiquotes, the lexer is advanced to the end of the token and `mark_end` is called to
+ * communicate the range to tree-sitter.
+ *
+ * In newline lookahead mode, the scanner performs repeated lexing passes until it encounters a `Lexed` token that is
+ * not CPP or a comment.
+ * In the second step of each pass, the token determines whether to terminate and/or which flags to set in the state to
+ * guide processing in the next run.
+ * If the lookahead loop has only made a single lexing pass that did not consume any characters of the following token
+ * (because the first character did not match any of the conditions for lexing that require more lookahead), the scanner
+ * switches to newline processing mode directly; otherwise it terminates the run after storing the newline information
+ * in the persistent state.
+ * This is possible by succeeding with the symbol `UPDATE`, which is mapped to newline in `externals`.
+ * tree-sitter does not create a node in the parse tree for this symbol if `mark_end` wasn't called after consuming
+ * lookahead, and immediately calls the scanner again at the same position.
+ *
+ * In either case, the scanner ends up in newline processing mode, in which it performs a series of highly
+ * order-sensitive steps based on the data collected in lookahead mode, potentially returning multiple symbols in
+ * successive runs until none of the newline-related conditions match.
+ * This procedure ensures that nested layouts are terminated at the earliest position instead of extending over all
+ * subsequent (top-level) whitespace, comments and CPP up to the next layout element.
+ * Only when all layouts are terminated will the scanner process the final `Lexed` token that it stored in the state in
+ * lookahead mode, using the same logic as in interior mode, and update the state to disable newline processing for the
+ * next run.
+ */
 #define DEBUG 0
 
 #include "tree_sitter/parser.h"
@@ -69,6 +129,11 @@
 // Symbols
 // --------------------------------------------------------------------------------------------------------
 
+/**
+ * This enum mirrors the symbols in `externals` in `grammar.js`.
+ * tree-sitter passes an array of booleans to the scanner whose entries are `true` if the symbol at the corresponding
+ * index is valid at the current parser position.
+ */
 typedef enum {
   FAIL,
   SEMICOLON,
@@ -162,19 +227,6 @@ static const char *sym_names[] = {
 // --------------------------------------------------------------------------------------------------------
 
 #if DEBUG
-static char const *context_names[] = {
-
-  "decls",
-  "do",
-  "case",
-  "let",
-  "multi_way_if",
-  "quote",
-  "braces",
-  "texp",
-  "module_header",
-  "none",
-};
 
 typedef struct {
   unsigned len;
@@ -182,12 +234,19 @@ typedef struct {
   int32_t *data;
 } ParseLine;
 
+/**
+ * A vector of lines, persisted across runs, for visualizing the current lexer position and scanner lookahead.
+ */
 typedef struct {
   unsigned len;
   unsigned cap;
   ParseLine *data;
 } ParseLines;
 
+/**
+ * Info about calls to `mark_end` and how far the lexer has progressed in a run.
+ * Discarded after each run.
+ */
 typedef struct {
   int marked;
   unsigned marked_line;
@@ -210,6 +269,9 @@ Debug debug_new(TSLexer *l) {
 
 #endif
 
+/**
+ * Different sorts of layout contexts that require special treatment.
+ */
 typedef enum {
   DeclLayout,
   DoLayout,
@@ -223,11 +285,36 @@ typedef enum {
   NoContext,
 } ContextSort;
 
+#if DEBUG
+
+static char const *context_names[] = {
+  "decls",
+  "do",
+  "case",
+  "let",
+  "multi_way_if",
+  "quote",
+  "braces",
+  "texp",
+  "module_header",
+  "none",
+};
+
+#endif
+
+/**
+ * The persistent state maintains a stack of layout contexts.
+ * New entries are created when a layout symbol is valid at the current position, and they are removed when the indent
+ * of a line satisfies conditions that depend on the current context sort, or when certain tokens (like `else`) occur.
+ */
 typedef struct {
   ContextSort sort;
   uint32_t indent;
 } Context;
 
+/**
+ * This enumerates the lookahead tokens that have special meaning in the scanner.
+ */
 typedef enum {
   LNothing,
   LEof,
@@ -306,6 +393,13 @@ static const char *token_names[] = {
 
 #endif
 
+/**
+ * The current newline mode.
+ * `NInit` is set during newline lookahead, and `NProcess` when lookahead has finished.
+ * After processing is complete, the state is reset to `NInactive`.
+ * `NResume` is a special variant that forces newline lookahead mode when a run starts without requiring a newline.
+ * This is used for the beginning of the file and after pragmas (see `pragma`).
+ */
 typedef enum {
   NInactive,
   NInit,
@@ -313,22 +407,52 @@ typedef enum {
   NResume,
 } NewlineState;
 
+/**
+ * The two newline modes need to operate across multiple scanner runs and adapt their behavior to the context
+ * established by previous runs, encoded by this persistent state.
+ */
 typedef struct {
   NewlineState state;
-  uint32_t indent;
+  // The final token encountered after skipping comments and CPP.
   Lexed end;
+  // The indent of `end`, used to decide layout actions before parsing intermediate extras.
+  uint32_t indent;
+  // When there is no token after extras, we shouldn't start layouts.
   bool eof;
+  // Prohibit layout semicolons in future runs.
   bool no_semi;
+  // Prohibit layout semicolons in future runs, but can be relaxed by some actions.
+  // See `explicit_semicolon`.
   bool skip_semi;
+  // Lookahead has advanced into `end`, so the scanner has to be restarted before processing the newline result.
   bool unsafe;
 } Newline;
 
+/**
+ * The vector for the layout context stack.
+ */
 typedef struct {
   uint32_t len;
   uint32_t cap;
   Context *data;
 } Contexts;
 
+/**
+ * Whenever the lexer is advanced over non-whitespace, the consumed character is appended to this vector.
+ * This avoids having to ensure that different components that need to examine multiple lookahead characters have to be
+ * run in the correct order.
+ * Instead, we refer to lookahead by the character's index using the interface described in the section 'Lookahead'.
+ *
+ * For example, the functions `peek0`, `char0`, `char1` operate on the first/second character relative to the start of
+ * the scanner run, and the implementation advances the lexer position when it is necessary.
+ *
+ * The field `offset` can be used to reset relative indexing to the current lexer position.
+ * This is used, for example, in `newline_lookahead`, to perform repeated lexing passes, since `lex` uses the lookahead
+ * interface.
+ * After processing a `Lexed` token, `newline_lookahead` continues seeking ahead after comments and CPP, and when it
+ * encounters the next token, it calls `reset_lookahead` to set `offset` to the current position, ensuring that `lex`
+ * can use `char0` to test the following character.
+ */
 typedef struct {
   uint32_t len;
   uint32_t cap;
@@ -336,6 +460,15 @@ typedef struct {
   uint32_t offset;
 } Lookahead;
 
+/**
+ * The state that is persisted across scanner runs.
+ *
+ * Although 'Lookahead' is always reset when starting a new run, storing it in the state avoids having to allocate and
+ * free the array repeatedly.
+ * Instead we just reset the `len` attribute to 0 and reuse the previous memory.
+ *
+ * REVIEW: Can tree-sitter run the scanner concurrently on multiple nodes in the same file in some situations?
+ */
 typedef struct {
   Contexts contexts;
   Newline newline;
@@ -346,12 +479,7 @@ typedef struct {
 } State;
 
 /**
- * This structure contains the external and internal state.
- *
- * The parser provides the lexer interface and the list of valid symbols.
- *
- * The internal state consists of a stack of indentation widths that is manipulated whenever a layout is started or
- * terminated.
+ * Transient state and stuff provided by tree-sitter.
  */
 typedef struct {
   TSLexer *lexer;
@@ -1852,6 +1980,15 @@ static bool consume_pragma() {
   return false;
 }
 
+/**
+ * Since pragmas can occur anywhere, like comments, but contrarily determine indentation when occurring at the beginning
+ * of a line in layouts, this sets `NResume` to continue newline processing with the indent of the pragma.
+ *
+ * If the pragma is followed by newline, this only ensures that no semicolon is emitted (since this rule is run before
+ * `semicolon` and `NResume` restarts lookahead).
+ *
+ * Otherwise it ensures that the following token is treated as a layout element with the correct indent.
+ */
 static Symbol pragma() {
   if (consume_pragma()) {
     if (newline->state != NInactive) newline->state = NResume;
