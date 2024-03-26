@@ -2203,7 +2203,6 @@ static Symbol newline_resume() {
   skip_space();
   reset_newline();
   newline->indent = indent;
-  newline->state = NResume;
   return newline_start();
 }
 
