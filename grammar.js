@@ -86,10 +86,25 @@ module.exports = grammar({
     $._cmd_layout_start_if,
     $._cmd_layout_start_let,
     $._cmd_layout_start_quote,
+    // This variant is used in a `choice` with the others, and serves only to create a terminal node for explicit
+    // braces.
+    // If the scanner emitted the same symbol for virtual and explicit braces, we would either get an anonymous node
+    // ranging over the brace, or a terminal brace node even for virtual starts if we were to alias the symbol to '{'
+    // unconditionally.
+    // So we use separate symbols and alias only this one.
+    // The same reasoning applies to `_cond_layout_end_explicit`.
+    // The terminal could be ensured in different ways – adding an `optional('{')` after the start symbol, using
+    // `seq($._cmd_layout_start_explicit, '{')` instead of including the brace in the scanner range, or branching the
+    // entire layout on the start token to unconditionally use `_cmd_brace_close` instead of
+    // `_cond_layout_end_explicit`.
+    // However, these solutions are all very expensive, adding between 500 and 1000kB to the shared object size, and up
+    // to a second in generation time.
+    $._cmd_layout_start_explicit,
 
     // Emitted when a new line's indent mandates ending the current layout (depending on the layout sort), or when a
     // special inline layout-ending token is encountered, like an `in`.
     $._cond_layout_end,
+    $._cond_layout_end_explicit,
 
     // Instruct the scanner to push or pop a brace context.
     $._cmd_brace_open,

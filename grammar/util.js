@@ -33,23 +33,23 @@ semis = ($, rule) => sep1(semi($), rule),
 /**
  * Wrap a repeated rule in a layout.
  * This is used for `where`, `let`, `of`, `if` and `do`, and the toplevel module.
- * The `start` rule must be one of the externals starting with `_cond_layout_<type>`, which instruct the scanner to push
+ * The `start` rule must be one of the externals starting with `_cmd_layout_<type>`, which instruct the scanner to push
  * a layout context with the current column as its indentation.
  * When a `_cond_layout_end` or `_cond_layout_semicolon` is encountered by the scanner, the recorded indent is compared
  * to the current one to make a decision.
  */
 layout_sort = ($, start, rule) => seq(
-  start,
+  choice(start, alias($._cmd_layout_start_explicit, '{')),
   optional(seq(
     semi_opt($),
     semis($, rule),
     semi_opt($),
   )),
-  $._cond_layout_end,
+  $._layout_end,
 ),
 
 /**
- * Alias of `layout_sort` using the common layout type for the start token, which corresponds to declarations and GADT
+ * Alias for `layout_sort` using the common layout type for the start token, which corresponds to declarations and GADT
  * constructors.
  */
 layout = ($, rule) => layout_sort($, $._cmd_layout_start, rule)

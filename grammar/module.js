@@ -62,11 +62,16 @@ module.exports = {
   declarations: $ => seq(semis($, $._topdecl), semi_opt($)),
 
   _body: $ => seq(
-    $._cmd_layout_start,
+    choice($._cmd_layout_start, alias($._cmd_layout_start_explicit, '{')),
     semi_opt($),
     field('imports', optional($.imports)),
     field('declarations', optional($.declarations)),
+    $._layout_end,
+  ),
+
+  _layout_end: $ => choice(
     $._cond_layout_end,
+    alias($._cond_layout_end_explicit, '}'),
   ),
 
 }

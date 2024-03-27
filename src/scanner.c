@@ -143,7 +143,9 @@ typedef enum {
   START_IF,
   START_LET,
   START_QUOTE,
+  START_EXPLICIT,
   END,
+  END_EXPLICIT,
   START_BRACE,
   END_BRACE,
   START_TEXP,
@@ -187,7 +189,9 @@ static const char *sym_names[] = {
   "start_if",
   "start_let",
   "start_quote",
+  "start_explicit",
   "end",
+  "end_explicit",
   "start_brace",
   "end_brace",
   "start_texp",
@@ -217,7 +221,7 @@ static const char *sym_names[] = {
   "prefix_percent",
   "varsym",
   "consym",
-  "indent",
+  "update",
 };
 
 #endif
@@ -1490,6 +1494,7 @@ static StartLayout valid_layout_start(Lexed next) {
     case LBraceOpen:
       if (newline_active()) return start;
       sort = Braces;
+      start.sym = START_EXPLICIT;
       break;
     default:
       if (sort == MultiWayIfLayout) return start;
@@ -1516,6 +1521,17 @@ static bool indent_can_start_layout(ContextSort sort, uint32_t indent) {
   return (indent > cur || (indent == cur && sort == DoLayout));
 }
 
+/**
+ * Start the given layout if the position allows it:
+ *
+ * - If the current context is `ModuleHeader`, the layout must be the `where` after `module`, so any indent is valid.
+
+ * - If the new layout is a brace layout, legal indent is technically required, but we can be lenient since there's no
+ *   other way to interpret an opening brace after a layout opener.
+ *   However, we need to mark to include the brace in the range to create a terminal (see `grammar.js` for why).
+ *
+ * - Otherwise, examine indent.
+ */
 static Symbol start_layout(const StartLayout start, uint32_t indent, const char * restrict desc) {
   if (in_module_header()) pop();
   else if (start.sort == Braces) MARK("start_layout brace");
@@ -1582,10 +1598,11 @@ static Symbol end_layout(const char *restrict desc) {
 }
 
 static Symbol end_layout_brace() {
-  if (valid(END) && current_context() == Braces) {
+  if (valid(END_EXPLICIT) && current_context() == Braces) {
     peek1();
     MARK("end_layout_brace");
-    return end_layout_unchecked("brace");
+    pop();
+    return finish(END_EXPLICIT, "brace");
   }
   else return FAIL;
 }
@@ -2331,7 +2348,7 @@ static Symbol process_token_init(uint32_t indent, Lexed next) {
       advance_over(0);
       MARK("init brace");
       push_context(Braces, indent);
-      return finish(START, "init");
+      return finish(START_EXPLICIT, "init");
     default:
       push_context(DeclLayout, indent);
       return finish(START, "init");
