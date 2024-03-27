@@ -2165,9 +2165,9 @@ static Symbol qq_body() {
 /**
  * When encountering explicit semicolons, we want to ensure that a subsequent newline doesn't trigger a layout
  * semicolon, so we set `skip_semi`.
- * If the next symbol is not a newline (and not another semicolon), the scanner will immediate end up in this function
- * again, matching the second branch, in which we unset the flag to avoid a mid-line semicolon from influencing an
- * unrelated newline.
+ * If the next symbol is not a newline (and not another semicolon), the scanner will immediate end up in
+ * `resolve_semicolon`, matching the condition, where we unset the flag to avoid a mid-line semicolon from influencing
+ * an unrelated newline.
  *
  * Take this example:
  *
@@ -2175,23 +2175,45 @@ static Symbol qq_body() {
  * > b = 2
  * > ;;c = 3
  *
- * At the first semicolon, the first branch is chosen and SEMICOLON is valid, so the flag is set.
- * The scanner will be called again immediately without advancing, so we hit the first branch again.
+ * At the first semicolon, `explicit_semicolon` is called (conditioned on `LSemi` in `process_token_interior`) and
+ * SEMICOLON is valid, so the flag is set.
+ * The scanner will be called again immediately without advancing, and first enter `resolve_semicolon`, which does
+ * nothing because the next token is still `LSemi`.
+ * Next it will enter `explicit_semicolon` again.
  * SEMICOLON is valid, but since the flag is set we fall through and defer to internal lexing.
  * The grammar advances into `semi` (in `util.js`), which causes SEMICOLON to become invalid.
- * The scanner is executed before the second semicolon, where we hit the first branch again and fall through again, this
- * time also because SEMICOLON is invalid.
+ * The scanner is executed before the second semicolon, where both functions skip again, this time additionally because
+ * SEMICOLON is now invalid.
  *
  * In the next scan, the newline branch is taken in `scan`, so this function is not executed again.
- * Newline lookahead finds the next line to begin at column 0, which would usually trigger a semicolon, but that is
- * skipped because the `skip_semi` was set, so the scan only skips whitespace and resets the newline state.
- * The following scan ends up in this function again, but since the next character isn't a semicolon and the flag was
- * reset at the end of the newline loop, it just falls through and continues parsing the line until the next newline.
+ * Newline lookahead finds the next line to begin at column 0, which would usually trigger a layout semicolon in
+ * `semicolon`, but that is inhibited by `skip_semi`, so the scan only skips whitespace and resets the newline state,
+ * which unsets `skip_semi` again.
+ * In the following scan, the conditions for both functions are unfulfilled, so parsing continues regularly until the
+ * next newline.
  *
- * Newline lookahead now encounters the third semicolon on the next line, which also sets `skip_semi` – not from this
- * function, but directly in `newline_lookahead`.
- * The scan finishes with a state update, after which the two semicolons are parsed.
- * For both, the run ends up here but since SEMICOLON is not valid, it just falls through.
+ * Newline lookahead now encounters the third semicolon on the next line and sets `no_semi`, which supersedes
+ * `skip_semi` and prohibits layout semicolon irreversibly, so the explicit semicolons are parsed by the grammar.
+ *
+ * Now consider an inline semicolon:
+ *
+ * > f = let
+ * >   a = 1; b = 2
+ * >   c = 3; {- x -}
+ * >   d = 4
+ * >   in c
+ *
+ * When the semicolon is lexed, `explicit_semicolon` sets `skip_semi`.
+ * If we would not reset it until the newline, no layout semicolon would be generated before `c`, resulting in a parse
+ * error at `=`.
+ * Therefore, `resolve_semicolon` unsets `skip_semi` when lexing `b`, triggered by `skip_semi` being set and the next
+ * token not being `LSemi`.
+ *
+ * The semicolon after `c = 3` is followed by a comment, so it is unclear if there is going to be another layout element
+ * in the same line.
+ * If there is none, the situation is the same as in the first example's first line; if another layout element were to
+ * follow, `skip_semi` would need to be reset like in this example's first line.
+ * Therefore, `resolve_semicolon` also keeps the flag as it is in this case.
  */
 static Symbol explicit_semicolon() {
   if (valid(SEMICOLON) && !newline->skip_semi) {
@@ -2206,6 +2228,7 @@ static Symbol resolve_semicolon(Lexed next) {
     switch(next) {
       case LLineComment:
       case LBlockComment:
+      case LPragma:
       case LSemi:
         break;
       default:

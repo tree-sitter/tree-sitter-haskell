@@ -3505,6 +3505,72 @@ a = a
         (variable)))))
 
 ================================================================================
+layout: comment and pragma after semicolon with following layout element
+================================================================================
+
+x = let
+  a = 1; b = 2
+  c = 3; {- x -}
+  d = 4; {- x -} e = 5
+  f = 6; {-# x #-}
+  g = 7; {-# x #-} h = 8
+  i = 9
+  in c
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_let_in
+        (let
+          (binds
+            (function
+              (variable)
+              (exp_literal
+                (integer)))
+            (function
+              (variable)
+              (exp_literal
+                (integer)))
+            (function
+              (variable)
+              (exp_literal
+                (integer)))
+            (comment)
+            (function
+              (variable)
+              (exp_literal
+                (integer)))
+            (comment)
+            (function
+              (variable)
+              (exp_literal
+                (integer)))
+            (function
+              (variable)
+              (exp_literal
+                (integer)))
+            (pragma)
+            (function
+              (variable)
+              (exp_literal
+                (integer)))
+            (pragma)
+            (function
+              (variable)
+              (exp_literal
+                (integer)))
+            (function
+              (variable)
+              (exp_literal
+                (integer)))))
+        (in
+          (exp_name
+            (variable)))))))
+
+================================================================================
 layout: list pattern in let
 ================================================================================
 
