@@ -1041,32 +1041,30 @@ void debug_newline() {
  * Produce a comma-separated string of valid symbols.
  */
 static void debug_valid(const bool *syms) {
-  if (after_error(syms)) {
+  if (after_error()) {
     dbg("all");
     return;
   }
   bool fst = true;
-  dbg("\"");
-  for (Symbol i = SEMICOLON; i <= FAIL; i++) {
+  for (Symbol i = FAIL; i <= UPDATE; i++) {
     if (syms[i]) {
       if (!fst) dbg(",");
       dbg("%s", sym_names[i]);
       fst = false;
     }
   }
-  dbg("\"");
 }
 
 static bool debug_init() {
   setlocale(LC_ALL, "C.UTF-8");
   dbg("\n");
-  dbg("Env { syms = ");
+  dbg("state:\n  syms = ");
   debug_valid(env->symbols);
-  dbg(", contexts = ");
+  dbg("\n  contexts = ");
   debug_contexts();
-  dbg(", newline = ");
+  dbg("\n  newline = ");
   debug_newline();
-  dbg(" }\n");
+  dbg("\n");
   return false;
 }
 
