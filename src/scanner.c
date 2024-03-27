@@ -529,6 +529,12 @@ static uint32_t column() {
 }
 
 /**
+ * tree-sitter's lexer interface maintains a current position that determines the lookahead character and the range of
+ * text that is associated with the symbol selected by the scanner, if `mark_end` is called.
+ *
+ * It's not possible to read earlier characters once the lexer has advanced over them, so this function appends the
+ * lookahead character to the array `lookahead` in the `State`.
+ *
  * Don't add zeroes to the lookahead buffer when hitting EOF – it causes `no_lookahead` to report false negatives.
  */
 static void advance() {
@@ -605,15 +611,29 @@ static Symbol update_state(const char *restrict desc) {
 // Lookahead
 // --------------------------------------------------------------------------------------------------------
 
+/**
+ * Ensure that at least `n` characters after the current `offset` are present in the lookahead buffer by calling
+ * `advance` as often as the difference between the desired index (`offset + n`) and the current buffer size.
+ *
+ * The confusing loop bounds have the purpose of avoiding an additional underflow check; they're equivalent to:
+ * `for (i = 0; i <= offset + n - len; i++)`
+ */
 static void advance_over(uint32_t n) {
   for (uint32_t i = state->lookahead->len; i <= state->lookahead->offset + n; i++) S_ADVANCE;
 }
 
+/**
+ * Ensure that the lookahead buffer is large enough to allow reading the `n`th character.
+ * Since `lexer->lookahead` points at the character after the buffer, it must have `offset + n - 1` elements.
+ */
 static void advance_before(uint32_t n) {
   if (n > 0) advance_over(n - 1);
 }
 
 /**
+ * Return the lookahead character with index `n`.
+ * If the index is larger than the lookahead buffer, return 0.
+ *
  * Unsafe insofar as that it does not advance if the index points outside of the lookahead buffer.
  * This may happen in regular operation when a tool like `seq` attempts to look beyond EOF.
  */
@@ -624,10 +644,21 @@ static int32_t unsafe_peek_abs(uint32_t n) {
     0;
 }
 
+/**
+ * Return the lookahead character with index `offset + n`.
+ * See `unsafe_peek_abs`.
+ */
 static int32_t unsafe_peek(uint32_t n) {
   return unsafe_peek_abs(state->lookahead->offset + n);
 }
 
+/**
+ * Return the lookahead character with index `offset + n`.
+ * If the character is not accessible, advance the position until it is.
+ *
+ * This "peeks" insofar as it doesn't advance over the requested character – `peek(0)` is equivalent to
+ * `lexer->lookahead` if `offset == 0`.
+ */
 static int32_t peek(uint32_t n) {
   if (state->lookahead->offset + n < state->lookahead->len) return unsafe_peek(n);
   else {
@@ -636,54 +667,89 @@ static int32_t peek(uint32_t n) {
   }
 }
 
-static int32_t peek0() {
-  return peek(0);
-}
+/**
+ * Return the first lookahead character after the `offset` without advancing the position.
+ */
+static int32_t peek0() { return peek(0); }
 
-static int32_t peek1() {
-  return peek(1);
-}
+/**
+ * Return the second lookahead character after the `offset` without advancing the position further than the first
+ * character.
+ */
+static int32_t peek1() { return peek(1); }
 
-static int32_t peek2() {
-  return peek(2);
-}
+/**
+ * Return the third lookahead character after the `offset` without advancing the position further than the second
+ * character.
+ */
+static int32_t peek2() { return peek(2); }
 
+/**
+ * Test the lookahead character at index `offset + n` for equality.
+ */
 static bool char_at(uint32_t n, int32_t c) {
   return peek(n) == c;
 }
 
+/**
+ * Test the lookahead character at index `offset` for equality.
+ */
 static bool char0(int32_t c) {
   return char_at(0, c);
 }
 
+/**
+ * Test the lookahead character at index `offset + 1` for equality.
+ */
 static bool char1(int32_t c) {
   return char_at(1, c);
 }
 
+/**
+ * Test the lookahead character at index `offset + 2` for equality.
+ */
 static bool char2(int32_t c) {
   return char_at(2, c);
 }
 
-static int32_t peek_after(const char *restrict s) {
-  return peek((uint32_t) strlen(s));
-}
-
-static void reset_lookahead_to(uint32_t col) {
-  state->lookahead->offset = col;
-}
-
+/**
+ * Move `offset` to the end of the consumed lookahead, causing `peek`, `char0` etc. to operate on characters following
+ * the current position at the time this function is executed.
+ */
 static void reset_lookahead() {
-  reset_lookahead_to(state->lookahead->len);
+  state->lookahead->offset = state->lookahead->len;
 }
 
+/**
+ * Return whether the lookahead position has been advanced since starting the run, not considering skipped characters
+ * (which are usually whitespace).
+ * This is important to decide whether the scanner has to be restarted to emit certain symbols.
+ *
+ * For example, before starting layouts and generating layout semicolons after newlines, we skip whitespace and mark, so
+ * that subsequent symbols start at their non-whitespace boundary instead of before the newline(s).
+ * When newline lookahead mode finishes, it can continue directly with this step _only if_ no non-whitespace characters
+ * were consumed, otherwise they would be included in the semicolon symbol.
+ * We also cannot unconditionally mark after whitespace in newline lookahead mode since there are several potential
+ * symbols that can be emitted before skipped whitespace is marked, like layout end, which should not extend beyond
+ * newlines.
+ */
 static bool no_lookahead() {
   return state->lookahead->len == 0;
 }
 
+/**
+ * Return the column of the first lookahead character of the current run.
+ * This is needed for starting layouts in interior mode, since we don't count positions across interior runs.
+ */
 static uint32_t start_column() {
   return column() - state->lookahead->len;
 }
 
+/**
+ * Increment `i` while the predicate is true for the lookahead character at that index (relative to `offset`), advancing
+ * the position when `i` points beyond the end of the lookahead buffer.
+ * Return the index after the last matching character.
+ */
 static uint32_t advance_while(bool (*pred)(int32_t), uint32_t i) {
   while (pred(peek(i))) { i++; }
   return i;
@@ -695,6 +761,9 @@ static uint32_t advance_while(bool (*pred)(int32_t), uint32_t i) {
 
 static bool has_contexts() { return contexts->len != 0; }
 
+/**
+ * Push a layout context onto the stack.
+ */
 static void push_context(ContextSort sort, uint32_t indent) {
   dbg("push: %s %d\n", context_names[sort], indent);
   Context ctx = (Context) {.sort = sort, .indent = indent};
@@ -702,7 +771,7 @@ static void push_context(ContextSort sort, uint32_t indent) {
 }
 
 /**
- * Remove an indentation context from the stack.
+ * Remove a layout context from the stack.
  */
 static void pop() {
   if (has_contexts()) {
@@ -719,10 +788,18 @@ static bool is_layout_context() {
   return current_context() < Braces;
 }
 
+/**
+ * Decide whether the current context requires generation of layout semicolons.
+ * This is true for all layout contexts except for multi-way if, since that uses `|` to start layout elements.
+ */
 static bool is_semicolon_context() {
   return current_context() < MultiWayIfLayout;
 }
 
+/**
+ * Return the indent of the innermost layout context.
+ * If there are non-layout contexts at the top of the stack, search downwards.
+ */
 static uint32_t current_indent() {
   for (int32_t i = (int32_t) contexts->len - 1; i >= 0; i--) {
     Context *cur = contexts->data + i;
@@ -747,6 +824,9 @@ static bool in_module_header() {
   return current_context() == ModuleHeader;
 }
 
+/**
+ * Return the appropriate symbol to close the given context, or FAIL if it can't be closed.
+ */
 static Symbol context_end_sym(ContextSort s) {
   switch (s) {
     case TExp:
@@ -813,6 +893,9 @@ static bool symop_char(const int32_t c) {
 }
 
 /**
+ * Advance the position to the first character that's not valid for a symbolic operator, and return that position.
+ * If the function has been called before, directly return the cached position.
+ *
  * This consumes the entire symop, since the field denotes the length of the string and therefore the last (failing)
  * peek is _beyond_ the end, consuming the last valid char.
  */
@@ -825,9 +908,8 @@ static uint32_t symop_lookahead() {
  * The parser calls `scan` with all symbols declared as valid directly after it encountered an error.
  * The symbol `FAIL` is not used in the grammar, so it can only be valid in this error case.
  */
-static bool all_syms(const bool *syms) {
-  return syms[FAIL];
-}
+
+static bool after_error() { return valid(FAIL); }
 
 // --------------------------------------------------------------------------------------------------------
 // Debug printing
@@ -959,7 +1041,7 @@ void debug_newline() {
  * Produce a comma-separated string of valid symbols.
  */
 static void debug_valid(const bool *syms) {
-  if (all_syms(syms)) {
+  if (after_error(syms)) {
     dbg("all");
     return;
   }
@@ -1128,6 +1210,10 @@ void debug_finish(Symbol result) {
 // Lookahead
 // --------------------------------------------------------------------------------------------------------
 
+/**
+ * Check if lookahead contains the string `s` starting at position `offset + start`.
+ * This advances only over matching characters.
+ */
 static bool seq_from(const char *restrict s, uint32_t start) {
   uint32_t len = (uint32_t) strlen(s);
   for (uint32_t i = 0; i < len; i++) {
@@ -1139,12 +1225,16 @@ static bool seq_from(const char *restrict s, uint32_t start) {
   return true;
 }
 
+/**
+ * Check if lookahead contains the string `s` starting at position `offset`.
+ */
 static bool seq(const char *restrict s) {
   return seq_from(s, 0);
 }
 
 /**
- * Consume the body of a cpp directive or comment.
+ * Advance until the next newline or EOF, used to consume the body of a cpp directive or comment.
+ * Escaped newlines are treated as line continuations.
  */
 static void take_line() {
   for (;;) {
@@ -1159,6 +1249,7 @@ static void take_line() {
 
 /**
  * Skip the lexer until the following character is neither space nor tab.
+ * Return whether any characters were skipped.
  */
 static bool skip_space() {
   if (!is_space_char(PEEK)) return false;
@@ -1167,6 +1258,10 @@ static bool skip_space() {
   return true;
 }
 
+/**
+ * Skip the lexer until the following character is not a newline.
+ * Return whether any characters were skipped.
+ */
 static bool skip_newlines() {
   if (!is_newline(PEEK)) return false;
   S_SKIP;
@@ -1180,6 +1275,9 @@ typedef enum {
   BOL,
 } Space;
 
+/**
+ * Alternate between skipping space and newlines, and return which was seen last.
+ */
 static Space skip_space_and_newline() {
   Space space = NoSpace;
   while (true) {
@@ -1189,6 +1287,10 @@ static Space skip_space_and_newline() {
   };
 }
 
+/**
+ * Advance the lexer until the following character is neither space nor tab, starting at position `offset + start`, and
+ * return the index of the next character.
+ */
 static uint32_t take_space_from(uint32_t start) {
   return advance_while(is_space_char, start);
 }
@@ -1200,7 +1302,7 @@ static uint32_t take_space_from(uint32_t start) {
 static bool token_end(int32_t c) { return !is_inner_id_char(c); }
 
 /**
- * Require that the argument string follows the given start position and is followed by a non-id char.
+ * Check if lookahead contains the string `s` starting at position `offset + start`, followed by a non-id character.
  * See `seq`.
  */
 static bool token_from(const char *restrict s, uint32_t start) {
@@ -1211,9 +1313,13 @@ static bool token_from(const char *restrict s, uint32_t start) {
  * `token` at the current offset.
  */
 static bool token(const char *restrict s) {
-  return seq(s) && token_end(peek_after(s));
+  return seq(s) && token_end(peek((uint32_t) strlen(s)));
 }
 
+/**
+ * Check if lookahead contains any of the strings in `tokens` starting at position `offset + start`, followed by a
+ * non-id character.
+ */
 static bool any_token_from(size_t n, const char * tokens[n], uint32_t start) {
   for (size_t i = 0; i < n; i++) {
     if (token_from(tokens[i], start)) return true;
@@ -1222,8 +1328,6 @@ static bool any_token_from(size_t n, const char * tokens[n], uint32_t start) {
 }
 
 static bool uninitialized() { return !has_contexts(); }
-
-static bool after_error() { return all_syms(env->symbols); }
 
 // --------------------------------------------------------------------------------------------------------
 // Lookahead: CPP
@@ -1284,6 +1388,10 @@ static bool cpp_directive_other(uint32_t start) {
     ;
 }
 
+/**
+ * If the first character at `offset` is a hash, skip space and try all tokens that start a CPP directive.
+ * Return the matching variant of the enum `CppDirective`.
+ */
 static CppDirective cpp_directive() {
   if (!char0('#')) return CppNothing;
   uint32_t start = take_space_from(1);
@@ -1298,6 +1406,19 @@ static CppDirective cpp_directive() {
 // Starting layouts
 // --------------------------------------------------------------------------------------------------------
 
+/**
+ * Opening and closing braces are always followed by a command (`grammar/util.js`), so this can unconditionally push a
+ * context.
+ * See `grammar.js` for more.
+ *
+ * Note: This is not related to regular brace layouts, which are handled by `start_layout`!
+ * Aside from layouts, braces are also used for records and inferred type variables, where indentation is also ignored!
+ * Therefore, we add a context to skip steps like semicolon generation.
+ *
+ * Check out some examples in the tests:
+ * - data: record zero indent
+ * - type decl: inferred quantifier at column 0
+ */
 static Symbol start_brace() {
   if (valid(START_BRACE)) {
     push_context(Braces, 0);
@@ -1307,7 +1428,7 @@ static Symbol start_brace() {
 }
 
 /**
- * Not failing when brace is valid without being in a brace context – maybe it'll help with error recovery.
+ * See `start_brace`.
  */
 static Symbol end_brace() {
   if (valid(END_BRACE) && current_context() == Braces) {
@@ -1317,7 +1438,9 @@ static Symbol end_brace() {
   return FAIL;
 }
 
-// Order of precedence for layouts
+/**
+ * Return the first valid layout start symbol.
+ */
 static Symbol valid_layout_start_sym() {
   for (Symbol i = START; i < END; i++) {
     if (valid(i)) return i;
@@ -1325,6 +1448,9 @@ static Symbol valid_layout_start_sym() {
   return FAIL;
 }
 
+/**
+ * Map `Symbol` to `ContextSort`.
+ */
 static ContextSort layout_sort(Symbol s) {
   switch (s) {
     case START_DO:
@@ -1347,6 +1473,15 @@ typedef struct {
   ContextSort sort;
 } StartLayout;
 
+/**
+ * Determine whether the layout sort corresponding to the potentially valid symbol can start at this position.
+ * If the context stack is `uninitialized`, the first layout is added by `process_token_init`.
+ * In newline processing mode, brace layouts cannot be started because there may be comments before the brace that need
+ * to be emitted first.
+ * Regular `if/then/else` conditionals are always valid at the same position as multi-way if layouts.
+ * If we were to unconditionally start a layout when START_IF is valid, it would never be possible to parse the former,
+ * so this skips that layout sort unless the `Lexed` token is `LBar`.
+ */
 static StartLayout valid_layout_start(Lexed next) {
   StartLayout start = {.sym = valid_layout_start_sym(), .sort = NoContext};
   if (uninitialized() || start.sym == FAIL) return start;
@@ -1358,8 +1493,6 @@ static StartLayout valid_layout_start(Lexed next) {
       if (newline_active()) return start;
       sort = Braces;
       break;
-    // `if/then/else` is always valid at the same position as MWI, so if we unconditionally start a layout, it will
-    // never be possible to parse the former.
     default:
       if (sort == MultiWayIfLayout) return start;
       break;
@@ -1386,14 +1519,11 @@ static bool indent_can_start_layout(ContextSort sort, uint32_t indent) {
 }
 
 static Symbol start_layout(const StartLayout start, uint32_t indent, const char * restrict desc) {
-  bool header = in_module_header();
-  if (header || start.sort == Braces || indent_can_start_layout(start.sort, indent)) {
-    if (header) pop();
-    if (start.sort == Braces) MARK("start_layout brace");
-    push_context(start.sort, indent);
-    return finish(start.sym, desc);
-  }
-  return FAIL;
+  if (in_module_header()) pop();
+  else if (start.sort == Braces) MARK("start_layout brace");
+  else if (!indent_can_start_layout(start.sort, indent)) return FAIL;
+  push_context(start.sort, indent);
+  return finish(start.sym, desc);
 }
 
 /**
@@ -2071,6 +2201,23 @@ static Symbol resolve_semicolon(Lexed next) {
   return FAIL;
 }
 
+/**
+ * Multi-way if layouts are exempt from automatic semicolon generation in GHC.
+ */
+static Symbol semicolon() {
+  if (
+      is_semicolon_context()
+      &&
+      !(newline->no_semi || newline->skip_semi)
+      &&
+      indent_lesseq(newline->indent)
+     ) {
+    newline->no_semi = true;
+    return finish(SEMICOLON, "newline");
+  }
+  else return FAIL;
+}
+
 // --------------------------------------------------------------------------------------------------------
 // High-level `Lexed` dispatch
 // --------------------------------------------------------------------------------------------------------
@@ -2209,23 +2356,6 @@ static Symbol interior(bool whitespace) {
 // --------------------------------------------------------------------------------------------------------
 // Newline actions
 // --------------------------------------------------------------------------------------------------------
-
-/**
- * Multi-way if layouts are exempt from automatic semicolon generation in GHC.
- */
-static Symbol semicolon() {
-  if (
-      is_semicolon_context()
-      &&
-      !(newline->no_semi || newline->skip_semi)
-      &&
-      indent_lesseq(newline->indent)
-     ) {
-    newline->no_semi = true;
-    return finish(SEMICOLON, "newline");
-  }
-  else return FAIL;
-}
 
 /**
  * `NoSpace` + `newline_init()` means that we're at the very beginning of the file, where we start in `NResume` mode
