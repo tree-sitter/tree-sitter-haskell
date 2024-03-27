@@ -1565,14 +1565,17 @@ static Symbol start_layout_newline() {
   return result;
 }
 
-static Symbol tuple_context() {
+/**
+ * See `token_end_layout_texp`.
+ */
+static Symbol texp_context() {
   if (valid(START_TEXP)) {
     push_context(TExp, 0);
-    return finish(START_TEXP, "tuple_context");
+    return finish(START_TEXP, "texp_context");
   }
   else if (valid(END_TEXP) && current_context() == TExp) {
     pop();
-    return finish(END_TEXP, "tuple_context");
+    return finish(END_TEXP, "texp_context");
   }
   else return FAIL;
 }
@@ -1597,9 +1600,13 @@ static Symbol end_layout(const char *restrict desc) {
   else return FAIL;
 }
 
+/**
+ * Explicit brace layouts need a dedicated symbol, see `_cmd_layout_start_explicit` for an explanation.
+ * Includes the brace in the range.
+ */
 static Symbol end_layout_brace() {
   if (valid(END_EXPLICIT) && current_context() == Braces) {
-    peek1();
+    advance_over(0);
     MARK("end_layout_brace");
     pop();
     return finish(END_EXPLICIT, "brace");
@@ -1715,18 +1722,26 @@ static bool layouts_in_texp() {
 }
 
 /**
- * Expression layouts can be closed by commas, vertical bars and closing brackets and parens when they are elements in a
- * list or tuple-like construct:
+ * Tuple expressions are constructs that syntactically delimit their contents in an unambiguous way that makes parsing
+ * a lot easier.
+ * In GHC, this concept is used to classify productions like view patterns and annotated expressions.
+ * For us, unfortunately, it also means that there are significantly more circumstances in which layouts can be ended by
+ * parse errors.
+ *
+ * In practice, it means that expression layouts can be closed by commas, vertical bars and closing brackets and parens
+ * when they are elements in a list or tuple-like construct:
  *
  * (case a of a -> a, do a; a, if | a -> a | a -> a)
  * [case a of a -> a | a <- a]
  *
- * This pattern also extends to some other this like guards:
+ * We encode this as a special context sort, `TExp`, that is pushed and popped at opening and closing brackets.
+ *
+ * Some other constructs, like guards, have similar characteristics, so we use the same mechanism for them:
  *
  * > a = case a of
  * >   a | let a = a -> a
  *
- * Here the arrow ends the let layout.
+ * Here the let layout must be ended by parse error, so we start a tuple expression at the bar and end it at the arrow.
  */
 static Symbol token_end_layout_texp() {
   return (valid(END) && layouts_in_texp()) ? end_layout("texp") : FAIL;
@@ -1746,6 +1761,10 @@ static Symbol force_end_context() {
 // Operators
 // --------------------------------------------------------------------------------------------------------
 
+/**
+ * Opening tokens are a class of characters that may immediately follow prefix operators like bang pattern `!` or type
+ * application `@`.
+ */
 static bool opening_token(uint32_t i) {
   int32_t c = peek(i);
   switch (c) {
@@ -1758,6 +1777,7 @@ static bool opening_token(uint32_t i) {
     case '{':
       return peek(i + 1) != '-';
     default:
+      // Includes single quote
       return is_id_char(c);
   }
 }
@@ -1767,27 +1787,31 @@ static bool opening_token(uint32_t i) {
  */
 static bool valid_symop_two_chars(int32_t first_char, int32_t second_char) {
   switch (first_char) {
-    case '-':
-      return second_char != '-' && second_char != '>';
     case '=':
       return second_char != '>';
     case '<':
       return second_char != '-';
-    case '.':
-      return second_char != '.';
     case ':':
       return second_char != ':';
     case '#':
+      // Unboxed unit `(##)` and unboxed sum with missing space `(#| Int #)`
       return second_char != '#' && second_char != '|';
     default:
       return true;
   }
 }
 
+/**
+ * If a prefix operator is not followed by an opening token, it may still be a valid varsym.
+ */
 static Lexed lex_prefix(Lexed t) {
   return opening_token(1) ? t : LSymop;
 }
 
+/**
+ * If a splice operator is not followed by an opening token, it may still be a valid varsym.
+ * We only allow variables and parenthesized expressions for performance reasons, though.
+ */
 static Lexed lex_splice(int32_t c) {
   return varid_start_char(c) || c == '(' ? LDollar : LSymop;
 }
@@ -1817,6 +1841,7 @@ static Lexed lex_symop() {
   if (len == 1) {
     switch (c1) {
       case '?':
+        // A `?` can be the head of an implicit parameter, if followed by a varid.
         return varid_start_char(peek1()) ? LNothing : LSymop;
       case '#':
         return char1(')') ? LUnboxedClose : LHash;
@@ -1889,29 +1914,60 @@ static Lexed lex_symop() {
   return LSymop;
 }
 
+/**
+ * This calls `symop_lookahead` to ensure that the position has advanced beyond the end of the symop, which is necessary
+ * because newline lookahead may have validated the symop in a previous run.
+ * This marks the range to emit a terminal.
+ */
 static Symbol finish_symop(Symbol s) {
   if (valid(s)) {
-    advance_before(symop_lookahead());
+    symop_lookahead();
     return finish_marked(s, "symop");
   }
   return FAIL;
 }
 
+/**
+ * Tight ops like `dot.syntax` require that no initial whitespace was skipped.
+ */
 static Symbol tight_op(bool whitespace, Symbol s) {
   if (!whitespace) return finish_if_valid(s, "tight_op");
   else return FAIL;
 }
 
+/**
+ * Used for situations where the operator is followed by an opening token, and so can be a prefix op if it is preceded
+ * by whitespace; but is no valid tight op and therefore becomes a regular operator if not preceded by whitespace or the
+ * symbol is not valid.
+ *
+ * Only used for `%` (modifier).
+ */
 static Symbol prefix_or_varsym(bool whitespace, Symbol s) {
   if (whitespace) SEQ(finish_if_valid(s, "prefix_or_varsym"));
   return finish_symop(VARSYM);
 }
 
+/**
+ * Used for situations where the operator is followed by an opening token, and so can be a tight op if it is not
+ * preceded by whitespace; but is no valid prefix op and therefore becomes a regular operator if preceded by whitespace
+ * or the symbol is not valid.
+ *
+ * Only used for `.`, when a projection selector `(.fieldname)` is not valid at this position, so the dot becomes the
+ * composition operator.
+ */
 static Symbol tight_or_varsym(bool whitespace, Symbol s) {
   SEQ(tight_op(whitespace, s));
   return finish_symop(VARSYM);
 }
 
+/**
+ * Used for situations where the operator is followed by an opening token, and so can be a tight op if it is not
+ * preceded by whitespace or a prefix op if it is.
+ *
+ * If neither of those symbols is valid, fall back to a regular operator.
+ *
+ * Used for `!`, `~` and `@`.
+ */
 static Symbol infix_or_varsym(bool whitespace, Symbol prefix, Symbol tight) {
   SEQ(finish_if_valid(whitespace ? prefix : tight, "infix_or_varsym"));
   return finish_symop(VARSYM);
@@ -1930,17 +1986,26 @@ static bool is_qq_start() {
   return char_at(end, '|');
 }
 
+/**
+ * An end token is a keyword like `else` or `deriving` that can end a layout without newline or indent.
+ */
 static Lexed try_end_token(const char * restrict target, Lexed match) {
   if (token(target)) return match;
   else return LNothing;
 }
 
+/**
+ * Check that a symop consists only of minuses after the second character.
+ */
 static bool only_minus() {
   uint32_t i = 2;
   while (peek(i) == '-') i++;
   return !symop_char(peek(i));
 }
 
+/**
+ * Check that a symop consists only of minuses, making it a comment herald.
+ */
 static bool line_comment_herald() {
   return seq("--") && only_minus();
 }
@@ -1956,6 +2021,9 @@ static Lexed lex_cpp() {
   }
 }
 
+/**
+ * Lex pragmas, comments and CPP.
+ */
 static Lexed lex_extras(bool bol) {
   switch (peek0()) {
     case '{':
@@ -1973,6 +2041,10 @@ static Lexed lex_extras(bool bol) {
   return LNothing;
 }
 
+/**
+ * The main lexing entry point, branching on the first character, then advancing as far as necessary to identify all
+ * interesting tokens.
+ */
 static Lexed lex(bool bol) {
   SEQT(lex_extras(bol));
   if (symop_char(peek0())) SEQT(lex_symop());
@@ -2047,6 +2119,9 @@ static Symbol cpp_line() {
   return finish_marked(CPP, "cpp");
 }
 
+/**
+ * Distinguish between haddocks and plain comments by matching on the first non-whitespace character.
+ */
 static Symbol comment_type() {
   uint32_t i = 2;
   while (peek(i) == '-') i++;
@@ -2058,6 +2133,10 @@ static Symbol comment_type() {
   return COMMENT;
 }
 
+/**
+ * Inline comments extend over all consecutive lines that start with comments.
+ * Could be improved by requiring equal indent.
+ */
 static Symbol inline_comment() {
   Symbol sym = comment_type();
   do {
@@ -2104,7 +2183,7 @@ static uint32_t consume_block_comment(uint32_t col) {
 }
 
 /**
- * Since {- -} comments can be nested arbitrarily, this has to keep track of how many have been openend, so that the
+ * Since {- -} comments can be nested arbitrarily, this has to keep track of how many have been opened, so that the
  * outermost comment isn't closed prematurely.
  */
 static Symbol block_comment() {
@@ -2240,7 +2319,15 @@ static Symbol resolve_semicolon(Lexed next) {
 }
 
 /**
- * Multi-way if layouts are exempt from automatic semicolon generation in GHC.
+ * Generate a layout semicolon after a newline if the indent is less or equal to the current layout's indent, unless:
+ *
+ * - The current context doesn't use layout semicolons, which is the case for explicit brace layouts, tuple expressions,
+ *   the module header and multi-way if layouts.
+ *
+ * - `no_semi` was set because newline lookahead found an explicit semicolon in the next line, or this function was
+ *   executed before for the same newline.
+ *
+ * - `skip_semi` was set because the previous line ended with an explicit semicolon.
  */
 static Symbol semicolon() {
   if (
@@ -2519,7 +2606,7 @@ static Symbol newline_resume() {
  * These are conditioned only on symbols and don't advance, except for `qq_body`, which cannot fail.
  */
 static Symbol pre_ws_commands() {
-  SEQ(tuple_context());
+  SEQ(texp_context());
   SEQ(start_brace());
   SEQ(end_brace());
   // Leading whitespace must be included in the node.
