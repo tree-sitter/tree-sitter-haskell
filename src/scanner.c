@@ -2348,7 +2348,9 @@ static Symbol semicolon() {
 // --------------------------------------------------------------------------------------------------------
 
 /**
- * This is called by `newline_post` before marking, so they must not fail after advancing.
+ * Process a `Lexed` token if it results in a layout end or an extra.
+ *
+ * This is called by `newline_post` before marking, so the actions must not fail after advancing.
  */
 static Symbol process_token_safe(Lexed next) {
   switch (next) {
@@ -2397,6 +2399,9 @@ static Symbol process_token_safe(Lexed next) {
   return FAIL;
 }
 
+/**
+ * Process a `Lexed` token if it results in a symbolic operator.
+ */
 static Symbol process_token_symop(bool whitespace, Lexed next) {
   switch (next) {
     case LDollar:
@@ -2430,6 +2435,9 @@ static Symbol process_token_symop(bool whitespace, Lexed next) {
   return FAIL;
 }
 
+/**
+ * Process a `Lexed` token for an interior position.
+ */
 static Symbol process_token_interior(Lexed next) {
   switch (next) {
     case LBraceClose:
@@ -2449,6 +2457,9 @@ static Symbol process_token_interior(Lexed next) {
   return FAIL;
 }
 
+/**
+ * Process a `Lexed` token to initialize the context stack.
+ */
 static Symbol process_token_init(uint32_t indent, Lexed next) {
   switch (next) {
     case LModule:
@@ -2524,6 +2535,10 @@ static Symbol newline_post() {
   return res;
 }
 
+/**
+ * Repeatedly lex lookahead until encountering something that is neither a comment nor CPP, skipping whitespace and
+ * newlines in between.
+ */
 static void newline_lookahead() {
   for (;;) {
     switch (PEEK) {
@@ -2578,6 +2593,10 @@ static void newline_lookahead() {
   }
 }
 
+/**
+ * Perform newline lookahead, then either finish the run if the position was advanced into the next token, or directly
+ * start newline processing if not.
+ */
 static Symbol newline_start() {
   dbg("newline lookahead\n");
   newline->state = NInit;
@@ -2586,6 +2605,9 @@ static Symbol newline_start() {
   else return newline_post();
 }
 
+/**
+ * Perform newline lookahead with preset indent, used at the beginning of a file and after pragmas.
+ */
 static Symbol newline_resume() {
   dbg("newline resume\n");
   uint32_t indent = newline->indent;
