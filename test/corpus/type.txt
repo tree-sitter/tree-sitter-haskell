@@ -3,22 +3,43 @@ type decl: basic
 ================================================================================
 
 type A = A
-type A a = A a
+type A a = A a a A a
 type A = A A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_name (type)))
- (type_alias
-  (type)
-  (type_variable)
-  (type_apply (type_name (type)) (type_name (type_variable))))
- (type_alias
-  (type)
-  (type_apply (type_name (type)) (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_name
+        (type)))
+    (type_alias
+      (type_apply
+        (type_name
+          (type))
+        (type_name
+          (type_variable)))
+      (type_apply
+        (type_name
+          (type))
+        (type_name
+          (type_variable))
+        (type_name
+          (type_variable))
+        (type_name
+          (type))
+        (type_name
+          (type_variable))))
+    (type_alias
+      (type_name
+        (type))
+      (type_apply
+        (type_name
+          (type))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: two tycons
@@ -26,9 +47,18 @@ type decl: two tycons
 
 type A = A A
 
----
+--------------------------------------------------------------------------------
 
-(haskell (type_alias (type) (type_apply (type_name (type)) (type_name (type)))))
+(haskell
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_apply
+        (type_name
+          (type))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: promoted constructor
@@ -36,16 +66,42 @@ type decl: promoted constructor
 
 type A = ' A
 type A = 'A
+type A = 'A.A
+type A = 'A.A.A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_name (promoted (type))))
- (type_alias
-  (type)
-  (type_name (promoted (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_name
+        (promoted
+          (type))))
+    (type_alias
+      (type_name
+        (type))
+      (type_name
+        (promoted
+          (type))))
+    (type_alias
+      (type_name
+        (type))
+      (type_name
+        (promoted
+          (qualified_type
+            (module)
+            (type)))))
+    (type_alias
+      (type_name
+        (type))
+      (type_name
+        (promoted
+          (qualified_type
+            (module)
+            (module)
+            (type)))))))
 
 ================================================================================
 type decl: list plain
@@ -54,15 +110,24 @@ type decl: list plain
 type A = []
 type A = [A a]
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_literal (con_list)))
- (type_alias
-  (type)
-  (type_list (type_apply (type_name (type)) (type_name (type_variable))))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_literal
+        (con_list)))
+    (type_alias
+      (type_name
+        (type))
+      (type_list
+        (type_apply
+          (type_name
+            (type))
+          (type_name
+            (type_variable)))))))
 
 ================================================================================
 type decl: parens
@@ -73,21 +138,50 @@ type A = (,)
 type A = (,,)
 type A = (->)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_literal (con_unit)))
- (type_alias
-  (type)
-  (type_literal (con_tuple (comma))))
- (type_alias
-  (type)
-  (type_literal (con_tuple (comma) (comma))))
- (type_alias
-  (type)
-  (type_name (tycon_arrow))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_literal
+        (con_unit)))
+    (type_alias
+      (type_name
+        (type))
+      (type_literal
+        (con_tuple)))
+    (type_alias
+      (type_name
+        (type))
+      (type_literal
+        (con_tuple)))
+    (type_alias
+      (type_name
+        (type))
+      (type_name
+        (tycon_arrow)))))
+
+================================================================================
+type decl: varsym
+================================================================================
+
+type A = A ++ A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (operator)
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: consym
@@ -95,18 +189,24 @@ type decl: consym
 
 type A = A :++ A ':++ A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_infix
-   (type_name (type))
-   (constructor_operator)
-   (type_infix
-    (type_name (type))
-    (promoted (constructor_operator))
-    (type_name (type))))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (constructor_operator)
+        (type_infix
+          (type_name
+            (type))
+          (promoted
+            (constructor_operator))
+          (type_name
+            (type)))))))
 
 ================================================================================
 type decl: list cons
@@ -114,15 +214,19 @@ type decl: list cons
 
 type A = A : A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_infix
-   (type_name (type))
-   (constructor_operator)
-   (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (constructor_operator)
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: promoted list cons
@@ -130,15 +234,20 @@ type decl: promoted list cons
 
 type A = A ': A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_infix
-   (type_name (type))
-   (promoted (constructor_operator))
-   (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (promoted
+          (constructor_operator))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: promoted list nil
@@ -146,9 +255,16 @@ type decl: promoted list nil
 
 type A = '[]
 
----
+--------------------------------------------------------------------------------
 
-(haskell (type_alias (type) (promoted (type_literal (con_list)))))
+(haskell
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (promoted
+        (type_literal
+          (con_list))))))
 
 ================================================================================
 type decl: qualified consym
@@ -156,15 +272,22 @@ type decl: qualified consym
 
 type A = A A.A.:++ A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_infix
-   (type_name (type))
-   (qualified_constructor_operator (module) (module) (constructor_operator))
-   (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (qualified_operator
+          (module)
+          (module)
+          (constructor_operator))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: promoted consym
@@ -172,15 +295,20 @@ type decl: promoted consym
 
 type A = A ':++ A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_infix
-   (type_name (type))
-   (promoted (constructor_operator))
-   (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (promoted
+          (constructor_operator))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: qualified promoted consym
@@ -188,15 +316,22 @@ type decl: qualified promoted consym
 
 type A = A 'A.:++ A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_infix
-   (type_name (type))
-   (promoted (qualified_constructor_operator (module) (constructor_operator)))
-   (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (promoted
+          (qualified_operator
+            (module)
+            (constructor_operator)))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: qualified ticked
@@ -204,15 +339,22 @@ type decl: qualified ticked
 
 type A = A `A.A` A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_infix
-   (type_name (type))
-   (ticked (qualified_type (module) (type)))
-   (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (infix_id
+          (qualified_type
+            (module)
+            (type)))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: promoted tuple
@@ -220,16 +362,22 @@ type decl: promoted tuple
 
 type A = '(A a, A)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (promoted
-   (type_tuple
-    (type_apply (type_name (type)) (type_name (type_variable)))
-    (comma)
-    (type_name (type))))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (promoted
+        (type_tuple
+          (type_apply
+            (type_name
+              (type))
+            (type_name
+              (type_variable)))
+          (type_name
+            (type)))))))
 
 ================================================================================
 type decl: equality
@@ -239,27 +387,74 @@ type A = A ~ A
 type A = A ~~ A
 type A = ∀ a . (A a ~ A a) => A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_infix (type_name (type)) (type_operator) (type_name (type))))
- (type_alias
-  (type)
-  (type_infix (type_name (type)) (type_operator) (type_name (type))))
- (type_alias
-  (type)
-  (forall
-   (quantifiers (type_variable))
-   (context
-    (constraint
-     (type_infix
-      (type_apply (type_name (type)) (type_name (type_variable)))
-      (type_operator)
-      (type_apply (type_name (type)) (type_name (type_variable))))
-    )
-    (type_name (type))))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (operator)
+        (type_name
+          (type))))
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_name
+          (type))
+        (operator)
+        (type_name
+          (type))))
+    (type_alias
+      (type_name
+        (type))
+      (type_forall
+        (quantifiers
+          (type_variable))
+        (type_context
+          (class_parens
+            (class_infix
+              (type_apply
+                (type_name
+                  (type))
+                (type_name
+                  (type_variable)))
+              (operator)
+              (type_apply
+                (type_name
+                  (type))
+                (type_name
+                  (type_variable)))))
+          (type_name
+            (type)))))))
+
+================================================================================
+type decl: infix promoted consym after apply
+================================================================================
+
+type A = a a ': a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_infix
+        (type_apply
+          (type_name
+            (type_variable))
+          (type_name
+            (type_variable)))
+        (promoted
+          (constructor_operator))
+        (type_name
+          (type_variable))))))
 
 ================================================================================
 type decl: mixed infix
@@ -267,31 +462,54 @@ type decl: mixed infix
 
 type A = A :++ A A ': A (A A a) : '[] ':++ A `A.A` '[]
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_infix
-   (type_name (type))
-   (constructor_operator)
-   (type_infix
-    (type_apply
-     (type_name (type))
-     (type_name (type)))
-    (promoted (constructor_operator))
-    (type_infix
-     (type_apply
-      (type_name (type))
-      (type_parens (type_apply (type_name (type)) (type_name (type)) (type_name (type_variable)))))
-     (constructor_operator)
-     (type_infix
-      (promoted (type_literal (con_list)))
-      (promoted (constructor_operator))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
       (type_infix
-       (type_name (type))
-       (ticked (qualified_type (module) (type)))
-       (promoted (type_literal (con_list))))))))))
+        (type_name
+          (type))
+        (constructor_operator)
+        (type_infix
+          (type_apply
+            (type_name
+              (type))
+            (type_name
+              (type)))
+          (promoted
+            (constructor_operator))
+          (type_infix
+            (type_apply
+              (type_name
+                (type))
+              (type_parens
+                (type_apply
+                  (type_name
+                    (type))
+                  (type_name
+                    (type))
+                  (type_name
+                    (type_variable)))))
+            (constructor_operator)
+            (type_infix
+              (promoted
+                (type_literal
+                  (con_list)))
+              (promoted
+                (constructor_operator))
+              (type_infix
+                (type_name
+                  (type))
+                (infix_id
+                  (qualified_type
+                    (module)
+                    (type)))
+                (promoted
+                  (type_literal
+                    (con_list)))))))))))
 
 ================================================================================
 type decl: symbol
@@ -300,15 +518,27 @@ type decl: symbol
 type A = "a"
 type A = A (A "a")
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias (type) (type_literal (string)))
- (type_alias
-  (type)
-  (type_apply
-   (type_name (type))
-   (type_parens (type_apply (type_name (type)) (type_literal (string)))))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_literal
+        (string)))
+    (type_alias
+      (type_name
+        (type))
+      (type_apply
+        (type_name
+          (type))
+        (type_parens
+          (type_apply
+            (type_name
+              (type))
+            (type_literal
+              (string))))))))
 
 ================================================================================
 type decl: prefix notation symbol
@@ -316,15 +546,20 @@ type decl: prefix notation symbol
 
 type A = (++) a a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_apply
-   (type_name (type_operator))
-   (type_name (type_variable))
-   (type_name (type_variable)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_apply
+        (type_name
+          (operator))
+        (type_name
+          (type_variable))
+        (type_name
+          (type_variable))))))
 
 ================================================================================
 type decl: nullary context
@@ -332,35 +567,81 @@ type decl: nullary context
 
 type A = A => A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (context (constraint (class_name (type))) (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_context
+        (class_name
+          (type))
+        (type_name
+          (type))))))
 
 ================================================================================
-type decl: forall
+type decl: forall only
+================================================================================
+
+type A = ∀ a . A a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_forall
+        (quantifiers
+          (type_variable))
+        (type_apply
+          (type_name
+            (type))
+          (type_name
+            (type_variable)))))))
+
+================================================================================
+type decl: forall context
 ================================================================================
 
 type A = ∀ a a . A => A
 type A = forall a a . A a => [A]
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (forall
-   (quantifiers (type_variable) (type_variable))
-   (context (constraint (class_name (type))) (type_name (type)))))
-  (type_alias
-   (type)
-   (forall
-    (quantifiers (type_variable) (type_variable))
-    (context
-     (constraint (class_name (type)) (type_name (type_variable)))
-     (type_list (type_name (type)))))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_forall
+        (quantifiers
+          (type_variable)
+          (type_variable))
+        (type_context
+          (class_name
+            (type))
+          (type_name
+            (type)))))
+    (type_alias
+      (type_name
+        (type))
+      (type_forall
+        (quantifiers
+          (type_variable)
+          (type_variable))
+        (type_context
+          (class_apply
+            (class_name
+              (type_name
+                (type)))
+            (type_name
+              (type_variable)))
+          (type_list
+            (type_name
+              (type))))))))
 
 ================================================================================
 type decl: lhs parens
@@ -368,35 +649,21 @@ type decl: lhs parens
 
 type (A a a) = A
 
----
-
-(haskell (type_alias (type) (type_variable) (type_variable) (type_name (type))))
-
-================================================================================
-type decl: constraint tuple with implicit parameter
-================================================================================
-
-type A = (?a :: A.A, A)
-
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_tuple
-   (implicit_param (implicit_parid) (type_name (qualified_type (module) (type))))
-   (comma)
-   (type_name (type)))))
-
-================================================================================
-type decl: implicit parameter constraint
-================================================================================
-
-type A = ?a :: A
-
----
-
-(haskell (type_alias (type) (implicit_param (implicit_parid) (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_parens
+        (type_apply
+          (type_name
+            (type))
+          (type_name
+            (type_variable))
+          (type_name
+            (type_variable))))
+      (type_name
+        (type)))))
 
 ================================================================================
 type decl: role
@@ -406,19 +673,29 @@ type role A phantom
 type role A.A _ representational nominal _ phantom _
 type role (A.>>) nominal nominal
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (role_annotation (type) (type_role))
- (role_annotation
-  (qualified_type (module) (type))
-  (type_role)
-  (type_role)
-  (type_role)
-  (type_role)
-  (type_role)
-  (type_role))
- (role_annotation (qualified_type_operator (module) (type_operator)) (type_role) (type_role)))
+  (declarations
+    (role_annotation
+      (type)
+      (type_role))
+    (role_annotation
+      (qualified_type
+        (module)
+        (type))
+      (type_role)
+      (type_role)
+      (type_role)
+      (type_role)
+      (type_role)
+      (type_role))
+    (role_annotation
+      (qualified_operator
+        (module)
+        (operator))
+      (type_role)
+      (type_role))))
 
 ================================================================================
 type decl: StandaloneKindSignatures
@@ -426,13 +703,21 @@ type decl: StandaloneKindSignatures
 
 type A a :: a -> Type
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_variable)
-  (fun (type_name (type_variable)) (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_apply
+        (type_name
+          (type))
+        (type_name
+          (type_variable)))
+      (type_fun
+        (type_name
+          (type_variable))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: function with multiplicity modifier
@@ -443,33 +728,82 @@ type A = a %1 -> a
 type A = a %One -> a
 type A = a %m -> a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (fun
-    (type_name (type_variable))
-    (modifier (type_literal (integer)))
-    (type_name (type_variable))))
- (type_alias
-  (type)
-  (fun
-    (type_name (type_variable))
-    (modifier (type_literal (integer)))
-    (type_name (type_variable))))
-  (type_alias
-   (type)
-   (fun
-    (type_name (type_variable))
-    (modifier (type_name (type)))
-    (type_name (type_variable))))
-  (type_alias
-   (type)
-   (fun
-    (type_name (type_variable))
-    (modifier (type_name (type_variable)))
-    (type_name (type_variable)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_linear_fun
+        (type_name
+          (type_variable))
+        (modifier
+          (type_literal
+            (integer)))
+        (type_name
+          (type_variable))))
+    (type_alias
+      (type_name
+        (type))
+      (type_linear_fun
+        (type_name
+          (type_variable))
+        (modifier
+          (type_literal
+            (integer)))
+        (type_name
+          (type_variable))))
+    (type_alias
+      (type_name
+        (type))
+      (type_linear_fun
+        (type_name
+          (type_variable))
+        (modifier
+          (type_name
+            (type)))
+        (type_name
+          (type_variable))))
+    (type_alias
+      (type_name
+        (type))
+      (type_linear_fun
+        (type_name
+          (type_variable))
+        (modifier
+          (type_name
+            (type_variable)))
+        (type_name
+          (type_variable))))))
+
+================================================================================
+type decl: special linear arrows
+================================================================================
+
+type A = A ->. A
+type A = A ⊸ A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_linear_fun
+        (type_name
+          (type))
+        (type_name
+          (type))))
+    (type_alias
+      (type_name
+        (type))
+      (type_linear_fun
+        (type_name
+          (type))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: unboxed nullary tuple
@@ -478,15 +812,18 @@ type decl: unboxed nullary tuple
 type A = (# #)
 type A = (##)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_unboxed_tuple))
- (type_alias
-  (type)
-  (type_name (type_operator))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_unboxed_tuple))
+    (type_alias
+      (type_name
+        (type))
+      (type_unboxed_tuple))))
 
 ================================================================================
 type decl: unboxed unary tuple
@@ -494,12 +831,16 @@ type decl: unboxed unary tuple
 
 type A = (# a #)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_unboxed_tuple (type_name (type_variable)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_unboxed_tuple
+        (type_name
+          (type_variable))))))
 
 ================================================================================
 type decl: unboxed tuple with newline after opening brace
@@ -509,14 +850,16 @@ type A =
   (#
     a #)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_unboxed_tuple
-   (type_name
-    (type_variable)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_unboxed_tuple
+        (type_name
+          (type_variable))))))
 
 ================================================================================
 type decl: unboxed tuple with newline before closing brace
@@ -526,14 +869,16 @@ type A =
   (# a
     #)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_unboxed_tuple
-   (type_name
-    (type_variable)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_unboxed_tuple
+        (type_name
+          (type_variable))))))
 
 ================================================================================
 type decl: unboxed sum
@@ -541,14 +886,44 @@ type decl: unboxed sum
 
 type A = (# A | A# #)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_unboxed_sum
-   (type_name (type))
-   (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_unboxed_sum
+        (type_name
+          (type))
+        (type_name
+          (type))))))
+
+================================================================================
+type decl: prefix notation unboxed tuple
+================================================================================
+
+type A = (# ,,, #) @A @A A# A#
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_apply
+        (type_unboxed_tuple)
+        (type_invisible
+          (type_name
+            (type)))
+        (type_invisible
+          (type_name
+            (type)))
+        (type_name
+          (type))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: prefix notation unboxed sum
@@ -556,16 +931,25 @@ type decl: prefix notation unboxed sum
 
 type A = (# | #) @A @A A# A#
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_apply
-   (type_unboxed_sum)
-   (type_invisible (type_name (type)))
-   (type_invisible (type_name (type)))
-   (type_name (type)) (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_apply
+        (type_unboxed_sum)
+        (type_invisible
+          (type_name
+            (type)))
+        (type_invisible
+          (type_name
+            (type)))
+        (type_name
+          (type))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: unicode arrows
@@ -573,20 +957,21 @@ type decl: unicode arrows
 
 type A = A ⇒ a → a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
-  (type_alias
-    (type)
-    (context
-      (constraint
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_context
         (class_name
-          (type)))
-      (fun
-        (type_name
-          (type_variable))
-        (type_name
-          (type_variable))))))
+          (type))
+        (type_fun
+          (type_name
+            (type_variable))
+          (type_name
+            (type_variable)))))))
 
 ================================================================================
 type decl: unicode star
@@ -594,26 +979,51 @@ type decl: unicode star
 
 type A = ★
 
----
+--------------------------------------------------------------------------------
 
-(haskell (type_alias (type) (type_star)))
+(haskell
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_star))))
 
 ================================================================================
-type decl: invisible application
+type decl: kind application
 ================================================================================
 
 type A = A @A @A A
+type A = A @A A
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_apply
-   (type_name (type))
-   (type_invisible (type_name (type)))
-   (type_invisible (type_name (type)))
-   (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_apply
+        (type_name
+          (type))
+        (type_invisible
+          (type_name
+            (type)))
+        (type_invisible
+          (type_name
+            (type)))
+        (type_name
+          (type))))
+    (type_alias
+      (type_name
+        (type))
+      (type_apply
+        (type_name
+          (type))
+        (type_invisible
+          (type_name
+            (type)))
+        (type_name
+          (type))))))
 
 ================================================================================
 type decl: kind signature in nested type
@@ -621,19 +1031,54 @@ type decl: kind signature in nested type
 
 type A = (∀ a . A (a :: A) => a :: A, A)
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (type_alias
-  (type)
-  (type_tuple
-   (forall
-    (quantifiers (type_variable))
-    (context
-     (constraint
-      (class_name (type))
-      (type_name (annotated_type_variable (type_variable) (type_name (type)))))
-     (type_name (type_variable))))
-   (kind (type_name (type)))
-   (comma)
-   (type_name (type)))))
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_tuple
+        (type_annotated
+          (type_forall
+            (quantifiers
+              (type_variable))
+            (type_context
+              (class_apply
+                (class_name
+                  (type_name
+                    (type)))
+                (type_parens
+                  (type_annotated
+                    (type_name
+                      (type_variable))
+                    (type_name
+                      (type)))))
+              (type_name
+                (type_variable))))
+          (type_name
+            (type)))
+        (type_name
+          (type))))))
+
+================================================================================
+type decl: inferred quantifier at column 0
+================================================================================
+
+type A :: ∀ {
+a
+} . a
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (type_alias
+      (type_name
+        (type))
+      (type_forall
+        (quantifiers
+          (inferred_type_variable
+            (type_variable)))
+        (type_name
+          (type_variable))))))

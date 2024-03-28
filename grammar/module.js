@@ -1,38 +1,77 @@
 const {parens} = require('./util.js')
 
 module.exports = {
+
   // ------------------------------------------------------------------------
-  // module
+  // module names
   // ------------------------------------------------------------------------
 
   _modid: $ => alias($.constructor, $.module),
 
-  _qualifying_module: $ => repeat1(seq($._modid, $._dot)),
+  _module_segment: $ => prec('qualifying-module', seq($._modid, $._any_tight_dot)),
+
+  _qualifying_module: $ => repeat1($._module_segment),
 
   qualified_module: $ => qualified($, $._modid),
-  _qmodid: $ => choice($.qualified_module, $._modid),
+  _qmodid: $ => choice($.qualified_module, alias($.constructor, $.module)),
 
-  export_names: $ => parens(sep($.comma, choice(alias('..', $.all_names), $._name))),
+  // ------------------------------------------------------------------------
+  // exports
+  // ------------------------------------------------------------------------
+
+  export_names: $ => parens($, sep(',', choice(alias('..', $.all_names), $._name))),
 
   export: $ => choice(
-    $._qvar,
+    $._varids,
     seq(
       optional($.namespace),
-      $._qtycon,
+      choice(
+        parens($, $.operator),
+        parens($, $._operator_minus),
+        parens($, $.qualified_operator),
+        parens($, $._consyms),
+        $._tyconids,
+      ),
       optional($.export_names),
     ),
     seq('module', field('module', $._qmodid)),
   ),
 
   exports: $ => parens(
-    optional(sep1($.comma, $.export)),
-    optional($.comma), // for trailing commas at the end of an export list
+    $,
+    optional(sep1(',', $.export)),
+    optional(','), // for trailing commas at the end of an export list
   ),
 
-  _module: $ => seq(
+  // ------------------------------------------------------------------------
+  // module body / sections
+  // ------------------------------------------------------------------------
+
+  header: $ => seq(
     'module',
     field('module', $._qmodid),
-    optional($.exports),
-    where($, $._topdecl),
+    field('exports', optional($.exports)),
+    $._where,
   ),
+
+  imports: $ => seq(semis($, alias($.decl_import, $.import)), semi($)),
+
+  /**
+   * Using `semi` at the end instead of `semi_opt` increases parser size by a full megabyte!!
+   */
+  declarations: $ => seq(semis($, $._topdecl), semi_opt($)),
+
+  _body: $ => seq(
+    choice($._cmd_layout_start, alias($._cmd_layout_start_explicit, '{')),
+    semi_opt($),
+    field('imports', optional($.imports)),
+    field('declarations', optional($.declarations)),
+    $._layout_end,
+  ),
+
+  _layout_end: $ => choice(
+    $._cond_layout_end,
+    alias($._cond_layout_end_explicit, '}'),
+  ),
+
 }

@@ -1,0 +1,36 @@
+(haskell [0, 0] - [11, 0]
+  declarations: (declarations [0, 0] - [11, 0]
+    (function [0, 0] - [4, 12]
+      name: (variable [0, 0] - [0, 1])
+      expression: (exp_do [0, 4] - [4, 12]
+        (exp_statement [1, 2] - [4, 12]
+          (exp_case [1, 2] - [4, 12]
+            (exp_name [1, 7] - [1, 8]
+              (variable [1, 7] - [1, 8]))
+            (alts [2, 4] - [4, 12]
+              alt: (alt [2, 4] - [4, 12]
+                pattern: (pat_name [2, 4] - [2, 5]
+                  (variable [2, 4] - [2, 5]))
+                match: (match [2, 6] - [4, 12]
+                  body: (exp_do [2, 9] - [4, 12]
+                    (bind_statement [3, 6] - [3, 12]
+                      (pat_name [3, 6] - [3, 7]
+                        (variable [3, 6] - [3, 7]))
+                      (exp_name [3, 11] - [3, 12]
+                        (variable [3, 11] - [3, 12])))
+                    (exp_statement [4, 6] - [4, 12]
+                      (exp_apply [4, 6] - [4, 12]
+                        (exp_name [4, 6] - [4, 10]
+                          (variable [4, 6] - [4, 10]))
+                        arg: (exp_name [4, 11] - [4, 12]
+                          (variable [4, 11] - [4, 12]))))))))))))
+    (comment [6, 0] - [6, 4])
+    (function [7, 0] - [7, 5]
+      name: (variable [7, 0] - [7, 1])
+      expression: (exp_name [7, 4] - [7, 5]
+        (variable [7, 4] - [7, 5])))
+    (comment [9, 0] - [9, 4])
+    (function [10, 0] - [10, 5]
+      name: (variable [10, 0] - [10, 1])
+      expression: (exp_name [10, 4] - [10, 5]
+        (variable [10, 4] - [10, 5])))))

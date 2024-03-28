@@ -39,7 +39,7 @@
 ] @punctuation.bracket
 
 [
-  (comma)
+  ","
   ";"
 ] @punctuation.delimiter
 
@@ -73,11 +73,10 @@
 [
   (operator)
   (constructor_operator)
-  (type_operator)
   (tycon_arrow)
-  (qualified_module)  ; grabs the `.` (dot), ex: import System.IO
   (all_names)
   (wildcard)
+  "."
   "="
   "|"
   "::"
@@ -92,7 +91,7 @@
 (module) @namespace
 
 [
-  (where)
+  "where"
   "let"
   "in"
   "class"
@@ -125,12 +124,12 @@
 (signature name: (variable) @type)
 (function
   name: (variable) @function
-  patterns: (patterns))
-((signature (fun)) . (function (variable) @function))
-((signature (context (fun))) . (function (variable) @function))
-((signature (forall (context (fun)))) . (function (variable) @function))
+  (patterns))
+((signature (type_fun)) . (function (variable) @function))
+((signature (type_context (type_fun))) . (function (variable) @function))
+((signature (type_forall (type_context (type_fun)))) . (function (variable) @function))
 
-(exp_infix (variable) @operator)  ; consider infix functions as operators
+(exp_infix (infix_id (variable)) @operator)  ; consider infix functions as operators
 
 (exp_infix (exp_name) @function (#set! "priority" 101))
 (exp_apply . (exp_name (variable) @function))

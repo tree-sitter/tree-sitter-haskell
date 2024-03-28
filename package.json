@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-haskell",
-  "version": "0.15.0",
+  "version": "1.0.0",
   "description": "Haskell grammar for tree-sitter",
   "repository": "github:tree-sitter/tree-sitter-haskell",
   "main": "bindings/node",
@@ -8,28 +8,28 @@
     "parser",
     "haskell"
   ],
-  "author": "Rick Winfrey",
-  "maintainers": ["Torsten Schmits"],
-  "contributors": ["Max Brunsfeld", "Owen Shepherd"],
+  "author": "Torsten Schmits",
+  "contributors": ["Rick Winfrey", "Max Brunsfeld", "Torsten Schmits", "Owen Shepherd"],
   "license": "MIT",
   "dependencies": {
     "nan": "^2.12.1",
     "node-gyp": ">=7 <11"
   },
   "devDependencies": {
-    "tree-sitter-cli": "^0.20.6",
-    "web-tree-sitter": "^0.20.6"
+    "tree-sitter-cli": "^0.20.8",
+    "web-tree-sitter": "^0.20.8"
   },
   "scripts": {
     "test": "tree-sitter test",
-    "examples": "script/parse-examples",
-    "examples-wasm": "script/parse-examples wasm"
+    "libs": "test/parse-libs",
+    "libs-wasm": "test/parse-libs wasm"
   },
   "tree-sitter": [
     {
       "scope": "source.haskell",
       "file-types": [
-        "hs"
+        "hs",
+        "hs-boot"
       ],
       "highlights": [
         "queries/highlights.scm"

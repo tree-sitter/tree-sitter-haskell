@@ -1,6 +1,7 @@
-const {parens} = require('./util.js')
+const {parens, braces} = require('./util.js')
 
 module.exports = {
+
   // ------------------------------------------------------------------------
   // type
   // ------------------------------------------------------------------------
@@ -10,11 +11,17 @@ module.exports = {
   annotated_type_variable: $ => seq($.type_variable, $._type_annotation),
 
   _tyvar: $ => choice(
-    parens($.annotated_type_variable),
+    parens($, $.annotated_type_variable),
     $.type_variable,
   ),
 
-  inferred_type_variable: $ => braces(choice($.annotated_type_variable, $.type_variable)),
+  _tyvar_in_parens: $ => choice(
+    parens($, $._tyvar_in_parens),
+    $.annotated_type_variable,
+    $.type_variable,
+  ),
+
+  inferred_type_variable: $ => braces($, choice($.annotated_type_variable, $.type_variable)),
 
   _quantifier: $ => choice(
     $._tyvar,
@@ -35,165 +42,138 @@ module.exports = {
     $._forall_dot,
   ),
 
-  forall: $ => $._quantifiers,
-
-  type_parens: $ => parens($._type_with_kind),
-
-  type_list: $ => brackets(sep1($.comma, $._type_with_kind)),
-
-  _type_tuple: $ => sep2($.comma, $._type_with_kind),
-
-  type_tuple: $ => parens($._type_tuple),
-
-  _type_sum: $ => sep2('|', optional($._type_with_kind)),
-
-  _type_promotable_literal: $ => choice(
-    $.type_literal,
-    $.type_tuple,
-    $.type_list,
+  forall: $ => seq(
+    alias($._forall, $.quantifiers),
+    $._forall_dot,
   ),
 
-  _type_promoted_literal: $ => seq(quote, $._type_promotable_literal),
+  type_parens: $ => parens($, $._ktype),
+
+  type_list: $ => brackets($, sep1(',', $._ktype)),
+
+  _type_tuple: $ => sep2(',', $._ktype),
+
+  type_tuple: $ => parens($, $._type_tuple),
+
+  _type_sum: $ => sep2('|', optional($._ktype)),
+
+  _type_promotable_literal: $ => alias($.literal, $.type_literal),
+
+  _type_promoted_literal: $ => seq('\'', $._type_promotable_literal),
 
   _type_literal: $ => choice(
     alias($._type_promoted_literal, $.promoted),
     $._type_promotable_literal,
   ),
 
-  strict_type: $ => seq($._strict, $._atype),
+  _type_promotable: $ => choice(
+    $.type_tuple,
+    $.type_list,
+  ),
 
-  lazy_type: $ => seq($._lazy, $._atype),
+  _type_promoted: $ => seq('\'', $._type_promotable),
 
   type_name: $ => choice(
-    $._tyvar,
-    $._gtycon,
+    $.type_variable,
+    prec('type-name', $._gtycon),
   ),
 
   type_star: _ => choice('*', '★'),
 
-  /**
-  * The `(##)` format of the unit tuple is parsed as an operator, see `exp_unboxed_tuple`.
-  */
-  type_unboxed_tuple: $ => seq($._unboxed_open, sep($.comma, $._type_with_kind), $._unboxed_close),
+  type_unboxed_tuple: $ => unboxed_tuple($, $._ktype),
 
-  type_unboxed_sum: $ => seq($._unboxed_open, $._type_sum, $._unboxed_close),
+  type_unboxed_sum: $ => unboxed_sum($, $._ktype),
+
+  type_wildcard: _ => '_',
 
   _atype: $ => choice(
     $.type_name,
     $.type_star,
     $._type_literal,
     $.type_parens,
+    alias($._type_promoted, $.promoted),
+    $._type_promotable,
     $.type_unboxed_tuple,
     $.type_unboxed_sum,
     $.splice,
     $.quasiquote,
+    $.type_wildcard,
   ),
 
-  type_invisible: $ => seq('@', $._atype),
+  // Prefix operator lexemes
+  type_strict: $ => seq($._any_prefix_bang, $._atype),
+  type_lazy: $ => seq($._any_prefix_tilde, $._atype),
+  type_invisible: $ => seq($._prefix_at, $._atype),
+  modifier: $ => seq($._prefix_percent, $._atype),
+
+  _type_apply_arg: $ => prec.left('apply', choice($._btype, $.type_invisible)),
 
   /**
    * Type application, as in `Either e (Int, Text)` or `TypeRep @Int`.
    */
-  type_apply: $ => seq($._atype, repeat1(choice($._atype, $.type_invisible))),
+  type_apply: $ => prec('apply', seq(
+    field('head', $._btype),
+    repeat1(field('argument', $._type_apply_arg)),
+  )),
 
-  /**
-   * The point of this `choice` is to get a node for type application only if there is more than one atype present.
-   */
+  type_infix: $ => prec.right('infix', seq(
+    field('left_operand', $._btype),
+    field('operator', $._tyops),
+    field('right_operand', $._btype),
+  )),
+
   _btype: $ => choice(
-    $._atype,
+    $.type_infix,
     $.type_apply,
+    $._atype,
   ),
 
-  implicit_param: $ => seq(
-    $.implicit_parid,
-    $._type_annotation,
-  ),
-
-  type_infix: $ => seq(
-    field('left', $._btype),
-    field('op', $._qtyconop),
-    field('right', $._type_infix),
-  ),
-
-  _type_infix: $ => choice(
-    $.type_infix,
-    $._btype,
-  ),
-
-  constraint: $ => choice(
-    seq(field('class', alias($.type_name, $.class_name)), repeat($._atype)),
-    $.type_infix,
-  ),
-
-  _quantified_constraint: $ => seq($._quantifiers, $._constraint),
-
-  _constraint_context: $ => seq($._context, $._constraint),
-
-  _constraint: $ => choice(
-    alias($._quantified_constraint, $.forall),
-    alias($._constraint_context, $.context),
-    parens($._constraint),
-    $.constraint,
-  ),
-
-  _context_constraints: $ => seq(
-    choice(
-      $.constraint,
-      prec('context-empty', parens(optional(sep1($.comma, choice($._constraint, $.implicit_param))))),
-    ),
-  ),
-
-  _context: $ => seq($._context_constraints, $._carrow),
-
-  context: $ => $._context,
-
-  _type_quantifiers: $ => seq($._quantifiers, $._type),
-
-  _type_context: $ => seq($._context, $._type),
-
-  modifier: $ => seq('%', $._atype),
+  type_forall: $ => prec.right('fun', seq($._quantifiers, $._ktype)),
 
   _fun_arrow: $ => seq(
-    optional($.modifier),
+    optional($._phantom_arrow),
     $._arrow,
   ),
 
-  _type_fun: $ => prec('function-type', seq($._type_infix, $._fun_arrow, $._type)),
-
-  _type: $ => prec('type', choice(
-    alias($._type_quantifiers, $.forall),
-    alias($._type_context, $.context),
-    alias($._type_fun, $.fun),
-    $._type_infix,
-  )),
-
-  _type_or_implicit: $ => choice(
-    $.implicit_param,
-    $._type,
+  _linear_fun_arrow: $ => choice(
+    seq(
+      $.modifier,
+      optional($._phantom_arrow),
+      $._arrow,
+    ),
+    $._linear_arrow,
   ),
+
+  type_fun: $ => prec.right('fun', seq($._ktype, $._fun_arrow, $._ktype)),
+
+  type_linear_fun: $ => prec.right('fun', seq($._ktype, $._linear_fun_arrow, $._ktype)),
 
   _type_annotation: $ => seq(
     $._colon2,
-    field('type', $._type_or_implicit),
+    $._ktype,
   ),
 
-  kind: $ => $._type_annotation,
+  type_annotated: $ => prec.right('annotated', seq(
+    $._ktype,
+    $._type_annotation,
+  )),
 
-  _type_with_kind: $ => seq($._type_or_implicit, optional($.kind)),
+  type_context: $ => prec.right('fun', seq(
+    field('context', $._context),
+    $._carrow,
+    $._ktype,
+  )),
 
-  _simpletype_infix: $ => seq(
-    $._tyvar,
-    field('name', $._simple_tyconop),
-    $._tyvar,
-  ),
+  _type_implicit: $ => $.implicit_param,
 
-  _simpletype: $ => choice(
-    parens($._simpletype),
-    alias($._simpletype_infix, $.type_infix),
-    seq(
-      field('name', $._simple_tycon),
-      repeat($._tyvar),
-    ),
+  _ktype: $ => choice(
+    $.type_annotated,
+    $.type_fun,
+    $.type_linear_fun,
+    $.type_forall,
+    $.type_context,
+    $._type_implicit,
+    $._btype,
   ),
 
   // ------------------------------------------------------------------------
@@ -202,73 +182,62 @@ module.exports = {
 
   decl_type: $ => seq(
     'type',
-    $._simpletype,
+    $._btype,
     choice(
-      seq('=', $._type_or_implicit),
+      seq('=', $._ktype),
       $._type_annotation
     ),
+  ),
+
+  // ------------------------------------------------------------------------
+  // type instance
+  // ------------------------------------------------------------------------
+
+  _type_instance: $ => seq(
+    optional($.forall),
+    alias($._btype, $.pattern),
+    '=',
+    $._ktype,
+  ),
+
+  decl_tyinst: $ => seq(
+    'type',
+    'instance',
+    $._type_instance,
   ),
 
   // ------------------------------------------------------------------------
   // type family
   // ------------------------------------------------------------------------
 
-  tyfam_head: $ => $._simpletype,
+  type_family_result: $ => seq('=', $._ktype),
 
-  _tyfam_pat_prefix: $ => seq(
-    field('name', $._simple_qtyconop),
-    repeat(choice($._atype, $.type_invisible)),
-  ),
-
-  _tyfam_pat_infix: $ => seq(
-    $._btype,
-    field('op', $._qtyconop),
-    $._btype,
-  ),
-
-  tyfam_pat: $ => choice(
-    $._tyfam_pat_prefix,
-    $._tyfam_pat_infix,
-  ),
-
-  tyfam_eq: $ => seq(
-    alias($.tyfam_pat, $.pattern),
-    '=',
-    $._type_or_implicit,
-  ),
-
-  tyfam_result_type: $ => seq('=', $._tyvar),
-
-  tyfam_injectivity: $ => seq('|', $.type_variable, $._arrow, repeat1($.type_variable)),
+  type_family_injectivity: $ => seq(optional($._phantom_bar), '|', $.type_variable, $._arrow, repeat1($.type_variable)),
 
   _tyfam_inj: $ => seq(
-    $.tyfam_result_type,
-    optional($.tyfam_injectivity),
+    $.type_family_result,
+    optional($.type_family_injectivity),
   ),
 
   _tyfam: $ => seq(
-    alias($.tyfam_head, $.head),
+    alias($._btype, $.head),
     optional(choice($._type_annotation, $._tyfam_inj)),
   ),
+
+  _tyfam_equations: $ => layout($, alias($._type_instance, $.equation)),
+
+  _where_equations: $ => seq($._where, optional($._tyfam_equations)),
 
   decl_tyfam: $ => seq(
     'type',
     'family',
     $._tyfam,
-    optional(where($, alias($.tyfam_eq, $.equation))),
+    optional(field('where', $._where_equations)),
   ),
 
-  _tyinst: $ => seq(
-    repeat(choice($._atype, $.type_invisible)),
-    '=',
-    $._type_or_implicit,
-  ),
-
-  decl_tyinst: $ => seq(
-    'type',
-    'instance',
-    $._tyinst,
-  ),
+  // ------------------------------------------------------------------------
+  // role
+  // ------------------------------------------------------------------------
 
   type_role: _ => choice(
     'representational',
@@ -277,10 +246,12 @@ module.exports = {
     '_',
   ),
 
+  _role: _ => 'role',
+
   decl_role: $ => seq(
     'type',
-    'role',
-    $._qtycon,
+    $._role,
+    $._tycons,
     repeat1($.type_role),
   )
 }

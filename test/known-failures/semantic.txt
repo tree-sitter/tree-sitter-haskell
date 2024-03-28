@@ -1,0 +1,7 @@
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/function-declarations.A.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/function-declarations.B.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/type-synonyms.A.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/type-synonyms.B.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/tempate-haskell.A.hs
+test/libs/semantic/semantic/test/fixtures/haskell/corpus/template-haskell.B.hs
+test/libs/semantic/semantic-proto/src/Proto/Semantic.hs

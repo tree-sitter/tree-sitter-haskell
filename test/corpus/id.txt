@@ -10,16 +10,38 @@ a9 = a
 aA = a
 aZ' = a
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (function (variable) (exp_name (variable)))
- (function (variable) (exp_name (variable)))
- (function (variable) (exp_name (variable)))
- (function (variable) (exp_name (variable)))
- (function (variable) (exp_name (variable)))
- (function (variable) (exp_name (variable)))
- (function (variable) (exp_name (variable))))
+  (declarations
+    (function
+      (variable)
+      (exp_name
+        (variable)))
+    (function
+      (variable)
+      (exp_name
+        (variable)))
+    (function
+      (variable)
+      (exp_name
+        (variable)))
+    (function
+      (variable)
+      (exp_name
+        (variable)))
+    (function
+      (variable)
+      (exp_name
+        (variable)))
+    (function
+      (variable)
+      (exp_name
+        (variable)))
+    (function
+      (variable)
+      (exp_name
+        (variable)))))
 
 ================================================================================
 id: constructor
@@ -32,18 +54,26 @@ data B = A
        | A_
        | Az'
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (adt
-  (type)
-  (constructors
-   (data_constructor (constructor))
-   (data_constructor (constructor))
-   (data_constructor (constructor))
-   (data_constructor (constructor))
-   (data_constructor (constructor))
-   (data_constructor (constructor)))))
+  (declarations
+    (data_type
+      (type_name
+        (type))
+      (constructors
+        (data_constructor
+          (constructor))
+        (data_constructor
+          (constructor))
+        (data_constructor
+          (constructor))
+        (data_constructor
+          (constructor))
+        (data_constructor
+          (constructor))
+        (data_constructor
+          (constructor))))))
 
 ================================================================================
 id: unicode
@@ -55,18 +85,44 @@ data T =
   | Étonnement
   | ǋtitlecasetest
 
----
+--------------------------------------------------------------------------------
 
 (haskell
-  (function (variable)
-    (patterns (pat_name (variable)))
-    (exp_literal (con_unit)))
-  (adt
-    (type)
-    (constructors
-      (data_constructor
-        (constructor))
-      (data_constructor
-        (constructor))
-      (data_constructor
-        (constructor)))))
+  (declarations
+    (function
+      (variable)
+      (exp_literal
+        (con_unit)))
+    (data_type
+      (type_name
+        (type))
+      (constructors
+        (data_constructor
+          (constructor))
+        (data_constructor
+          (constructor))
+        (data_constructor
+          (constructor))))))
+
+================================================================================
+id: hashes
+================================================================================
+
+a#### = a##
+
+data A## = A###
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (declarations
+    (function
+      (variable)
+      (exp_name
+        (variable)))
+    (data_type
+      (type_name
+        (type))
+      (constructors
+        (data_constructor
+          (constructor))))))

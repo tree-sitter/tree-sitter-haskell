@@ -1,0 +1,31 @@
+(haskell [0, 0] - [8, 0]
+  (header [0, 0] - [0, 14]
+    module: (module [0, 7] - [0, 8]))
+  declarations: (declarations [2, 0] - [8, 0]
+    (data_type [2, 0] - [5, 17]
+      (type_apply [2, 5] - [2, 8]
+        head: (type_name [2, 5] - [2, 6]
+          (type [2, 5] - [2, 6]))
+        argument: (type_name [2, 7] - [2, 8]
+          (type_variable [2, 7] - [2, 8])))
+      (constructors [3, 2] - [3, 3]
+        (data_constructor [3, 2] - [3, 3]
+          (constructor [3, 2] - [3, 3])))
+      (deriving [4, 2] - [4, 15]
+        class: (class_name [4, 12] - [4, 14]
+          (type [4, 12] - [4, 14])))
+      (deriving [5, 2] - [5, 17]
+        class: (class_name [5, 12] - [5, 16]
+          (type [5, 12] - [5, 16]))))
+    (data_type [7, 0] - [7, 24]
+      (type_apply [7, 5] - [7, 8]
+        head: (type_name [7, 5] - [7, 6]
+          (type [7, 5] - [7, 6]))
+        argument: (type_name [7, 7] - [7, 8]
+          (type_variable [7, 7] - [7, 8])))
+      (constructors [7, 11] - [7, 12]
+        (data_constructor [7, 11] - [7, 12]
+          (constructor [7, 11] - [7, 12])))
+      (deriving [7, 13] - [7, 24]
+        class: (class_name [7, 22] - [7, 24]
+          (type [7, 22] - [7, 24]))))))

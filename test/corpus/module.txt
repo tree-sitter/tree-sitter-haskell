@@ -1,31 +1,15 @@
 ================================================================================
-module: starting on first line
-================================================================================
-module A where
-
----
-
-(haskell module: (module) (where))
-
-================================================================================
-module: starting on second line
-================================================================================
-
-module A where
-
----
-
-(haskell (module) (where))
-
-================================================================================
 module: exports empty
 ================================================================================
 
 module A () where
 
----
+--------------------------------------------------------------------------------
 
-(haskell (module) (exports) (where))
+(haskell
+  (header
+    (module)
+    (exports)))
 
 ================================================================================
 module: exports regular
@@ -39,21 +23,28 @@ module A (
   A(a, a),
 ) where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (module)
- (exports
-  (export (variable))
-  (comma)
-  (export (type))
-  (comma)
-  (export (type) (export_names))
-  (comma)
-  (export (type) (export_names (all_names)))
-  (comma)
-  (export (type) (export_names (variable) (comma) (variable))) (comma))
- (where))
+  (header
+    (module)
+    (exports
+      (export
+        (variable))
+      (export
+        (type))
+      (export
+        (type)
+        (export_names))
+      (export
+        (type)
+        (export_names
+          (all_names)))
+      (export
+        (type)
+        (export_names
+          (variable)
+          (variable))))))
 
 ================================================================================
 module: exports symbolic
@@ -61,14 +52,22 @@ module: exports symbolic
 
 module A (
   (<>)((:<>), A),
+  (:++),
 ) where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (module)
- (exports (export (type_operator) (export_names (constructor_operator) (comma) (constructor))) (comma))
- (where))
+  (header
+    (module)
+    (exports
+      (export
+        (operator)
+        (export_names
+          (constructor_operator)
+          (constructor)))
+      (export
+        (constructor_operator)))))
 
 ================================================================================
 module: exports type
@@ -77,18 +76,24 @@ module: exports type
 module A (
   type A,
   type (<>),
+  type (:++),
 ) where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (module)
- (exports
-  (export (namespace) (type))
-  (comma)
-  (export (namespace) (type_operator))
-  (comma))
- (where))
+  (header
+    (module)
+    (exports
+      (export
+        (namespace)
+        (type))
+      (export
+        (namespace)
+        (operator))
+      (export
+        (namespace)
+        (constructor_operator)))))
 
 ================================================================================
 module: exports pattern
@@ -100,19 +105,24 @@ module A (
   A (.., a, ..),
 ) where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (module)
- (exports
-  (export (namespace) (type))
-  (comma)
-  (export (namespace) (type_operator))
-  (comma)
-  (export (type) (export_names (all_names) (comma) (variable) (comma) (all_names)))
-  (comma))
- (where))
-
+  (header
+    (module)
+    (exports
+      (export
+        (namespace)
+        (type))
+      (export
+        (namespace)
+        (operator))
+      (export
+        (type)
+        (export_names
+          (all_names)
+          (variable)
+          (all_names))))))
 
 ================================================================================
 module: exports module
@@ -124,18 +134,21 @@ module A (
   module A.A.A,
 ) where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (module)
- (exports
-  (export (variable))
-  (comma)
-  (export (module))
-  (comma)
-  (export (qualified_module (module) (module) (module)))
-  (comma))
- (where))
+  (header
+    (module)
+    (exports
+      (export
+        (variable))
+      (export
+        (module))
+      (export
+        (qualified_module
+          (module)
+          (module)
+          (module))))))
 
 ================================================================================
 module: exports qualified
@@ -151,28 +164,82 @@ module A (
   pattern A.A((>>), A),
 ) where
 
----
+--------------------------------------------------------------------------------
 
 (haskell
- (module)
- (exports
-  (export (qualified_variable (module) (module) (variable)))
-  (comma)
-  (export (namespace) (qualified_type_operator (module) (module) (type_operator)))
-  (comma)
-  (export (namespace) (qualified_constructor_operator (module) (module) (constructor_operator)))
-  (comma)
-  (export (qualified_type (module) (module) (type)))
-  (comma)
-  (export
-   (qualified_type (module) (module) (type))
-   (export_names (operator) (comma) (constructor_operator) (comma) (constructor) (comma) (variable)))
-  (comma)
-  (export (namespace) (qualified_type (module) (type)) (export_names (operator) (comma) (constructor)))
-  (comma)
-  (export (namespace) (qualified_type (module) (type)) (export_names (operator) (comma) (constructor)))
-  (comma))
- (where))
+  (header
+    (module)
+    (exports
+      (export
+        (qualified_variable
+          (module)
+          (module)
+          (variable)))
+      (export
+        (namespace)
+        (qualified_operator
+          (module)
+          (module)
+          (operator)))
+      (export
+        (namespace)
+        (qualified_operator
+          (module)
+          (module)
+          (constructor_operator)))
+      (export
+        (qualified_type
+          (module)
+          (module)
+          (type)))
+      (export
+        (qualified_type
+          (module)
+          (module)
+          (type))
+        (export_names
+          (operator)
+          (constructor_operator)
+          (constructor)
+          (variable)))
+      (export
+        (namespace)
+        (qualified_type
+          (module)
+          (type))
+        (export_names
+          (operator)
+          (constructor)))
+      (export
+        (namespace)
+        (qualified_type
+          (module)
+          (type))
+        (export_names
+          (operator)
+          (constructor))))))
+
+================================================================================
+module: exports zero indent
+================================================================================
+module A (
+A
+, a,
+A
+) where
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module)
+    (exports
+      (export
+        (type))
+      (export
+        (variable))
+      (export
+        (type)))))
 
 ================================================================================
 module: qualified
@@ -180,16 +247,49 @@ module: qualified
 
 module A.A'.A where
 
----
+--------------------------------------------------------------------------------
 
-(haskell (qualified_module (module) (module) (module)) (where))
+(haskell
+  (header
+    (qualified_module
+      (module)
+      (module)
+      (module))))
 
 ================================================================================
 module: export minus
 ================================================================================
 
-module A (type(-), (-)) where
+module A (type (-), (-)) where
 
----
+--------------------------------------------------------------------------------
 
-(haskell (module) (exports (export (namespace) (type_operator)) (comma) (export (type_operator))) (where))
+(haskell
+  (header
+    (module)
+    (exports
+      (export
+        (namespace)
+        (operator))
+      (export
+        (operator)))))
+
+================================================================================
+module: no trailing comma
+================================================================================
+
+module A (
+  A,
+  A
+) where
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (header
+    (module)
+    (exports
+      (export
+        (type))
+      (export
+        (type)))))

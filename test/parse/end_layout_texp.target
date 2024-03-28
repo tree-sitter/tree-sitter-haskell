@@ -1,0 +1,19 @@
+(haskell [0, 0] - [10, 0]
+  (comment [0, 0] - [1, 45])
+  declarations: (declarations [2, 0] - [10, 0]
+    (function [2, 0] - [9, 3]
+      name: (variable [2, 0] - [2, 1])
+      expression: (exp_tuple [3, 2] - [9, 3]
+        (exp_case [4, 4] - [5, 12]
+          (exp_name [4, 9] - [4, 10]
+            (variable [4, 9] - [4, 10]))
+          (alts [5, 6] - [5, 12]
+            alt: (alt [5, 6] - [5, 12]
+              pattern: (pat_name [5, 6] - [5, 7]
+                (variable [5, 6] - [5, 7]))
+              match: (match [5, 8] - [5, 12]
+                body: (exp_name [5, 11] - [5, 12]
+                  (variable [5, 11] - [5, 12]))))))
+        (comment [6, 8] - [6, 12])
+        (exp_literal [8, 4] - [8, 5]
+          (integer [8, 4] - [8, 5]))))))
