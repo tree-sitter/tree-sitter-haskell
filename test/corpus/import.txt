@@ -483,3 +483,25 @@ import A (A (type A, A, ..))
               (name))
             (constructor)
             (all_names)))))))
+
+================================================================================
+import: partially typed import before the end of the block
+================================================================================
+
+import A
+impo
+import A
+
+--------------------------------------------------------------------------------
+
+(haskell
+  (imports
+    (import
+      (module
+        (module_id))))
+  (declarations
+    (top_splice
+      (variable))
+    (import
+      (module
+        (module_id)))))

@@ -28,7 +28,7 @@ module.exports = {
   namespace: _ => choice('pattern', 'type'),
 
   _child_type: $ => seq(field('namespace', 'type'), field('type', $._tyconids)),
- 
+
   _child: $ => choice(
     alias($._child_type, $.associated_type),
     $._qname,
@@ -96,8 +96,18 @@ module.exports = {
 
   /**
    * Using `semi` at the end instead of `semi_opt` increases parser size by a full megabyte!!
+   *
+   * This allows imports after the first declaration to prevent the tree from jittering while typing an import:
+   *
+   * > import A
+   * > imp
+   * > import B
+   *
+   * The partially typed `imp` will be parsed as a `top_splice`, which forces `imports` to reduce after `import A`.
+   * The rest of the file will then be part of `declarations` and all following imports will be broken until the keyword
+   * has been completed.
    */
-  declarations: $ => seq(semis($, $.declaration), semi_opt($)),
+  declarations: $ => seq($.declaration, repeat(seq(semi($), choice($.declaration, $.import))), semi_opt($)),
 
   _body: $ => seq(
     choice($._cmd_layout_start, alias($._cmd_layout_start_explicit, '{')),
