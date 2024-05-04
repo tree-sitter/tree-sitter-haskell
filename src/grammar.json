@@ -6461,41 +6461,45 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "declaration"
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "SEQ",
+          "type": "SYMBOL",
+          "name": "declaration"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
                 "members": [
                   {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "REPEAT1",
-                        "content": {
-                          "type": "STRING",
-                          "value": ";"
-                        }
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "_cond_layout_semicolon"
-                      }
-                    ]
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "STRING",
+                      "value": ";"
+                    }
                   },
                   {
                     "type": "SYMBOL",
+                    "name": "_cond_layout_semicolon"
+                  }
+                ]
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
                     "name": "declaration"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "import"
                   }
                 ]
               }
-            }
-          ]
+            ]
+          }
         },
         {
           "type": "CHOICE",
