@@ -1,7 +1,7 @@
 [package]
 name = "tree-sitter-haskell"
 description = "Haskell grammar for tree-sitter"
-version = "1.0.0"
+version = "0.21.0"
 authors = ["Max Brunsfeld <maxbrunsfeld@gmail.com>"]
 license = "MIT"
 keywords = ["incremental", "parsing", "tree-sitter", "haskell"]

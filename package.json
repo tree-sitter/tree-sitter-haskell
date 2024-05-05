@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-haskell",
-  "version": "1.0.0",
+  "version": "0.21.0",
   "description": "Haskell grammar for tree-sitter",
   "repository": "github:tree-sitter/tree-sitter-haskell",
   "license": "MIT",
