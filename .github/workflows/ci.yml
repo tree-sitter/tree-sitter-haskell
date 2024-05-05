@@ -2,63 +2,72 @@ name: CI
 
 on:
   push:
-    branches: [main]
-    tags: ['**']
+    branches: [master]
+    paths:
+      - grammar.js
+      - src/**
+      - test/**
+      - bindings/**
+      - binding.gyp
   pull_request:
-    types: [opened, synchronize]
+    paths:
+      - grammar.js
+      - src/**
+      - test/**
+      - bindings/**
+      - binding.gyp
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
 
 jobs:
   test:
-    name: test / ${{matrix.os}}
+    name: Test parser
     runs-on: ${{matrix.os}}
-    if: github.event.pull_request.merged == true || github.event.action != 'closed'
     strategy:
       fail-fast: false
       matrix:
-        os: [macOS-latest, ubuntu-latest]
-
+        os: [ubuntu-latest, windows-latest, macos-14]
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Install node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Install emscripten
-        uses: mymindstorm/setup-emsdk@v14
-        with:
-          version: '3.1.47'
-
-      - name: Build dependencies
-        run: npm install
-
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v1
+      - name: Set up examples
+        run: |-
+          git clone https://github.com/joshvera/effects examples/effects --single-branch --depth=1 --filter=blob:none
+          git clone https://github.com/PostgRest/postgrest examples/postgrest --single-branch --depth=1 --filter=blob:none
+          git clone https://github.com/GaloisInc/ivory examples/ivory --single-branch --depth=1 --filter=blob:none
+          git clone https://github.com/polysemy-research/polysemy examples/polysemy --single-branch --depth=1 --filter=blob:none
+          git clone https://github.com/github/semantic examples/semantic --single-branch --depth=1 --filter=blob:none
+          git clone https://github.com/haskell/haskell-language-server examples/haskell-language-server --single-branch --depth=1 --filter=blob:none
+          git clone https://github.com/AndrasKovacs/flatparse examples/flatparse --single-branch --depth=1 --filter=blob:none
+          git clone https://github.com/ekmett/lens examples/lens --single-branch --depth=1 --filter=blob:none
+          git clone https://github.com/tek/tsh-test-ghc examples/tsh-test-ghc --single-branch --depth=1 --filter=blob:none
       - name: Run tests
-        run: npm test
-
-      - name: Parse libraries
-        run: npm run libs
-
-      - name: Parse libraries with wasm
-        run: npm run libs-wasm
-
-      - name: Run fuzzer
-        if: ${{matrix.os == 'ubuntu-latest'}}
-        uses: tree-sitter/fuzz-action@v4
-
-  legacy:
-    permissions:
-      contents: write
-      id-token: write
-    needs: test
-    if: github.ref_type == 'tag'
-    uses: ./.github/workflows/legacy.yml
-
-  release:
-    permissions:
-      contents: read
-      id-token: write
-    needs: test
-    if: github.ref_type == 'tag'
-    uses: ./.github/workflows/release.yml
+        uses: tree-sitter/parser-test-action@v2
+        with:
+          test-rust: ${{runner.os == 'Linux'}}
+      - name: Parse examples
+        id: examples
+        uses: tree-sitter/parse-action@v4
+        with:
+          files: |
+            examples/*.hs
+            !exampels/haskell-language-server/test/functional/Symbol.hs
+            !examples/lens/tests/properties.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/function-declarations.A.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/function-declarations.B.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/tempate-haskell.A.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/template-haskell.B.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/algebraic-datatype-declarations.A.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/algebraic-datatype-declarations.B.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/newtype-declaration.A.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/newtype-declaration.B.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/type-synonyms.A.hs
+            !examples/semantic/semantic/test/fixtures/haskell/corpus/type-synonyms.B.hs
+            !examples/polysemy/src/Polysemy/Law.hs
+            !examples/tsh-test-ghc/compiler/GHC/Builtin/PrimOps.hs
+          invalid-files: |
+            !examples/haskell-language-server/test/testdata/FuncTestFail.hs

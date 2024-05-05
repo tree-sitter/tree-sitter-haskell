@@ -12,11 +12,17 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Topic :: Software Development :: Compilers",
   "Topic :: Text Processing :: Linguistic",
-  "Typing :: Typed"
+  "Typing :: Typed",
 ]
 requires-python = ">=3.8"
 license.text = "MIT"
 readme = "README.md"
+
+[[project.authors]]
+name = "Rick Winfrey"
+
+[[project.maintainers]]
+name = "Torsten Schmits"
 
 [project.urls]
 Homepage = "https://github.com/tree-sitter/tree-sitter-haskell"
