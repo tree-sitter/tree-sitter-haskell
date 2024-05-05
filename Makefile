@@ -106,5 +106,6 @@ clean:
 
 test:
 	$(TS) test
+	$(TS) parse examples/* --quiet --time
 
 .PHONY: all install uninstall clean test
