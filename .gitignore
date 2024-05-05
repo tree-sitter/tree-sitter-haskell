@@ -1,13 +1,38 @@
-/src/parser.c
-/dist-newstyle
-/result
-/test/libs/*
-!/test/libs/.gitkeep
-/build/
-/target/
-/.lib/
-/node_modules/
-*.log
-.gdb_history
-*.o
+# Rust artifacts
+Cargo.lock
+target/
+
+# Node artifacts
+build/
+prebuilds/
+node_modules/
+*.tgz
+
+# Swift artifacts
+.build/
+
+# Go artifacts
+go.sum
+_obj/
+
+# Python artifacts
+.venv/
+dist/
+*.egg-info
+*.whl
+
+# C artifacts
+*.a
 *.so
+*.so.*
+*.dylib
+*.dll
+*.pc
+
+# Example dirs
+/examples/*/
+
+# Grammar volatiles
+*.wasm
+*.obj
+*.o

@@ -1,10 +1,8 @@
 // swift-tools-version:5.3
-
 import PackageDescription
 
 let package = Package(
     name: "TreeSitterHaskell",
-    platforms: [.macOS(.v10_13), .iOS(.v11)],
     products: [
         .library(name: "TreeSitterHaskell", targets: ["TreeSitterHaskell"]),
     ],
@@ -13,34 +11,37 @@ let package = Package(
         .target(name: "TreeSitterHaskell",
                 path: ".",
                 exclude: [
-                    "binding.gyp",
-                    "bindings",
                     "Cargo.toml",
-                    "Cargo.lock",
-                    "examples",
-                    "grammar",
-                    "grammar.js",
-                    "LICENSE",
                     "Makefile",
+                    "binding.gyp",
+                    "bindings/c",
+                    "bindings/go",
+                    "bindings/node",
+                    "bindings/python",
+                    "bindings/rust",
+                    "prebuilds",
+                    "grammar.js",
                     "package.json",
-                    "README.md",
-                    "script",
-                    "src/grammar.json",
-                    "src/node-types.json",
+                    "package-lock.json",
+                    "pyproject.toml",
+                    "setup.py",
                     "test",
+                    "examples",
+                    ".editorconfig",
+                    ".github",
+                    ".gitignore",
+                    ".gitattributes",
+                    ".gitmodules",
                 ],
                 sources: [
                     "src/parser.c",
                     "src/scanner.c",
-                    "src/id.h",
-                    "src/space.h",
-                    "src/symop.h",
-                    "src/varid-start.h",
                 ],
                 resources: [
                     .copy("queries")
                 ],
                 publicHeadersPath: "bindings/swift",
                 cSettings: [.headerSearchPath("src")])
-    ]
+    ],
+    cLanguageStandard: .c11
 )
