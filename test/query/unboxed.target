@@ -1,7 +1,0 @@
-test/query/unboxed.hs
-  pattern: 0
-    capture: 0 - open, start: (0, 4), end: (0, 5), text: `(`
-  pattern: 0
-    capture: 0 - open, start: (0, 5), end: (0, 6), text: `#`
-  pattern: 1
-    capture: 1 - close, start: (0, 12), end: (0, 14), text: `#)`
