@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-tree-sitter test
-test/parse/run.bash
-test/query/run.bash
