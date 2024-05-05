@@ -7,10 +7,10 @@
   "author": "Rick Winfrey",
   "contributors": [
     "Max Brunsfeld",
-    "Owen Shepherd"
+    "Owen Shepherd",
+    "Torsten Schmits"
   ],
   "maintainers": [
-    "Torsten Schmits"
   ],
   "main": "bindings/node",
   "types": "bindings/node",
