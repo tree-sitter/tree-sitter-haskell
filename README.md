@@ -6,155 +6,139 @@ Haskell grammar for [tree-sitter].
 
 # References
 
-* [Haskell 2010 Language Report – Syntax References][ref]
-* [GHC Language Extensions][ext]
-
-# Building with nvim-treesitter
-
-When installing the grammar from source, be sure to include `src/scanner.c` in the source files:
-
-```vim
-lua <<EOF
-local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-parser_config.haskell = {
-  install_info = {
-    url = "~/path/to/tree-sitter-haskell",
-    files = {"src/parser.c", "src/scanner.c"}
-  }
-}
-EOF
-```
+- [Haskell 2010 Language Report – Syntax References][ref]
+- [GHC Language Extensions][ext]
 
 # Supported Language Extensions
 
 These extensions are supported ✅, unsupported ❌ or not applicable because they don't involve parsing ➖️:
 
-* AllowAmbiguousTypes ➖️
-* ApplicativeDo ➖️
-* Arrows ❌
-* BangPatterns ✅
-* BinaryLiterals ✅
-* BlockArguments ✅
-* CApiFFI ✅
-* ConstrainedClassMethods ✅
-* ConstraintKinds ✅
-* CPP ✅
-* CUSKs ✅
-* DataKinds ✅
-* DatatypeContexts ✅
-* DefaultSignatures ✅
-* DeriveAnyClass ➖️
-* DeriveDataTypeable ➖️
-* DeriveFoldable ➖️
-* DeriveFunctor ➖️
-* DeriveGeneric ➖️
-* DeriveLift ➖️
-* DeriveTraversable ➖️
-* DerivingStrategies ✅
-* DerivingVia ✅
-* DisambiguateRecordFields ➖️
-* DuplicateRecordFields ➖️
-* EmptyCase ✅
-* EmptyDataDecls ✅
-* EmptyDataDeriving ✅
-* ExistentialQuantification ✅
-* ExplicitForAll ✅
-* ExplicitNamespaces ✅
-* ExtendedDefaultRules ➖️
-* FlexibleContexts ✅
-* FlexibleInstances ✅
-* ForeignFunctionInterface ✅
-* FunctionalDependencies ✅
-* GADTs ✅
-* GADTSyntax ✅
-* GeneralisedNewtypeDeriving ➖️
-* GHCForeignImportPrim ✅
-* Haskell2010 ➖️
-* Haskell98 ➖️
-* HexFloatLiterals ✅
-* ImplicitParams ✅
-* ImplicitPrelude ➖️
-* ImportQualifiedPost ✅
-* ImpredicativeTypes ➖️
-* IncoherentInstances ➖️
-* InstanceSigs ✅
-* InterruptibleFFI ✅
-* KindSignatures ✅
-* LambdaCase ✅
-* LexicalNegation ❌
-* LiberalTypeSynonyms ✅
-* LinearTypes ✅
-* ListTuplePuns ✅
-* MagicHash ✅
-* Modifiers ❌
-* MonadComprehensions ➖️
-* MonadFailDesugaring ➖️
-* MonoLocalBinds ➖️
-* MonomorphismRestriction ➖️
-* MultiParamTypeClasses ✅
-* MultiWayIf ✅
-* NamedFieldPuns ✅
-* NamedWildCards ✅
-* NegativeLiterals ➖️
-* NondecreasingIndentation ✅
-* NPlusKPatterns ➖️
-* NullaryTypeClasses ✅
-* NumDecimals ➖️
-* NumericUnderscores ✅
-* OverlappingInstances ➖️
-* OverloadedLabels ✅
-* OverloadedLists ➖️
-* OverloadedRecordDot ✅
-* OverloadedRecordUpdate ✅
-* OverloadedStrings ➖️
-* PackageImports ✅
-* ParallelListComp ✅
-* PartialTypeSignatures ✅
-* PatternGuards ✅
-* PatternSynonyms ✅
-* PolyKinds ➖️
-* PostfixOperators ➖️
-* QualifiedDo ✅
-* QuantifiedConstraints ✅
-* QuasiQuotes ✅
-* Rank2Types ✅
-* RankNTypes ✅
-* RebindableSyntax ➖️
-* RecordWildCards ➖️
-* RecursiveDo ✅
-* RequiredTypeArguments ✅
-* RoleAnnotations ✅
-* Safe ➖️
-* ScopedTypeVariables ✅
-* StandaloneDeriving ✅
-* StandaloneKindSignatures ✅
-* StarIsType ✅
-* StaticPointers ❌
-* Strict ➖️
-* StrictData ✅
-* TemplateHaskell ✅
-* TemplateHaskellQuotes ✅
-* TraditionalRecordSyntax ➖️
-* TransformListComp ✅
-* Trustworthy ➖️
-* TupleSections ✅
-* TypeAbstractions ✅
-* TypeApplications ✅
-* TypeData ✅
-* TypeFamilies ✅
-* TypeFamilyDependencies ✅
-* TypeInType ✅
-* TypeOperators ✅
-* TypeSynonymInstances ➖️
-* UnboxedSums ✅
-* UnboxedTuples ✅
-* UndecidableInstances ➖️
-* UndecidableSuperClasses ➖️
-* UnicodeSyntax ✅
-* UnliftedFFITypes ➖️
-* UnliftedNewtypes ✅
-* Unsafe ➖️
-* ViewPatterns ✅
+- AllowAmbiguousTypes ➖️
+- ApplicativeDo ➖️
+- Arrows ❌
+- BangPatterns ✅
+- BinaryLiterals ✅
+- BlockArguments ✅
+- CApiFFI ✅
+- ConstrainedClassMethods ✅
+- ConstraintKinds ✅
+- CPP ✅
+- CUSKs ✅
+- DataKinds ✅
+- DatatypeContexts ✅
+- DefaultSignatures ✅
+- DeriveAnyClass ➖️
+- DeriveDataTypeable ➖️
+- DeriveFoldable ➖️
+- DeriveFunctor ➖️
+- DeriveGeneric ➖️
+- DeriveLift ➖️
+- DeriveTraversable ➖️
+- DerivingStrategies ✅
+- DerivingVia ✅
+- DisambiguateRecordFields ➖️
+- DuplicateRecordFields ➖️
+- EmptyCase ✅
+- EmptyDataDecls ✅
+- EmptyDataDeriving ✅
+- ExistentialQuantification ✅
+- ExplicitForAll ✅
+- ExplicitNamespaces ✅
+- ExtendedDefaultRules ➖️
+- FlexibleContexts ✅
+- FlexibleInstances ✅
+- ForeignFunctionInterface ✅
+- FunctionalDependencies ✅
+- GADTs ✅
+- GADTSyntax ✅
+- GeneralisedNewtypeDeriving ➖️
+- GHCForeignImportPrim ✅
+- Haskell2010 ➖️
+- Haskell98 ➖️
+- HexFloatLiterals ✅
+- ImplicitParams ✅
+- ImplicitPrelude ➖️
+- ImportQualifiedPost ✅
+- ImpredicativeTypes ➖️
+- IncoherentInstances ➖️
+- InstanceSigs ✅
+- InterruptibleFFI ✅
+- KindSignatures ✅
+- LambdaCase ✅
+- LexicalNegation ❌
+- LiberalTypeSynonyms ✅
+- LinearTypes ✅
+- ListTuplePuns ✅
+- MagicHash ✅
+- Modifiers ❌
+- MonadComprehensions ➖️
+- MonadFailDesugaring ➖️
+- MonoLocalBinds ➖️
+- MonomorphismRestriction ➖️
+- MultiParamTypeClasses ✅
+- MultiWayIf ✅
+- NamedFieldPuns ✅
+- NamedWildCards ✅
+- NegativeLiterals ➖️
+- NondecreasingIndentation ✅
+- NPlusKPatterns ➖️
+- NullaryTypeClasses ✅
+- NumDecimals ➖️
+- NumericUnderscores ✅
+- OverlappingInstances ➖️
+- OverloadedLabels ✅
+- OverloadedLists ➖️
+- OverloadedRecordDot ✅
+- OverloadedRecordUpdate ✅
+- OverloadedStrings ➖️
+- PackageImports ✅
+- ParallelListComp ✅
+- PartialTypeSignatures ✅
+- PatternGuards ✅
+- PatternSynonyms ✅
+- PolyKinds ➖️
+- PostfixOperators ➖️
+- QualifiedDo ✅
+- QuantifiedConstraints ✅
+- QuasiQuotes ✅
+- Rank2Types ✅
+- RankNTypes ✅
+- RebindableSyntax ➖️
+- RecordWildCards ➖️
+- RecursiveDo ✅
+- RequiredTypeArguments ✅
+- RoleAnnotations ✅
+- Safe ➖️
+- ScopedTypeVariables ✅
+- StandaloneDeriving ✅
+- StandaloneKindSignatures ✅
+- StarIsType ✅
+- StaticPointers ❌
+- Strict ➖️
+- StrictData ✅
+- TemplateHaskell ✅
+- TemplateHaskellQuotes ✅
+- TraditionalRecordSyntax ➖️
+- TransformListComp ✅
+- Trustworthy ➖️
+- TupleSections ✅
+- TypeAbstractions ✅
+- TypeApplications ✅
+- TypeData ✅
+- TypeFamilies ✅
+- TypeFamilyDependencies ✅
+- TypeInType ✅
+- TypeOperators ✅
+- TypeSynonymInstances ➖️
+- UnboxedSums ✅
+- UnboxedTuples ✅
+- UndecidableInstances ➖️
+- UndecidableSuperClasses ➖️
+- UnicodeSyntax ✅
+- UnliftedFFITypes ➖️
+- UnliftedNewtypes ✅
+- Unsafe ➖️
+- ViewPatterns ✅
 
 # Bugs
 
@@ -171,8 +155,8 @@ which group multiple other node types under a single name.
 
 Supertype names do not occur as extra nodes in parse trees, but they can be used in queries in special ways:
 
-* As an alias, matching any of their subtypes
-* As prefix for one of their subtypes, matching its symbol only when it occurs as a production of the supertype
+- As an alias, matching any of their subtypes
+- As prefix for one of their subtypes, matching its symbol only when it occurs as a production of the supertype
 
 For example, the query `(expression)` matches the nodes `infix`, `record`, `projection`, `constructor`, and the second
 and third `variable` in this tree for `cats <> Cat {mood = moods.sleepy}`:
@@ -196,59 +180,59 @@ A query for `(expression/variable)` will match only the other two, `cats` and `m
 
 The grammar's supertypes consist of the following sets:
 
-* [`expression`](./grammar/exp.js)
+- [`expression`](./grammar/exp.js)
 
   Rules that are valid in any expression position, excluding type applications, explicit types and expression
   signatures.
 
-* [`pattern`](./grammar/pat.js)
+- [`pattern`](./grammar/pat.js)
 
   Rules that are valid in any pattern position, excluding type binders, explicit types and pattern signatures.
 
-* [`type`](./grammar/type.js)
-  
+- [`type`](./grammar/type.js)
+
   Types that are either atomic (have no ambiguous associativity, like bracketed constructs, variables and type
   constructors), applied types or infix types.
 
-* [`quantified_type`](./grammar/type.js)
+- [`quantified_type`](./grammar/type.js)
 
   Types prefixed with a `forall`, context or function parameter.
 
-* [`constraint`](./grammar/constraint.js)
+- [`constraint`](./grammar/constraint.js)
 
   Almost the same rules as `type`, but mirrored for use in contexts.
 
-* [`constraints`](./grammar/constraints.js)
+- [`constraints`](./grammar/constraints.js)
 
   Analog of `quantified_type`, for constraints with `forall` or context.
 
-* [`type_param`](./grammar/type.js)
+- [`type_param`](./grammar/type.js)
 
   Atomic nodes in type and class heads, like the three nodes following `A` in `data A @k a (b :: k)`.
 
-* [`declaration`](./grammar/module.js)
+- [`declaration`](./grammar/module.js)
 
   All top-level declarations, like functions and data types.
 
-* [`decl`](./grammar/decl.js)
+- [`decl`](./grammar/decl.js)
 
   Shorthand for declarations that are also valid in local bindings (`let` and `where`) and in class and instance bodies,
   except for fixity declarations.
   Consists of `signature`, `function` and `bind`.
 
-* [`class_decl` and `instance_decl`](./grammar/class.js)
+- [`class_decl` and `instance_decl`](./grammar/class.js)
 
   All declarations that are valid in classes and instances, which includes associated type and data families.
 
-* [`statement`](./grammar/exp.js)
+- [`statement`](./grammar/exp.js)
 
   Different forms of `do`-notation statements.
 
-* [`qualifier`](./grammar/exp.js)
+- [`qualifier`](./grammar/exp.js)
 
   Different forms of list comprehension qualifiers.
 
-* [`guard`](./grammar/exp.js)
+- [`guard`](./grammar/exp.js)
 
   Different forms of guards in function equations and case alternatives.
 
@@ -260,10 +244,6 @@ Other components of the project require additional tools, described below.
 Some are made available through `npm` – for example, `npx tree-sitter` runs the CLI.
 If you don't have `tree-sitter` available otherwise, prefix all the commands in the following sections with `npx`.
 
-For [Nix] users, the project's [flake](./flake.nix) provides the full toolkit for maximum convenience, as well as
-a bunch of test apps and packages.
-Run `nix develop` to start a shell with all tools in `$PATH`.
-
 ## Output path
 
 The CLI writes the shared library containing the parser to the directory denoted by `$TREE_SITTER_LIBDIR`.
@@ -274,9 +254,6 @@ In order to avoid clobbering this global directory with development versions, yo
 ```
 export TREE_SITTER_LIBDIR=$PWD/.lib
 ```
-
-All CLI commands that use the parser will load it from that path.
-The Nix shell sets this variable automatically.
 
 ## The grammar
 
@@ -307,8 +284,6 @@ $ tree-sitter generate
 
 Two byproducts of this process are written to `src/grammar.json` and `src/node-types.json`.
 
-Nix derivation: `nix build .#parser-gen`
-
 ## Compiling the parser
 
 The C code is automatically compiled by most of the test tools mentioned below, but you can instruct tree-sitter to do
@@ -324,8 +299,6 @@ Aside from the generated `src/parser.c`, tree-sitter will also compile and link 
 This file contains the _external scanner_, which is a custom extension of the built-in lexer whose purpose is to handle
 language constructs that cannot be expressed (efficiently) in the javascript grammar, like Haskell layouts.
 
-Nix derivation: `nix build .#parser-lib`
-
 ### WebAssembly
 
 The parser can be compiled to WebAssembly as well, which requires `emscripten`:
@@ -335,8 +308,6 @@ $ tree-sitter build --wasm
 ```
 
 The resulting binary is written to `$PWD/tree-sitter-haskell.wasm`.
-
-Nix derivation: `nix build .#parser-wasm`
 
 ## Testing the parser
 
@@ -355,23 +326,23 @@ $ tree-sitter test -f 'module: exports empty'
 
 The project contains several other types of tests:
 
-* `test/parse/run.bash [update] [test names ...]` parses the files in `test/parse/*.hs` and compares the output with
+- `test/parse/run.bash [update] [test names ...]` parses the files in `test/parse/*.hs` and compares the output with
   `test/parse/*.target`.
   If `update` is specified as the first argument, it will update the `.target` file for the first failing test.
 
-* `test/query/run.bash [update] [test names ...]` parses the files in `test/query/*.hs`, applies the queries in
+- `test/query/run.bash [update] [test names ...]` parses the files in `test/query/*.hs`, applies the queries in
   `test/query/*.query` and compares the output with `test/query/*.target`, similar to `test/parse`.
 
-* `test/rust/parse-test.rs` contains a few tests that use tree-sitter's Rust API to extract the test ranges for
+- `test/rust/parse-test.rs` contains a few tests that use tree-sitter's Rust API to extract the test ranges for
   terminals in a slightly more convenient way.
   This requires `cargo` to be installed, and can be executed with `cargo test` (which also runs the tests in
   `bindings/rust`).
 
-* `test/parse-libs [wasm]` clones a set of Haskell libraries to `test/libs` and parses the entire codebase.
+- `test/parse-libs [wasm]` clones a set of Haskell libraries to `test/libs` and parses the entire codebase.
   When invoked as `test/parse-libs wasm`, it will use the WebAssembly parser.
   This requires `bc` to be installed.
 
-* `test/parse-lib name [wasm]` parses only the library `name` in that directory (without cloning the repository).
+- `test/parse-lib name [wasm]` parses only the library `name` in that directory (without cloning the repository).
 
 ### Debugging
 
@@ -409,5 +380,4 @@ This requires `graphviz` to be installed.
 [ref]: https://www.haskell.org/onlinereport/haskell2010/haskellch10.html
 [ext]: https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/exts/table.html
 [cli]: https://github.com/tree-sitter/tree-sitter/tree/master/cli
-[Nix]: https://nixos.org/manual/nix/stable/introduction
 [grammar-docs]: https://tree-sitter.github.io/tree-sitter/creating-parsers#writing-the-grammar
