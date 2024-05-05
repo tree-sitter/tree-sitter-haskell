@@ -1,6 +1,11 @@
 # tree-sitter-haskell
 
-[![CI](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml/badge.svg)](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml)
+[![CI][ci]](https://github.com/tree-sitter/tree-sitter-haskell/actions/workflows/ci.yml)
+[![discord][discord]](https://discord.gg/w7nTvsVJhm)
+[![matrix][matrix]](https://matrix.to/#/#tree-sitter-chat:matrix.org)
+[![crates][crates]](https://crates.io/crates/tree-sitter-haskell)
+[![npm][npm]](https://www.npmjs.com/package/tree-sitter-haskell)
+[![pypi][pypi]](https://pypi.org/project/tree-sitter-haskell)
 
 Haskell grammar for [tree-sitter].
 
@@ -381,3 +386,9 @@ This requires `graphviz` to be installed.
 [ext]: https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/exts/table.html
 [cli]: https://github.com/tree-sitter/tree-sitter/tree/master/cli
 [grammar-docs]: https://tree-sitter.github.io/tree-sitter/creating-parsers#writing-the-grammar
+[ci]: https://img.shields.io/github/actions/workflow/status/tree-sitter/tree-sitter-haskell/ci.yml?logo=github&label=CI
+[discord]: https://img.shields.io/discord/1063097320771698699?logo=discord&label=discord
+[matrix]: https://img.shields.io/matrix/tree-sitter-chat%3Amatrix.org?logo=matrix&label=matrix
+[npm]: https://img.shields.io/npm/v/tree-sitter-haskell?logo=npm
+[crates]: https://img.shields.io/crates/v/tree-sitter-haskell?logo=rust
+[pypi]: https://img.shields.io/pypi/v/tree-sitter-haskell?logo=pypi&logoColor=ffd242
