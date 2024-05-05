@@ -1,2 +1,0 @@
-module TSH.Monad where
-

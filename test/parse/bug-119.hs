@@ -1,1 +1,0 @@
-data Aa = Bb | Cc |
