@@ -1,23 +1,23 @@
 const
-class_ = require('./grammar/class.js')
-conflicts = require('./grammar/conflicts.js')
-context = require('./grammar/context.js')
-data = require('./grammar/data.js')
-decl = require('./grammar/decl.js')
-exp = require('./grammar/exp.js')
-externals = require('./grammar/externals.js')
-general = require('./grammar/general.js')
-id = require('./grammar/id.js')
-inline = require('./grammar/inline.js')
-lexeme = require('./grammar/lexeme.js')
-literal = require('./grammar/literal.js')
-module_ = require('./grammar/module.js')
-operator = require('./grammar/operator.js')
-pat = require('./grammar/pat.js')
-patsyn = require('./grammar/patsyn.js')
-precedences = require('./grammar/precedences.js')
-th = require('./grammar/th.js')
-type = require('./grammar/type.js')
+  class_ = require('./grammar/class.js'),
+  conflicts = require('./grammar/conflicts.js'),
+  context = require('./grammar/context.js'),
+  data = require('./grammar/data.js'),
+  decl = require('./grammar/decl.js'),
+  exp = require('./grammar/exp.js'),
+  externals = require('./grammar/externals.js'),
+  general = require('./grammar/general.js'),
+  id = require('./grammar/id.js'),
+  inline = require('./grammar/inline.js'),
+  lexeme = require('./grammar/lexeme.js'),
+  literal = require('./grammar/literal.js'),
+  module_ = require('./grammar/module.js'),
+  operator = require('./grammar/operator.js'),
+  pat = require('./grammar/pat.js'),
+  patsyn = require('./grammar/patsyn.js'),
+  precedences = require('./grammar/precedences.js'),
+  th = require('./grammar/th.js'),
+  type = require('./grammar/type.js')
 
 module.exports = grammar({
   name: 'haskell',
