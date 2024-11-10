@@ -28,7 +28,7 @@ name = "Torsten Schmits"
 Homepage = "https://github.com/tree-sitter/tree-sitter-haskell"
 
 [project.optional-dependencies]
-core = ["tree-sitter~=0.21"]
+core = ["tree-sitter~=0.22"]
 
 [tool.cibuildwheel]
 build = "cp39-*"

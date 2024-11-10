@@ -3106,6 +3106,7 @@
   {
     "type": "haskell",
     "named": true,
+    "root": true,
     "fields": {
       "declarations": {
         "multiple": false,
