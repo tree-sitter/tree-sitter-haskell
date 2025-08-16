@@ -1187,17 +1187,17 @@ type (#?) = (#?)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (prefix_id
         (operator))
       (prefix_id
         (operator)))
-    (type_synomym
+    (type_synonym
       (prefix_id
         (operator))
       (prefix_id
         (operator)))
-    (type_synomym
+    (type_synonym
       (prefix_id
         (operator))
       (prefix_id
@@ -1218,7 +1218,7 @@ type A = (# a | a # b | c #)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_tuple
         (infix
@@ -1226,7 +1226,7 @@ type A = (# a | a # b | c #)
           (operator)
           (variable))
         (variable)))
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_tuple
         (variable)
@@ -1235,7 +1235,7 @@ type A = (# a | a # b | c #)
           (operator)
           (variable))
         (variable)))
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_tuple
         (variable)
@@ -1243,12 +1243,12 @@ type A = (# a | a # b | c #)
           (variable)
           (operator)
           (variable))))
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_sum
         (name)
         (name)))
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_sum
         (infix
@@ -1256,7 +1256,7 @@ type A = (# a | a # b | c #)
           (operator)
           (variable))
         (variable)))
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_sum
         (variable)
@@ -1676,7 +1676,7 @@ type A = A.A.A A.A.A A.A.+++ A.A.A A.A.A A.A.+++ A.A.A A.A.A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (apply

@@ -182,7 +182,7 @@ type A = A a => A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (context
         (apply
@@ -200,7 +200,7 @@ type A = (a A) a => A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (context
         (apply
@@ -221,7 +221,7 @@ type A = (A :: A a -> A) a => A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (context
         (apply
@@ -246,7 +246,7 @@ type A = A a => ∀ a . a *+* a => A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (context
         (apply
@@ -272,7 +272,7 @@ type A = (A => a a) -> A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (function
         (parens
