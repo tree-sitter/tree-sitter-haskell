@@ -8,7 +8,7 @@ type A = ?a :: A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (implicit_parameter
         (implicit_variable)
@@ -24,7 +24,7 @@ type A = (?a :: A)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (parens
         (implicit_parameter
@@ -41,7 +41,7 @@ type A = (?a :: Int :: Constraint)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (parens
         (signature
@@ -60,7 +60,7 @@ type A = (A => ?a :: A)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (parens
         (context
@@ -79,7 +79,7 @@ type A = (?a :: A.A, A)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (tuple
         (implicit_parameter
@@ -100,7 +100,7 @@ type A = (?a :: A.A, A)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (tuple
         (implicit_parameter
@@ -121,7 +121,7 @@ type A = (?a :: A) => A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (context
         (parens
@@ -140,7 +140,7 @@ type A = ?a :: ∀ a . A a => A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (implicit_parameter
         (implicit_variable)

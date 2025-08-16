@@ -10,10 +10,10 @@ type A = A A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (name))
-    (type_synomym
+    (type_synonym
       (name)
       (type_params
         (variable))
@@ -26,7 +26,7 @@ type A = A A
             (variable))
           (name))
         (variable)))
-    (type_synomym
+    (type_synonym
       (name)
       (apply
         (name)
@@ -42,7 +42,7 @@ type A = A A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (apply
         (name)
@@ -61,22 +61,22 @@ type A = 'A.A.A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (promoted
         (constructor)))
-    (type_synomym
+    (type_synonym
       (name)
       (promoted
         (constructor)))
-    (type_synomym
+    (type_synonym
       (name)
       (promoted
         (qualified
           (module
             (module_id))
           (constructor))))
-    (type_synomym
+    (type_synonym
       (name)
       (promoted
         (qualified
@@ -96,10 +96,10 @@ type A = [A a]
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (prefix_list))
-    (type_synomym
+    (type_synonym
       (name)
       (list
         (apply
@@ -120,20 +120,20 @@ type A = (A.A.->)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (unit))
-    (type_synomym
+    (type_synonym
       (name)
       (prefix_tuple))
-    (type_synomym
+    (type_synonym
       (name)
       (prefix_tuple))
-    (type_synomym
+    (type_synonym
       (name)
       (prefix_id
         (operator)))
-    (type_synomym
+    (type_synonym
       (name)
       (prefix_id
         (qualified
@@ -152,7 +152,7 @@ type A = A ++ A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
@@ -169,7 +169,7 @@ type A = A :++ A ':++ A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
@@ -190,7 +190,7 @@ type A = A : A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
@@ -207,7 +207,7 @@ type A = A ': A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
@@ -225,7 +225,7 @@ type A = '[]
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (promoted
         (empty_list)))))
@@ -240,7 +240,7 @@ type A = [A a, 'A, a]
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (list
         (apply
@@ -261,7 +261,7 @@ type A = '[a]
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (promoted
         (list
@@ -271,7 +271,7 @@ type A = '[a]
           (promoted
             (constructor))
           (variable))))
-    (type_synomym
+    (type_synonym
       (name)
       (promoted
         (list
@@ -287,7 +287,7 @@ type A = A A.A.:++ A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
@@ -308,7 +308,7 @@ type A = A ':++ A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
@@ -326,7 +326,7 @@ type A = A 'A.:++ A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
@@ -347,7 +347,7 @@ type A = A `A.A` A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
@@ -368,7 +368,7 @@ type A = '(A a, A)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (promoted
         (tuple
@@ -388,7 +388,7 @@ type A = '(,,,)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (promoted
         (prefix_tuple)))))
@@ -405,19 +405,19 @@ type A = ∀ a . (A a ~ A a) => A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
         (operator)
         (name)))
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
         (operator)
         (name)))
-    (type_synomym
+    (type_synonym
       (name)
       (forall
         (quantified_variables
@@ -444,7 +444,7 @@ type A = a a ': a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (apply
@@ -464,7 +464,7 @@ type A = A :++ A A ': A (A A a) : '[] ':++ A `A.A` '[]
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (name)
@@ -510,7 +510,7 @@ type A = A a a a ++ A a a a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (infix
         (apply
@@ -540,11 +540,11 @@ type A = A (A "a")
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (literal
         (string)))
-    (type_synomym
+    (type_synonym
       (name)
       (apply
         (name)
@@ -564,7 +564,7 @@ type A = (++) a a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (apply
         (apply
@@ -583,7 +583,7 @@ type A = A => A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (context
         (name)
@@ -599,7 +599,7 @@ type A = ∀ a . A a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (forall
         (quantified_variables
@@ -619,7 +619,7 @@ type A = forall a a . A a => [A]
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (forall
         (quantified_variables
@@ -628,7 +628,7 @@ type A = forall a a . A a => [A]
         (context
           (name)
           (name))))
-    (type_synomym
+    (type_synonym
       (name)
       (forall
         (quantified_variables
@@ -651,7 +651,7 @@ type (A a a) = A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (parens
         (name)
         (type_params
@@ -725,7 +725,7 @@ type A = a %m -> a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (linear_function
         (variable)
@@ -733,7 +733,7 @@ type A = a %m -> a
           (literal
             (integer)))
         (variable)))
-    (type_synomym
+    (type_synonym
       (name)
       (linear_function
         (variable)
@@ -741,14 +741,14 @@ type A = a %m -> a
           (literal
             (integer)))
         (variable)))
-    (type_synomym
+    (type_synonym
       (name)
       (linear_function
         (variable)
         (modifier
           (name))
         (variable)))
-    (type_synomym
+    (type_synonym
       (name)
       (linear_function
         (variable)
@@ -767,12 +767,12 @@ type A = A ⊸ A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (linear_function
         (name)
         (name)))
-    (type_synomym
+    (type_synonym
       (name)
       (linear_function
         (name)
@@ -789,10 +789,10 @@ type A = (##)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_unit))
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_unit))))
 
@@ -806,7 +806,7 @@ type A = (# a #)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_tuple
         (variable)))))
@@ -823,7 +823,7 @@ type A =
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_tuple
         (variable)))))
@@ -840,7 +840,7 @@ type A =
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_tuple
         (variable)))))
@@ -855,7 +855,7 @@ type A = (# A | A# #)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (unboxed_sum
         (name)
@@ -871,7 +871,7 @@ type A = (# ,,, #) @A @A A# A#
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (apply
         (apply
@@ -896,7 +896,7 @@ type A = (# | | | #) @A @A A# A#
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (apply
         (apply
@@ -909,7 +909,7 @@ type A = (# | | | #) @A @A A# A#
               (name)))
           (name))
         (name)))
-    (type_synomym
+    (type_synonym
       (name)
       (apply
         (apply
@@ -933,7 +933,7 @@ type A = A ⇒ a → a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (context
         (name)
@@ -951,7 +951,7 @@ type A = ★
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (star))))
 
@@ -966,7 +966,7 @@ type A = A @A A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (apply
         (apply
@@ -977,7 +977,7 @@ type A = A @A A
           (kind_application
             (name)))
         (name)))
-    (type_synomym
+    (type_synonym
       (name)
       (apply
         (apply
@@ -996,7 +996,7 @@ type A = (∀ a . A (a :: A) => a :: A, A)
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (tuple
         (signature
@@ -1044,7 +1044,7 @@ type A = (A :: A) :: A
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (signature
         (parens
@@ -1063,7 +1063,7 @@ type A = (a :: (* -> *) -> *) -> a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (function
         (parens
@@ -1087,7 +1087,7 @@ type A = a -> $(a ''A) -> a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (function
         (variable)
@@ -1110,7 +1110,7 @@ type A = a -> [a|a|] -> a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (function
         (variable)
@@ -1131,7 +1131,7 @@ type A = ∀ {a} {a :: A} a . a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (forall
         (quantified_variables
@@ -1154,7 +1154,7 @@ type A = ∀ a (a :: A) {a :: A} -> forall a -> forall a . a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (forall_required
         (quantified_variables
@@ -1186,11 +1186,11 @@ type A = ∀ -> a
 
 (haskell
   (declarations
-    (type_synomym
+    (type_synonym
       (name)
       (forall
         (variable)))
-    (type_synomym
+    (type_synonym
       (name)
       (forall_required
         (variable)))))
