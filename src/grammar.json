@@ -11989,6 +11989,15 @@
       "type": "CHOICE",
       "members": [
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_linear_arrow"
+          },
+          "named": true,
+          "value": "operator"
+        },
+        {
           "type": "SEQ",
           "members": [
             {
@@ -13263,5 +13272,6 @@
     "statement",
     "qualifier",
     "guard"
-  ]
+  ],
+  "reserved": {}
 }

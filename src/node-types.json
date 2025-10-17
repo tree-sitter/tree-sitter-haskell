@@ -4320,7 +4320,17 @@
   {
     "type": "operator",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "operator",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "parens",
@@ -6127,7 +6137,8 @@
   },
   {
     "type": "comment",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "constructor",
@@ -6135,7 +6146,8 @@
   },
   {
     "type": "cpp",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "d",
@@ -6191,7 +6203,8 @@
   },
   {
     "type": "haddock",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "hiding",
@@ -6283,7 +6296,8 @@
   },
   {
     "type": "pragma",
-    "named": true
+    "named": true,
+    "extra": true
   },
   {
     "type": "qualified",
