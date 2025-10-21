@@ -17,6 +17,7 @@ module.exports = {
   ),
 
   operator: $ => choice(
+    alias($._linear_arrow, $.operator),
     seq(optional($._cond_prefix_dot), $._varsym),
     $._operator_hash_head,
     '*',
