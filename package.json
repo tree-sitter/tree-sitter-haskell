@@ -16,8 +16,12 @@
       "name": "Owen Shepherd"
     },
     {
-      "name": "Torsten Schmits"
+      "name": "Torsten Schmits",
+      "email": "tree-sitter@schmits.me"
     }
+  ],
+  "maintainers": [
+    "Torsten Schmits"
   ],
   "main": "bindings/node",
   "types": "bindings/node",
