@@ -35,7 +35,7 @@
 
 (comment) @comment
 
-((haddock) @comment.documentation)
+(haddock) @comment.documentation
 
 ; ----------------------------------------------------------------------------
 ; Punctuation
@@ -99,7 +99,6 @@
 ;   (module) @constructor)
 ;   .
 ;   (module))
-
 (module
   (module_id) @module)
 
@@ -130,12 +129,12 @@
 
 ; ----------------------------------------------------------------------------
 ; Functions and variables
-(decl
-  [
-   name: (variable) @function
-   names: (binding_list (variable) @function)
-  ])
-
+; (decl
+;   [
+;     name: (variable) @function
+;     names: (binding_list
+;       (variable) @function)
+;   ])
 (decl/bind
   name: (variable) @variable)
 
@@ -145,15 +144,14 @@
   name: (variable) @variable
   type: (type))
 
-((decl/signature
-  name: (variable) @_name
-  type: (type))
-  .
-  (decl
-    name: (variable) @variable)
-    match: (_)
-  (#eq? @_name @variable))
-
+; ((decl/signature
+;   name: (variable) @_name
+;   type: (type))
+;   .
+;   (decl
+;     name: (variable) @variable)
+;   match: (_)
+;   (#eq? @_name @variable))
 ; but consider a type that involves 'IO' a decl/function
 (decl/signature
   name: (variable) @function
@@ -161,17 +159,16 @@
     constructor: (name) @_type)
   (#eq? @_type "IO"))
 
-((decl/signature
-  name: (variable) @_name
-  type: (type/apply
-    constructor: (name) @_type)
-  (#eq? @_type "IO"))
-  .
-  (decl
-    name: (variable) @function)
-    match: (_)
-  (#eq? @_name @function))
-
+; ((decl/signature
+;   name: (variable) @_name
+;   type: (type/apply
+;     constructor: (name) @_type)
+;   (#eq? @_type "IO"))
+;   .
+;   (decl
+;     name: (variable) @function)
+;   match: (_)
+;   (#eq? @_name @function))
 ((decl/signature) @function
   .
   (decl/function
@@ -225,10 +222,10 @@
 
 ; decl/function calls with infix operators
 ([
-    (expression/variable) @function.call
-    (expression/qualified
-      (variable) @function.call)
-  ]
+  (expression/variable) @function.call
+  (expression/qualified
+    (variable) @function.call)
+]
   .
   (operator) @_op
   (#any-of? @_op "$" "<$>" ">>=" "=<<"))
@@ -237,7 +234,8 @@
 ((infix
   [
     (operator)
-    (infix_id (variable))
+    (infix_id
+      (variable))
   ] ; infix or `func`
   .
   [
@@ -250,12 +248,11 @@
   (#any-of? @_op "$" "<$>" "=<<"))
 
 ; decl/function composition, arrows, monadic composition (lhs)
-(
-  [
-    (expression/variable) @function
-    (expression/qualified
-      (variable) @function)
-  ]
+([
+  (expression/variable) @function
+  (expression/qualified
+    (variable) @function)
+]
   .
   (operator) @_op
   (#any-of? @_op "." ">>>" "***" ">=>" "<=<"))
@@ -264,7 +261,8 @@
 ((infix
   [
     (operator)
-    (infix_id (variable))
+    (infix_id
+      (variable))
   ] ; infix or `func`
   .
   [
@@ -427,7 +425,6 @@
 
 ; ----------------------------------------------------------------------------
 ; Fields
-
 (field_name
   (variable) @variable.member)
 
@@ -436,7 +433,6 @@
   .
   (children
     (variable) @variable.member))
-
 
 ; ----------------------------------------------------------------------------
 ; Spell checking

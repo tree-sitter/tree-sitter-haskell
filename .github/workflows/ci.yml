@@ -3,19 +3,9 @@ name: CI
 on:
   push:
     branches: [master]
-    paths:
-      - grammar.js
-      - src/**
-      - test/**
-      - bindings/**
-      - binding.gyp
   pull_request:
-    paths:
-      - grammar.js
-      - src/**
-      - test/**
-      - bindings/**
-      - binding.gyp
+    branches: [master]
+  workflow_dispatch:
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}
@@ -24,16 +14,20 @@ concurrency:
 jobs:
   test:
     name: Test parser
-    runs-on: ${{matrix.os}}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Set up repository
+        uses: actions/checkout@v5
+
       - name: Set up tree-sitter
-        uses: tree-sitter/setup-action/cli@v1
+        uses: tree-sitter/setup-action@v2
+        with:
+          install-lib: false
+
       - name: Set up examples
         run: |-
           git clone https://github.com/joshvera/effects examples/effects --single-branch --depth=1 --filter=blob:none
@@ -45,10 +39,12 @@ jobs:
           git clone https://github.com/AndrasKovacs/flatparse examples/flatparse --single-branch --depth=1 --filter=blob:none
           git clone https://github.com/ekmett/lens examples/lens --single-branch --depth=1 --filter=blob:none
           git clone https://github.com/tek/tsh-test-ghc examples/tsh-test-ghc --single-branch --depth=1 --filter=blob:none
+
       - name: Run tests
         uses: tree-sitter/parser-test-action@v2
         with:
           test-rust: ${{runner.os == 'Linux'}}
+
       - name: Parse examples
         id: examples
         uses: tree-sitter/parse-action@v4
@@ -71,3 +67,23 @@ jobs:
             !examples/tsh-test-ghc/compiler/GHC/Builtin/PrimOps.hs
           invalid-files: |
             !examples/haskell-language-server/test/testdata/FuncTestFail.hs
+  query:
+    name: Validate queries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up repository
+        uses: actions/checkout@v5
+
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action@v2
+        with:
+          install-lib: false
+
+      - name: Build parser
+        run: tree-sitter build
+
+      - name: Set up ts_query_ls
+        run: curl -fL https://github.com/ribru17/ts_query_ls/releases/latest/download/ts_query_ls-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+
+      - name: Check queries
+        run: ./ts_query_ls check -f queries/
