@@ -4,7 +4,7 @@ endif
 
 LANGUAGE_NAME := tree-sitter-haskell
 HOMEPAGE_URL := https://github.com/tree-sitter/tree-sitter-haskell
-VERSION := 0.23.2
+VERSION := 0.24.0
 
 # repository
 SRC_DIR := src
