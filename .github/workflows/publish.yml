@@ -20,6 +20,7 @@ jobs:
       NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
     with:
       generate: true
+      node-version: 24
   crates:
     uses: tree-sitter/workflows/.github/workflows/package-crates.yml@main
     secrets:
